@@ -1,0 +1,35 @@
+version: '3'
+services:
+  api:
+    restart: always
+    build:
+      context: .
+      dockerfile: ./docker/api/Dockerfile
+    volumes:
+      - ./api:/app
+    networks:
+      - network_web
+  web:
+    restart: always
+    build:
+      context: .
+      dockerfile: ./docker/web/Dockerfile
+    volumes:
+      - ./web:/app
+    networks:
+      - network_web
+  nginx:
+    image: nginx:alpine
+    restart: always
+    ports:
+      - "8080:80"
+    volumes:
+      - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf
+    networks:
+      - network_web
+    depends_on:
+      - api
+      - web
+networks:
+  network_web:
+    driver: bridge
