@@ -66,8 +66,12 @@ Frontend is initialized with vue-cli (beta 3.0, https://github.com/vuejs/vue-cli
 
 Add new dependencies `npm install package-name` or `npm install package-name --save-dev`. In this case, you need to rebuild the containers by running `docker-compose build web`. You need to have node installed on your computer to do this. You could also just simply modify package.json.
 
+Frontend can also be run locally (without docker). Please make sure that you have Python3 installed on your computer. Run `pip install pipenv && pipenv install` in /api directory to install required packages. After this you can start the api serve by running `pipenv run python app.py`.
+
 ## Backend (API)
 
 Backend (API) is a simple Python webapp. Dependency management is handled by Pipenv ()
 
 Add new dependencies by running `pipenv install package-name` or `npm install package-name --dev` on your own computer. Afterwards, rebuild api container `docker-compose build api`. You need to have Python3 and pipenv installed to do this locally.
+
+Backend can be run locally (without docker). You should have node installed. Run `npm install` in /web directory to install required dependencies. After that you can start the development server by running `npm run serve`.
