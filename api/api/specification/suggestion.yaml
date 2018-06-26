@@ -9,36 +9,37 @@ paths:
     get:
       operationId: api.logic.suggestion.get_suggestions
       description: |
-        Gets `Suggestion` objects.
-        Optional query param of **limit** determines
-        size of returned array and **offset** 
-        determines the starting point
+        Get all suggestions.
+        Optional query parameters can be used to limit the request.
+        Parameter **limit** determines the size of the returned array and **offset** 
+        determines the starting offset.
       parameters:
         - name: limit
           in: query
-          description: Maximum number of returned `Suggestion` items
+          description: Maximum number of returned suggestions
           required: false
           type: integer
         - name: offset
           in: query
-          description: Offset of the results (needed for a paging view)
+          description: Offset of the results (e.g. for paging)
           required: false
           type: integer
       responses:
         '200':
-          description: Successful response
+          description: An array of suggestion objects
           schema:
             title: ArrayOfSuggestions
             type: array
             items:
               $ref: '#/definitions/Suggestion'
+  
     post:
       operationId: api.logic.suggestion.post_suggestion
-      description: Post a new `Suggestion` object.
+      description: Create a new suggestion
       parameters:
         - in: body
           name: body
-          description: A `Suggestion` object that needs to be added
+          description: Suggestion object to be added
           required: true
           schema:
             $ref: '#/definitions/Suggestion'
@@ -46,12 +47,14 @@ paths:
         - application/json
       responses:
         '201':
-          description: 'new `Suggestion` created.'
+          description: The created suggestion
+          schema:
+            $ref: '#/definitions/Suggestion'
+
   /suggestions/{suggestion_id}:
     get:
       operationId: api.logic.suggestion.get_suggestion
-      description: |
-        Gets a single `Suggestion` object.
+      description: Get a single suggestion by id
       parameters:
         - name: suggestion_id
           in: path
@@ -60,17 +63,15 @@ paths:
           type: integer
       responses:
         '200':
-          description: Successful response
+          description: A suggestion matching the given id
           schema:
-            title: ArrayOfSuggestions
-            type: array
-            items:
-              $ref: '#/definitions/Suggestion'
+            $ref: '#/definitions/Suggestion'
         '404':
           description: No suggestion could be found with the given ID
+
     put:
       operationId: api.logic.suggestion.put_suggestion
-      description: Replace a `Suggestion` object.
+      description: Replace a suggestion by id
       parameters:
         - name: suggestion_id
           in: path
@@ -79,32 +80,44 @@ paths:
           type: integer
         - in: body
           name: body
-          description: Suggestion object that needs to be added
+          description: (A complete) suggestion object to be updated
           required: true
           schema:
             $ref: '#/definitions/Suggestion'
       responses:
         '204':
-          description: 'successful operation, no content returned'
+          description: Replaced suggestion
+          schema:
+            $ref: '#/definitions/Suggestion'
         '404':
           description: No suggestion could be found with the given ID
+  
     patch:
       operationId: api.logic.suggestion.patch_suggestion
-      description: replace a part of the `Suggestion`
+      description: Patch a suggestion by id, replacing (only some) of its fields.
       parameters:
         - name: suggestion_id
           in: path
           description: Suggestion ID
           required: true
           type: integer
+        - in: body
+          name: body
+          description: (A partial) suggestion object with only fields that need to be patched
+          required: true
+          schema:
+            $ref: '#/definitions/PatchSuggestion'
       responses:
         '200':
-          description: 'successful operation, full content returned'
+          description: Patched suggestion
+          schema:
+            $ref: '#/definitions/Suggestion'
         '404':
           description: No suggestion could be found with the given ID
+
     delete:
       operationId: api.logic.suggestion.delete_suggestion
-      description: delete a `Suggestion`
+      description: Delete a suggestion by id
       parameters:
         - name: suggestion_id
           in: path
@@ -113,102 +126,180 @@ paths:
           type: integer
       responses:
         '204':
-          description: 'Successful operation, no content returned'
+          description: Deleted suggestion
+          schema:
+            $ref: '#/definitions/Suggestion'
         '404':
           description: No suggestion could be found with the given ID
 
+# This should be ideally split into smaller components,
+# definitions.yaml, main.yaml, suggestion.yaml, etc.
+# Not currently supported, though https://github.com/zalando/connexion/issues/254
 definitions:
   Suggestion:
     type: object
     properties:
       prefLabel:
-        type: array
-        items:
-          type: string
-          description: Preferred label of the suggested concept including a language code
-        example:
-          - Kissa @fi
-          - Katt @sv
-          - Cat @en
+        $ref: "#/definitions/prefLabel"
       altLabel:
-        type: array
-        items:
-          type: string
-          description: Preferred label of the suggested concept including a language code
-        example:
-          - kisu @fi
-          - katti @fi
+        $ref: "#/definitions/altLabel"
       status:
-        type: number
-        format: integer
-        description: 'Processing state of a particular `Suggestion`. For example: 0 - closed, 1 - needs review, 2 - reviewed, 3 - accepted into vocabulary.'
-        example: 2
+        $ref: "#/definitions/status"
       id:
-        type: number
-        format: integer
-        description: Automatically generated identifier
-        example: 5224
+        $ref: "#/definitions/id"
       uri:
-        type: string
-        example: 'http://www.yso.fi/onto/ysa/Y505224'
+        $ref: "#/definitions/uri"
       type:
-        type: number
-        format: integer
-        description: E.g. 0 for new concept suggestions and 1 for change suggestions
-        example: 0
+        $ref: "#/definitions/type"
       broader:
-        type: array
-        items:
-          type: string
-          description: broader concept URI
-        description: An array of broader concept uris
-        example:
-          - 'http://www.yso.fi/onto/ysa/Y98177'
+        $ref: "#/definitions/broader"
       narrower:
-        type: array
-        items:
-          type: string
-          description: narrower concept URI
-        description: An array of narrower concept uris
+        $ref: "#/definitions/narrower"
       related:
-        type: array
-        items:
-          type: string
-          description: related concept URI
-        description: An array of related concept uris
+        $ref: "#/definitions/related"
       group:
-        type: array
-        items:
-          type: string
-          description: group URI
-        description: An array of group/collection uris the suggested concept is a member of
-        example:
-          - 'http://www.yso.fi/onto/ysa/ryhma_07'
-          - 'http://www.yso.fi/onto/ysa/ryhma_09'
+        $ref: "#/definitions/group"
       description:
-        type: array
-        items:
-          type: string
-        description: Additional information about the suggested concept.
-        example:
-          - Kissaeläimiin kuuluva nelijalkainen nisäkäs. @fi
+        $ref: "#/definitions/description"
       note:
-        type: array
-        items:
-          type: string
-        description: Why the suggested concept is necessary
-        example:
-          - 'KULOssa ja MAO-ontologiassa. Ei ole käytetty kovin usein sisällönkuvailuun, mutta vaikea korvata muulla asiasanalla. @fi'
-      neededfor:
-        type: string
-        description: What the suggested concept is needed for. e.g. a ISBN or the URL of a document
+        $ref: "#/definitions/note"
+      needefor:
+        $ref: "#/definitions/neededfor"
       organization:
-        type: string
-        description: Organization of the suggester
-        example: Ankkalinnan kaupunki
+        $ref: "#/definitions/organization"
     required:
       - id
       - uri
       - prefLabel
       - type
       - status
+
+  PatchSuggestion:
+    type: object
+    properties:
+      prefLabel:
+        $ref: "#/definitions/prefLabel"
+      altLabel:
+        $ref: "#/definitions/altLabel"
+      status:
+        $ref: "#/definitions/status"
+      id:
+        $ref: "#/definitions/id"
+      uri:
+        $ref: "#/definitions/uri"
+      type:
+        $ref: "#/definitions/type"
+      broader:
+        $ref: "#/definitions/broader"
+      narrower:
+        $ref: "#/definitions/narrower"
+      related:
+        $ref: "#/definitions/related"
+      group:
+        $ref: "#/definitions/group"
+      description:
+        $ref: "#/definitions/description"
+      note:
+        $ref: "#/definitions/note"
+      needefor:
+        $ref: "#/definitions/neededfor"
+      organization:
+        $ref: "#/definitions/organization"
+    required:
+      - id
+
+  prefLabel:
+    type: array
+    items:
+      type: string
+      description: A suggested concept and its language code
+    example:
+      - Kissa @fi
+      - Katt @sv
+      - Cat @en
+
+  altLabel:
+    type: array
+    items:
+      type: string
+      description: A suggested concept and its language code
+    example:
+      - kisu @fi
+      - katti @fi
+
+  status:
+    type: number
+    format: integer
+    description: 'Processing state of a particular `Suggestion`. For example: 0 - closed, 1 - needs review, 2 - reviewed, 3 - accepted into vocabulary.'
+    example: 2
+
+  id:
+    type: number
+    format: integer
+    description: Automatically generated identifier
+    example: 5224
+
+  uri:
+    type: string
+    example: 'http://www.yso.fi/onto/ysa/Y505224'
+
+  type:
+    type: number
+    format: integer
+    description: E.g. 0 for new concept suggestions and 1 for change suggestions
+    example: 0
+
+  broader:
+    type: array
+    items:
+      type: string
+      description: An array of broader concept URIs
+    example:
+      - 'http://www.yso.fi/onto/ysa/Y98177'
+
+  narrower:
+    type: array
+    items:
+      type: string
+      description: An array of narrower concept URIs
+
+  related:
+    type: array
+    items:
+      type: string
+      description: An array of related concept URIs
+
+  group:
+    type: array
+    items:
+      type: string
+      description: An array of group/collection uris the suggested concept is a member of
+    example:
+      - 'http://www.yso.fi/onto/ysa/ryhma_07'
+      - 'http://www.yso.fi/onto/ysa/ryhma_09'
+
+  description:
+    type: array
+    items:
+      type: string
+      description: Additional information about the suggested concept
+    example:
+      - Kissaeläimiin kuuluva nelijalkainen nisäkäs. @fi
+
+  note:
+    type: array
+    items:
+      type: string
+      description: Additional notes on why the suggested concept is necessary
+    example:
+      - 'KULOssa ja MAO-ontologiassa. Ei ole käytetty kovin usein sisällönkuvailuun, mutta vaikea korvata muulla asiasanalla. @fi'
+
+  neededfor:
+    type: string
+    description: What the suggested concept is needed for. e.g. a ISBN or the URL of a document
+
+  organization:
+    type: string
+    description: Organization of the suggester
+    example: Ankkalinnan kaupunki
+
