@@ -13,6 +13,7 @@ connexion = "*"
 
 [dev-packages]
 
+swagger-tester = "*"
 
 
 [requires]
