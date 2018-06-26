@@ -1,0 +1,214 @@
+swagger: '2.0'
+
+info:
+  title: Finto Suggestion API
+  version: '1.0'
+
+paths:
+  /suggestions:
+    get:
+      operationId: api.logic.suggestion.get_suggestions
+      description: |
+        Gets `Suggestion` objects.
+        Optional query param of **limit** determines
+        size of returned array and **offset** 
+        determines the starting point
+      parameters:
+        - name: limit
+          in: query
+          description: Maximum number of returned `Suggestion` items
+          required: false
+          type: integer
+        - name: offset
+          in: query
+          description: Offset of the results (needed for a paging view)
+          required: false
+          type: integer
+      responses:
+        '200':
+          description: Successful response
+          schema:
+            title: ArrayOfSuggestions
+            type: array
+            items:
+              $ref: '#/definitions/Suggestion'
+    post:
+      operationId: api.logic.suggestion.post_suggestion
+      description: Post a new `Suggestion` object.
+      parameters:
+        - in: body
+          name: body
+          description: A `Suggestion` object that needs to be added
+          required: true
+          schema:
+            $ref: '#/definitions/Suggestion'
+      consumes:
+        - application/json
+      responses:
+        '201':
+          description: 'new `Suggestion` created.'
+  /suggestions/{suggestion_id}:
+    get:
+      operationId: api.logic.suggestion.get_suggestion
+      description: |
+        Gets a single `Suggestion` object.
+      parameters:
+        - name: suggestion_id
+          in: path
+          description: Suggestion ID
+          required: true
+          type: integer
+      responses:
+        '200':
+          description: Successful response
+          schema:
+            title: ArrayOfSuggestions
+            type: array
+            items:
+              $ref: '#/definitions/Suggestion'
+        '404':
+          description: No suggestion could be found with the given ID
+    put:
+      operationId: api.logic.suggestion.put_suggestion
+      description: Replace a `Suggestion` object.
+      parameters:
+        - name: suggestion_id
+          in: path
+          description: Suggestion ID
+          required: true
+          type: integer
+        - in: body
+          name: body
+          description: Suggestion object that needs to be added
+          required: true
+          schema:
+            $ref: '#/definitions/Suggestion'
+      responses:
+        '204':
+          description: 'successful operation, no content returned'
+        '404':
+          description: No suggestion could be found with the given ID
+    patch:
+      operationId: api.logic.suggestion.patch_suggestion
+      description: replace a part of the `Suggestion`
+      parameters:
+        - name: suggestion_id
+          in: path
+          description: Suggestion ID
+          required: true
+          type: integer
+      responses:
+        '200':
+          description: 'successful operation, full content returned'
+        '404':
+          description: No suggestion could be found with the given ID
+    delete:
+      operationId: api.logic.suggestion.delete_suggestion
+      description: delete a `Suggestion`
+      parameters:
+        - name: suggestion_id
+          in: path
+          description: Suggestion ID
+          required: true
+          type: integer
+      responses:
+        '204':
+          description: 'Successful operation, no content returned'
+        '404':
+          description: No suggestion could be found with the given ID
+
+definitions:
+  Suggestion:
+    type: object
+    properties:
+      prefLabel:
+        type: array
+        items:
+          type: string
+          description: Preferred label of the suggested concept including a language code
+        example:
+          - Kissa @fi
+          - Katt @sv
+          - Cat @en
+      altLabel:
+        type: array
+        items:
+          type: string
+          description: Preferred label of the suggested concept including a language code
+        example:
+          - kisu @fi
+          - katti @fi
+      status:
+        type: number
+        format: integer
+        description: 'Processing state of a particular `Suggestion`. For example: 0 - closed, 1 - needs review, 2 - reviewed, 3 - accepted into vocabulary.'
+        example: 2
+      id:
+        type: number
+        format: integer
+        description: Automatically generated identifier
+        example: 5224
+      uri:
+        type: string
+        example: 'http://www.yso.fi/onto/ysa/Y505224'
+      type:
+        type: number
+        format: integer
+        description: E.g. 0 for new concept suggestions and 1 for change suggestions
+        example: 0
+      broader:
+        type: array
+        items:
+          type: string
+          description: broader concept URI
+        description: An array of broader concept uris
+        example:
+          - 'http://www.yso.fi/onto/ysa/Y98177'
+      narrower:
+        type: array
+        items:
+          type: string
+          description: narrower concept URI
+        description: An array of narrower concept uris
+      related:
+        type: array
+        items:
+          type: string
+          description: related concept URI
+        description: An array of related concept uris
+      group:
+        type: array
+        items:
+          type: string
+          description: group URI
+        description: An array of group/collection uris the suggested concept is a member of
+        example:
+          - 'http://www.yso.fi/onto/ysa/ryhma_07'
+          - 'http://www.yso.fi/onto/ysa/ryhma_09'
+      description:
+        type: array
+        items:
+          type: string
+        description: Additional information about the suggested concept.
+        example:
+          - Kissaeläimiin kuuluva nelijalkainen nisäkäs. @fi
+      note:
+        type: array
+        items:
+          type: string
+        description: Why the suggested concept is necessary
+        example:
+          - 'KULOssa ja MAO-ontologiassa. Ei ole käytetty kovin usein sisällönkuvailuun, mutta vaikea korvata muulla asiasanalla. @fi'
+      neededfor:
+        type: string
+        description: What the suggested concept is needed for. e.g. a ISBN or the URL of a document
+      organization:
+        type: string
+        description: Organization of the suggester
+        example: Ankkalinnan kaupunki
+    required:
+      - id
+      - uri
+      - prefLabel
+      - type
+      - status

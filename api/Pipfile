@@ -7,11 +7,12 @@ name = "pypi"
 
 [packages]
 
-flask = "*"
 gunicorn = "*"
+connexion = "*"
 
 
 [dev-packages]
+
 
 
 [requires]

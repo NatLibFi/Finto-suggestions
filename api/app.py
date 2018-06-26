@@ -1,18 +1,9 @@
-import os
-
-from flask import Flask, send_file, jsonify
-app = Flask(__name__)
+import connexion
 
 
-@app.route("/")
-def main():
-    return jsonify({"msg": "Hello World!"})
-
-
-@app.route("/test")
-def test():
-    return jsonify({"msg": "Test World!"})
+app = connexion.FlaskApp(__name__, specification_dir='api/specification/')
+app.add_api('suggestion.yaml', base_path="/api/v1")
 
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", debug=True, port=8050)
+    app.run(host="0.0.0.0", port=8050, debug=True)
