@@ -13,7 +13,7 @@ connexion = "*"
 
 [dev-packages]
 
-swagger-tester = "*"
+pytest = "*"
 
 
 [requires]

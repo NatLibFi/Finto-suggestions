@@ -9,35 +9,49 @@ DUMMY_SUGGESTION = {'id': 1000,
 
 
 def get_suggestions(limit: int = None, offset: int = None) -> str:
-    return [
-        DUMMY_SUGGESTION
-    ], 200
+    return {
+        "data": [
+            DUMMY_SUGGESTION,
+            DUMMY_SUGGESTION
+        ]
+    }, 200
 
 
 def post_suggestion() -> str:
-    body = connexion.request.json  # usually the post payload is returned
-    return body, 201
-    # TODO: failed status code missing
+    body = connexion.request.json
+    return {
+        "data": body
+    }, 201
 
 
 def get_suggestion(suggestion_id: int) -> str:
-    return DUMMY_SUGGESTION, 200
+    return {
+        "data": DUMMY_SUGGESTION
+    }, 200
     # return "failed", 404
 
 
 def put_suggestion(suggestion_id: int) -> str:
-    return DUMMY_SUGGESTION, 204
-    # return "failed", 404
+    body = connexion.request.json
+    return {
+        "data": body
+    }, 204
+    # 404
 
 
 def patch_suggestion(suggestion_id: int) -> str:
     body = connexion.request.json
-    patched = dict(DUMMY_SUGGESTION).update(body)
+    patched = DUMMY_SUGGESTION.copy()
+    patched.update(body)
 
-    return patched, 200
+    return {
+        "data": patched
+    }, 200
     # return "patch failed", 404
 
 
 def delete_suggestion(suggestion_id: int) -> str:
-    return "success delete", 204
+    return {
+        "data": DUMMY_SUGGESTION
+    }, 204
     # return "delete failed", 404

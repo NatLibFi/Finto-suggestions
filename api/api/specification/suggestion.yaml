@@ -28,10 +28,7 @@ paths:
         '200':
           description: An array of suggestion objects
           schema:
-            title: ArrayOfSuggestions
-            type: array
-            items:
-              $ref: '#/definitions/Suggestion'
+            $ref: '#/definitions/SuggestionResponseArray'
   
     post:
       operationId: api.logic.suggestion.post_suggestion
@@ -49,7 +46,7 @@ paths:
         '201':
           description: The created suggestion
           schema:
-            $ref: '#/definitions/Suggestion'
+            $ref: '#/definitions/SuggestionResponse'
 
   /suggestions/{suggestion_id}:
     get:
@@ -65,7 +62,7 @@ paths:
         '200':
           description: A suggestion matching the given id
           schema:
-            $ref: '#/definitions/Suggestion'
+            $ref: '#/definitions/SuggestionResponse'
         '404':
           description: No suggestion could be found with the given ID
 
@@ -88,7 +85,7 @@ paths:
         '204':
           description: Replaced suggestion
           schema:
-            $ref: '#/definitions/Suggestion'
+            $ref: '#/definitions/SuggestionResponse'
         '404':
           description: No suggestion could be found with the given ID
   
@@ -111,7 +108,7 @@ paths:
         '200':
           description: Patched suggestion
           schema:
-            $ref: '#/definitions/Suggestion'
+            $ref: '#/definitions/SuggestionResponse'
         '404':
           description: No suggestion could be found with the given ID
 
@@ -127,8 +124,6 @@ paths:
       responses:
         '204':
           description: Deleted suggestion
-          schema:
-            $ref: '#/definitions/Suggestion'
         '404':
           description: No suggestion could be found with the given ID
 
@@ -136,6 +131,23 @@ paths:
 # definitions.yaml, main.yaml, suggestion.yaml, etc.
 # Not currently supported, though https://github.com/zalando/connexion/issues/254
 definitions:
+
+  # According to JSON specification, the response needs to be an object at root-level
+  # This format also allows for addition of later metadata to responses
+  SuggestionResponse:
+    type: object
+    properties:
+      data:
+        $ref: "#/definitions/Suggestion"
+  
+  SuggestionResponseArray:
+    type: object
+    properties:
+      data:
+        type: array
+        items:
+          $ref: "#/definitions/Suggestion"
+
   Suggestion:
     type: object
     properties:
@@ -205,8 +217,6 @@ definitions:
         $ref: "#/definitions/neededfor"
       organization:
         $ref: "#/definitions/organization"
-    required:
-      - id
 
   prefLabel:
     type: array
