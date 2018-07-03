@@ -1,4 +1,4 @@
-version: '3'
+version: '3.6'
 services:
   api:
     restart: always
@@ -9,6 +9,9 @@ services:
       - ./api:/app
     networks:
       - network_web
+      - network_db
+    depends_on:
+      - db
   web:
     restart: always
     build:
@@ -31,6 +34,23 @@ services:
     depends_on:
       - api
       - web
+  db:
+    image: postgres:10-alpine
+    restart: always
+    volumes:
+      - volume_db:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_USER=psql
+      - POSTGRES_PASSWORD=pw
+      - POSTGRES_DB=psdb
+    ports:
+      - 5432:5432
+    networks:
+      - network_db
 networks:
+  network_db:
+    driver: bridge
   network_web:
     driver: bridge
+volumes:
+  volume_db:

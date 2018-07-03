@@ -9,6 +9,8 @@ name = "pypi"
 
 gunicorn = "*"
 connexion = "*"
+Flask-SQLAlchemy = "*"
+"psycopg2" = "*"
 
 
 [dev-packages]

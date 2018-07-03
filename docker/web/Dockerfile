@@ -12,4 +12,4 @@ COPY ./web/* /app/
 
 EXPOSE 8040
 
-CMD [ "npm", "run", "serve" ]
+ENTRYPOINT [ "npm", "run", "serve" ]

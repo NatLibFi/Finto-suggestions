@@ -4,12 +4,12 @@
 
 import pytest
 import connexion
-from app import app
+from app import cx_app
 
 
 @pytest.fixture(scope='module')
 def client():
-    with app.app.test_client() as client:
+    with cx_app.app.test_client() as client:
         yield client
 
 

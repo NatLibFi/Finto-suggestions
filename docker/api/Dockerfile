@@ -5,11 +5,16 @@ ENV PYTHONUNBUFFERED 1
 COPY ./api /app
 WORKDIR /app
 
+# This layer is needed for python postgres support
+RUN apk update \
+  && apk --no-cache add py3-psycopg2 \
+  && apk add libpq postgresql-dev \
+  && apk add build-base
+
 # Manage dependencies using pipenv
 RUN pip install pipenv \
   && pipenv install --system
 
 EXPOSE 8050
 
-# CMD ["python", "app.py"]
-CMD ["gunicorn", "-w", "2", "-b", ":8050", "--reload", "--access-logfile", "-", "--error-logfile", "-", "app:app"]
+ENTRYPOINT ["gunicorn", "-w", "2", "-b", ":8050", "--reload", "--access-logfile", "-", "--error-logfile", "-", "app:cx_app"]
