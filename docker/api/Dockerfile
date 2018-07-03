@@ -17,4 +17,4 @@ RUN pip install pipenv \
 
 EXPOSE 8050
 
-ENTRYPOINT ["gunicorn", "-w", "2", "-b", ":8050", "--reload", "--access-logfile", "-", "--error-logfile", "-", "app:cx_app"]
+ENTRYPOINT ["gunicorn", "-w", "2", "-b", ":8050", "--reload", "--access-logfile", "-", "--error-logfile", "-", "app:app"]

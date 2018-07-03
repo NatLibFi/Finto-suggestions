@@ -3,13 +3,12 @@
 """
 
 import pytest
-import connexion
-from app import cx_app
+from app import flask_app
 
 
 @pytest.fixture(scope='module')
 def client():
-    with cx_app.app.test_client() as client:
+    with flask_app.test_client() as client:
         yield client
 
 

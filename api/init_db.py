@@ -1,4 +1,6 @@
-from app import cx_app, db
+from app import flask_app, db
 
-with cx_app.app.app_context():
+with flask_app.app_context():
     db.create_all()
+
+print("Database initialized.")

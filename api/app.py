@@ -1,28 +1,26 @@
 import connexion
+import os
 from api.models import db
 
 # Create a WSGI compliant app instance
-cx_app = connexion.FlaskApp(__name__, specification_dir='api/specification/')
+app = connexion.FlaskApp(__name__, specification_dir='api/specification/')
+
+# This is required for Flask cli and FLASK_APP env to work
+flask_app = app.app
 
 # Add PSQL database config for SQLAlchemy
-connection_string_template = 'postgresql+psycopg2://{user}:{passwd}@{host}:{port}/{db}'
-connection_string = connection_string_template.format(
-    user='psql',
-    passwd='pw',
-    host='db',
-    port='5432',
-    db='psdb')
+flask_app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URI')
 
-cx_app.app.config['SQLALCHEMY_DATABASE_URI'] = connection_string
-cx_app.app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+# http://flask-sqlalchemy.pocoo.org/2.1/signals/
+flask_app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-cx_app.app.secret_key = 'foobarbaz'  # TODO: change
+flask_app.secret_key = os.environ.get('APP_SECRET_KEY')
 
 # Init database models
-db.init_app(cx_app.app)
+db.init_app(flask_app)
 
 # Add Connexion API endpoints
-cx_app.add_api('suggestion.yaml', base_path="/api/v1")
+app.add_api('suggestion.yaml', base_path="/api/v1")
 
 if __name__ == "__main__":
-    cx_app.run(host="0.0.0.0", port=8050, debug=True)
+    app.run(host="0.0.0.0", port=8050, debug=True)

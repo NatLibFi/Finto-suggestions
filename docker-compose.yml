@@ -7,6 +7,10 @@ services:
       dockerfile: ./docker/api/Dockerfile
     volumes:
       - ./api:/app
+    environment:
+      # DATABASE_URI is defined as dialect+driver://username:password@host:port/database
+      - DATABASE_URI=postgresql+psycopg2://psql:pw@db:5432/psdb
+      - APP_SECRET_KEY=changethis
     networks:
       - network_web
       - network_db

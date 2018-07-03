@@ -21,3 +21,11 @@ pytest = "*"
 [requires]
 
 python_version = "3.6"
+
+
+[scripts]
+
+start = "docker-compose up"
+start-db = "docker-compose up db"
+init-db = "docker-compose exec api python init_db.py"
+psql = "docker-compose exec db psql psdb -Upsql"
