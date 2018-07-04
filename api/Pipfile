@@ -9,8 +9,9 @@ name = "pypi"
 
 gunicorn = "*"
 connexion = "*"
-Flask-SQLAlchemy = "*"
+flask-sqlalchemy = "*"
 "psycopg2" = "*"
+flask-migrate = "*"
 
 
 [dev-packages]
@@ -26,6 +27,8 @@ python_version = "3.6"
 [scripts]
 
 start = "docker-compose up"
-start-db = "docker-compose up db"
-init-db = "docker-compose exec api python init_db.py"
 psql = "docker-compose exec db psql psdb -Upsql"
+start-db = "docker-compose up db"
+init-db = "docker-compose exec api flask db init"
+migrate-db = "docker-compose exec api flask db migrate"
+upgrade-db = "docker-compose exec api flask db upgrade"
