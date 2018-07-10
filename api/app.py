@@ -1,6 +1,6 @@
 import connexion
 import os
-from api.models import db
+from api.models import db, User, Suggestion, Event, Meeting, Emoji, Tag, EventType
 from flask_migrate import Migrate
 
 # Create a WSGI compliant Connexion app instance and initialize the API
@@ -20,6 +20,20 @@ flask_app.secret_key = os.environ.get('APP_SECRET_KEY')
 # Init database models and migrations
 db.init_app(flask_app)
 migrate = Migrate(flask_app, db)
+
+
+@flask_app.shell_context_processor
+def make_shell_context():
+    return {
+        'db': db,
+        'User': User,
+        'Suggestion': Suggestion,
+        'Event': Event,
+        'Meeting': Meeting,
+        'Emoji': Emoji,
+        'Tag': Tag,
+        'EventType': EventType
+    }
 
 
 if __name__ == "__main__":
