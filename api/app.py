@@ -1,6 +1,6 @@
 import connexion
 import os
-from api.models import db, User, Suggestion, Event, Meeting, Emoji, Tag, EventType
+from api.models import *
 from flask_migrate import Migrate
 from specsynthase.specbuilder import SpecBuilder
 
@@ -50,7 +50,9 @@ def make_shell_context():
         'Meeting': Meeting,
         'Emoji': Emoji,
         'Tag': Tag,
-        'EventType': EventType
+        'EventTypes': EventTypes,
+        'SuggestionStatusTypes': SuggestionStatusTypes,
+        'SuggestionTypes': SuggestionTypes
     }
 
 

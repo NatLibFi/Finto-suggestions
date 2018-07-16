@@ -42,10 +42,8 @@ definitions:
         $ref: "#/definitions/group"
       description:
         $ref: "#/definitions/description"
-      note:
-        $ref: "#/definitions/note"
-      needefor:
-        $ref: "#/definitions/neededfor"
+      reason:
+        $ref: "#/definitions/reason"
       organization:
         $ref: "#/definitions/organization"
     required:
@@ -80,31 +78,38 @@ definitions:
         $ref: "#/definitions/group"
       description:
         $ref: "#/definitions/description"
-      note:
-        $ref: "#/definitions/note"
-      needefor:
-        $ref: "#/definitions/neededfor"
+      reason:
+        $ref: "#/definitions/reason"
       organization:
         $ref: "#/definitions/organization"
 
   prefLabel:
-    type: array
-    items:
-      type: string
-      description: A suggested concept and its language code
-    example:
-      - Kissa @fi
-      - Katt @sv
-      - Cat @en
+    type: object
+    description: "Preferred label"
+    properties:
+      fi:
+        type: string
+        example: "kisu"
+      en:
+        type: string
+        example: "cat"
+      sv:
+        type: string
+        example: "katten"
 
   altLabel:
-    type: array
-    items:
-      type: string
-      description: A suggested concept and its language code
-    example:
-      - kisu @fi
-      - katti @fi
+    type: object
+    description: "Alternative label"
+    properties:
+      fi:
+        type: string
+        example: "kisu"
+      en:
+        type: string
+        example: "cat"
+      sv:
+        type: string
+        example: "katten"
 
   status:
     type: number
@@ -141,6 +146,8 @@ definitions:
     items:
       type: string
       description: An array of narrower concept URIs
+    example:
+      - 'http://www.yso.fi/onto/ysa/Y98176'
 
   related:
     type: array
@@ -158,24 +165,14 @@ definitions:
       - 'http://www.yso.fi/onto/ysa/ryhma_09'
 
   description:
-    type: array
-    items:
-      type: string
-      description: Additional information about the suggested concept
-    example:
-      - Kissaeläimiin kuuluva nelijalkainen nisäkäs. @fi
-
-  note:
-    type: array
-    items:
-      type: string
-      description: Additional notes on why the suggested concept is necessary
-    example:
-      - 'KULOssa ja MAO-ontologiassa. Ei ole käytetty kovin usein sisällönkuvailuun, mutta vaikea korvata muulla asiasanalla. @fi'
-
-  neededfor:
     type: string
-    description: What the suggested concept is needed for. e.g. a ISBN or the URL of a document
+    description: Additional information about the suggested concept
+    example: "Kissaeläimiin kuuluva nelijalkainen nisäkäs."
+
+  reason:
+    type: string
+    description: Additional notes on why the suggested concept is necessary. What is the concept needed for (e.g. a ISBN or the URL of a document)?
+    example: 'KULOssa ja MAO-ontologiassa. Ei ole käytetty kovin usein sisällönkuvailuun, mutta vaikea korvata muulla asiasanalla.'
 
   organization:
     type: string

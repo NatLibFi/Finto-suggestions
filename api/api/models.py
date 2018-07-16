@@ -13,9 +13,20 @@ suggestions_to_tags = db.Table('suggestion_tags_association',
                                )
 
 
-class EventType(enum.Enum):
+class EventTypes(enum.Enum):
     ACTION = 1
     COMMENT = 2
+
+
+class SuggestionStatusTypes(enum.Enum):
+    REJECTED = 0
+    ACCEPTED = 1
+    # more types here..
+
+
+class SuggestionTypes(enum.Enum):
+    NEW = 0
+    MODIFY = 1
 
 
 class Event(db.Model):
@@ -29,8 +40,8 @@ class Event(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     created = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     updated = db.Column(db.DateTime, index=True, default=datetime.utcnow)
-    event_type = db.Column(db.Enum(EventType), nullable=False)
-    text = db.Column(db.String(4096))
+    event_type = db.Column(db.Enum(EventTypes), nullable=False)
+    text = db.Column(db.Text)
 
     emojis = db.relationship('Emoji', backref='event')
 
@@ -88,7 +99,23 @@ class Suggestion(db.Model):
     name = db.Column(db.String(128), index=True, nullable=False)
     # meeting: backref
 
-    event = db.relationship('Event', backref='suggestion')
+    suggestion_type = db.Column(db.Enum(SuggestionTypes), nullable=False)
+    status = db.Column(db.Enum(SuggestionStatusTypes))  # nullable=False
+    uri = db.Column(db.String(256))
+
+    organization = db.Column(db.String(256))
+    description = db.Column(db.Text)
+    reason = db.Column(db.Text)
+
+    preferred_label = db.Column(db.JSON)
+    alternative_label = db.Column(db.JSON)
+
+    broader = db.Column(db.JSON)
+    narrower = db.Column(db.JSON)
+    related = db.Column(db.JSON)
+    group = db.Column(db.JSON)
+
+    events = db.relationship('Event', backref='suggestion')
     emojis = db.relationship('Emoji', backref='suggestion')
 
     tags = db.relationship("Tag",

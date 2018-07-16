@@ -1,5 +1,5 @@
 import connexion
-from ..models import db, Suggestion
+from ..models import db, Suggestion, SuggestionTypes
 
 DUMMY_SUGGESTION = {'id': 1000,
                     'uri': 'http://www.google.fi',
@@ -21,7 +21,8 @@ def get_suggestions(limit: int = None, offset: int = None) -> str:
 def post_suggestion() -> str:
     body = connexion.request.json
 
-    s = Suggestion(name="My Suggestion1")
+    s = Suggestion(name="My Suggestion1",
+                   suggestion_type=SuggestionTypes.NEW_SUGGESTION)
     db.session.add(s)
     db.session.commit()
 
