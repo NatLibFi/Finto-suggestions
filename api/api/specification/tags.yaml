@@ -1,0 +1,35 @@
+paths:
+
+  /tags/:
+    get:
+      operationId: api.logic.tags.get_tags
+      responses:
+        "200":
+          description:  OK
+
+  /tags/{tag_id}:
+    parameters:
+      - name: tag_id
+        in: path
+        type: integer
+        required: true
+    get:
+      operationId: api.logic.tags.get_tag
+      responses:
+        "200":
+          description:  OK
+    post:
+      operationId: api.logic.tags.post_tag
+      responses:
+        "200":
+          description:  OK
+    delete:
+      operationId: api.logic.tags.delete_tag
+      responses:
+        "200":
+          description:  OK
+    put:
+      operationId: api.logic.tags.put_tag
+      responses:
+        "200":
+          description:  OK

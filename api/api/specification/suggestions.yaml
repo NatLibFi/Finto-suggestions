@@ -1,0 +1,131 @@
+paths:
+
+  /suggestions:
+    get:
+      operationId: api.logic.suggestions.get_suggestions
+      description: |
+        Get all suggestions.
+        Optional query parameters can be used to limit the request.
+        Parameter **limit** determines the size of the returned array and **offset** 
+        determines the starting offset.
+      parameters:
+        - name: limit
+          in: query
+          description: Maximum number of returned suggestions
+          required: false
+          type: integer
+        - name: offset
+          in: query
+          description: Offset of the results (e.g. for paging)
+          required: false
+          type: integer
+      responses:
+        '200':
+          description: An array of suggestion objects
+          schema:
+            $ref: '#/definitions/SuggestionResponseArray'
+    post:
+      operationId: api.logic.suggestions.post_suggestion
+      description: Create a new suggestion
+      parameters:
+        - in: body
+          name: body
+          description: Suggestion object to be added
+          required: true
+          schema:
+            $ref: '#/definitions/Suggestion'
+      consumes:
+        - application/json
+      responses:
+        '201':
+          description: The created suggestion
+          schema:
+            $ref: '#/definitions/SuggestionResponse'
+
+  /suggestions/{suggestion_id}:
+    get:
+      operationId: api.logic.suggestions.get_suggestion
+      description: Get a single suggestion by id
+      parameters:
+        - name: suggestion_id
+          in: path
+          description: Suggestion ID
+          required: true
+          type: integer
+      responses:
+        '200':
+          description: A suggestion matching the given id
+          schema:
+            $ref: '#/definitions/SuggestionResponse'
+        '404':
+          description: No suggestion could be found with the given ID
+    put:
+      operationId: api.logic.suggestions.put_suggestion
+      description: Replace a suggestion by id
+      parameters:
+        - name: suggestion_id
+          in: path
+          description: Suggestion ID
+          required: true
+          type: integer
+        - in: body
+          name: body
+          description: (A complete) suggestion object to be updated
+          required: true
+          schema:
+            $ref: '#/definitions/Suggestion'
+      responses:
+        '204':
+          description: Replaced suggestion
+          schema:
+            $ref: '#/definitions/SuggestionResponse'
+        '404':
+          description: No suggestion could be found with the given ID
+    patch:
+      operationId: api.logic.suggestions.patch_suggestion
+      description: Patch a suggestion by id, replacing (only some) of its fields.
+      parameters:
+        - name: suggestion_id
+          in: path
+          description: Suggestion ID
+          required: true
+          type: integer
+        - in: body
+          name: body
+          description: (A partial) suggestion object with only fields that need to be patched
+          required: true
+          schema:
+            $ref: '#/definitions/PatchSuggestion'
+      responses:
+        '200':
+          description: Patched suggestion
+          schema:
+            $ref: '#/definitions/SuggestionResponse'
+        '404':
+          description: No suggestion could be found with the given ID
+    delete:
+      operationId: api.logic.suggestions.delete_suggestion
+      description: Delete a suggestion by id
+      parameters:
+        - name: suggestion_id
+          in: path
+          description: Suggestion ID
+          required: true
+          type: integer
+      responses:
+        '204':
+          description: Deleted suggestion
+        '404':
+          description: No suggestion could be found with the given ID
+
+  /users/{user_id}/suggestions:
+    parameters:
+    - name: user_id
+      in: path
+      type: integer
+      required: true
+    get:
+      operationId: api.logic.suggestions.get_suggestions_by_user
+      responses:
+        "200":
+          description:  OK

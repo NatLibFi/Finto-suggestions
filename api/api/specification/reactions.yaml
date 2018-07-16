@@ -1,0 +1,35 @@
+paths:
+
+  /reactions/:
+    get:
+      operationId: api.logic.reactions.get_reactions
+      responses:
+        "200":
+          description:  OK
+
+  /reactions/{reaction_id}:
+    parameters:
+      - name: reaction_id
+        in: path
+        type: integer
+        required: true
+    get:
+      operationId: api.logic.reactions.get_reaction
+      responses:
+        "200":
+          description:  OK
+    post:
+      operationId: api.logic.reactions.post_reaction
+      responses:
+        "200":
+          description:  OK
+    delete:
+      operationId: api.logic.reactions.delete_reaction
+      responses:
+        "200":
+          description:  OK
+    put:
+      operationId: api.logic.reactions.put_reaction
+      responses:
+        "200":
+          description:  OK

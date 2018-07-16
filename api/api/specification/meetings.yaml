@@ -1,0 +1,35 @@
+paths:
+
+  /meetings/:
+    get:
+      operationId: api.logic.meetings.get_meetings
+      responses:
+        "200":
+          description:  OK
+
+  /meetings/{meeting_id}:
+    parameters:
+      - name: meeting_id
+        in: path
+        type: integer
+        required: true
+    get:
+      operationId: api.logic.meetings.get_meeting
+      responses:
+        "200":
+          description:  OK
+    post:
+      operationId: api.logic.meetings.post_meeting
+      responses:
+        "200":
+          description:  OK
+    delete:
+      operationId: api.logic.meetings.delete_meeting
+      responses:
+        "200":
+          description:  OK
+    put:
+      operationId: api.logic.meetings.put_meeting
+      responses:
+        "200":
+          description:  OK

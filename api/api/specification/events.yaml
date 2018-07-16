@@ -1,0 +1,59 @@
+paths:
+
+  /events/:
+    get:
+      operationId: api.logic.events.get_events
+      responses:
+        "200":
+          description:  OK
+
+  /events/{event_id}:
+    parameters:
+      - name: event_id
+        in: path
+        type: integer
+        required: true
+    get:
+      operationId: api.logic.events.get_event
+      responses:
+        "200":
+          description:  OK
+    post:
+      operationId: api.logic.events.post_event
+      responses:
+        "200":
+          description:  OK
+    delete:
+      operationId: api.logic.events.delete_event
+      responses:
+        "200":
+          description:  OK
+    put:
+      operationId: api.logic.events.put_event
+      responses:
+        "200":
+          description:  OK
+
+  /suggestion/{suggestion_id}/events:
+    parameters:
+    - name: suggestion_id
+      in: path
+      type: integer
+      required: true
+    get:
+      operationId: api.logic.events.get_events_by_suggestion
+      responses:
+        "200":
+          description:  OK
+
+  /user/{user_id}/events:
+    parameters:
+    - name: user_id
+      in: path
+      type: integer
+      required: true
+    get:
+      operationId: api.logic.events.get_events_by_user
+      responses:
+        "200":
+          description:  OK

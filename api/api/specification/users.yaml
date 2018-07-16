@@ -1,0 +1,35 @@
+paths:
+
+  /users:
+    get:
+      operationId: api.logic.users.get_users
+      responses:
+        "200":
+          description:  OK
+
+  /users/{user_id}:
+    parameters:
+      - name: user_id
+        in: path
+        type: integer
+        required: true
+    get:
+      operationId: api.logic.users.get_user
+      responses:
+        "200":
+          description:  OK
+    post:
+      operationId: api.logic.users.post_user
+      responses:
+        "200":
+          description:  OK
+    delete:
+      operationId: api.logic.users.delete_user
+      responses:
+        "200":
+          description:  OK
+    put:
+      operationId: api.logic.users.put_user
+      responses:
+        "200":
+          description:  OK

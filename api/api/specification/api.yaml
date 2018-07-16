@@ -1,0 +1,7 @@
+swagger: '2.0'
+
+info:
+  title: Finto Suggestion API
+  version: '1.0'
+
+basePath: /api

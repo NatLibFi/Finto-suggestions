@@ -27,7 +27,8 @@ class Event(db.Model):
     __tablename__ = 'events'
 
     id = db.Column(db.Integer, primary_key=True)
-    timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
+    created = db.Column(db.DateTime, index=True, default=datetime.utcnow)
+    updated = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     event_type = db.Column(db.Enum(EventType), nullable=False)
     text = db.Column(db.String(4096))
 
@@ -68,7 +69,8 @@ class Meeting(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(256))
-    timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
+    created = db.Column(db.DateTime, index=True, default=datetime.utcnow)
+    updated = db.Column(db.DateTime, index=True, default=datetime.utcnow)
 
     suggestions = db.relationship(
         'Suggestion', backref='meeting')
@@ -81,7 +83,8 @@ class Suggestion(db.Model):
     __tablename__ = 'suggestions'
 
     id = db.Column(db.Integer, primary_key=True)
-    timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
+    created = db.Column(db.DateTime, index=True, default=datetime.utcnow)
+    updated = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     name = db.Column(db.String(128), index=True, nullable=False)
     # meeting: backref
 

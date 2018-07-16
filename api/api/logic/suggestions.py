@@ -1,4 +1,5 @@
 import connexion
+from ..models import db, Suggestion
 
 DUMMY_SUGGESTION = {'id': 1000,
                     'uri': 'http://www.google.fi',
@@ -19,6 +20,11 @@ def get_suggestions(limit: int = None, offset: int = None) -> str:
 
 def post_suggestion() -> str:
     body = connexion.request.json
+
+    s = Suggestion(name="My Suggestion1")
+    db.session.add(s)
+    db.session.commit()
+
     return {
         "data": body
     }, 201
@@ -51,6 +57,13 @@ def patch_suggestion(suggestion_id: int) -> str:
 
 
 def delete_suggestion(suggestion_id: int) -> str:
+    return {
+        "data": DUMMY_SUGGESTION
+    }, 204
+    # return "delete failed", 404
+
+
+def get_suggestions_by_user(user_id: int) -> str:
     return {
         "data": DUMMY_SUGGESTION
     }, 204
