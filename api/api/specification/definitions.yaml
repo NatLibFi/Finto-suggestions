@@ -232,3 +232,61 @@ definitions:
     type: string
     example: 'mysecretpassword'
 
+# EVENT
+
+  EventResponse:
+    type: object
+    properties:
+      data:
+        $ref: "#/definitions/EventResponseObject"
+  
+  EventResponseArray:
+    type: object
+    properties:
+      data:
+        type: array
+        items:
+          $ref: "#/definitions/EventResponseObject"
+
+  EventResponseObject:
+    type: object
+    additionalProperties: false
+    properties:
+      id:
+        type: number
+      user_id:
+        type: number
+      suggestion_id:
+        type: number
+      event_type:
+        $ref: "#/definitions/event_type"
+      text:
+        $ref: "#/definitions/text"
+    required:
+      - id
+      - event_type
+      - text
+  
+  EventParameterObject:
+    type: object
+    additionalProperties: false
+    properties:
+      user_id:
+        type: number
+      suggestion_id:
+        type: number
+      event_type:
+        $ref: "#/definitions/event_type"
+      text:
+        $ref: "#/definitions/text"
+    required:
+      - event_type
+      - text
+  
+  event_type:
+    # could also be an enum
+    type: number
+  
+  text:
+    type: string
+    example: "This is just a basic comment"

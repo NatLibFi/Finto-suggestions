@@ -1,6 +1,5 @@
 import connexion
 from ..models import db, User
-from datetime import datetime
 from .common import create_response
 from sqlalchemy.exc import IntegrityError
 
@@ -12,14 +11,14 @@ def get_users(limit: int = None, offset: int = None) -> str:
     Request query can be limited with additional parameters.
 
     :param limit: Cap the results to :limit: results
-    :param offest: Start the query from offset (e.g. for paging)
+    :param offset: Start the query from offset (e.g. for paging)
     :returns: All users matching the query in json format
     """
 
     query = User.query
-    if (limit):
+    if limit:
         query = query.limit(limit)
-    if (offset):
+    if offset:
         query = query.offset(offset)
     user_objs = query.all()
 
@@ -78,7 +77,7 @@ def delete_user(user_id: int) -> str:
     Deletes a user by id.
 
     :param id: user id
-    :returns: 204 No Content on success
+    :returns: 204, No Content on success
     """
 
     success = User.query.filter_by(id=user_id).delete()

@@ -3,9 +3,46 @@ paths:
   /events/:
     get:
       operationId: api.logic.events.get_events
+      parameters:
+        - name: limit
+          in: query
+          description: Maximum number of returned suggestions
+          required: false
+          type: integer
+        - name: offset
+          in: query
+          description: Offset of the results (e.g. for paging)
+          required: false
+          type: integer
+        - name: user_id
+          in: query
+          description: Only show events created by given user id
+          required: false
+          type: integer
+        - name: suggestion_id
+          in: query
+          description: Only show events related to given suggestion id
+          required: false
+          type: integer
       responses:
         "200":
-          description:  OK
+          description:  An array of all events in the database
+          schema:
+            $ref: '#/definitions/EventResponseArray'
+    post:
+      operationId: api.logic.events.post_event
+      parameters:
+        - in: body
+          name: body
+          description: Event object to be added
+          required: true
+          schema:
+            $ref: '#/definitions/EventParameterObject'
+      responses:
+        "200":
+          description:  Newly created event
+          schema:
+            $ref: '#/definitions/EventResponse'
 
   /events/{event_id}:
     parameters:
@@ -16,44 +53,81 @@ paths:
     get:
       operationId: api.logic.events.get_event
       responses:
-        "200":
-          description:  OK
-    post:
-      operationId: api.logic.events.post_event
-      responses:
-        "200":
-          description:  OK
+        '200':
+          description:  A single event by id
+          schema:
+            $ref: '#/definitions/EventResponse'
+        '404':
+          description: No event found
     delete:
       operationId: api.logic.events.delete_event
       responses:
-        "200":
-          description:  OK
+        '204':
+          description: Event deleted
+        '404':
+          description: No event found
+
     put:
       operationId: api.logic.events.put_event
+      parameters:
+        - in: body
+          name: body
+          description: (A complete) event object to be updated
+          required: true
+          schema:
+            $ref: '#/definitions/EventParameterObject'
       responses:
-        "200":
-          description:  OK
+        '200':
+          description:  The updated event by id
+          schema:
+            $ref: '#/definitions/EventResponse'
+        '404':
+          description: No event found
 
-  /suggestion/{suggestion_id}/events:
+  /suggestions/{suggestion_id}/events:
     parameters:
-    - name: suggestion_id
-      in: path
-      type: integer
-      required: true
+      - name: suggestion_id
+        in: path
+        type: integer
+        required: true
+      - name: limit
+        in: query
+        description: Maximum number of returned suggestions
+        required: false
+        type: integer
+      - name: offset
+        in: query
+        description: Offset of the results (e.g. for paging)
+        required: false
+        type: integer
     get:
       operationId: api.logic.events.get_events_by_suggestion
       responses:
         "200":
-          description:  OK
+          description:  An array of all events related with the suggestion
+          schema:
+            $ref: '#/definitions/EventResponseArray'
 
-  /user/{user_id}/events:
+  /users/{user_id}/events:
     parameters:
-    - name: user_id
-      in: path
-      type: integer
-      required: true
+      - name: user_id
+        in: path
+        type: integer
+        required: true
+      - name: limit
+        in: query
+        description: Maximum number of returned suggestions
+        required: false
+        type: integer
+      - name: offset
+        in: query
+        description: Offset of the results (e.g. for paging)
+        required: false
+        type: integer
     get:
       operationId: api.logic.events.get_events_by_user
       responses:
         "200":
-          description:  OK
+          description:  An array of all events created by the user
+          schema:
+            $ref: '#/definitions/EventResponseArray'

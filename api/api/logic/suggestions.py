@@ -25,14 +25,14 @@ def get_suggestions(limit: int = None, offset: int = None) -> str:
     Request query can be limited with additional parameters.
 
     :param limit: Cap the results to :limit: results
-    :param offest: Start the query from offset (e.g. for paging)
+    :param offset: Start the query from offset (e.g. for paging)
     :returns: All suggestion matching the qu in json format
     """
 
     query = Suggestion.query
-    if (limit):
+    if limit:
         query = query.limit(limit)
-    if (offset):
+    if offset:
         query = query.offset(offset)
     suggestion_objs = query.all()
 
@@ -113,7 +113,7 @@ def delete_suggestion(suggestion_id: int) -> str:
     Deletes a suggestion by id.
 
     :param id: Suggestion id
-    :returns: 204 No Content on success
+    :returns: 204, No Content on success
     """
 
     success = Suggestion.query.filter_by(id=suggestion_id).delete()

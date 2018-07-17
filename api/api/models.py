@@ -5,31 +5,6 @@ import enum
 
 db = SQLAlchemy()
 
-WHITELISTED_SUGGESTION_KEYS = [
-    "alternative_label",
-    "broader",
-    "created",
-    "description",
-    "group",
-    "id",
-    "created",
-    "modified",
-    "narrower",
-    "organization",
-    "preferred_label",
-    "reason",
-    "related",
-    "status",
-    "suggestion_type",
-    "uri"
-]
-
-WHITELISTED_USER_KEYS = [
-    "id",
-    "name",
-    "email"
-]
-
 suggestions_to_tags = db.Table('suggestion_tags_association',
                                db.Column('tag_id', db.Integer, db.ForeignKey(
                                    'tags.id'), primary_key=True),
@@ -38,6 +13,7 @@ suggestions_to_tags = db.Table('suggestion_tags_association',
                                )
 
 
+# TODO: 0 and 1
 class EventTypes(enum.IntEnum):
     ACTION = 1
     COMMENT = 2
@@ -54,13 +30,32 @@ class SuggestionTypes(enum.IntEnum):
     MODIFY = 1
 
 
-class Event(db.Model):
+class SerializableMixin():
+    """
+    Adds the method ´as_dict´ to an sqlalchemy model.
+
+    Calling the method requires a special __public__ attribute,
+    which acts as a whitelist for serializable columns.
+
+    e.g. __public__ = ['id', 'created', 'modified']
+    """
+
+    def as_dict(self, strip=True):
+        d = {c.name: getattr(self, c.name) for c in self.__table__.columns}
+        if strip:  # strip hidden fields, such as meeting_id
+            d = {k: v for k, v in d.items() if k in self.__public__}
+        return d
+
+
+class Event(db.Model, SerializableMixin):
     """
     An object representing a single event in a suggestion's event stream.
     It can be an action, or a comment by a user, for example.
     """
 
     __tablename__ = 'events'
+    __public__ = ['id', 'event_type', 'text',
+                  'emojis', 'user_id', 'suggestion_id']
 
     id = db.Column(db.Integer, primary_key=True)
     created = db.Column(db.DateTime, index=True, default=datetime.utcnow)
@@ -115,8 +110,10 @@ class Meeting(db.Model):
         return '<Meeting {}>'.format(self.id)
 
 
-class Suggestion(db.Model):
+class Suggestion(db.Model, SerializableMixin):
     __tablename__ = 'suggestions'
+    __public__ = ["alternative_label", "broader", "created", "description", "group", "id", "created", "modified",
+                  "narrower", "organization", "preferred_label", "reason", "related", "status", "suggestion_type", "uri"]
 
     id = db.Column(db.Integer, primary_key=True)
     created = db.Column(db.DateTime, index=True, default=datetime.utcnow)
@@ -153,12 +150,6 @@ class Suggestion(db.Model):
         label = self.preferred_label.get('fi')
         return '<Suggestion \'{}\'>'.format(label)
 
-    def as_dict(self, strip=True):
-        d = {c.name: getattr(self, c.name) for c in self.__table__.columns}
-        if strip:  # strip hidden fields, such as meeting_id
-            d = {k: v for k, v in d.items() if k in WHITELISTED_SUGGESTION_KEYS}
-        return d
-
 
 class Tag(db.Model):
     __tablename__ = "tags"
@@ -171,8 +162,9 @@ class Tag(db.Model):
         return '<Tag {}>'.format(self.text)
 
 
-class User(db.Model):
+class User(db.Model, SerializableMixin):
     __tablename__ = 'users'
+    __public__ = ['id', 'name', 'email']
 
     id = db.Column(db.Integer, primary_key=True)
     created = db.Column(db.DateTime, index=True, default=datetime.utcnow)
@@ -190,9 +182,3 @@ class User(db.Model):
 
     def __repr__(self):
         return '<User {}>'.format(self.name)
-
-    def as_dict(self, strip=True):
-        d = {c.name: getattr(self, c.name) for c in self.__table__.columns}
-        if strip:  # strip hidden fields, such as meeting_id
-            d = {k: v for k, v in d.items() if k in WHITELISTED_USER_KEYS}
-        return d
