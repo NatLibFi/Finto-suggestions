@@ -19,19 +19,18 @@ definitions:
 
   Suggestion:
     type: object
+    additionalProperties: false
     properties:
-      prefLabel:
-        $ref: "#/definitions/prefLabel"
-      altLabel:
-        $ref: "#/definitions/altLabel"
+      preferred_label:
+        $ref: "#/definitions/preferred_label"
+      alternative_label:
+        $ref: "#/definitions/alternative_label"
       status:
         $ref: "#/definitions/status"
-      id:
-        $ref: "#/definitions/id"
       uri:
         $ref: "#/definitions/uri"
-      type:
-        $ref: "#/definitions/type"
+      suggestion_type:
+        $ref: "#/definitions/suggestion_type"
       broader:
         $ref: "#/definitions/broader"
       narrower:
@@ -47,27 +46,23 @@ definitions:
       organization:
         $ref: "#/definitions/organization"
     required:
-      - id
       - uri
-      - prefLabel
-      - type
-      - status
+      - preferred_label
+      - suggestion_type
 
-  PatchSuggestion:
+  PutSuggestion:
     type: object
     properties:
-      prefLabel:
-        $ref: "#/definitions/prefLabel"
-      altLabel:
-        $ref: "#/definitions/altLabel"
+      preferred_label:
+        $ref: "#/definitions/preferred_label"
+      alternative_label:
+        $ref: "#/definitions/alternative_label"
       status:
         $ref: "#/definitions/status"
-      id:
-        $ref: "#/definitions/id"
       uri:
         $ref: "#/definitions/uri"
-      type:
-        $ref: "#/definitions/type"
+      suggestion_type:
+        $ref: "#/definitions/suggestion_type"
       broader:
         $ref: "#/definitions/broader"
       narrower:
@@ -82,8 +77,14 @@ definitions:
         $ref: "#/definitions/reason"
       organization:
         $ref: "#/definitions/organization"
+      modified:
+        type: string
+      created:
+        type: string
+      id:
+        type: number
 
-  prefLabel:
+  preferred_label:
     type: object
     description: "Preferred label"
     properties:
@@ -97,7 +98,7 @@ definitions:
         type: string
         example: "katten"
 
-  altLabel:
+  alternative_label:
     type: object
     description: "Alternative label"
     properties:
@@ -115,19 +116,13 @@ definitions:
     type: number
     format: integer
     description: 'Processing state of a particular `Suggestion`. For example: 0 - closed, 1 - needs review, 2 - reviewed, 3 - accepted into vocabulary.'
-    example: 2
-
-  id:
-    type: number
-    format: integer
-    description: Automatically generated identifier
-    example: 5224
+    example: 0
 
   uri:
     type: string
     example: 'http://www.yso.fi/onto/ysa/Y505224'
 
-  type:
+  suggestion_type:
     type: number
     format: integer
     description: E.g. 0 for new concept suggestions and 1 for change suggestions

@@ -4,6 +4,24 @@ import enum
 
 db = SQLAlchemy()
 
+WHITELISTED_SUGGESTION_KEYS = [
+    "alternative_label",
+    "broader",
+    "created",
+    "description",
+    "group",
+    "id",
+    "created",
+    "modified",
+    "narrower",
+    "organization",
+    "preferred_label",
+    "reason",
+    "related",
+    "status",
+    "suggestion_type",
+    "uri"
+]
 
 suggestions_to_tags = db.Table('suggestion_tags_association',
                                db.Column('tag_id', db.Integer, db.ForeignKey(
@@ -13,18 +31,18 @@ suggestions_to_tags = db.Table('suggestion_tags_association',
                                )
 
 
-class EventTypes(enum.Enum):
+class EventTypes(enum.IntEnum):
     ACTION = 1
     COMMENT = 2
 
 
-class SuggestionStatusTypes(enum.Enum):
-    REJECTED = 0
-    ACCEPTED = 1
-    # more types here..
+class SuggestionStatusTypes(enum.IntEnum):
+    DEFAULT = 0
+    REJECTED = 1
+    ACCEPTED = 2
 
 
-class SuggestionTypes(enum.Enum):
+class SuggestionTypes(enum.IntEnum):
     NEW = 0
     MODIFY = 1
 
@@ -39,7 +57,7 @@ class Event(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     created = db.Column(db.DateTime, index=True, default=datetime.utcnow)
-    updated = db.Column(db.DateTime, index=True, default=datetime.utcnow)
+    modified = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     event_type = db.Column(db.Enum(EventTypes), nullable=False)
     text = db.Column(db.Text)
 
@@ -81,7 +99,7 @@ class Meeting(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(256))
     created = db.Column(db.DateTime, index=True, default=datetime.utcnow)
-    updated = db.Column(db.DateTime, index=True, default=datetime.utcnow)
+    modified = db.Column(db.DateTime, index=True, default=datetime.utcnow)
 
     suggestions = db.relationship(
         'Suggestion', backref='meeting')
@@ -95,12 +113,12 @@ class Suggestion(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     created = db.Column(db.DateTime, index=True, default=datetime.utcnow)
-    updated = db.Column(db.DateTime, index=True, default=datetime.utcnow)
-    name = db.Column(db.String(128), index=True, nullable=False)
+    modified = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     # meeting: backref
 
-    suggestion_type = db.Column(db.Enum(SuggestionTypes), nullable=False)
-    status = db.Column(db.Enum(SuggestionStatusTypes))  # nullable=False
+    # suggestion_type = db.Column(db.Enum(SuggestionTypes), nullable=False)
+    suggestion_type = db.Column(db.Enum(SuggestionTypes))
+    status = db.Column(db.Enum(SuggestionStatusTypes))
     uri = db.Column(db.String(256))
 
     organization = db.Column(db.String(256))
@@ -125,7 +143,14 @@ class Suggestion(db.Model):
     meeting_id = db.Column(db.Integer, db.ForeignKey('meetings.id'))
 
     def __repr__(self):
-        return '<Suggestion {}>'.format(self.name)
+        label = self.preferred_label.get('fi')
+        return '<Suggestion \'{}\'>'.format(label)
+
+    def as_dict(self, strip=True):
+        d = {c.name: getattr(self, c.name) for c in self.__table__.columns}
+        if strip:  # strip hidden fields, such as meeting_id
+            d = {k: v for k, v in d.items() if k in WHITELISTED_SUGGESTION_KEYS}
+        return d
 
 
 class Tag(db.Model):

@@ -73,32 +73,10 @@ paths:
           description: (A complete) suggestion object to be updated
           required: true
           schema:
-            $ref: '#/definitions/Suggestion'
-      responses:
-        '204':
-          description: Replaced suggestion
-          schema:
-            $ref: '#/definitions/SuggestionResponse'
-        '404':
-          description: No suggestion could be found with the given ID
-    patch:
-      operationId: api.logic.suggestions.patch_suggestion
-      description: Patch a suggestion by id, replacing (only some) of its fields.
-      parameters:
-        - name: suggestion_id
-          in: path
-          description: Suggestion ID
-          required: true
-          type: integer
-        - in: body
-          name: body
-          description: (A partial) suggestion object with only fields that need to be patched
-          required: true
-          schema:
-            $ref: '#/definitions/PatchSuggestion'
+            $ref: '#/definitions/PutSuggestion'
       responses:
         '200':
-          description: Patched suggestion
+          description: Updated suggestion
           schema:
             $ref: '#/definitions/SuggestionResponse'
         '404':
@@ -117,15 +95,3 @@ paths:
           description: Deleted suggestion
         '404':
           description: No suggestion could be found with the given ID
-
-  /users/{user_id}/suggestions:
-    parameters:
-    - name: user_id
-      in: path
-      type: integer
-      required: true
-    get:
-      operationId: api.logic.suggestions.get_suggestions_by_user
-      responses:
-        "200":
-          description:  OK
