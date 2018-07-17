@@ -33,7 +33,7 @@ paths:
           description: Suggestion object to be added
           required: true
           schema:
-            $ref: '#/definitions/Suggestion'
+            $ref: '#/definitions/SuggestionParameterObject'
       consumes:
         - application/json
       responses:
@@ -73,7 +73,7 @@ paths:
           description: (A complete) suggestion object to be updated
           required: true
           schema:
-            $ref: '#/definitions/PutSuggestion'
+            $ref: '#/definitions/SuggestionParameterObject'
       responses:
         '200':
           description: Updated suggestion

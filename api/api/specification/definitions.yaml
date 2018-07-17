@@ -7,7 +7,7 @@ definitions:
     type: object
     properties:
       data:
-        $ref: "#/definitions/Suggestion"
+        $ref: "#/definitions/SuggestionResponseObject"
   
   SuggestionResponseArray:
     type: object
@@ -15,9 +15,9 @@ definitions:
       data:
         type: array
         items:
-          $ref: "#/definitions/Suggestion"
+          $ref: "#/definitions/SuggestionResponseObject"
 
-  Suggestion:
+  SuggestionResponseObject:
     type: object
     additionalProperties: false
     properties:
@@ -45,13 +45,28 @@ definitions:
         $ref: "#/definitions/reason"
       organization:
         $ref: "#/definitions/organization"
+      created:
+        $ref: "#/definitions/created"
+      modified:
+        $ref: "#/definitions/modified"
+      meeting_id:
+        $ref: "#/definitions/meeting_id"
+      events:
+        $ref: "#/definitions/events"
+      emojis:
+        $ref: "#/definitions/emojis"
+      tags:
+        $ref: "#/definitions/tags"
+      id:
+        type: number
     required:
       - uri
       - preferred_label
       - suggestion_type
 
-  PutSuggestion:
+  SuggestionParameterObject:
     type: object
+    additionalProperties: false
     properties:
       preferred_label:
         $ref: "#/definitions/preferred_label"
@@ -77,12 +92,6 @@ definitions:
         $ref: "#/definitions/reason"
       organization:
         $ref: "#/definitions/organization"
-      modified:
-        type: string
-      created:
-        type: string
-      id:
-        type: number
 
   preferred_label:
     type: object
@@ -173,6 +182,30 @@ definitions:
     type: string
     description: Organization of the suggester
     example: Ankkalinnan kaupunki
+  
+  meeting_id:
+    type: number
+  
+  events:
+    type: array
+    items:
+      type: number
+  
+  emojis:
+    type: array
+    items:
+      type: object
+
+  tags:
+    type: array
+    items:
+      type: object
+
+  created:
+    type: string
+  
+  modified:
+    type: string
 
   # USER
 
@@ -200,6 +233,10 @@ definitions:
         $ref: "#/definitions/name"
       email:
         $ref: "#/definitions/email"
+      events:
+        type: array
+        items:
+          type: number
     required:
       - id
       - name
