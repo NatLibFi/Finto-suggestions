@@ -1,8 +1,8 @@
 # A common definitions file for Finto API endpoints
 
 definitions:
-  # According to JSON specification, the response needs to be an object at root-level
-  # This format also allows for addition of later metadata to responses
+  # SUGGESTION
+
   SuggestionResponse:
     type: object
     properties:
@@ -173,4 +173,62 @@ definitions:
     type: string
     description: Organization of the suggester
     example: Ankkalinnan kaupunki
+
+  # USER
+
+  UserResponse:
+    type: object
+    properties:
+      data:
+        $ref: "#/definitions/UserResponseObject"
+  
+  UserResponseArray:
+    type: object
+    properties:
+      data:
+        type: array
+        items:
+          $ref: "#/definitions/UserResponseObject"
+
+  UserResponseObject:
+    type: object
+    additionalProperties: false
+    properties:
+      id:
+        type: number
+      name:
+        $ref: "#/definitions/name"
+      email:
+        $ref: "#/definitions/email"
+    required:
+      - id
+      - name
+      - email
+  
+  UserParameterObject:
+    type: object
+    additionalProperties: false
+    properties:
+      name:
+        $ref: "#/definitions/name"
+      email:
+        $ref: "#/definitions/email"
+      password:
+        $ref: "#/definitions/password"
+    required:
+      - name
+      - email
+      - password
+
+  name:
+    type: string
+    example: 'Kalle Käyttäjä'
+  
+  email:
+    type: string
+    example: 'kalle@kayttajat.fi'
+  
+  password:
+    type: string
+    example: 'mysecretpassword'
 

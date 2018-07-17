@@ -3,9 +3,36 @@ paths:
   /users:
     get:
       operationId: api.logic.users.get_users
+      parameters:
+        - name: limit
+          in: query
+          description: Maximum number of returned suggestions
+          required: false
+          type: integer
+        - name: offset
+          in: query
+          description: Offset of the results (e.g. for paging)
+          required: false
+          type: integer
       responses:
         "200":
-          description:  OK
+          description:  An array of all users in the database
+          schema:
+            $ref: '#/definitions/UserResponseArray'
+    post:
+      operationId: api.logic.users.post_user
+      parameters:
+        - in: body
+          name: body
+          description: User object to be added
+          required: true
+          schema:
+            $ref: '#/definitions/UserParameterObject'
+      responses:
+        "201":
+          description:  Newly created user
+          schema:
+            $ref: '#/definitions/UserResponse'
 
   /users/{user_id}:
     parameters:
@@ -16,20 +43,32 @@ paths:
     get:
       operationId: api.logic.users.get_user
       responses:
-        "200":
-          description:  OK
-    post:
-      operationId: api.logic.users.post_user
+        '200':
+          description:  A single user by id
+          schema:
+            $ref: '#/definitions/UserResponse'
+        '404':
+          description: No user found
+    put:
+      operationId: api.logic.users.put_user
+      parameters:
+        - in: body
+          name: body
+          description: (A complete) user object to be updated
+          required: true
+          schema:
+            $ref: '#/definitions/UserParameterObject'
       responses:
-        "200":
-          description:  OK
+        '200':
+          description:  The updated user by id
+          schema:
+            $ref: '#/definitions/UserResponse'
+        '404':
+          description: No user found
     delete:
       operationId: api.logic.users.delete_user
       responses:
-        "200":
-          description:  OK
-    put:
-      operationId: api.logic.users.put_user
-      responses:
-        "200":
-          description:  OK
+        '204':
+          description: User deleted
+        '404':
+          description: No user found

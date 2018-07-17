@@ -13,6 +13,7 @@ flask-sqlalchemy = "*"
 "psycopg2" = "*"
 flask-migrate = "*"
 spec-synthase = "*"
+passlib = "*"
 
 
 [dev-packages]

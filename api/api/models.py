@@ -1,4 +1,5 @@
 from flask_sqlalchemy import SQLAlchemy
+from passlib.apps import custom_app_context as pwd_context
 from datetime import datetime
 import enum
 
@@ -21,6 +22,12 @@ WHITELISTED_SUGGESTION_KEYS = [
     "status",
     "suggestion_type",
     "uri"
+]
+
+WHITELISTED_USER_KEYS = [
+    "id",
+    "name",
+    "email"
 ]
 
 suggestions_to_tags = db.Table('suggestion_tags_association',
@@ -168,11 +175,24 @@ class User(db.Model):
     __tablename__ = 'users'
 
     id = db.Column(db.Integer, primary_key=True)
+    created = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     name = db.Column(db.String(64), index=True, nullable=False)
     email = db.Column(db.String(128), index=True, unique=True, nullable=False)
     password_hash = db.Column(db.String(128))
 
     events = db.relationship('Event', backref='user', lazy='dynamic')
 
+    def hash_password(self, password):
+        self.password_hash = pwd_context.encrypt(password)
+
+    def verify_password(self, password):
+        return pwd_context.verify(password, self.password_hash)
+
     def __repr__(self):
         return '<User {}>'.format(self.name)
+
+    def as_dict(self, strip=True):
+        d = {c.name: getattr(self, c.name) for c in self.__table__.columns}
+        if strip:  # strip hidden fields, such as meeting_id
+            d = {k: v for k, v in d.items() if k in WHITELISTED_USER_KEYS}
+        return d

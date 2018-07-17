@@ -56,15 +56,12 @@ def post_suggestion() -> str:
     body = connexion.request.json
     suggestion = dict(body)  # copy the response body
     suggestion = _suggestion_response_into_model(suggestion)
-    # TODO: is the status parameter necessary here?
 
     suggestion_obj = Suggestion(**suggestion)
     db.session.add(suggestion_obj)
     db.session.commit()
 
-    return {
-        "data": suggestion_obj.as_dict()
-    }
+    return create_response(suggestion_obj.as_dict(), 200)
 
 
 def get_suggestion(suggestion_id: int) -> str:
