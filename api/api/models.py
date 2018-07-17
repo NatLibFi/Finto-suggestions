@@ -13,10 +13,9 @@ suggestions_to_tags = db.Table('suggestion_tags_association',
                                )
 
 
-# TODO: 0 and 1
 class EventTypes(enum.IntEnum):
-    ACTION = 1
-    COMMENT = 2
+    ACTION = 0
+    COMMENT = 1
 
 
 class SuggestionStatusTypes(enum.IntEnum):
@@ -41,7 +40,8 @@ class SerializableMixin():
     """
 
     def as_dict(self, strip=True):
-        d = {c.name: getattr(self, c.name) for c in self.__table__.columns}
+        d = {c.name: getattr(self, c.name)
+             for c in self.__table__.columns}
         if strip:  # strip hidden fields, such as meeting_id
             d = {k: v for k, v in d.items() if k in self.__public__}
         return d
@@ -113,7 +113,7 @@ class Meeting(db.Model):
 class Suggestion(db.Model, SerializableMixin):
     __tablename__ = 'suggestions'
     __public__ = ["alternative_label", "broader", "created", "description", "group", "id", "created", "modified",
-                  "narrower", "organization", "preferred_label", "reason", "related", "status", "suggestion_type", "uri"]
+                  "narrower", "organization", "preferred_label", "reason", "related", "status", "suggestion_type", "uri", "meeting_id"]
 
     id = db.Column(db.Integer, primary_key=True)
     created = db.Column(db.DateTime, index=True, default=datetime.utcnow)
@@ -150,6 +150,14 @@ class Suggestion(db.Model, SerializableMixin):
         label = self.preferred_label.get('fi')
         return '<Suggestion \'{}\'>'.format(label)
 
+    def as_dict(self, strip=True):
+        # relationships (joins) should be expanded carefully
+        serialized = super(Suggestion, self).as_dict()
+        serialized['events'] = [e.id for e in self.events]  # only ids
+        serialized['emojis'] = [e.as_dict(strip=strip) for e in self.emojis]
+        serialized['tags'] = [e.as_dict(strip=strip) for e in self.tags]
+        return serialized
+
 
 class Tag(db.Model):
     __tablename__ = "tags"
@@ -172,7 +180,7 @@ class User(db.Model, SerializableMixin):
     email = db.Column(db.String(128), index=True, unique=True, nullable=False)
     password_hash = db.Column(db.String(128))
 
-    events = db.relationship('Event', backref='user', lazy='dynamic')
+    events = db.relationship('Event', backref='user')
 
     def hash_password(self, password):
         self.password_hash = pwd_context.encrypt(password)
@@ -182,3 +190,10 @@ class User(db.Model, SerializableMixin):
 
     def __repr__(self):
         return '<User {}>'.format(self.name)
+
+    def as_dict(self, strip=True):
+        # relationships (joins) should be expanded carefully
+        serialized = super(User, self).as_dict()
+        # serialized['events'] = [e.as_dict(strip=strip) for e in self.events]  # whole events
+        serialized['events'] = [e.id for e in self.events]  # only ids
+        return serialized
