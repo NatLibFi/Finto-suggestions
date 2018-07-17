@@ -1,7 +1,7 @@
+from datetime import datetime
+from typing import Dict
 import connexion
 from ..models import db, Suggestion, SuggestionTypes, SuggestionStatusTypes
-from datetime import datetime
-from typing import Dict, List, Union
 from .common import create_response
 
 

@@ -1,5 +1,4 @@
-from typing import Dict, List, Union
-
+from typing import Dict
 from sqlalchemy import exists
 from ..models import db
 

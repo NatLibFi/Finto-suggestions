@@ -1,10 +1,7 @@
 import connexion
-from ..models import db, Event, Suggestion, User
-from datetime import datetime
-from .common import create_response, id_exists
 from sqlalchemy.exc import IntegrityError
-
-import inspect  # TODO: remove me
+from ..models import db, Event, Suggestion, User
+from .common import create_response, id_exists
 
 
 def get_events(limit: int = None, offset: int = None, user_id: int = None, suggestion_id: int = None) -> str:

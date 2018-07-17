@@ -1,7 +1,8 @@
 import connexion
+from sqlalchemy.exc import IntegrityError
+
 from ..models import db, User
 from .common import create_response
-from sqlalchemy.exc import IntegrityError
 
 
 def get_users(limit: int = None, offset: int = None) -> str:
@@ -38,6 +39,7 @@ def get_user(user_id: int) -> str:
     """
 
     user_obj = User.query.get(user_id)
+
     if user_obj:
         return create_response(user_obj.as_dict(), 200)
     else:
