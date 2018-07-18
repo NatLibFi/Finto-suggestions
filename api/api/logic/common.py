@@ -49,12 +49,11 @@ def get_all_filtered_or_404(model, filter_func):
     query = filter_func(model.query)
     db_objs = query.all()
 
+    serialized_objects = []
     if db_objs:
         serialized_objects = [o.as_dict() for o in db_objs]
-        return create_response(serialized_objects, 200)
 
-    msg = "No {} found".format(model.__table__)
-    return create_response(None, 404, msg)
+    return create_response(serialized_objects, 200)
 
 
 def get_all_or_404(model, limit: int, offset: int) -> str:
