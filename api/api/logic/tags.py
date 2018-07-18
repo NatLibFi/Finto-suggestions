@@ -1,6 +1,6 @@
 import connexion
-from ..models import db, Tag
-from .common import create_response, id_exists, get_one_or_404, get_all_or_404, create_or_404, delete_or_404, update_or_404
+from ..models import Tag
+from .common import get_one_or_404, get_all_or_404, create_or_404, delete_or_404, update_or_404
 
 
 def get_tags(limit: int = None, offset: int = None) -> str:

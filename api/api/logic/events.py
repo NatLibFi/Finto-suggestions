@@ -1,6 +1,5 @@
 import connexion
-from sqlalchemy.exc import IntegrityError
-from ..models import db, Event, Suggestion, User
+from ..models import Event, Suggestion, User
 from .common import create_response, id_exists, get_all_filtered_or_404, get_one_or_404, create_or_404, delete_or_404, update_or_404
 
 

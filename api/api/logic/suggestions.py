@@ -1,8 +1,7 @@
-from datetime import datetime
 from typing import Dict
 import connexion
-from ..models import db, Suggestion, SuggestionTypes, SuggestionStatusTypes
-from .common import create_response, id_exists, get_one_or_404, get_all_or_404, create_or_404, delete_or_404, update_or_404
+from ..models import Suggestion, SuggestionTypes, SuggestionStatusTypes
+from .common import get_one_or_404, get_all_or_404, create_or_404, delete_or_404, update_or_404
 
 
 def _suggestion_response_into_model(response: Dict) -> Dict:

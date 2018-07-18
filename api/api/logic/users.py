@@ -1,8 +1,6 @@
 import connexion
-from sqlalchemy.exc import IntegrityError
-
-from ..models import db, User
-from .common import create_response, get_all_or_404, get_one_or_404, create_or_404, delete_or_404, update_or_404
+from ..models import User
+from .common import get_all_or_404, get_one_or_404, create_or_404, delete_or_404, update_or_404
 
 
 def get_users(limit: int = None, offset: int = None) -> str:
