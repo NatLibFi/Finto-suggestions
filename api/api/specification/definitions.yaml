@@ -53,8 +53,8 @@ definitions:
         $ref: "#/definitions/meeting_id"
       events:
         $ref: "#/definitions/events"
-      emojis:
-        $ref: "#/definitions/emojis"
+      reactions:
+        $ref: "#/definitions/reactions"
       tags:
         $ref: "#/definitions/tags"
       id:
@@ -191,7 +191,7 @@ definitions:
     items:
       type: number
   
-  emojis:
+  reactions:
     type: array
     items:
       type: object
@@ -416,3 +416,52 @@ definitions:
         type: string
     required:
       - text
+
+
+# REACTIONS
+
+  ReactionResponse:
+    type: object
+    properties:
+      data:
+        $ref: "#/definitions/ReactionResponseObject"
+  
+  ReactionResponseArray:
+    type: object
+    properties:
+      data:
+        type: array
+        items:
+          $ref: "#/definitions/ReactionResponseObject"
+
+  ReactionResponseObject:
+    type: object
+    additionalProperties: false
+    properties:
+      id:
+        type: number
+      code:
+        type: string
+      event_id:
+        type: number
+      suggestion_id:
+        type: number
+    required:
+      - id
+      - code
+
+  ReactionParameterObject:
+    type: object
+    additionalProperties: false
+    properties:
+      code:
+        type: string
+      event_id:
+        type: number
+      suggestion_id:
+        type: number
+      user_id:
+        type: number
+    required:
+      - code
+      - user_id

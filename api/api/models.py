@@ -56,7 +56,7 @@ class Event(db.Model, SerializableMixin):
 
     __tablename__ = 'events'
     __public__ = ['id', 'event_type', 'text',
-                  'emojis', 'user_id', 'suggestion_id']
+                  'reactions', 'user_id', 'suggestion_id']
 
     id = db.Column(db.Integer, primary_key=True)
     created = db.Column(db.DateTime, index=True, default=datetime.utcnow)
@@ -64,7 +64,7 @@ class Event(db.Model, SerializableMixin):
     event_type = db.Column(db.Enum(EventTypes), nullable=False)
     text = db.Column(db.Text)
 
-    emojis = db.relationship('Emoji', backref='event')
+    reactions = db.relationship('Reaction', backref='event')
 
     # user: backref
     # suggestion: backref
@@ -76,9 +76,15 @@ class Event(db.Model, SerializableMixin):
         msg = self.text if len(self.text) <= 16 else (self.text[:16] + '...')
         return '<Event {} | \'{}\'>'.format(self.event_type.name, msg)
 
+    def as_dict(self, strip=True):
+        serialized = super(Event, self).as_dict()
+        serialized['reactions'] = [e.as_dict() for e in self.reactions]
+        return serialized
 
-class Emoji(db.Model):
-    __tablename__ = 'emojis'
+
+class Reaction(db.Model, SerializableMixin):
+    __tablename__ = 'reactions'
+    __public__ = ['id', 'code', 'event_id', 'suggestion_id', 'user_id']
 
     id = db.Column(db.Integer, primary_key=True)
     code = db.Column(db.String(32), nullable=False)
@@ -146,7 +152,7 @@ class Suggestion(db.Model, SerializableMixin):
     group = db.Column(db.JSON)
 
     events = db.relationship('Event', backref='suggestion')
-    emojis = db.relationship('Emoji', backref='suggestion')
+    reactions = db.relationship('Reaction', backref='suggestion')
 
     tags = db.relationship("Tag",
                            secondary=suggestions_to_tags,
@@ -162,7 +168,8 @@ class Suggestion(db.Model, SerializableMixin):
         # relationships (joins) should be expanded carefully
         serialized = super(Suggestion, self).as_dict()
         serialized['events'] = [e.id for e in self.events]  # only ids
-        serialized['emojis'] = [e.as_dict(strip=strip) for e in self.emojis]
+        serialized['reactions'] = [
+            e.as_dict(strip=strip) for e in self.reactions]
         serialized['tags'] = [e.as_dict(strip=strip) for e in self.tags]
         return serialized
 
@@ -179,7 +186,7 @@ class Tag(db.Model, SerializableMixin):
         return '<Tag {}>'.format(self.text)
 
     def as_dict(self, strip=True):
-        serialized = super(Tag, self).as_dict()
+        serialized = super(Meeting, self).as_dict()
         serialized['suggestions'] = [
             e.id for e in self.suggestions]  # only ids
         return serialized

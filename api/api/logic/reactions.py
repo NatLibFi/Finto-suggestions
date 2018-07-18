@@ -1,22 +1,61 @@
 import connexion
-import inspect  # TODO: remove me
+from ..models import Reaction
+from .common import get_one_or_404, get_all_or_404, create_or_404, delete_or_404, update_or_404
 
 
-def get_reactions() -> str:
-    return inspect.stack()[0][3], 200
+def get_reactions(limit: int = None, offset: int = None) -> str:
+    """
+    Returns all reactionss.
+
+    Request query can be limited with additional parameters.
+
+    :param limit: Cap the results to :limit: results
+    :param offset: Start the query from offset (e.g. for paging)
+    :returns: All reactionss matching the query in json format
+    """
+
+    return get_all_or_404(Reaction, limit, offset)
 
 
 def get_reaction(reaction_id: int) -> str:
-    return inspect.stack()[0][3], 200
+    """
+    Returns a reactions by id.
+
+    :param reactions_id: Meeting id
+    :returns: A single reactions object as json
+    """
+
+    return get_one_or_404(Reaction, reaction_id)
 
 
-def post_reaction(reaction_id: int) -> str:
-    return inspect.stack()[0][3], 200
+def post_reaction() -> str:
+    """
+    Creates a single reactions.
+    Request body should include a single reactions object.
+
+    :returns: the created reactions as json
+    """
+
+    return create_or_404(Reaction, connexion.request.json)
 
 
 def delete_reaction(reaction_id: int) -> str:
-    return inspect.stack()[0][3], 200
+    """
+    Deletes a reactions by id.
+
+    :param reactions_id: reactions id
+    :returns: 204, No Content on success, 404 on error
+    """
+
+    return delete_or_404(Reaction, reaction_id)
 
 
 def put_reaction(reaction_id: int) -> str:
-    return inspect.stack()[0][3], 200
+    """
+    Updates a single reactions by id.
+    Request body should include a single reactions object.
+
+    :returns: the created reactions as json
+    """
+
+    return update_or_404(Reaction, reaction_id, connexion.request.json)

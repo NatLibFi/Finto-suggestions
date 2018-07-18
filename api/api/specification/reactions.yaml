@@ -3,9 +3,36 @@ paths:
   /reactions/:
     get:
       operationId: api.logic.reactions.get_reactions
+      parameters:
+        - name: limit
+          in: query
+          description: Maximum number of returned reactions
+          required: false
+          type: integer
+        - name: offset
+          in: query
+          description: Offset of the results (e.g. for paging)
+          required: false
+          type: integer
       responses:
         "200":
-          description:  OK
+          description:  An array of all users in the database
+          schema:
+            $ref: '#/definitions/ReactionResponseArray'
+    post:
+      operationId: api.logic.reactions.post_reaction
+      parameters:
+        - in: body
+          name: body
+          description: Reaction object to be added
+          required: true
+          schema:
+            $ref: '#/definitions/ReactionParameterObject'
+      responses:
+        "201":
+          description:  Newly created reaction
+          schema:
+            $ref: '#/definitions/ReactionResponse'
 
   /reactions/{reaction_id}:
     parameters:
@@ -16,20 +43,33 @@ paths:
     get:
       operationId: api.logic.reactions.get_reaction
       responses:
-        "200":
-          description:  OK
-    post:
-      operationId: api.logic.reactions.post_reaction
-      responses:
-        "200":
-          description:  OK
+        '200':
+          description:  A single reaction by id
+          schema:
+            $ref: '#/definitions/ReactionResponse'
+        '404':
+          description: No reaction found
     delete:
       operationId: api.logic.reactions.delete_reaction
       responses:
-        "200":
-          description:  OK
+        '204':
+          description: Reaction deleted
+        '404':
+          description: No reaction found
+
     put:
       operationId: api.logic.reactions.put_reaction
+      parameters:
+        - in: body
+          name: body
+          description: (A complete) reaction object to be updated
+          required: true
+          schema:
+            $ref: '#/definitions/ReactionParameterObject'
       responses:
-        "200":
-          description:  OK
+        '200':
+          description:  The updated reaction by id
+          schema:
+            $ref: '#/definitions/ReactionResponse'
+        '404':
+          description: No reaction found
