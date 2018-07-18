@@ -1,5 +1,6 @@
 from flask_sqlalchemy import SQLAlchemy
-from passlib.apps import custom_app_context as pwd_context
+from sqlalchemy.ext.hybrid import hybrid_property, hybrid_method
+from passlib.hash import pbkdf2_sha256 as hash_algorithm
 from datetime import datetime
 import enum
 
@@ -95,8 +96,9 @@ class Emoji(db.Model):
         return '<Emoji {}>'.format(self.code)
 
 
-class Meeting(db.Model):
+class Meeting(db.Model, SerializableMixin):
     __tablename__ = 'meetings'
+    __public__ = ['id', 'name', 'created', 'modified']
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(256))
@@ -108,6 +110,12 @@ class Meeting(db.Model):
 
     def __repr__(self):
         return '<Meeting {}>'.format(self.id)
+
+    def as_dict(self, strip=True):
+        serialized = super(Meeting, self).as_dict()
+        serialized['suggestions'] = [
+            e.id for e in self.suggestions]  # only ids
+        return serialized
 
 
 class Suggestion(db.Model, SerializableMixin):
@@ -182,11 +190,16 @@ class User(db.Model, SerializableMixin):
 
     events = db.relationship('Event', backref='user')
 
-    def hash_password(self, password):
-        self.password_hash = pwd_context.encrypt(password)
+    @hybrid_property
+    def password(self):
+        return self.password_hash
 
-    def verify_password(self, password):
-        return pwd_context.verify(password, self.password_hash)
+    @password.setter
+    def password(self, value):
+        self.password_hash = hash_algorithm.hash(value)
+
+    def validate_password(self, password):
+        return hash_algorithm.verify(password, self.password_hash)
 
     def __repr__(self):
         return '<User {}>'.format(self.name)

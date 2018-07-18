@@ -3,9 +3,36 @@ paths:
   /meetings/:
     get:
       operationId: api.logic.meetings.get_meetings
+      parameters:
+        - name: limit
+          in: query
+          description: Maximum number of returned meetings
+          required: false
+          type: integer
+        - name: offset
+          in: query
+          description: Offset of the results (e.g. for paging)
+          required: false
+          type: integer
       responses:
         "200":
-          description:  OK
+          description:  An array of all users in the database
+          schema:
+            $ref: '#/definitions/MeetingResponseArray'
+    post:
+      operationId: api.logic.meetings.post_meeting
+      parameters:
+        - in: body
+          name: body
+          description: Meeting object to be added
+          required: true
+          schema:
+            $ref: '#/definitions/MeetingParameterObject'
+      responses:
+        "201":
+          description:  Newly created meeting
+          schema:
+            $ref: '#/definitions/MeetingResponse'
 
   /meetings/{meeting_id}:
     parameters:
@@ -16,20 +43,33 @@ paths:
     get:
       operationId: api.logic.meetings.get_meeting
       responses:
-        "200":
-          description:  OK
-    post:
-      operationId: api.logic.meetings.post_meeting
-      responses:
-        "200":
-          description:  OK
+        '200':
+          description:  A single meeting by id
+          schema:
+            $ref: '#/definitions/MeetingResponse'
+        '404':
+          description: No meeting found
     delete:
       operationId: api.logic.meetings.delete_meeting
       responses:
-        "200":
-          description:  OK
+        '204':
+          description: Meeting deleted
+        '404':
+          description: No meeting found
+
     put:
       operationId: api.logic.meetings.put_meeting
+      parameters:
+        - in: body
+          name: body
+          description: (A complete) meeting object to be updated
+          required: true
+          schema:
+            $ref: '#/definitions/MeetingParameterObject'
       responses:
-        "200":
-          description:  OK
+        '200':
+          description:  The updated meeting by id
+          schema:
+            $ref: '#/definitions/MeetingResponse'
+        '404':
+          description: No meeting found

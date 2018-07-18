@@ -2,7 +2,7 @@ from datetime import datetime
 from typing import Dict
 import connexion
 from ..models import db, Suggestion, SuggestionTypes, SuggestionStatusTypes
-from .common import create_response
+from .common import create_response, id_exists, get_one_or_404, get_all_or_404, create_or_404, delete_or_404, update_or_404
 
 
 def _suggestion_response_into_model(response: Dict) -> Dict:
@@ -13,7 +13,6 @@ def _suggestion_response_into_model(response: Dict) -> Dict:
     response['suggestion_type'] = SuggestionTypes(
         response['suggestion_type']).name
     response['status'] = SuggestionStatusTypes(response['status']).name
-    response['modified'] = datetime.utcnow()
 
     return response
 
@@ -29,18 +28,7 @@ def get_suggestions(limit: int = None, offset: int = None) -> str:
     :returns: All suggestion matching the qu in json format
     """
 
-    query = Suggestion.query
-    if limit:
-        query = query.limit(limit)
-    if offset:
-        query = query.offset(offset)
-    suggestion_objs = query.all()
-
-    if suggestion_objs:
-        serialized_objects = [s.as_dict() for s in suggestion_objs]
-        return create_response(serialized_objects, 200)
-    else:
-        return create_response(None, 404, "No suggestions found")
+    return get_all_or_404(Suggestion, limit, offset)
 
 
 def post_suggestion() -> str:
@@ -53,15 +41,8 @@ def post_suggestion() -> str:
     :returns: the created suggestion as json
     """
 
-    body = connexion.request.json
-    suggestion = dict(body)  # copy the response body
-    suggestion = _suggestion_response_into_model(suggestion)
-
-    suggestion_obj = Suggestion(**suggestion)
-    db.session.add(suggestion_obj)
-    db.session.commit()
-
-    return create_response(suggestion_obj.as_dict(), 200)
+    suggestion_dict = _suggestion_response_into_model(connexion.request.json)
+    return create_or_404(Suggestion, suggestion_dict)
 
 
 def get_suggestion(suggestion_id: int) -> str:
@@ -72,12 +53,7 @@ def get_suggestion(suggestion_id: int) -> str:
     :returns: A single suggestion object as json
     """
 
-    suggestion_obj = Suggestion.query.get(suggestion_id)
-    if suggestion_obj:
-        return create_response(suggestion_obj.as_dict(), 200)
-    else:
-        msg = "Suggestion with an id {} doesn't exist.".format(suggestion_id)
-        return create_response(None, 404, msg)
+    return get_one_or_404(Suggestion, suggestion_id)
 
 
 def put_suggestion(suggestion_id: int) -> str:
@@ -88,24 +64,8 @@ def put_suggestion(suggestion_id: int) -> str:
     :returns: the created suggestion as json
     """
 
-    old_object = Suggestion.query.get(suggestion_id)
-    if not old_object:
-        msg = "Suggestion with an id {} doesn't exist.".format(suggestion_id)
-        return create_response(None, 404, msg)
-
-    body = connexion.request.json
-    suggestion = dict(body)  # copy the response body
-    suggestion = _suggestion_response_into_model(suggestion)
-
-    # create a new suggestion, but replace its id
-    suggestion_obj = Suggestion(**suggestion)
-    suggestion_obj.id = old_object.id
-    suggestion_obj.created = old_object.created
-
-    db.session.merge(suggestion_obj)
-    db.session.commit()
-
-    return create_response(suggestion_obj.as_dict(), 200)
+    suggestion_dict = _suggestion_response_into_model(connexion.request.json)
+    return update_or_404(Suggestion, suggestion_id, suggestion_dict)
 
 
 def delete_suggestion(suggestion_id: int) -> str:
@@ -116,12 +76,4 @@ def delete_suggestion(suggestion_id: int) -> str:
     :returns: 204, No Content on success
     """
 
-    success = Suggestion.query.filter_by(id=suggestion_id).delete()
-    db.session.commit()
-
-    if success:
-        return (None, 204)  # No Content
-    else:
-        msg = "Could not delete suggestion {}. Perhaps it doesn't exist.".format(
-            suggestion_id)
-        return create_response(None, 404, msg)
+    return delete_or_404(Suggestion, suggestion_id)

@@ -327,3 +327,53 @@ definitions:
   text:
     type: string
     example: "This is just a basic comment"
+
+
+# MEETING
+
+  MeetingResponse:
+    type: object
+    properties:
+      data:
+        $ref: "#/definitions/MeetingResponseObject"
+  
+  MeetingResponseArray:
+    type: object
+    properties:
+      data:
+        type: array
+        items:
+          $ref: "#/definitions/MeetingResponseObject"
+
+  MeetingResponseObject:
+    type: object
+    additionalProperties: false
+    properties:
+      id:
+        type: number
+      name:
+        type: string
+      created:
+        type: string
+      modified:
+        type: string
+      suggestions:
+        $ref: "#/definitions/suggestions"
+    required:
+      - id
+      - name
+
+  MeetingParameterObject:
+    type: object
+    additionalProperties: false
+    properties:
+      name:
+        type: string
+    required:
+      - name
+
+  suggestions:
+    type: array
+    items:
+      type: number
+      description: An array of suggestion ids
