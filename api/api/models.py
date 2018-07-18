@@ -167,8 +167,9 @@ class Suggestion(db.Model, SerializableMixin):
         return serialized
 
 
-class Tag(db.Model):
+class Tag(db.Model, SerializableMixin):
     __tablename__ = "tags"
+    __public__ = ['id', 'text']
 
     id = db.Column(db.Integer, primary_key=True)
     text = db.Column(db.String(32), index=True, nullable=False)
@@ -176,6 +177,12 @@ class Tag(db.Model):
 
     def __repr__(self):
         return '<Tag {}>'.format(self.text)
+
+    def as_dict(self, strip=True):
+        serialized = super(Tag, self).as_dict()
+        serialized['suggestions'] = [
+            e.id for e in self.suggestions]  # only ids
+        return serialized
 
 
 class User(db.Model, SerializableMixin):

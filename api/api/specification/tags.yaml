@@ -3,9 +3,36 @@ paths:
   /tags/:
     get:
       operationId: api.logic.tags.get_tags
+      parameters:
+        - name: limit
+          in: query
+          description: Maximum number of returned tags
+          required: false
+          type: integer
+        - name: offset
+          in: query
+          description: Offset of the results (e.g. for paging)
+          required: false
+          type: integer
       responses:
         "200":
-          description:  OK
+          description:  An array of all users in the database
+          schema:
+            $ref: '#/definitions/TagResponseArray'
+    post:
+      operationId: api.logic.tags.post_tag
+      parameters:
+        - in: body
+          name: body
+          description: Tag object to be added
+          required: true
+          schema:
+            $ref: '#/definitions/TagParameterObject'
+      responses:
+        "201":
+          description:  Newly created tag
+          schema:
+            $ref: '#/definitions/TagResponse'
 
   /tags/{tag_id}:
     parameters:
@@ -16,20 +43,33 @@ paths:
     get:
       operationId: api.logic.tags.get_tag
       responses:
-        "200":
-          description:  OK
-    post:
-      operationId: api.logic.tags.post_tag
-      responses:
-        "200":
-          description:  OK
+        '200':
+          description:  A single tag by id
+          schema:
+            $ref: '#/definitions/TagResponse'
+        '404':
+          description: No tag found
     delete:
       operationId: api.logic.tags.delete_tag
       responses:
-        "200":
-          description:  OK
+        '204':
+          description: Tag deleted
+        '404':
+          description: No tag found
+
     put:
       operationId: api.logic.tags.put_tag
+      parameters:
+        - in: body
+          name: body
+          description: (A complete) tag object to be updated
+          required: true
+          schema:
+            $ref: '#/definitions/TagParameterObject'
       responses:
-        "200":
-          description:  OK
+        '200':
+          description:  The updated tag by id
+          schema:
+            $ref: '#/definitions/TagResponse'
+        '404':
+          description: No tag found

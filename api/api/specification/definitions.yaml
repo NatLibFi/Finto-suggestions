@@ -377,3 +377,42 @@ definitions:
     items:
       type: number
       description: An array of suggestion ids
+
+# TAG
+
+  TagResponse:
+    type: object
+    properties:
+      data:
+        $ref: "#/definitions/TagResponseObject"
+  
+  TagResponseArray:
+    type: object
+    properties:
+      data:
+        type: array
+        items:
+          $ref: "#/definitions/TagResponseObject"
+
+  TagResponseObject:
+    type: object
+    additionalProperties: false
+    properties:
+      id:
+        type: number
+      text:
+        type: string
+      suggestions:
+        $ref: "#/definitions/suggestions"
+    required:
+      - id
+      - text
+
+  TagParameterObject:
+    type: object
+    additionalProperties: false
+    properties:
+      text:
+        type: string
+    required:
+      - text
