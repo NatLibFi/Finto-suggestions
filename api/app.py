@@ -71,7 +71,7 @@ def prune():
     Prunes the JWT token blacklist.
 
     Run this from command line
-    >> flask prune_blacklist
+    >> flask prune
     """
 
     no_pruned = prune_expired_tokens()
