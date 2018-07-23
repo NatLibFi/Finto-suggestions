@@ -224,3 +224,18 @@ class User(db.Model, SerializableMixin):
         # serialized['events'] = [e.as_dict(strip=strip) for e in self.events]  # whole events
         serialized['events'] = [e.id for e in self.events]  # only ids
         return serialized
+
+
+class TokenBlacklist(db.Model, SerializableMixin):
+    """
+    JSON Web Token blacklist for logouts and user bans.
+    """
+
+    __tablename__ = 'tokens_blacklist'
+    __public__ = ['id', 'jti', 'token_type', 'revoked', 'expires']  # as_dict
+
+    id = db.Column(db.Integer, primary_key=True)
+    jti = db.Column(db.String(36), nullable=False)
+    token_type = db.Column(db.String(10), nullable=False)
+    revoked = db.Column(db.Boolean, nullable=False)
+    expires = db.Column(db.DateTime, nullable=False)

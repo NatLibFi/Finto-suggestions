@@ -1,0 +1,42 @@
+paths:
+
+  /login:
+    post:
+      operationId: api.logic.authentication.login
+      parameters:
+        - name: body
+          in: body
+          description: Authentication object (email/password)
+          required: true
+          schema:
+            $ref: '#/definitions/LoginRequest'
+      responses:
+        "200":
+          description:  JWT Token
+          schema:
+            $ref: '#/definitions/Token'
+
+  /refresh:
+    post:
+      operationId: api.logic.authentication.refresh
+      responses:
+        "200":
+          description:  JWT Token
+          schema:
+            $ref: '#/definitions/Token'
+
+  /logout:
+    post:
+      operationId: api.logic.authentication.logout
+      parameters:
+        - name: body
+          in: body
+          description: "Authentication tokens: access_token, refresh_token"
+          required: true
+          schema:
+            $ref: '#/definitions/Token'
+      responses:
+        "200":
+          description:  JWT Token
+          schema:
+            $ref: '#/definitions/LogoutResponse'

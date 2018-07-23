@@ -2,12 +2,16 @@ from datetime import datetime
 from typing import Dict
 from sqlalchemy import exists
 from sqlalchemy.exc import IntegrityError
-from ..models import db
+from ..models import db  # api.models?
 
 
-def create_response(data: Dict, status_code: int, message: str = None) -> Dict:
+def create_response(data: Dict, status_code: int, message: str = None, **kwargs) -> Dict:
     response_dict = {}
-    response_dict["data"] = data
+
+    if kwargs:
+        response_dict.update(kwargs)
+
+    response_dict["data"] = data if data else {}
     if message:
         response_dict["message"] = message
     response_dict["code"] = status_code

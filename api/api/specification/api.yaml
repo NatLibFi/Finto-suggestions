@@ -5,3 +5,9 @@ info:
   version: '1.0'
 
 basePath: /api
+
+securityDefinitions:
+  jwt:
+    type: apiKey
+    name: Authorization
+    in: header

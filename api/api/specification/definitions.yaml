@@ -1,6 +1,30 @@
 # A common definitions file for Finto API endpoints
 
 definitions:
+
+  # AUTHENTICATION
+  LoginRequest:
+    type: object
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+  
+  LogoutResponse:
+    type: object
+    properties:
+      message:
+        type: string
+
+  Token:
+    type: object
+    properties:
+      access_token:
+        type: string
+      refresh_token:
+        type: string
+
   # SUGGESTION
 
   SuggestionResponse:

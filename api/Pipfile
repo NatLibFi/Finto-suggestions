@@ -14,6 +14,7 @@ flask-sqlalchemy = "*"
 flask-migrate = "*"
 spec-synthase = "*"
 passlib = "*"
+flask-jwt-extended = "*"
 
 
 [dev-packages]
@@ -31,6 +32,7 @@ python_version = "3.6"
 start = "docker-compose up"
 psql = "docker-compose exec db psql psdb -Upsql"
 shell = "docker-compose exec api flask shell"
+prune = "docker-compose exec api flask prune"
 start-db = "docker-compose up db"
 init-db = "docker-compose exec api flask db init"
 migrate-db = "docker-compose exec api flask db migrate"
