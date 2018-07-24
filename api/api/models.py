@@ -2,6 +2,7 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.ext.hybrid import hybrid_property, hybrid_method
 from passlib.hash import pbkdf2_sha256 as hash_algorithm
 from datetime import datetime
+from collections import Counter
 import enum
 
 db = SQLAlchemy()
@@ -56,7 +57,7 @@ class Event(db.Model, SerializableMixin):
 
     __tablename__ = 'events'
     __public__ = ['id', 'event_type', 'text',
-                  'reactions', 'user_id', 'suggestion_id']
+                  'reactions', 'user_id', 'suggestion_id', 'created', 'modified']
 
     id = db.Column(db.Integer, primary_key=True)
     created = db.Column(db.DateTime, index=True, default=datetime.utcnow)
@@ -121,6 +122,10 @@ class Meeting(db.Model, SerializableMixin):
         serialized = super(Meeting, self).as_dict()
         serialized['suggestions'] = [
             e.id for e in self.suggestions]  # only ids
+
+        serialized['processed'] = Counter(
+            [s.status.name.lower() for s in self.suggestions])
+
         return serialized
 
 
@@ -186,7 +191,7 @@ class Tag(db.Model, SerializableMixin):
         return '<Tag {}>'.format(self.text)
 
     def as_dict(self, strip=True):
-        serialized = super(Meeting, self).as_dict()
+        serialized = super(Tag, self).as_dict()
         serialized['suggestions'] = [
             e.id for e in self.suggestions]  # only ids
         return serialized

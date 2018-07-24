@@ -8,10 +8,13 @@ def _suggestion_response_into_model(response: Dict) -> Dict:
     """
     Modifies the response in a way that it fits the Suggestion model schema.
     """
+    suggestion_type = response.get('suggestion_type')
+    status = response.get('status')
 
-    response['suggestion_type'] = SuggestionTypes(
-        response['suggestion_type']).name
-    response['status'] = SuggestionStatusTypes(response['status']).name
+    if suggestion_type:
+        response['suggestion_type'] = SuggestionTypes(suggestion_type).name
+    if status:
+        response['status'] = SuggestionStatusTypes(status).name
 
     return response
 

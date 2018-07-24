@@ -8,9 +8,9 @@ services:
     volumes:
       - ./api:/app
     environment:
-      # DATABASE_URI is defined as dialect+driver://username:password@host:port/database
-      - DATABASE_URI=postgresql+psycopg2://psql:pw@db:5432/psdb
       - APP_SECRET_KEY=changethis
+      - APP_CONFIG_OBJECT=config.DevelopmentConfig
+      - FLASK_APP=wsgi:flask_app
     networks:
       - network_web
       - network_db

@@ -5,11 +5,15 @@ definitions:
   # AUTHENTICATION
   LoginRequest:
     type: object
+    additionalProperties: false
     properties:
       email:
         type: string
       password:
         type: string
+    required:
+      - email
+      - password
   
   LogoutResponse:
     type: object
@@ -116,6 +120,8 @@ definitions:
         $ref: "#/definitions/reason"
       organization:
         $ref: "#/definitions/organization"
+      meeting_id:
+        type: number
 
   preferred_label:
     type: object
@@ -383,9 +389,25 @@ definitions:
         type: string
       suggestions:
         $ref: "#/definitions/suggestions"
+      processed:
+        $ref: "#/definitions/processed"
     required:
       - id
       - name
+  
+  processed:
+    type: object
+    description: "Meeting's progress grouped by suggestion status"
+    properties:
+      accepted:
+        type: number
+        example: 18
+      default:
+        type: number
+        example: 46
+      rejected:
+        type: number
+        example: 4
 
   MeetingParameterObject:
     type: object

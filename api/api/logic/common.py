@@ -2,7 +2,7 @@ from datetime import datetime
 from typing import Dict
 from sqlalchemy import exists
 from sqlalchemy.exc import IntegrityError
-from ..models import db  # api.models?
+from ..models import db
 
 
 def create_response(data: Dict, status_code: int, message: str = None, **kwargs) -> Dict:
