@@ -1,4 +1,3 @@
-
 from sqlalchemy import or_
 from ..models import db, Event, Reaction, Suggestion, SuggestionTypes, SuggestionStatusTypes
 from .common import InvalidFilterException

@@ -1,6 +1,7 @@
 import connexion
 from ..models import Event, Suggestion, User
-from .common import create_response, id_exists, get_all_or_404_custom, get_one_or_404, create_or_404, delete_or_404, update_or_404
+from .common import (create_response, id_exists, get_all_or_404_custom,
+                     get_one_or_404, create_or_404, delete_or_404, update_or_404)
 
 
 def get_events(limit: int = None, offset: int = None, user_id: int = None, suggestion_id: int = None) -> str:
