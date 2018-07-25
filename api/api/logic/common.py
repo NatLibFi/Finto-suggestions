@@ -5,6 +5,10 @@ from sqlalchemy.exc import IntegrityError
 from ..models import db
 
 
+class InvalidFilterException(Exception):
+    pass
+
+
 def create_response(data: Dict, status_code: int, message: str = None, **kwargs) -> Dict:
     response_dict = {}
 
@@ -33,25 +37,28 @@ def id_exists(model: object, id: int) -> bool:
     return True
 
 
-def get_all_filtered_or_404(model, filter_func):
+def get_all_or_404_custom(query_func) -> str:
     """
-        A generic get all, with a custom filter function
+        A generic get all, with a custom query function
 
         :param model: model to query
-        :param filter_func: a function, that takes a query
+        :param query_func: a function, that takes a query
             instance as a parameter and returns a query instance.
 
-            def filter_func(query):
-                # query logic here, e.g.
+            This is handy for filtering, sorting and searching. 
+
+            def query_func():
+                query = model.query
                 if limit:
                     query = query.limit(limit)
-                return query
+                return query.all()
 
         :returns: All columns matching the filtered query or 404
     """
-
-    query = filter_func(model.query)
-    db_objs = query.all()
+    try:
+        db_objs = query_func()
+    except InvalidFilterException as e:
+        return create_response({}, 404, str(e))
 
     serialized_objects = []
     if db_objs:
@@ -70,14 +77,16 @@ def get_all_or_404(model, limit: int, offset: int) -> str:
     :returns: All columns matching the query in json format or 404 and error message as JSON
     """
 
-    def filter_func(query):
+    def query_func():
+        query = model.query
         if limit:
             query = query.limit(limit)
         if offset:
             query = query.offset(offset)
-        return query
 
-    return get_all_filtered_or_404(model, filter_func)
+        return query.all()
+
+    return get_all_or_404_custom(query_func)
 
 
 def get_one_or_404(model: object, object_id: int) -> str:

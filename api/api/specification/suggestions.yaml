@@ -19,6 +19,27 @@ paths:
           description: Offset of the results (e.g. for paging)
           required: false
           type: integer
+        - name: sort
+          in: query
+          description: 'Sort string, choose from '
+          required: false
+          type: string
+          enum:
+              - CREATED_DESC
+              - CREATED_ASC
+              - COMMENTS_DESC
+              - UPDATED_DESC
+              - REACTIONS_DESC
+        - name: filters
+          in: query
+          description: 'Pipe-separated filter string, i.e. status:accepted|type:new|meeting:12'
+          required: false
+          type: string
+        - name: search
+          in: query
+          description: Search string
+          required: false
+          type: string
       responses:
         '200':
           description: An array of suggestion objects

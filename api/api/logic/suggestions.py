@@ -1,7 +1,8 @@
 from typing import Dict
 import connexion
-from ..models import Suggestion, SuggestionTypes, SuggestionStatusTypes
-from .common import get_one_or_404, get_all_or_404, create_or_404, delete_or_404, update_or_404
+from ..models import db, Suggestion, SuggestionTypes, SuggestionStatusTypes
+from .common import get_one_or_404, get_all_or_404_custom, create_or_404, delete_or_404, update_or_404
+from .utils import SUGGESTION_FILTER_FUNCTIONS, SUGGESTION_SORT_FUNCTIONS
 
 
 def _suggestion_response_into_model(response: Dict) -> Dict:
@@ -19,7 +20,7 @@ def _suggestion_response_into_model(response: Dict) -> Dict:
     return response
 
 
-def get_suggestions(limit: int = None, offset: int = None) -> str:
+def get_suggestions(limit: int = None, offset: int = None, filters: str = None, search: str = None, sort: str = 'DEFAULT') -> str:
     """
     Returns all suggestions.
 
@@ -30,7 +31,35 @@ def get_suggestions(limit: int = None, offset: int = None) -> str:
     :returns: All suggestion matching the qu in json format
     """
 
-    return get_all_or_404(Suggestion, limit, offset)
+    # TODO: add string search to queries
+
+    def _validate_filters(f):
+        # a crude whitelist check for filter types
+        return all([f[0].upper() in SUGGESTION_FILTER_FUNCTIONS.keys() for f in filters])
+
+    def query_func():
+        if sort in SUGGESTION_SORT_FUNCTIONS:
+            query = SUGGESTION_SORT_FUNCTIONS.get(sort)(db.session)
+
+        if filters and _validate_filters(filters):
+            for name, value in filters:
+                filter_func = SUGGESTION_FILTER_FUNCTIONS.get(name.upper())
+                if filter_func:
+                    query = filter_func(query, value.upper())
+
+        if limit:
+            query = query.limit(limit)
+        if offset:
+            query = query.offset(offset)
+
+        return query.all()
+
+    if filters:
+        # status:accepted|type:new|meeting:12
+        # -> [['status', 'accepted'], ['type', 'new'], ['meeting', '12']]
+        filters = [f.split(':') for f in filters.split('|')]
+
+    return get_all_or_404_custom(query_func)
 
 
 def post_suggestion() -> str:

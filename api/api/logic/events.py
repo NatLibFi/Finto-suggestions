@@ -1,6 +1,6 @@
 import connexion
 from ..models import Event, Suggestion, User
-from .common import create_response, id_exists, get_all_filtered_or_404, get_one_or_404, create_or_404, delete_or_404, update_or_404
+from .common import create_response, id_exists, get_all_or_404_custom, get_one_or_404, create_or_404, delete_or_404, update_or_404
 
 
 def get_events(limit: int = None, offset: int = None, user_id: int = None, suggestion_id: int = None) -> str:
@@ -14,7 +14,8 @@ def get_events(limit: int = None, offset: int = None, user_id: int = None, sugge
     :returns: All events matching the query in json format
     """
 
-    def filter_func(query):
+    def filter_func():
+        query = Event.query
         if user_id:
             query = query.filter(Event.user_id == user_id)
         if suggestion_id:
@@ -23,9 +24,9 @@ def get_events(limit: int = None, offset: int = None, user_id: int = None, sugge
             query = query.limit(limit)
         if offset:
             query = query.offset(offset)
-        return query
+        return query.all()
 
-    return get_all_filtered_or_404(Event, filter_func)
+    return get_all_or_404_custom(filter_func)
 
 
 def get_event(event_id: int) -> str:
