@@ -1,5 +1,7 @@
 from typing import Dict
 import connexion
+from sqlalchemy import or_
+from sqlalchemy.types import Unicode
 from ..models import db, Suggestion, SuggestionTypes, SuggestionStatusTypes
 from .common import get_one_or_404, get_all_or_404_custom, create_or_404, delete_or_404, update_or_404
 from .utils import SUGGESTION_FILTER_FUNCTIONS, SUGGESTION_SORT_FUNCTIONS
@@ -33,10 +35,6 @@ def get_suggestions(limit: int = None, offset: int = None, filters: str = None, 
 
     # TODO: add string search to queries
 
-    def _validate_filters(f):
-        # a crude whitelist check for filter types
-        return all([f[0].upper() in SUGGESTION_FILTER_FUNCTIONS.keys() for f in filters])
-
     def query_func():
         if sort in SUGGESTION_SORT_FUNCTIONS:
             query = SUGGESTION_SORT_FUNCTIONS.get(sort)(db.session)
@@ -47,12 +45,28 @@ def get_suggestions(limit: int = None, offset: int = None, filters: str = None, 
                 if filter_func:
                     query = filter_func(query, value.upper())
 
+        if search:
+            # Please append more fields, if you'd like to include in search
+            # Currently the JSON field search is a bit dum.
+            # Ideally, you would like to search matches in each language separately,
+            # instead of the whole json blob (cast as string)
+            query = query.filter(or_(
+                Suggestion.preferred_label.cast(Unicode).contains(search),
+                Suggestion.alternative_label.cast(Unicode).contains(search),
+                Suggestion.description.contains(search),
+                Suggestion.reason.contains(search)
+            ))
+
         if limit:
             query = query.limit(limit)
         if offset:
             query = query.offset(offset)
 
         return query.all()
+
+    def _validate_filters(f):
+        # a crude whitelist check for filter types
+        return all([f[0].upper() in SUGGESTION_FILTER_FUNCTIONS.keys() for f in filters])
 
     if filters:
         # status:accepted|type:new|meeting:12
