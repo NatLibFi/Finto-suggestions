@@ -105,12 +105,13 @@ class Reaction(db.Model, SerializableMixin):
 
 class Meeting(db.Model, SerializableMixin):
     __tablename__ = 'meetings'
-    __public__ = ['id', 'name', 'created', 'modified']
+    __public__ = ['id', 'name', 'created', 'modified', 'meeting_date']
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(256))
     created = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     modified = db.Column(db.DateTime, index=True, default=datetime.utcnow)
+    meeting_date = db.Column(db.DateTime, index=True)
 
     suggestions = db.relationship(
         'Suggestion', backref='meeting')

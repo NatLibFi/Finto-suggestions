@@ -19,6 +19,7 @@ def create_response(data: Dict, status_code: int, message: str = None, **kwargs)
     if message:
         response_dict["message"] = message
     response_dict["code"] = status_code
+    response_dict["items"] = len(data)
 
     return response_dict, status_code
 

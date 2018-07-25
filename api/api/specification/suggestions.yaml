@@ -21,7 +21,7 @@ paths:
           type: integer
         - name: sort
           in: query
-          description: 'Sort string, choose from '
+          description: Sort method
           required: false
           type: string
           enum:
