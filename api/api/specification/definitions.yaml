@@ -92,6 +92,37 @@ definitions:
       - preferred_label
       - suggestion_type
 
+  SuggestionPatchObject:
+    type: object
+    additionalProperties: false
+    properties:
+      preferred_label:
+        $ref: "#/definitions/preferred_label"
+      alternative_label:
+        $ref: "#/definitions/alternative_label"
+      status:
+        $ref: "#/definitions/status"
+      uri:
+        $ref: "#/definitions/uri"
+      suggestion_type:
+        $ref: "#/definitions/suggestion_type"
+      broader:
+        $ref: "#/definitions/broader"
+      narrower:
+        $ref: "#/definitions/narrower"
+      related:
+        $ref: "#/definitions/related"
+      group:
+        $ref: "#/definitions/group"
+      description:
+        $ref: "#/definitions/description"
+      reason:
+        $ref: "#/definitions/reason"
+      organization:
+        $ref: "#/definitions/organization"
+      meeting_id:
+        type: number
+
   SuggestionParameterObject:
     type: object
     additionalProperties: false
@@ -122,6 +153,13 @@ definitions:
         $ref: "#/definitions/organization"
       meeting_id:
         type: number
+    required:
+      - preferred_label
+      - uri
+      - suggestion_type
+      - description
+      - reason
+      - meeting_id
 
   preferred_label:
     type: object

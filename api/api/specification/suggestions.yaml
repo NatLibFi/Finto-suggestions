@@ -116,7 +116,7 @@ paths:
           description: (A partial) suggestion object to be patched
           required: true
           schema:
-            $ref: '#/definitions/SuggestionParameterObject'
+            $ref: '#/definitions/SuggestionPatchObject'
       responses:
         '200':
           description: Updated suggestion
