@@ -11,15 +11,18 @@ class InvalidFilterException(Exception):
 
 def create_response(data: Dict, status_code: int, message: str = None, **kwargs) -> Dict:
     response_dict = {}
+    data = data if data else {}
 
     if kwargs:
         response_dict.update(kwargs)
-
-    response_dict["data"] = data if data else {}
     if message:
         response_dict["message"] = message
+
     response_dict["code"] = status_code
-    response_dict["items"] = len(data)
+    response_dict["data"] = data
+
+    if isinstance(data, list):
+        response_dict["items"] = len(data)
 
     return response_dict, status_code
 

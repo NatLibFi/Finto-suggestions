@@ -31,7 +31,7 @@ def get_suggestions(limit: int = None, offset: int = None, filters: str = None, 
 
     :param limit: Cap the results to :limit: results
     :param offset: Start the query from offset (e.g. for paging)
-    :returns: All suggestion matching the qu in json format
+    :returns: All suggestion matching the query in json format
     """
 
     def query_func():

@@ -3,7 +3,7 @@ from ..models import db, Event, Reaction, Suggestion, SuggestionTypes, Suggestio
 from .common import InvalidFilterException
 
 
-def _raise_ex(value, filter_type, valid_types=None):
+def _raise_exception(value, filter_type, valid_types=None):
     msg = 'Invalid value {} for filter type {}.'.format(
         value, filter_type)
     if valid_types:
@@ -17,18 +17,18 @@ SUGGESTION_FILTER_FUNCTIONS = {
         lambda query, value:
         query.filter(Suggestion.status == SuggestionStatusTypes[value])
         if value in SuggestionStatusTypes.__members__
-        else _raise_ex(value, 'STATUS', [e.name for e in SuggestionStatusTypes])
+        else _raise_exception(value, 'STATUS', [e.name for e in SuggestionStatusTypes])
     ),
     'SUGGESTION_TYPE': (
         lambda query, value:
         query.filter(Suggestion.status == SuggestionTypes[value])
         if value in SuggestionTypes.__members__
-        else _raise_ex(value, 'SUGGESTION_TYPE', [e.name for e in SuggestionTypes])
+        else _raise_exception(value, 'SUGGESTION_TYPE', [e.name for e in SuggestionTypes])
     ),
     'MEETING_ID': (
         lambda query, value:
         query.filter(Suggestion.meeting_id == int(value))
-        if value.isdigit() else _raise_ex(value, 'MEETING')
+        if value.isdigit() else _raise_exception(value, 'MEETING')
     ),
 }
 
