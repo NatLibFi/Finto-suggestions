@@ -96,6 +96,12 @@ def put_suggestion(suggestion_id: int) -> str:
     :returns: the created suggestion as json
     """
 
+    # Check that the meeting_id is valid before creating the suggestion
+    meeting_id = connexion.request.json.get('meeting_id')
+
+    if not id_exists(Meeting, meeting_id):
+        return create_response({}, 404, "A valid meeting_id is required.")
+
     return update_or_404(Suggestion, suggestion_id, connexion.request.json)
 
 

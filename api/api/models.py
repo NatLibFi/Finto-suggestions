@@ -156,7 +156,8 @@ class Suggestion(db.Model, SerializableMixin):
 
     # suggestion_type = db.Column(db.Enum(SuggestionTypes), nullable=False)
     suggestion_type = db.Column(db.Enum(SuggestionTypes))
-    status = db.Column(db.Enum(SuggestionStatusTypes))
+    status = db.Column(db.Enum(SuggestionStatusTypes),
+                       default=SuggestionStatusTypes.DEFAULT)
     uri = db.Column(db.String(256))
 
     organization = db.Column(db.String(256))
