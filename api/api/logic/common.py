@@ -27,18 +27,16 @@ def create_response(data: Dict, status_code: int, message: str = None, **kwargs)
     return response_dict, status_code
 
 
-def id_exists(model: object, id: int) -> bool:
+def id_exists(model: object, object_id: int) -> bool:
     """
     Checks if the given id exists in the given model object.
 
-    :param id: id to search
+    :param object_id: id to search
     :param model: model to search from
     :returns: True if id exists, or id is None. False if user was not found in the model.
     """
 
-    if id and not db.session.query(exists().where(model.id == id)).scalar():
-        return False
-    return True
+    return db.session.query(exists().where(model.id == object_id)).scalar()
 
 
 def get_all_or_404_custom(query_func) -> str:
