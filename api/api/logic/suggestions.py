@@ -1,11 +1,42 @@
+from functools import wraps
 import connexion
 from sqlalchemy import or_
 from sqlalchemy.types import Unicode
-from ..models import db, Meeting, Suggestion
+from ..models import db, Meeting, Suggestion, Tag
 from .common import (get_one_or_404, get_all_or_404_custom, id_exists,
                      create_or_404, create_response, delete_or_404,
                      patch_or_404, update_or_404)
 from .utils import SUGGESTION_FILTER_FUNCTIONS, SUGGESTION_SORT_FUNCTIONS
+
+
+def validate_payload(f):
+    """
+        A custom validator decorator for Suggestions.
+        The decorator goes through the connexion payload and
+        validates/modifies the data passing it through to the
+        actualy api method.
+    """
+    @wraps(f)
+    def wrapper(*args, **kw):
+
+        payload = connexion.request.json
+
+        # Check that the meeting_id is valid before creating the suggestion
+        meeting_id = payload.get('meeting_id')
+        if meeting_id and not id_exists(Meeting, meeting_id):
+            return create_response({}, 404, "A valid meeting_id is required.")
+
+        # tag strings need to be converted to actual tags
+        # please note, that nonexisting tags are removed from the list here
+        tag_labels = payload.get('tags')
+        if tag_labels:
+            tag_labels_upper = [label.upper() for label in tag_labels]
+            payload['tags'] = db.session.query(
+                Tag).filter(Tag.label.in_(tag_labels_upper)).all()
+
+        return f(*args, **kw)
+
+    return wrapper
 
 
 def get_suggestions(limit: int = None, offset: int = None, filters: str = None, search: str = None, sort: str = 'DEFAULT') -> str:
@@ -59,24 +90,6 @@ def get_suggestions(limit: int = None, offset: int = None, filters: str = None, 
     return get_all_or_404_custom(query_func)
 
 
-def post_suggestion() -> str:
-    """
-    Creates a single suggestion.
-
-    Request body should include a single suggestion object.
-    The object should be validated by Connexion according to the API definition.
-
-    :returns: the created suggestion as json
-    """
-
-    # Check that the meeting_id is valid before creating the suggestion
-    meeting_id = connexion.request.json.get('meeting_id')
-    if meeting_id and not id_exists(Meeting, meeting_id):
-        return create_response({}, 404, "A valid meeting_id is required.")
-
-    return create_or_404(Suggestion, connexion.request.json)
-
-
 def get_suggestion(suggestion_id: int) -> str:
     """
     Returns a suggestion by id.
@@ -88,6 +101,21 @@ def get_suggestion(suggestion_id: int) -> str:
     return get_one_or_404(Suggestion, suggestion_id)
 
 
+@validate_payload
+def post_suggestion() -> str:
+    """
+    Creates a single suggestion.
+
+    Request body should include a single suggestion object.
+    The object should be validated by Connexion according to the API definition.
+
+    :returns: the created suggestion as json
+    """
+
+    return create_or_404(Suggestion, connexion.request.json)
+
+
+@validate_payload
 def put_suggestion(suggestion_id: int) -> str:
     """
     Updates a single suggestion by id.
@@ -96,15 +124,10 @@ def put_suggestion(suggestion_id: int) -> str:
     :returns: the created suggestion as json
     """
 
-    # Check that the meeting_id is valid before creating the suggestion
-    meeting_id = connexion.request.json.get('meeting_id')
-
-    if not id_exists(Meeting, meeting_id):
-        return create_response({}, 404, "A valid meeting_id is required.")
-
     return update_or_404(Suggestion, suggestion_id, connexion.request.json)
 
 
+@validate_payload
 def patch_suggestion(suggestion_id: int) -> str:
     """
     Updates a single suggestion by id.

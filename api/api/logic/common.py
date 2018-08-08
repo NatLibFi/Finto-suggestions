@@ -163,7 +163,7 @@ def update_or_404(model: object, object_id: int, payload: Dict) -> str:
     old_object = model.query.get(object_id)
     if not old_object:
         msg = "{} with an id {} doesn't exist.".format(
-            model.__table__, object_id)
+            str(model.__table__)[:-1], object_id)
         return create_response(None, 404, msg)
 
     # create a new model instance, but replace its id
@@ -193,7 +193,7 @@ def patch_or_404(model: object, object_id: int, payload: Dict) -> str:
     db_obj = model.query.get(object_id)
     if not db_obj:
         msg = "{} with an id {} doesn't exist.".format(
-            model.__table__, object_id)
+            str(model.__table__)[:-1], object_id)
         return create_response(None, 404, msg)
 
     # make sure that the `id` and `created` fields never get updated

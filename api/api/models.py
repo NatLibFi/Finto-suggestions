@@ -1,5 +1,6 @@
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.ext.hybrid import hybrid_property, hybrid_method
+from sqlalchemy.orm import validates
 from passlib.hash import pbkdf2_sha256 as hash_algorithm
 from datetime import datetime
 from collections import Counter
@@ -8,8 +9,8 @@ import enum
 db = SQLAlchemy()
 
 suggestions_to_tags = db.Table('suggestion_tags_association',
-                               db.Column('tag_id', db.Integer, db.ForeignKey(
-                                   'tags.id'), primary_key=True),
+                               db.Column('tag_label', db.String, db.ForeignKey(
+                                   'tags.label'), primary_key=True),
                                db.Column('suggestion_id', db.Integer, db.ForeignKey(
                                    'suggestions.id'), primary_key=True)
                                )
@@ -197,14 +198,18 @@ class Suggestion(db.Model, SerializableMixin):
 
 class Tag(db.Model, SerializableMixin):
     __tablename__ = "tags"
-    __public__ = ['id', 'text']
+    __public__ = ['label']
 
-    id = db.Column(db.Integer, primary_key=True)
-    text = db.Column(db.String(32), index=True, nullable=False)
+    label = db.Column(db.String(128), index=True, primary_key=True)
     # suggestions: backref
 
+    # convert tag always to uppercase
+    @validates('label')
+    def convert_upper(self, key, value):
+        return value.upper()
+
     def __repr__(self):
-        return '<Tag {}>'.format(self.text)
+        return '<Tag {}>'.format(self.label)
 
     def as_dict(self, strip=True):
         serialized = super(Tag, self).as_dict()

@@ -122,6 +122,10 @@ definitions:
         $ref: "#/definitions/organization"
       meeting_id:
         type: number
+      tags:
+        type: array
+        items:
+          type: string
 
   SuggestionParameterObject:
     type: object
@@ -558,22 +562,22 @@ definitions:
     properties:
       id:
         type: number
-      text:
+      label:
         type: string
       suggestions:
         $ref: "#/definitions/suggestions"
     required:
       - id
-      - text
+      - label
 
   TagParameterObject:
     type: object
     additionalProperties: false
     properties:
-      text:
+      label:
         type: string
     required:
-      - text
+      - label
 
 
 # REACTIONS
