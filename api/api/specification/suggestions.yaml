@@ -102,6 +102,28 @@ paths:
             $ref: '#/definitions/SuggestionResponse'
         '404':
           description: No suggestion could be found with the given ID
+    patch:
+      operationId: api.logic.suggestions.patch_suggestion
+      description: Patch a suggestion by id
+      parameters:
+        - name: suggestion_id
+          in: path
+          description: Suggestion ID
+          required: true
+          type: integer
+        - in: body
+          name: body
+          description: (A partial) suggestion object to be patched
+          required: true
+          schema:
+            $ref: '#/definitions/SuggestionParameterObject'
+      responses:
+        '200':
+          description: Updated suggestion
+          schema:
+            $ref: '#/definitions/SuggestionResponse'
+        '404':
+          description: No suggestion could be found with the given ID
     delete:
       operationId: api.logic.suggestions.delete_suggestion
       description: Delete a suggestion by id

@@ -65,6 +65,22 @@ paths:
             $ref: '#/definitions/UserResponse'
         '404':
           description: No user found
+    patch:
+      operationId: api.logic.users.patch_user
+      parameters:
+        - in: body
+          name: body
+          description: (A partial) user object to be updated
+          required: true
+          schema:
+            $ref: '#/definitions/UserPatchObject'
+      responses:
+        '200':
+          description:  The patched user by id
+          schema:
+            $ref: '#/definitions/UserResponse'
+        '404':
+          description: No user found
     delete:
       operationId: api.logic.users.delete_user
       responses:

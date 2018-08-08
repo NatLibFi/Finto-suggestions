@@ -170,6 +170,7 @@ definitions:
       - NEW
       - MODIFY
     description: "The type of a vocabulary suggestion: 'NEW' for new suggestions, 'MODIFY' for a modification."
+    example: NEW
 
   broader:
     type: array
@@ -277,7 +278,20 @@ definitions:
       - id
       - name
       - email
-  
+
+  UserPatchObject:
+    type: object
+    additionalProperties: false
+    properties:
+      name:
+        $ref: "#/definitions/name"
+      email:
+        $ref: "#/definitions/email"
+      role:
+        $ref: "#/definitions/role"
+      password:
+        $ref: "#/definitions/password"
+
   UserParameterObject:
     type: object
     additionalProperties: false
@@ -292,6 +306,7 @@ definitions:
       - name
       - email
       - password
+
 
   name:
     type: string
@@ -364,6 +379,19 @@ definitions:
       - event_type
       - text
   
+  EventPatchObject:
+    type: object
+    additionalProperties: false
+    properties:
+      user_id:
+        type: number
+      suggestion_id:
+        type: number
+      event_type:
+        $ref: "#/definitions/event_type"
+      text:
+        $ref: "#/definitions/text"
+
   event_type:
     type: string
     enum:
@@ -393,6 +421,15 @@ definitions:
         items:
           $ref: "#/definitions/MeetingResponseObject"
 
+  MeetingPatchObject:
+    type: object
+    additionalProperties: false
+    properties:
+      name:
+        type: string
+      meeting_date:
+        $ref: "#/definitions/meeting_date"
+
   MeetingResponseObject:
     type: object
     additionalProperties: false
@@ -406,7 +443,7 @@ definitions:
       modified:
         type: string
       meeting_date:
-        type: string
+        $ref: "#/definitions/meeting_date"
       suggestions:
         $ref: "#/definitions/suggestions"
       processed:
@@ -415,6 +452,21 @@ definitions:
       - id
       - name
   
+  MeetingParameterObject:
+    type: object
+    additionalProperties: false
+    properties:
+      name:
+        type: string
+      meeting_date:
+        $ref: "#/definitions/meeting_date"
+    required:
+      - name
+
+  meeting_date:
+    type: string
+    format: date-time
+
   processed:
     type: object
     description: "Meeting's progress grouped by suggestion status"
@@ -428,15 +480,6 @@ definitions:
       rejected:
         type: number
         example: 4
-
-  MeetingParameterObject:
-    type: object
-    additionalProperties: false
-    properties:
-      name:
-        type: string
-    required:
-      - name
 
   suggestions:
     type: array
@@ -515,6 +558,19 @@ definitions:
     required:
       - id
       - code
+
+  ReactionPatchObject:
+    type: object
+    additionalProperties: false
+    properties:
+      code:
+        type: string
+      event_id:
+        type: number
+      suggestion_id:
+        type: number
+      user_id:
+        type: number
 
   ReactionParameterObject:
     type: object

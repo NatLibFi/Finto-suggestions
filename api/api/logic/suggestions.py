@@ -1,10 +1,10 @@
-from typing import Dict
 import connexion
 from sqlalchemy import or_
 from sqlalchemy.types import Unicode
-from ..models import db, Meeting, Suggestion, SuggestionTypes, SuggestionStatusTypes
+from ..models import db, Meeting, Suggestion
 from .common import (get_one_or_404, get_all_or_404_custom, id_exists,
-                     create_or_404, create_response, delete_or_404, update_or_404)
+                     create_or_404, create_response, delete_or_404,
+                     patch_or_404, update_or_404)
 from .utils import SUGGESTION_FILTER_FUNCTIONS, SUGGESTION_SORT_FUNCTIONS
 
 
@@ -97,6 +97,17 @@ def put_suggestion(suggestion_id: int) -> str:
     """
 
     return update_or_404(Suggestion, suggestion_id, connexion.request.json)
+
+
+def patch_suggestion(suggestion_id: int) -> str:
+    """
+    Updates a single suggestion by id.
+    Request body should include a single suggestion object.
+
+    :returns: the created suggestion as json
+    """
+
+    return patch_or_404(Suggestion, suggestion_id, connexion.request.json)
 
 
 def delete_suggestion(suggestion_id: int) -> str:

@@ -73,3 +73,21 @@ paths:
             $ref: '#/definitions/ReactionResponse'
         '404':
           description: No reaction found
+
+    patch:
+      operationId: api.logic.reactions.patch_reaction
+      parameters:
+        - in: body
+          name: body
+          description: (A partial) reaction object to be patched
+          required: true
+          schema:
+            $ref: '#/definitions/ReactionPatchObject'
+      responses:
+        '200':
+          description:  The patched reaction by id
+          schema:
+            $ref: '#/definitions/ReactionResponse'
+        '404':
+          description: No reaction found
+

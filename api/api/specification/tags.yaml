@@ -56,7 +56,6 @@ paths:
           description: Tag deleted
         '404':
           description: No tag found
-
     put:
       operationId: api.logic.tags.put_tag
       parameters:

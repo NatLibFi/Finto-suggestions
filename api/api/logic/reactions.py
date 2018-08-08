@@ -1,6 +1,7 @@
 import connexion
 from ..models import Reaction
-from .common import get_one_or_404, get_all_or_404, create_or_404, delete_or_404, update_or_404
+from .common import (get_one_or_404, get_all_or_404, create_or_404,
+                     delete_or_404, update_or_404, patch_or_404)
 
 
 def get_reactions(limit: int = None, offset: int = None) -> str:
@@ -59,3 +60,14 @@ def put_reaction(reaction_id: int) -> str:
     """
 
     return update_or_404(Reaction, reaction_id, connexion.request.json)
+
+
+def patch_reaction(reaction_id: int) -> str:
+    """
+    Patches a single reaction by id.
+    Request body should include a single (partial) reaction object.
+
+    :returns: the patched reaction as json
+    """
+
+    return patch_or_404(Reaction, reaction_id, connexion.request.json)

@@ -1,6 +1,8 @@
 import connexion
 from ..models import User
-from .common import get_all_or_404, get_one_or_404, create_or_404, delete_or_404, update_or_404
+from .common import (get_all_or_404, get_one_or_404,
+                     create_or_404, delete_or_404,
+                     update_or_404, patch_or_404)
 
 
 def get_users(limit: int = None, offset: int = None) -> str:
@@ -61,3 +63,14 @@ def put_user(user_id: int) -> str:
     """
 
     return update_or_404(User, user_id, connexion.request.json)
+
+
+def patch_user(user_id: int) -> str:
+    """
+    Patches a single user by id.
+    Request body should include a single (partial) user object.
+
+    :returns: the patched user as json
+    """
+
+    return patch_or_404(User, user_id, connexion.request.json)

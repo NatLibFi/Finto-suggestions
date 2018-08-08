@@ -168,7 +168,7 @@ def update_or_404(model: object, object_id: int, payload: Dict) -> str:
             model.__table__, object_id)
         return create_response(None, 404, msg)
 
-    # create a new suggestion, but replace its id
+    # create a new model instance, but replace its id
     db_obj = model(**payload)
     db_obj.id = old_object.id
     if 'modified' in model.__table__.columns:
@@ -178,5 +178,43 @@ def update_or_404(model: object, object_id: int, payload: Dict) -> str:
 
     db.session.merge(db_obj)
     db.session.commit()
+
+    return create_response(db_obj.as_dict(), 200)
+
+
+def patch_or_404(model: object, object_id: int, payload: Dict) -> str:
+    """
+    Patches a single sqlalchemy model by id.
+
+    :param model: SQLAlchemy database model
+    :param object_id: patched objects id
+    :param payload: payload to patch the object with
+    :returns: the patched object as json, or 404
+    """
+
+    db_obj = model.query.get(object_id)
+    if not db_obj:
+        msg = "{} with an id {} doesn't exist.".format(
+            model.__table__, object_id)
+        return create_response(None, 404, msg)
+
+    # make sure that the id and created fields never get updated
+    payload.pop("id", None)
+    payload.pop("created", None)
+
+    # update SQLAlchemy object with new attributes
+    for key, value in payload.items():
+        setattr(db_obj, key, value)
+
+    # update the modified field, also
+    if 'modified' in model.__table__.columns:
+        db_obj.modified = datetime.utcnow()
+
+    try:
+        db.session.commit()
+    except IntegrityError:
+        msg = "Unable to patch the {}. Please check that all properties have valid values.".format(
+            str(model.__table__)[:-1])
+        return create_response(None, 404, msg)
 
     return create_response(db_obj.as_dict(), 200)

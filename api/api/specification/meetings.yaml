@@ -73,3 +73,21 @@ paths:
             $ref: '#/definitions/MeetingResponse'
         '404':
           description: No meeting found
+
+    patch:
+      operationId: api.logic.meetings.patch_meeting
+      parameters:
+        - in: body
+          name: body
+          description: (A partial) meeting object to be patched
+          required: true
+          schema:
+            $ref: '#/definitions/MeetingPatchObject'
+      responses:
+        '200':
+          description:  The patched meeting by id
+          schema:
+            $ref: '#/definitions/MeetingResponse'
+        '404':
+          description: No meeting found
+

@@ -84,6 +84,23 @@ paths:
         '404':
           description: No event found
 
+    patch:
+      operationId: api.logic.events.patch_event
+      parameters:
+        - in: body
+          name: body
+          description: (A partial) event object to be patched
+          required: true
+          schema:
+            $ref: '#/definitions/EventPatchObject'
+      responses:
+        '200':
+          description:  The patched event by id
+          schema:
+            $ref: '#/definitions/EventResponse'
+        '404':
+          description: No event found
+
   /suggestions/{suggestion_id}/events:
     parameters:
       - name: suggestion_id

@@ -1,6 +1,7 @@
 import connexion
 from ..models import Meeting
-from .common import get_one_or_404, get_all_or_404, create_or_404, delete_or_404, update_or_404
+from .common import (get_one_or_404, get_all_or_404, create_or_404,
+                     delete_or_404, update_or_404, patch_or_404)
 
 
 def get_meetings(limit: int = None, offset: int = None) -> str:
@@ -59,3 +60,14 @@ def put_meeting(meeting_id: int) -> str:
     """
 
     return update_or_404(Meeting, meeting_id, connexion.request.json)
+
+
+def patch_meeting(meeting_id: int) -> str:
+    """
+    Patches a single meeting by id.
+    Request body should include a single (partial) meeting object.
+
+    :returns: the patched meeting as json
+    """
+
+    return patch_or_404(Meeting, meeting_id, connexion.request.json)
