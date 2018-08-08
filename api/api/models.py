@@ -31,6 +31,11 @@ class SuggestionTypes(enum.IntEnum):
     MODIFY = 1
 
 
+class UserRoles(enum.IntEnum):
+    NORMAL = 0
+    ADMIN = 1
+
+
 class SerializableMixin():
     """
     Adds the method ´as_dict´ to an sqlalchemy model.
@@ -41,8 +46,17 @@ class SerializableMixin():
     e.g. __public__ = ['id', 'created', 'modified']
     """
 
+    def _serialize(self, obj):
+        """
+        A simple serializer override to handle Enums better.
+        This could also be done on overriding flask_app.json_encoder.
+        """
+        if isinstance(obj, enum.Enum):
+            return obj.name
+        return obj
+
     def as_dict(self, strip=True):
-        d = {c.name: getattr(self, c.name)
+        d = {c.name: self._serialize(getattr(self, c.name))
              for c in self.__table__.columns}
         if strip:  # strip hidden fields, such as meeting_id
             d = {k: v for k, v in d.items() if k in self.__public__}
@@ -200,12 +214,13 @@ class Tag(db.Model, SerializableMixin):
 
 class User(db.Model, SerializableMixin):
     __tablename__ = 'users'
-    __public__ = ['id', 'name', 'email']
+    __public__ = ['id', 'name', 'email', 'role']
 
     id = db.Column(db.Integer, primary_key=True)
     created = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     name = db.Column(db.String(64), index=True, nullable=False)
     email = db.Column(db.String(128), index=True, unique=True, nullable=False)
+    role = db.Column(db.Enum(UserRoles), default=UserRoles.NORMAL)
     password_hash = db.Column(db.String(128))
 
     events = db.relationship('Event', backref='user')

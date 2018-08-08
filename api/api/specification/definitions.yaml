@@ -152,20 +152,24 @@ definitions:
         example: "katten"
 
   status:
-    type: number
-    format: integer
-    description: 'Processing state of a particular `Suggestion`. For example: 0 - closed, 1 - needs review, 2 - reviewed, 3 - accepted into vocabulary.'
-    example: 0
+    type: string
+    enum:
+      - DEFAULT
+      - REJECTED
+      - ACCEPTED
+    description: 'Processing state of a particular `Suggestion`.'
+    example: DEFAULT
 
   uri:
     type: string
     example: 'http://www.yso.fi/onto/ysa/Y505224'
 
   suggestion_type:
-    type: number
-    format: integer
-    description: E.g. 0 for new concept suggestions and 1 for change suggestions
-    example: 0
+    type: string
+    enum:
+      - NEW
+      - MODIFY
+    description: "The type of a vocabulary suggestion: 'NEW' for new suggestions, 'MODIFY' for a modification."
 
   broader:
     type: array
@@ -267,6 +271,8 @@ definitions:
         type: array
         items:
           type: number
+      role:
+        $ref: "#/definitions/role"
     required:
       - id
       - name
@@ -298,6 +304,14 @@ definitions:
   password:
     type: string
     example: 'mysecretpassword'
+  
+  role:
+    type: string
+    enum:
+      - NORMAL
+      - ADMIN
+    description: 'User role, NORMAL or ADMIN. '
+    example: NORMAL
 
 # EVENT
 
@@ -351,8 +365,12 @@ definitions:
       - text
   
   event_type:
-    # could also be an enum
-    type: number
+    type: string
+    enum:
+      - ACTION
+      - COMMENT
+    description: 'The type of an event. Eithern an event stream ACTION or COMMENT.'
+    example: ACTION
   
   text:
     type: string

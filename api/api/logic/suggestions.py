@@ -2,25 +2,10 @@ from typing import Dict
 import connexion
 from sqlalchemy import or_
 from sqlalchemy.types import Unicode
-from ..models import db, Suggestion, SuggestionTypes, SuggestionStatusTypes
-from .common import (get_one_or_404, get_all_or_404_custom,
-                     create_or_404, delete_or_404, update_or_404)
+from ..models import db, Meeting, Suggestion, SuggestionTypes, SuggestionStatusTypes
+from .common import (get_one_or_404, get_all_or_404_custom, id_exists,
+                     create_or_404, create_response, delete_or_404, update_or_404)
 from .utils import SUGGESTION_FILTER_FUNCTIONS, SUGGESTION_SORT_FUNCTIONS
-
-
-def _suggestion_response_into_model(response: Dict) -> Dict:
-    """
-    Modifies the response in a way that it fits the Suggestion model schema.
-    """
-    suggestion_type = response.get('suggestion_type')
-    status = response.get('status')
-
-    if suggestion_type:
-        response['suggestion_type'] = SuggestionTypes(suggestion_type).name
-    if status:
-        response['status'] = SuggestionStatusTypes(status).name
-
-    return response
 
 
 def get_suggestions(limit: int = None, offset: int = None, filters: str = None, search: str = None, sort: str = 'DEFAULT') -> str:
@@ -84,8 +69,12 @@ def post_suggestion() -> str:
     :returns: the created suggestion as json
     """
 
-    suggestion_dict = _suggestion_response_into_model(connexion.request.json)
-    return create_or_404(Suggestion, suggestion_dict)
+    # Check that the meeting_id is valid before creating the suggestion
+    meeting_id = connexion.request.json.get('meeting_id')
+    if meeting_id and not id_exists(Meeting, meeting_id):
+        return create_response({}, 404, "A valid meeting_id is required.")
+
+    return create_or_404(Suggestion, connexion.request.json)
 
 
 def get_suggestion(suggestion_id: int) -> str:
@@ -107,8 +96,7 @@ def put_suggestion(suggestion_id: int) -> str:
     :returns: the created suggestion as json
     """
 
-    suggestion_dict = _suggestion_response_into_model(connexion.request.json)
-    return update_or_404(Suggestion, suggestion_id, suggestion_dict)
+    return update_or_404(Suggestion, suggestion_id, connexion.request.json)
 
 
 def delete_suggestion(suggestion_id: int) -> str:
