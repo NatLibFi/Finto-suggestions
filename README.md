@@ -2,31 +2,39 @@
 
 ## Architecture
 
-A Docker setup for development has been created with docker-compose. It consists of three containers: API (Python3.6/Flask), Frontend (Vue.js) and Nginx forward-proxy. Nginx proxies both Flask API (localhost:8080/api) and Vue.js frontend (localhost:8080/) to host machine's port 8080.
+A Docker setup for development has been created with docker-compose. It consists of three containers: API (Python3.6/Flask), Frontend (Vue.js) and Nginx forward-proxy. Nginx proxies both Flask API (localhost:8080/api) and Vue.js frontend (localhost:8080/) to host machine's port 8080. API Uses a PostgreSQL database for data persistence.
 
 ```
-             localhost:8080
-                  +
-                  |
-+------------------------------------+
-|                 | :8080            |
-|            +----v-----+            |
-|            |          |            |
-|            |  NGINX   |            |
-|            |          |            |
-|            +---+--+---+            |
-|                |  |                |
-|          /api  |  |  /*            |
-|                |  |                |
-|      :8050     |  |    :8040       |
-|   +----------+ |  | +----------+   |
-|   |          | |  | |          |   |
-|   |   API    <-+  +->   WEB    |   |
-|   |          |      |          |   |
-|   +----------+      +----------+   |
-|    Flask API       Vue.js frontend |
-|                                    |
-+------------------------------------+
+                localhost:8080
+                     +
+                     |
++------------------------------------------+
+|                    | :8080               |
+|               +----v-----+               |
+|               |          |               |
+|               |  NGINX   |               |
+|               |          |               |
+|               +----------+               |
+|                   |  |                   |
+|             /api  |  |  /*               |
+|                   |  |                   |
+|         :8050     |  |    :8040          |
+|      +----------+ |  | +----------+      |
+|      |          | |  | |          |      |
+| +---->   API    <-+  +->   WEB    |      |
+| |    |          |      |          |      |
+| |    +----------+      +----------+      |
+| |     Flask API       Vue.js frontend    |
+| |                                        |
+| |       :5432                            |
+| |    +----------+                        |
+| |    |          |                        |
+| +---->   PSQL   |                        |
+|      |          |                        |
+|      +----------+                        |
+|                                          |
++------------------------------------------+
+
 
 http://asciiflow.com/
 ```
