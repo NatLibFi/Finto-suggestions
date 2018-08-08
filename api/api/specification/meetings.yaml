@@ -91,3 +91,23 @@ paths:
         '404':
           description: No meeting found
 
+  /meetings/{meeting_id}/suggestions:
+    parameters:
+      - name: meeting_id
+        in: path
+        type: integer
+        required: true
+    post:
+      operationId: api.logic.meetings.add_suggestions_to_meeting
+      parameters:
+        - in: body
+          name: body
+          description: A list of suggestion IDs to be added to the meeting.
+          required: true
+          schema:
+            $ref: '#/definitions/AddSuggestionToMeetingParameterObject'
+      responses:
+        "201":
+          description:  Updated meeting object
+          schema:
+            $ref: '#/definitions/MeetingResponse'

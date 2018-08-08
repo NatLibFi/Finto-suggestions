@@ -198,7 +198,7 @@ def patch_or_404(model: object, object_id: int, payload: Dict) -> str:
             model.__table__, object_id)
         return create_response(None, 404, msg)
 
-    # make sure that the id and created fields never get updated
+    # make sure that the `id` and `created` fields never get updated
     payload.pop("id", None)
     payload.pop("created", None)
 

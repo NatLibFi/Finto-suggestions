@@ -1,7 +1,8 @@
 import connexion
-from ..models import Meeting
+from ..models import db, Meeting, Suggestion
 from .common import (get_one_or_404, get_all_or_404, create_or_404,
-                     delete_or_404, update_or_404, patch_or_404)
+                     delete_or_404, update_or_404, patch_or_404,
+                     create_response)
 
 
 def get_meetings(limit: int = None, offset: int = None) -> str:
@@ -71,3 +72,30 @@ def patch_meeting(meeting_id: int) -> str:
     """
 
     return patch_or_404(Meeting, meeting_id, connexion.request.json)
+
+
+def add_suggestions_to_meeting(meeting_id: int) -> str:
+    """
+    Adds the given suggestions to the meeting.
+
+    :returns: the updated meeting as json
+    """
+
+    suggestion_ids = connexion.request.json.get('suggestion_ids')
+    meeting = Meeting.query.get(meeting_id)
+
+    if meeting:
+        # update the suggestions one-by-one to overwrite any existing meeting_ids
+        # since a suggestion can only be associated with a single meeting at a time
+        for suggestion_id in suggestion_ids:
+            suggestion = Suggestion.query.get(suggestion_id)
+            suggestion.meeting_id = meeting_id
+
+        db.session.commit()
+
+        return create_response(meeting.as_dict(), 200,
+                               'Successfully added suggestions {} to the meeting {}.'
+                               .format(suggestion_ids, meeting_id))
+
+    else:
+        return create_response({}, 404, "Meeting with an id {} doesn't exist.".format(meeting_id))

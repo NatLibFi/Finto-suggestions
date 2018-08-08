@@ -463,6 +463,17 @@ definitions:
     required:
       - name
 
+  AddSuggestionToMeetingParameterObject:
+    type: object
+    additionalProperties: false
+    properties:
+      suggestion_ids:
+        type: array
+        items:
+          type: number
+    required:
+        - suggestion_ids  
+
   meeting_date:
     type: string
     format: date-time
