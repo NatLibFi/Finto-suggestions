@@ -459,11 +459,11 @@ definitions:
       - ACTION
       - COMMENT
     description: 'The type of an event. Eithern an event stream ACTION or COMMENT.'
-    example: ACTION
+    example: COMMENT
   
   text:
     type: string
-    example: "This is just a basic comment"
+    example: "Hello there!"
 
 
 # MEETING

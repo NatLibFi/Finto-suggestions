@@ -1,4 +1,5 @@
 import connexion
+from ..authentication import admin_only
 from ..models import db, Meeting, Suggestion
 from .common import (get_one_or_404, get_all_or_404, create_or_404,
                      delete_or_404, update_or_404, patch_or_404,
@@ -30,6 +31,7 @@ def get_meeting(meeting_id: int) -> str:
     return get_one_or_404(Meeting, meeting_id)
 
 
+@admin_only
 def post_meeting() -> str:
     """
     Creates a single meeting.
@@ -41,6 +43,7 @@ def post_meeting() -> str:
     return create_or_404(Meeting, connexion.request.json)
 
 
+@admin_only
 def delete_meeting(meeting_id: int) -> str:
     """
     Deletes a meeting by id.
@@ -52,6 +55,7 @@ def delete_meeting(meeting_id: int) -> str:
     return delete_or_404(Meeting, meeting_id)
 
 
+@admin_only
 def put_meeting(meeting_id: int) -> str:
     """
     Updates a single meeting by id.
@@ -63,6 +67,7 @@ def put_meeting(meeting_id: int) -> str:
     return update_or_404(Meeting, meeting_id, connexion.request.json)
 
 
+@admin_only
 def patch_meeting(meeting_id: int) -> str:
     """
     Patches a single meeting by id.
@@ -74,6 +79,7 @@ def patch_meeting(meeting_id: int) -> str:
     return patch_or_404(Meeting, meeting_id, connexion.request.json)
 
 
+@admin_only
 def add_suggestions_to_meeting(meeting_id: int) -> str:
     """
     Adds the given suggestions to the meeting.

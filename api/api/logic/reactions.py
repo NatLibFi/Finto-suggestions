@@ -1,4 +1,5 @@
 import connexion
+from ..authentication import authorized
 from .validators import reaction_parameter_validator
 from ..models import Reaction
 from .common import (get_one_or_404, get_all_or_404, create_or_404,
@@ -30,6 +31,7 @@ def get_reaction(reaction_id: int) -> str:
     return get_one_or_404(Reaction, reaction_id)
 
 
+@authorized
 @reaction_parameter_validator
 def post_reaction() -> str:
     """
@@ -42,6 +44,7 @@ def post_reaction() -> str:
     return create_or_404(Reaction, connexion.request.json)
 
 
+@authorized
 def delete_reaction(reaction_id: int) -> str:
     """
     Deletes a reaction by id.
@@ -53,6 +56,7 @@ def delete_reaction(reaction_id: int) -> str:
     return delete_or_404(Reaction, reaction_id)
 
 
+@authorized
 @reaction_parameter_validator
 def put_reaction(reaction_id: int) -> str:
     """
@@ -65,6 +69,7 @@ def put_reaction(reaction_id: int) -> str:
     return update_or_404(Reaction, reaction_id, connexion.request.json)
 
 
+@authorized
 @reaction_parameter_validator
 def patch_reaction(reaction_id: int) -> str:
     """

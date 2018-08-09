@@ -3,6 +3,7 @@ from typing import Dict
 from sqlalchemy import exists
 from sqlalchemy.exc import IntegrityError
 from ..models import db
+from ..authentication import verify_user_access_to_resource
 
 
 class InvalidFilterException(Exception):
@@ -121,6 +122,8 @@ def create_or_404(model: object, payload: Dict, error_msg: str = None) -> str:
     """
     db_obj = model(**payload)
 
+    verify_user_access_to_resource(db_obj)
+
     try:
         db.session.add(db_obj)
         db.session.commit()
@@ -142,15 +145,17 @@ def delete_or_404(model: object, primary_key: int) -> str:
     :returns: 204, No Content on success, 404 on error
     """
 
-    obj = model.query.get(primary_key)
-    if obj:
-        db.session.delete(obj)
-        db.session.commit()
-        return (None, 204)  # No Content
+    db_obj = model.query.get(primary_key)
 
-    msg = "No {} found with id {}.".format(
-        model.__table__, primary_key)
-    return create_response(None, 404, msg)
+    if not db_obj:
+        msg = "No {} found with id {}.".format(model.__table__, primary_key)
+        return create_response(None, 404, msg)
+
+    verify_user_access_to_resource(db_obj)
+
+    db.session.delete(db_obj)
+    db.session.commit()
+    return (None, 204)  # No Content
 
 
 def update_or_404(model: object, primary_key: int, payload: Dict) -> str:
@@ -168,6 +173,8 @@ def update_or_404(model: object, primary_key: int, payload: Dict) -> str:
         msg = "{} with an id {} doesn't exist.".format(
             str(model.__table__)[:-1], primary_key)
         return create_response(None, 404, msg)
+
+    verify_user_access_to_resource(old_object)
 
     # create a new model instance, but replace its id
     db_obj = model(**payload)
@@ -198,6 +205,8 @@ def patch_or_404(model: object, primary_key: int, payload: Dict) -> str:
         msg = "{} with an id {} doesn't exist.".format(
             str(model.__table__)[:-1], primary_key)
         return create_response(None, 404, msg)
+
+    verify_user_access_to_resource(db_obj)
 
     # make sure that the `id` and `created` fields never get updated
     payload.pop("id", None)

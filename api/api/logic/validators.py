@@ -112,9 +112,11 @@ def event_parameter_validator(f):
         if user_id is not None and not id_exists(User, user_id):
             return create_response({}, 404, _error_messagify(User))
 
-        if payload.get('event_type') == 'COMMENT' and user_id is None:
-            msg = 'A valid user_id is required for events of type `COMMENT`.'
-            return create_response({}, 404, msg)
+        # Currently applies also to PATCH!
+
+        # if payload.get('event_type') == 'COMMENT' and user_id is None:
+        #     msg = 'A valid user_id is required for events of type `COMMENT`.'
+        #     return create_response({}, 404, msg)
 
         return f(*args, **kw)
 

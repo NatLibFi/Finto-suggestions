@@ -1,4 +1,5 @@
 import connexion
+from ..authentication import admin_only
 from ..models import User
 from .common import (get_all_or_404, get_one_or_404,
                      create_or_404, delete_or_404,
@@ -43,6 +44,7 @@ def post_user() -> str:
     return create_or_404(User, connexion.request.json, error_msg=msg)
 
 
+@admin_only
 def delete_user(user_id: int) -> str:
     """
     Deletes a user by id.
@@ -54,6 +56,7 @@ def delete_user(user_id: int) -> str:
     return delete_or_404(User, user_id)
 
 
+@admin_only
 def put_user(user_id: int) -> str:
     """
     Updates a single user by id.
@@ -65,6 +68,7 @@ def put_user(user_id: int) -> str:
     return update_or_404(User, user_id, connexion.request.json)
 
 
+@admin_only
 def patch_user(user_id: int) -> str:
     """
     Patches a single user by id.

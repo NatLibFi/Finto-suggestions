@@ -1,11 +1,10 @@
 import connexion
 from sqlalchemy import or_
 from sqlalchemy.types import Unicode
+from ..authentication import admin_only
 from .validators import suggestion_parameter_validator, suggestion_id_validator
-from .common import (create_response, id_exists,
-                     get_one_or_404, get_all_or_404_custom,
-                     create_or_404, delete_or_404,
-                     patch_or_404, update_or_404)
+from .common import (create_response, get_one_or_404, get_all_or_404_custom,
+                     create_or_404, delete_or_404, patch_or_404, update_or_404)
 from .utils import SUGGESTION_FILTER_FUNCTIONS, SUGGESTION_SORT_FUNCTIONS
 from ..models import db, Suggestion, Tag
 
@@ -86,6 +85,7 @@ def post_suggestion() -> str:
     return create_or_404(Suggestion, connexion.request.json)
 
 
+@admin_only
 @suggestion_parameter_validator
 def put_suggestion(suggestion_id: int) -> str:
     """
@@ -98,6 +98,7 @@ def put_suggestion(suggestion_id: int) -> str:
     return update_or_404(Suggestion, suggestion_id, connexion.request.json)
 
 
+@admin_only
 @suggestion_parameter_validator
 def patch_suggestion(suggestion_id: int) -> str:
     """
@@ -110,6 +111,7 @@ def patch_suggestion(suggestion_id: int) -> str:
     return patch_or_404(Suggestion, suggestion_id, connexion.request.json)
 
 
+@admin_only
 def delete_suggestion(suggestion_id: int) -> str:
     """
     Deletes a suggestion by id.
@@ -121,6 +123,7 @@ def delete_suggestion(suggestion_id: int) -> str:
     return delete_or_404(Suggestion, suggestion_id)
 
 
+@admin_only
 @suggestion_id_validator
 def add_tags_to_suggestion(suggestion_id: int) -> str:
     """
@@ -151,6 +154,7 @@ def add_tags_to_suggestion(suggestion_id: int) -> str:
     return create_response(suggestion.as_dict(), 200)
 
 
+@admin_only
 @suggestion_id_validator
 def remove_tags_from_suggestion(suggestion_id: int) -> str:
     """

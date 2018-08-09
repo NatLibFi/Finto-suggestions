@@ -1,4 +1,5 @@
 import connexion
+from ..authentication import admin_only
 from ..models import Tag
 from .common import get_one_or_404, get_all_or_404, create_or_404, delete_or_404, update_or_404
 
@@ -28,6 +29,7 @@ def get_tag(tag_label: str) -> str:
     return get_one_or_404(Tag, tag_label.upper())
 
 
+@admin_only
 def post_tag() -> str:
     """
     Creates a single tag.
@@ -39,6 +41,7 @@ def post_tag() -> str:
     return create_or_404(Tag, connexion.request.json)
 
 
+@admin_only
 def put_tag(tag_label: str) -> str:
     """
     Updates a single tag by label.
@@ -51,6 +54,7 @@ def put_tag(tag_label: str) -> str:
     return update_or_404(Tag, tag_label, connexion.request.json)
 
 
+@admin_only
 def delete_tag(tag_label: str) -> str:
     """
     Deletes a tag by label.

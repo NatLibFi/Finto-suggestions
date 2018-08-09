@@ -1,6 +1,7 @@
 import connexion
-from ..models import Event, Suggestion, User
-from .common import (create_response, id_exists, get_all_or_404_custom,
+from ..models import Event
+from ..authentication import authorized
+from .common import (get_all_or_404_custom,
                      get_one_or_404, create_or_404, delete_or_404,
                      patch_or_404, update_or_404)
 from .validators import event_parameter_validator
@@ -43,6 +44,7 @@ def get_event(event_id: int) -> str:
     return get_one_or_404(Event, event_id)
 
 
+@authorized
 @event_parameter_validator
 def post_event() -> str:
     """
@@ -57,6 +59,7 @@ def post_event() -> str:
     return create_or_404(Event, connexion.request.json)
 
 
+@authorized
 @event_parameter_validator
 def put_event(event_id: int) -> str:
     """
@@ -69,10 +72,11 @@ def put_event(event_id: int) -> str:
     return update_or_404(Event, event_id, connexion.request.json)
 
 
+@authorized
 @event_parameter_validator
 def patch_event(event_id: int) -> str:
     """
-    Patcjes a single event by id.
+    Patches a single event by id.
     Request body should include a single (partial) event object.
 
     :returns: the created event as json
@@ -81,6 +85,7 @@ def patch_event(event_id: int) -> str:
     return patch_or_404(Event, event_id, connexion.request.json)
 
 
+@authorized
 def delete_event(event_id: int) -> str:
     """
     Deletes an event by id.
