@@ -157,6 +157,11 @@ definitions:
         $ref: "#/definitions/organization"
       meeting_id:
         type: number
+      tags:
+        type: array
+        items:
+          type: string
+          example: "ACCEPTED"
     required:
       - preferred_label
       - uri
@@ -235,6 +240,8 @@ definitions:
     items:
       type: string
       description: An array of related concept URIs
+      example:
+        - 'http://www.yso.fi/onto/ysa/Y12345'
 
   group:
     type: array
@@ -603,7 +610,7 @@ definitions:
       id:
         type: number
       code:
-        type: string
+        $ref: "#/definitions/code"
       event_id:
         type: number
       suggestion_id:
@@ -617,7 +624,7 @@ definitions:
     additionalProperties: false
     properties:
       code:
-        type: string
+        $ref: "#/definitions/code"
       event_id:
         type: number
       suggestion_id:
@@ -630,7 +637,7 @@ definitions:
     additionalProperties: false
     properties:
       code:
-        type: string
+        $ref: "#/definitions/code"
       event_id:
         type: number
       suggestion_id:
@@ -640,3 +647,7 @@ definitions:
     required:
       - code
       - user_id
+
+  code:
+    type: string
+    example: ":thumbsup:"

@@ -36,6 +36,9 @@ def id_exists(model: object, object_id: int) -> bool:
     :returns: True if id exists, or id is None. False if user was not found in the model.
     """
 
+    if object_id is None:
+        return False
+
     return db.session.query(exists().where(model.id == object_id)).scalar()
 
 
