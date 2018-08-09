@@ -84,18 +84,21 @@ def add_suggestions_to_meeting(meeting_id: int) -> str:
     suggestion_ids = connexion.request.json.get('suggestion_ids')
     meeting = Meeting.query.get(meeting_id)
 
+    successfully_added_list = []
     if meeting:
         # update the suggestions one-by-one to overwrite any existing meeting_ids
         # since a suggestion can only be associated with a single meeting at a time
         for suggestion_id in suggestion_ids:
             suggestion = Suggestion.query.get(suggestion_id)
-            suggestion.meeting_id = meeting_id
+            if suggestion:
+                suggestion.meeting_id = meeting_id
+                successfully_added_list.append(suggestion_id)
 
         db.session.commit()
 
+        msg = 'Successfully added {} suggestions (IDs: {}) to meeting {}.'
         return create_response(meeting.as_dict(), 200,
-                               'Successfully added suggestions {} to the meeting {}.'
-                               .format(suggestion_ids, meeting_id))
+                               msg.format(len(successfully_added_list), successfully_added_list, meeting_id))
 
     else:
         return create_response({}, 404, "Meeting with an id {} doesn't exist.".format(meeting_id))
