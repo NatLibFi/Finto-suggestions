@@ -3,6 +3,7 @@ from ..models import Event, Suggestion, User
 from .common import (create_response, id_exists, get_all_or_404_custom,
                      get_one_or_404, create_or_404, delete_or_404,
                      patch_or_404, update_or_404)
+from .validators import events_validator
 
 
 def get_events(limit: int = None, offset: int = None, user_id: int = None, suggestion_id: int = None) -> str:
@@ -42,6 +43,7 @@ def get_event(event_id: int) -> str:
     return get_one_or_404(Event, event_id)
 
 
+@events_validator
 def post_event() -> str:
     """
     Creates a single event.
@@ -52,15 +54,31 @@ def post_event() -> str:
     :returns: the created event as json
     """
 
-    event = connexion.request.json
+    return create_or_404(Event, connexion.request.json)
 
-    # Check, that the user and/or suggestion exists before continuing the update
-    if not id_exists(User, event.get('user_id')):
-        return create_response(None, 404, "Given user id {} doesn't exist".format(event.get('user_id')))
-    if not id_exists(Suggestion, event.get('suggestion_id')):
-        return create_response(None, 404, "Given suggestion id {} doesn't exist".format(event.get('suggestion_id')))
 
-    return create_or_404(Event, event)
+@events_validator
+def put_event(event_id: int) -> str:
+    """
+    Updates a single event by id.
+    Request body should include a single event object.
+
+    :returns: the created event as json
+    """
+
+    return update_or_404(Event, event_id, connexion.request.json)
+
+
+@events_validator
+def patch_event(event_id: int) -> str:
+    """
+    Patcjes a single event by id.
+    Request body should include a single (partial) event object.
+
+    :returns: the created event as json
+    """
+
+    return patch_or_404(Event, event_id, connexion.request.json)
 
 
 def delete_event(event_id: int) -> str:
@@ -72,44 +90,6 @@ def delete_event(event_id: int) -> str:
     """
 
     return delete_or_404(Event, event_id)
-
-
-def put_event(event_id: int) -> str:
-    """
-    Updates a single event by id.
-    Request body should include a single event object.
-
-    :returns: the created event as json
-    """
-
-    event = connexion.request.json
-
-    # Check, that the event and/or suggestion exists before continuing the update
-    if not id_exists(User, event.get('user_id')):
-        return create_response(None, 404, "Given user id {} doesn't exist".format(event.get('user_id')))
-    if not id_exists(Suggestion, event.get('suggestion_id')):
-        return create_response(None, 404, "Given suggestion id {} doesn't exist".format(event.get('suggestion_id')))
-
-    return update_or_404(Event, event_id, event)
-
-
-def patch_event(event_id: int) -> str:
-    """
-    Patcjes a single event by id.
-    Request body should include a single (partial) event object.
-
-    :returns: the created event as json
-    """
-
-    event = connexion.request.json
-
-    # Check, that the user and/or suggestion exists before continuing the update
-    if not id_exists(User, event.get('user_id')):
-        return create_response(None, 404, "Given user id {} doesn't exist".format(event.get('user_id')))
-    if not id_exists(Suggestion, event.get('suggestion_id')):
-        return create_response(None, 404, "Given suggestion id {} doesn't exist".format(event.get('suggestion_id')))
-
-    return patch_or_404(Event, event_id, event)
 
 
 def get_events_by_suggestion(limit: int = None, offset: int = None, suggestion_id: int = None) -> str:

@@ -106,7 +106,7 @@ def get_one_or_404(model: object, object_id: int) -> str:
     if db_obj:
         return create_response(db_obj.as_dict(), 200)
 
-    msg = "Could not find a {} with an id {}.".format(
+    msg = "Unable to find any {} with an id of {}.".format(
         model.__table__, object_id)
     return create_response(None, 404, msg)
 

@@ -427,6 +427,7 @@ definitions:
     required:
       - event_type
       - text
+      - suggestion_id
   
   EventPatchObject:
     type: object

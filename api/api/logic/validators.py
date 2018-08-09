@@ -28,9 +28,6 @@ def _error_messagify(model):
 
 
 def suggestions_validator(f):
-    """
-    A custom validator decorator for Suggestions.
-    """
     @wraps(f)
     def wrapper(*args, **kw):
 
@@ -57,15 +54,11 @@ def suggestions_validator(f):
 
 
 def reactions_validator(f):
-    """
-    A custom validator decorator for Reactions.
-    """
-
     @wraps(f)
     def wrapper(*args, **kw):
         payload = connexion.request.json
 
-        # Connexion doesn't support OpenAPI v3.0 yetm so no oneOf in schema :(
+        # Connexion doesn't support OpenAPI v3.0 yet so no use for oneOf in schema :(
         # https://github.com/zalando/connexion/issues/420
         # Let's do it here
 
@@ -75,7 +68,7 @@ def reactions_validator(f):
         # Return an error message if both are present or none of either are present
         if (event_id is not None and suggestion_id is not None) or \
            (event_id is None and suggestion_id is None):
-            msg = "Only one of either event_id or suggestion_id is required."
+            msg = 'Only one of either event_id or suggestion_id is required.'
             return create_response({}, 404, msg)
 
         if event_id is not None and not id_exists(Event, event_id):
@@ -87,6 +80,28 @@ def reactions_validator(f):
         user_id = payload.get('user_id')
         if not id_exists(User, user_id):
             return create_response({}, 404, _error_messagify(User))
+
+        return f(*args, **kw)
+
+    return wrapper
+
+
+def events_validator(f):
+    @wraps(f)
+    def wrapper(*args, **kw):
+        payload = connexion.request.json
+
+        suggestion_id = payload.get('suggestion_id')
+        if suggestion_id is not None and not id_exists(Suggestion, suggestion_id):
+            return create_response({}, 404, _error_messagify(Suggestion))
+
+        user_id = payload.get('user_id')
+        if user_id is not None and not id_exists(User, user_id):
+            return create_response({}, 404, _error_messagify(User))
+
+        if payload.get('event_type') == 'COMMENT' and user_id is None:
+            msg = 'A valid user_id is required for events of type `COMMENT`.'
+            return create_response({}, 404, msg)
 
         return f(*args, **kw)
 
