@@ -72,9 +72,11 @@ def reactions_validator(f):
         event_id = payload.get('event_id')
         suggestion_id = payload.get('suggestion_id')
 
-        # only one of either is allowed
-        if event_id is not None and suggestion_id is not None:
-            return create_response({}, 404, "Only on of either event_id or suggestion_id is allowed.")
+        # Return an error message if both are present or none of either are present
+        if (event_id is not None and suggestion_id is not None) or \
+           (event_id is None and suggestion_id is None):
+            msg = "Only one of either event_id or suggestion_id is required."
+            return create_response({}, 404, msg)
 
         if event_id is not None and not id_exists(Event, event_id):
             return create_response({}, 404, _error_messagify(Event))
