@@ -138,3 +138,37 @@ paths:
           description: Deleted suggestion
         '404':
           description: No suggestion could be found with the given ID
+
+  /suggestions/{suggestion_id}/tags:
+    parameters:
+      - name: suggestion_id
+        in: path
+        type: integer
+        required: true
+    post:
+      operationId: api.logic.suggestions.add_tags_to_suggestion
+      parameters:
+        - in: body
+          name: body
+          description: A list of tag labels (string) to be added to the suggestion.
+          required: true
+          schema:
+            $ref: '#/definitions/TagListParameterObject'
+      responses:
+        "201":
+          description:  Updated meeting object
+          schema:
+            $ref: '#/definitions/SuggestionResponse'
+
+    delete:
+      operationId: api.logic.suggestions.remove_tags_from_suggestion
+      parameters:
+        - in: body
+          name: body
+          description: A list of tag labels (string) to be removed from the suggestion.
+          required: true
+          schema:
+            $ref: '#/definitions/TagListParameterObject'
+      responses:
+        '204':
+          description: List of deleted tags

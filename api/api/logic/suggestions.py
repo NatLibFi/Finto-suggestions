@@ -1,12 +1,13 @@
 import connexion
 from sqlalchemy import or_
 from sqlalchemy.types import Unicode
-from .validators import suggestions_validator
-from .common import (get_one_or_404, get_all_or_404_custom,
+from .validators import suggestion_parameter_validator, suggestion_id_validator
+from .common import (create_response, id_exists,
+                     get_one_or_404, get_all_or_404_custom,
                      create_or_404, delete_or_404,
                      patch_or_404, update_or_404)
 from .utils import SUGGESTION_FILTER_FUNCTIONS, SUGGESTION_SORT_FUNCTIONS
-from ..models import db, Suggestion
+from ..models import db, Suggestion, Tag
 
 
 def get_suggestions(limit: int = None, offset: int = None, filters: str = None, search: str = None, sort: str = 'DEFAULT') -> str:
@@ -71,7 +72,7 @@ def get_suggestion(suggestion_id: int) -> str:
     return get_one_or_404(Suggestion, suggestion_id)
 
 
-@suggestions_validator
+@suggestion_parameter_validator
 def post_suggestion() -> str:
     """
     Creates a single suggestion.
@@ -85,7 +86,7 @@ def post_suggestion() -> str:
     return create_or_404(Suggestion, connexion.request.json)
 
 
-@suggestions_validator
+@suggestion_parameter_validator
 def put_suggestion(suggestion_id: int) -> str:
     """
     Updates a single suggestion by id.
@@ -97,7 +98,7 @@ def put_suggestion(suggestion_id: int) -> str:
     return update_or_404(Suggestion, suggestion_id, connexion.request.json)
 
 
-@suggestions_validator
+@suggestion_parameter_validator
 def patch_suggestion(suggestion_id: int) -> str:
     """
     Updates a single suggestion by id.
@@ -118,3 +119,57 @@ def delete_suggestion(suggestion_id: int) -> str:
     """
 
     return delete_or_404(Suggestion, suggestion_id)
+
+
+@suggestion_id_validator
+def add_tags_to_suggestion(suggestion_id: int) -> str:
+    """
+    Adds the given tags to the suggestion.
+    New tags are created on the go, if they don't yet exist.
+
+    :returns: the updated suggestion as json
+    """
+
+    def _get_or_create_tag(label):
+        instance = Tag.query.get(label)
+        if not instance:
+            instance = Tag(label=label)
+            db.session.add(instance)
+            db.session.commit()
+
+        return instance
+
+    payload = connexion.request.json
+
+    suggestion = Suggestion.query.get(suggestion_id)
+    for label in [label.upper() for label in payload.get('tags')]:
+        tag = _get_or_create_tag(label)
+        suggestion.tags.append(tag)
+
+    db.session.commit()
+
+    return create_response(suggestion.as_dict(), 200)
+
+
+@suggestion_id_validator
+def remove_tags_from_suggestion(suggestion_id: int) -> str:
+    """
+    Removes the given tags from the suggestion.
+
+    :param id: Suggestion id
+    :returns: 204, No Content on success
+    """
+
+    payload = connexion.request.json
+
+    suggestion = Suggestion.query.get(suggestion_id)
+    tag_labels_upper = [label.upper() for label in payload.get('tags')]
+    tags = db.session.query(Tag).filter(Tag.label.in_(tag_labels_upper)).all()
+
+    for tag in tags:
+        if tag in suggestion.tags:
+            suggestion.tags.remove(tag)
+
+    db.session.commit()
+
+    return create_response({}, 204)

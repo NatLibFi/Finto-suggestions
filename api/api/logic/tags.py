@@ -17,15 +17,15 @@ def get_tags(limit: int = None, offset: int = None) -> str:
     return get_all_or_404(Tag, limit, offset)
 
 
-def get_tag(tag_id: int) -> str:
+def get_tag(tag_label: str) -> str:
     """
-    Returns a tag by id.
+    Returns a tag by label.
 
-    :param tag_id: tag id
+    :param tag_label: tag label
     :returns: A single tag object as json
     """
 
-    return get_one_or_404(Tag, tag_id)
+    return get_one_or_404(Tag, tag_label.upper())
 
 
 def post_tag() -> str:
@@ -39,23 +39,24 @@ def post_tag() -> str:
     return create_or_404(Tag, connexion.request.json)
 
 
-def delete_tag(tag_id: int) -> str:
+def put_tag(tag_label: str) -> str:
     """
-    Deletes a tag by id.
-
-    :param tag_id: tag id
-    :returns: 204, No Content on success, 404 on error
-    """
-
-    return delete_or_404(Tag, tag_id)
-
-
-def put_tag(tag_id: int) -> str:
-    """
-    Updates a single tag by id.
+    Updates a single tag by label.
     Request body should include a single tag object.
 
+    :param tag_label: tag label
     :returns: the created tag as json
     """
 
-    return update_or_404(Tag, tag_id, connexion.request.json)
+    return update_or_404(Tag, tag_label, connexion.request.json)
+
+
+def delete_tag(tag_label: str) -> str:
+    """
+    Deletes a tag by label.
+
+    :param tag_label: tag label
+    :returns: 204, No Content on success, 404 on error
+    """
+
+    return delete_or_404(Tag, tag_label.upper())

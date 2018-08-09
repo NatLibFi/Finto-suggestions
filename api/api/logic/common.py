@@ -94,20 +94,20 @@ def get_all_or_404(model, limit: int, offset: int) -> str:
     return get_all_or_404_custom(query_func)
 
 
-def get_one_or_404(model: object, object_id: int) -> str:
+def get_one_or_404(model: object, primary_key: int) -> str:
     """
-    Returns an object by id.
+    Returns an object by primary_key.
 
     :param meeting_id: database column id
     :returns: success 200 with a serialized object or 404 and an error message as JSON
     """
-    db_obj = model.query.get(object_id)
+    db_obj = model.query.get(primary_key)
 
     if db_obj:
         return create_response(db_obj.as_dict(), 200)
 
     msg = "Unable to find any {} with an id of {}.".format(
-        model.__table__, object_id)
+        model.__table__, primary_key)
     return create_response(None, 404, msg)
 
 
@@ -133,40 +133,40 @@ def create_or_404(model: object, payload: Dict, error_msg: str = None) -> str:
     return create_response(db_obj.as_dict(), 200)
 
 
-def delete_or_404(model: object, object_id: int) -> str:
+def delete_or_404(model: object, primary_key: int) -> str:
     """
-    Deletes an object by id from the database.
+    Deletes an object by primary_key from the database.
 
     :param model: sqlalchemy database object (column) to delete from 
-    :param object_id: object id
+    :param primary_key: primary_key
     :returns: 204, No Content on success, 404 on error
     """
 
-    success = model.query.filter_by(id=object_id).delete()
-    db.session.commit()
-
-    if success:
+    obj = model.query.get(primary_key)
+    if obj:
+        db.session.delete(obj)
+        db.session.commit()
         return (None, 204)  # No Content
 
     msg = "No {} found with id {}.".format(
-        model.__table__, object_id)
+        model.__table__, primary_key)
     return create_response(None, 404, msg)
 
 
-def update_or_404(model: object, object_id: int, payload: Dict) -> str:
+def update_or_404(model: object, primary_key: int, payload: Dict) -> str:
     """
     Updates a single sqlalchemy model by id.
 
     :param model: SQLAlchemy database model
-    :param object_id: updated objects id
+    :param primary_key: updated primary_key
     :param payload: payload to update the object with
     :returns: the updated object as json, or 404
     """
 
-    old_object = model.query.get(object_id)
+    old_object = model.query.get(primary_key)
     if not old_object:
         msg = "{} with an id {} doesn't exist.".format(
-            str(model.__table__)[:-1], object_id)
+            str(model.__table__)[:-1], primary_key)
         return create_response(None, 404, msg)
 
     # create a new model instance, but replace its id
@@ -183,20 +183,20 @@ def update_or_404(model: object, object_id: int, payload: Dict) -> str:
     return create_response(db_obj.as_dict(), 200)
 
 
-def patch_or_404(model: object, object_id: int, payload: Dict) -> str:
+def patch_or_404(model: object, primary_key: int, payload: Dict) -> str:
     """
-    Patches a single sqlalchemy model by id.
+    Patches a single sqlalchemy model by primary_key.
 
     :param model: SQLAlchemy database model
-    :param object_id: patched objects id
+    :param primary_key: patched objects primary_key
     :param payload: payload to patch the object with
     :returns: the patched object as json, or 404
     """
 
-    db_obj = model.query.get(object_id)
+    db_obj = model.query.get(primary_key)
     if not db_obj:
         msg = "{} with an id {} doesn't exist.".format(
-            str(model.__table__)[:-1], object_id)
+            str(model.__table__)[:-1], primary_key)
         return create_response(None, 404, msg)
 
     # make sure that the `id` and `created` fields never get updated

@@ -27,7 +27,7 @@ def _error_messagify(model):
     return msg.format(str(model.__table__)[:-1])
 
 
-def suggestions_validator(f):
+def suggestion_parameter_validator(f):
     @wraps(f)
     def wrapper(*args, **kw):
 
@@ -53,7 +53,20 @@ def suggestions_validator(f):
     return wrapper
 
 
-def reactions_validator(f):
+def suggestion_id_validator(f):
+    @wraps(f)
+    def wrapper(*args, **kw):
+
+        suggestion_id = kw.get('suggestion_id')
+        if suggestion_id is not None and not id_exists(Suggestion, suggestion_id):
+            return create_response({}, 404, _error_messagify(Suggestion))
+
+        return f(*args, **kw)
+
+    return wrapper
+
+
+def reaction_parameter_validator(f):
     @wraps(f)
     def wrapper(*args, **kw):
         payload = connexion.request.json
@@ -86,7 +99,7 @@ def reactions_validator(f):
     return wrapper
 
 
-def events_validator(f):
+def event_parameter_validator(f):
     @wraps(f)
     def wrapper(*args, **kw):
         payload = connexion.request.json

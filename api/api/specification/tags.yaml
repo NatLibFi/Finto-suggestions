@@ -34,11 +34,11 @@ paths:
           schema:
             $ref: '#/definitions/TagResponse'
 
-  /tags/{tag_id}:
+  /tags/{tag_label}:
     parameters:
-      - name: tag_id
+      - name: tag_label
         in: path
-        type: integer
+        type: string
         required: true
     get:
       operationId: api.logic.tags.get_tag

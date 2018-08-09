@@ -1,5 +1,5 @@
 import connexion
-from .validators import reactions_validator
+from .validators import reaction_parameter_validator
 from ..models import Reaction
 from .common import (get_one_or_404, get_all_or_404, create_or_404,
                      delete_or_404, update_or_404, patch_or_404)
@@ -30,7 +30,7 @@ def get_reaction(reaction_id: int) -> str:
     return get_one_or_404(Reaction, reaction_id)
 
 
-@reactions_validator
+@reaction_parameter_validator
 def post_reaction() -> str:
     """
     Creates a single reaction.
@@ -53,7 +53,7 @@ def delete_reaction(reaction_id: int) -> str:
     return delete_or_404(Reaction, reaction_id)
 
 
-@reactions_validator
+@reaction_parameter_validator
 def put_reaction(reaction_id: int) -> str:
     """
     Updates a single reaction by id.
@@ -65,7 +65,7 @@ def put_reaction(reaction_id: int) -> str:
     return update_or_404(Reaction, reaction_id, connexion.request.json)
 
 
-@reactions_validator
+@reaction_parameter_validator
 def patch_reaction(reaction_id: int) -> str:
     """
     Patches a single reaction by id.

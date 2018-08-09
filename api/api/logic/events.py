@@ -3,7 +3,7 @@ from ..models import Event, Suggestion, User
 from .common import (create_response, id_exists, get_all_or_404_custom,
                      get_one_or_404, create_or_404, delete_or_404,
                      patch_or_404, update_or_404)
-from .validators import events_validator
+from .validators import event_parameter_validator
 
 
 def get_events(limit: int = None, offset: int = None, user_id: int = None, suggestion_id: int = None) -> str:
@@ -43,7 +43,7 @@ def get_event(event_id: int) -> str:
     return get_one_or_404(Event, event_id)
 
 
-@events_validator
+@event_parameter_validator
 def post_event() -> str:
     """
     Creates a single event.
@@ -57,7 +57,7 @@ def post_event() -> str:
     return create_or_404(Event, connexion.request.json)
 
 
-@events_validator
+@event_parameter_validator
 def put_event(event_id: int) -> str:
     """
     Updates a single event by id.
@@ -69,7 +69,7 @@ def put_event(event_id: int) -> str:
     return update_or_404(Event, event_id, connexion.request.json)
 
 
-@events_validator
+@event_parameter_validator
 def patch_event(event_id: int) -> str:
     """
     Patcjes a single event by id.

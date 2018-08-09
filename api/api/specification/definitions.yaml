@@ -170,6 +170,17 @@ definitions:
       - reason
       - meeting_id
 
+  TagListParameterObject:
+    type: object
+    additionalProperties: false
+    properties:
+      tags:
+        type: array
+        items:
+          type: string
+    required:
+      - tags
+
   preferred_label:
     type: object
     description: "Preferred label"
@@ -240,8 +251,8 @@ definitions:
     items:
       type: string
       description: An array of related concept URIs
-      example:
-        - 'http://www.yso.fi/onto/ysa/Y12345'
+    example:
+      - 'http://www.yso.fi/onto/ysa/Y12345'
 
   group:
     type: array
@@ -512,6 +523,7 @@ definitions:
         $ref: "#/definitions/meeting_date"
     required:
       - name
+      - meeting_date
 
   AddSuggestionToMeetingParameterObject:
     type: object
@@ -527,6 +539,7 @@ definitions:
   meeting_date:
     type: string
     format: date-time
+    description: The date of the meeting as an UTC datetime string.
 
   processed:
     type: object
