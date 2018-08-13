@@ -66,13 +66,34 @@ def create_app(config_object='config.DevelopmentConfig'):
         """
         Prunes the JWT token blacklist.
 
-        Run this from command line
+        Run this from command line (or periodically from crontab, for example)
         >> flask prune
         """
 
         no_pruned = prune_expired_tokens()
         click.echo(
             '{} expired tokens pruned from the database.'.format(no_pruned))
+
+    @flask_app.cli.command()
+    @click.argument('name')
+    @click.argument('email')
+    @click.argument('password')
+    def create_admin(name, email, password):
+        """
+        Creates an admin user
+
+        Run this from command line
+        >> flask create_admin 
+        """
+
+        user = User(name=name,
+                    email=email,
+                    password=password,
+                    role=UserRoles.ADMIN)
+        db.session.add(user)
+        db.session.commit()
+
+        click.echo('Created admin user {}.'.format(email))
 
     return app
 
