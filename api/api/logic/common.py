@@ -133,7 +133,7 @@ def create_or_404(model: object, payload: Dict, error_msg: str = None) -> str:
             msg = error_msg
         return create_response(None, 404, msg)
 
-    return create_response(db_obj.as_dict(), 200)
+    return create_response(db_obj.as_dict(), 201)
 
 
 def delete_or_404(model: object, primary_key: int) -> str:
