@@ -6,6 +6,7 @@ from .common import (get_all_or_404, get_one_or_404,
                      update_or_404, patch_or_404)
 
 
+@admin_only
 def get_users(limit: int = None, offset: int = None) -> str:
     """
     Returns all users.
@@ -20,6 +21,7 @@ def get_users(limit: int = None, offset: int = None) -> str:
     return get_all_or_404(User, limit, offset)
 
 
+@admin_only
 def get_user(user_id: int) -> str:
     """
     Returns a user by id.
