@@ -168,7 +168,6 @@ definitions:
       - suggestion_type
       - description
       - reason
-      - meeting_id
 
   TagListParameterObject:
     type: object

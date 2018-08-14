@@ -12,6 +12,17 @@ def _raise_exception(value, filter_type, valid_types=None):
     raise InvalidFilterException(msg)
 
 
+def _meeting_id_filter(query, value):
+    if value == 'NULL':
+        value = None
+    elif value.isdigit():
+        value = int(value)
+    else:
+        _raise_exception(value, 'MEETING')
+
+    return query.filter(Suggestion.meeting_id == value)
+
+
 SUGGESTION_FILTER_FUNCTIONS = {
     'SUGGESTION_STATUS': (
         lambda query, value:
@@ -25,11 +36,7 @@ SUGGESTION_FILTER_FUNCTIONS = {
         if value in SuggestionTypes.__members__
         else _raise_exception(value, 'SUGGESTION_TYPE', [e.name for e in SuggestionTypes])
     ),
-    'MEETING_ID': (
-        lambda query, value:
-        query.filter(Suggestion.meeting_id == int(value))
-        if value.isdigit() else _raise_exception(value, 'MEETING')
-    ),
+    'MEETING_ID': _meeting_id_filter
 }
 
 
