@@ -1,9 +1,9 @@
 import pytest
 import sqlalchemy
 from sqlalchemy.exc import ProgrammingError, IntegrityError
+from flask_jwt_extended import create_access_token
 from app import create_app
 from api.models import db, User, UserRoles
-from flask_jwt_extended import create_access_token
 
 
 ADMIN_USER = {
@@ -27,45 +27,28 @@ MEETING_DATA = {
     "name": "First Meeting Ever"
 }
 
-SUGGESTION_DATA = {
-    "alternative_label": {
-        "en": "feline animal",
-        "fi": "kissaeläin",
-        "sv": "katten"
-    },
-    "broader": [
-        "http://www.yso.fi/onto/ysa/Y98177"
-    ],
-    "description": "Kissaeläimiin kuuluva nelijalkainen nisäkäs.",
-    "group": [
-        "http://www.yso.fi/onto/ysa/ryhma_07",
-        "http://www.yso.fi/onto/ysa/ryhma_09"
-    ],
-    "meeting_id": 0,
-    "narrower": [
-        "http://www.yso.fi/onto/ysa/Y98176"
-    ],
-    "organization": "Ankkalinnan kaupunki",
-    "preferred_label": {
-        "en": "cat",
-        "fi": "kisu",
-        "sv": "katten"
-    },
-    "reason": "Minulla on omat syyni!",
-    "related": [
-        "http://www.yso.fi/onto/ysa/Y12345"
-    ],
-    "status": "DEFAULT",
-    "suggestion_type": "NEW",
-    "tags": [
-        "ACCEPTED"
-    ],
-    "uri": "http://www.yso.fi/onto/ysa/Y505224"
-}
-
 
 @pytest.fixture(scope='session', autouse='true')
 def client():
+    """
+    A session-scoped fixture, injecting
+    a valid test client with approppriate
+    authorization headers to a test case.
+
+    It also initializes the database. This fixture
+    is automatically invoked for each test case.
+
+    Usage:
+
+    def test_api_endpoint(client):
+        response = client('ADMIN').get('api/endpoint')
+        assert response.status_code == 200
+
+    :returns:   a client factory function which takes
+                the authorization level as a parameter:
+                ('NORMAL', 'ADMIN' or 'None')
+    """
+
     def client(auth_level=None):
         test_client = flask_app.test_client()
 
@@ -105,7 +88,6 @@ def _initialize_test_database(app, engine):
 
 
 def _teardown_test_database(app, db_engine):
-    # teardown
     with app.app_context():
         db.session.remove()
         db.drop_all()
