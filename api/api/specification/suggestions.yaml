@@ -6,7 +6,7 @@ paths:
       description: |
         Get all suggestions.
         Optional query parameters can be used to limit the request.
-        Parameter **limit** determines the size of the returned array and **offset** 
+        Parameter **limit** determines the size of the returned array and **offset**
         determines the starting offset.
       parameters:
         - name: limit
@@ -32,7 +32,7 @@ paths:
               - REACTIONS_DESC
         - name: filters
           in: query
-          description: 'Pipe-separated filter string, i.e. status:accepted|type:new|meeting:12'
+          description: 'Pipe-separated filter string, i.e. status:accepted|type:new|meeting_id:12'
           required: false
           type: string
         - name: search
