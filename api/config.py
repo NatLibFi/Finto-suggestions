@@ -13,6 +13,8 @@ class BaseConfig:
     JWT_ERROR_MESSAGE_KEY = 'message'
     JWT_BLACKLIST_ENABLED = True
 
+    CORS_ALLOWED_ORIGINS = ['finto.fi']
+
     ENABLE_SWAGGER_UI = False
 
     DEBUG = False

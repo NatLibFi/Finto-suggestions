@@ -4,6 +4,7 @@ import click
 from datetime import timedelta
 from flask_migrate import Migrate
 from flask.cli import with_appcontext
+from flask_cors import CORS
 from specsynthase.specbuilder import SpecBuilder
 from api.models import *
 from api.authentication import jwt, prune_expired_tokens
@@ -44,6 +45,11 @@ def create_app(config_object='config.DevelopmentConfig'):
     db.init_app(flask_app)
     jwt.init_app(flask_app)
     migrate = Migrate(flask_app, db)
+
+    cors_origins = flask_app.config['CORS_ALLOWED_ORIGINS']
+
+    # only allow CORS for suggestions endpoint
+    CORS(flask_app, origins=cors_origins, resources=r"/api/suggestions/*")
 
     @flask_app.shell_context_processor
     def shell_context():

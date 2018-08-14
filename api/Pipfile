@@ -9,12 +9,13 @@ name = "pypi"
 
 gunicorn = "*"
 connexion = "*"
-Flask-SQLAlchemy = "*"
+flask-sqlalchemy = "*"
 "psycopg2" = "*"
-Flask-Migrate = "*"
+flask-migrate = "*"
 spec-synthase = "*"
 passlib = "*"
-Flask-JWT-Extended = "*"
+flask-jwt-extended = "*"
+flask-cors = "*"
 
 
 [dev-packages]
