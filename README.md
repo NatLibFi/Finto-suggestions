@@ -77,6 +77,8 @@ When the application is running, you should find the application running on loca
 
 You can start developing! Both api and web services should reload automatically.
 
+Please see [examples](documentation/examples.md) for interactive terminal recordings of the installation process.
+
 ### Halting containers, teardown
 
 All the running (composed) containers can be halted with command `docker-compose down`.
@@ -144,3 +146,6 @@ In case you'd rather downgrade to a previous migration, run `pipenv run downgrad
 
 **You can access a psql prompt** with a command `pipenv run psql` (See Pipfile -- unfortunately it doesn't use environmental variables for login credentials at this point).
 
+<p align="center">
+    <img src="https://cdn.rawgit.com/NatLibFi/Finto-suggestions/master/documentation/img/pipenv-psql.svg">
+</p>
