@@ -1,6 +1,6 @@
 paths:
 
-  /events/:
+  /events:
     get:
       operationId: api.logic.events.get_events
       parameters:

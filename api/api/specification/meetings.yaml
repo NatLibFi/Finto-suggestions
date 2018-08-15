@@ -1,6 +1,6 @@
 paths:
 
-  /meetings/:
+  /meetings:
     get:
       operationId: api.logic.meetings.get_meetings
       parameters:

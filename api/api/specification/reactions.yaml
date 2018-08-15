@@ -1,6 +1,6 @@
 paths:
 
-  /reactions/:
+  /reactions:
     get:
       operationId: api.logic.reactions.get_reactions
       parameters:

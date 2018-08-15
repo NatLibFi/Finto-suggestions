@@ -1,6 +1,6 @@
 paths:
 
-  /tags/:
+  /tags:
     get:
       operationId: api.logic.tags.get_tags
       parameters:
