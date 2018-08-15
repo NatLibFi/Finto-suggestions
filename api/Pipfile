@@ -31,7 +31,7 @@ python_version = "3.6"
 [scripts]
 
 start = "docker-compose up"
-psql = "docker-compose exec db psql psdb -Upsql"
+psql = "docker-compose exec db psql devdb -Udevuser"
 shell = "docker-compose exec api flask shell"
 prune = "docker-compose exec api flask prune"
 test = "docker-compose exec api pytest -s tests/"

@@ -10,7 +10,6 @@ class BaseConfig:
     Default values for app configurations. Do not modify these.
     Rather, overwrite the DevelopmentConfig and ProductionConfig values.
     """
-    # postgresql+psycopg2://psql:pw@db:5432/psdb
     SQLALCHEMY_DATABASE_URI = f'postgresql+psycopg2://{user}:{pw}@db:5432/{db}'
 
     # Disable signals. http://flask-sqlalchemy.pocoo.org/2.1/signals/
