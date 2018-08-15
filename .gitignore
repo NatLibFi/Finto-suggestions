@@ -4,3 +4,4 @@ __pycache__
 /dist
 .vscode
 .pytest_cache
+.env
