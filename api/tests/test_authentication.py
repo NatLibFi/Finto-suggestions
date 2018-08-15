@@ -1,12 +1,7 @@
-from .conftest import NORMAL_USER
-from .fixtures import MEETING_DATA
-
-from unittest.mock import Mock
+import pytest
 from api.authentication import authorized, admin_only
 from api.models import User, TokenBlacklist
-
-
-import pytest
+from .conftest import NORMAL_USER
 
 
 @pytest.fixture(scope='function')

@@ -1,6 +1,6 @@
-from .fixtures import MEETING_DATA
-from api.models import Meeting
 import copy
+from api.models import Meeting
+from .fixtures import MEETING_DATA
 
 
 def _add_meetings(session, n=1):
