@@ -18,6 +18,7 @@ paths:
 
   /refresh:
     post:
+      description:  "Requires a valid refresh token in Authorization header. (Authorization: Bearer <refresh token>)"
       operationId: api.logic.authentication.refresh
       responses:
         "200":
