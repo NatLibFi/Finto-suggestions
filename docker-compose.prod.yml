@@ -1,0 +1,9 @@
+version: '3.6'
+services:
+  api:
+    entrypoint: "gunicorn wsgi:connexion_app --bind :8050"
+
+  # Please run `yarn docker:build` (on docker host)
+  # to build production dist
+  web:
+    entrypoint: "http-server -p 8040 dist"

@@ -8,9 +8,12 @@ services:
     volumes:
       - ./api:/app
     environment:
-      - APP_SECRET_KEY=changethis
-      - APP_CONFIG_OBJECT=config.DevelopmentConfig
-      - FLASK_APP=wsgi:flask_app
+      - APP_SECRET_KEY
+      - APP_CONFIG_OBJECT
+      - FLASK_APP
+      - POSTGRES_USER
+      - POSTGRES_PASSWORD
+      - POSTGRES_DB
     networks:
       - network_web
       - network_db
@@ -44,9 +47,9 @@ services:
     volumes:
       - volume_db:/var/lib/postgresql/data
     environment:
-      - POSTGRES_USER=psql
-      - POSTGRES_PASSWORD=pw
-      - POSTGRES_DB=psdb
+      - POSTGRES_USER
+      - POSTGRES_PASSWORD
+      - POSTGRES_DB
     ports:
       - 5432:5432
     networks:
