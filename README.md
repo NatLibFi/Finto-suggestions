@@ -144,4 +144,3 @@ In case you'd rather downgrade to a previous migration, run `pipenv run downgrad
 
 **You can access a psql prompt** with a command `pipenv run psql` (See Pipfile -- unfortunately it doesn't use environmental variables for login credentials at this point).
 
-![docker-compose up](documentation/img/pipenv-psql.svg)
