@@ -151,3 +151,12 @@ Recording of an example migration / upgrade [here](documentation/img/migrate-and
 **You can access a psql prompt** with a command `pipenv run psql` (See Pipfile -- unfortunately it doesn't use environmental variables for login credentials at this point).
 
 See the animation on using psql [here](documentation/img/pipenv-psql.svg).
+
+
+#### Bugs and quirks
+
+Occasionally pytest doesn't get installed on the system when building the docker containers.
+
+> OCI runtime exec failed: exec failed: container_linux.go:348: starting container process caused "exec: \"pytest\": executable file not found in $PATH": unknown
+
+In that case, you need to install it manually in order to run tests: `docker-compose exec api pip install pytest`.
