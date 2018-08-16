@@ -70,14 +70,14 @@ http://asciiflow.com/
 3.  Download and install [Docker CE](https://docs.docker.com/install/) to your computer. Docker-compose should be included with the installation.
 4.  Download and install [Python 3.6+](https://www.python.org/downloads/) and after that install pipenv with command `pip install pipenv`. Pipenv is used to install/remove packages and run scripts api-side.
 4.  Start the freshly installed Docker
-5.  Run `docker-compose up` in project's **root** folder. (**If it is ran elsewhere, the environment variables from .env file won't get properly initialized!**) This command builds the required containers (api, web and nginx) and starts them. Hitting `CTRL+C` should exit the output feed from docker. However the containers should still be running. You can check the container status with a command `docker ps`.
+5.  Run `docker-compose up` in project's **root** folder. This command builds the required containers (api, web and nginx) and starts them. Hitting `CTRL+C` should exit the output feed from docker. However the containers should still be running. You can check the container status with a command `docker ps`.
 6.  Initialize the database. In api directory (while the containers are running), run `pipenv run upgrade-db`
 
 When the application is running, you should find the application running on localhost:8080. The web frontend (Vue.js app) can be found on root url (localhost:8080/) and API on localhost:8080/api. Swagger ui can be found on localhost:8080/api/ui.
 
 You can start developing! Both api and web services should reload automatically.
 
-Please see [examples](documentation/examples.md) for interactive terminal recordings of the installation process.
+Please see [a terminal recording](img/docker-compose-up.svg) of a successful setup.
 
 ### Halting containers, teardown
 
@@ -128,6 +128,8 @@ Add new dependencies by running `pipenv install package-name` or `npm install pa
 | upgrade-db   | Upgrades the database (to the next migration version).                                                      | pipenv run upgrade-db                                 |
 | downgrade-db | Downgrades the database (to the previous migration version).                                                | pipenv run downgrade-db                               |
 
+See [examples](documentation/examples.md) for additional tips and examples for development.
+
 #### Database (migrations, accessing container etc.)
 
 The database container runs a vendor Postgres Docker image on top of an Alpine container. Upon fresh installation, the database is initialized (currently) based on three environment variables set in .env file:
@@ -144,8 +146,8 @@ After creating a new migration file, upgrade the database by running `pipenv run
 
 In case you'd rather downgrade to a previous migration, run `pipenv run downgrade-db` and remove the latest migration file from migrations/versions.
 
+Recording of an example migration / upgrade [here](img/migrate-and-upgrade.svg).
+
 **You can access a psql prompt** with a command `pipenv run psql` (See Pipfile -- unfortunately it doesn't use environmental variables for login credentials at this point).
 
-<p align="center">
-    <img src="https://cdn.rawgit.com/NatLibFi/Finto-suggestions/master/documentation/img/pipenv-psql.svg">
-</p>
+See the animation on using psql [here](https://cdn.rawgit.com/NatLibFi/Finto-suggestions/master/documentation/img/pipenv-psql.svg).
