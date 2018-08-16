@@ -19,23 +19,10 @@ def create_app(config_object='config.DevelopmentConfig'):
     flask_app.secret_key = os.environ.get('APP_SECRET_KEY')
     flask_app.config.from_object(config_object)
 
-    # Specsynthase combines multiple Swagger yaml files into a one.
+    # Specsynthase's SpecBuilder combines multiple Swagger yaml files into a one.
     # This is purely used for modularity.
     # https://github.com/zalando/connexion/issues/254
-    api_spec = SpecBuilder()
-
-    # Common
-    api_spec.add_spec('api/specification/api.yaml')
-    api_spec.add_spec('api/specification/definitions.yaml')
-    api_spec.add_spec('api/specification/authentication.yaml')
-
-    # API Endpoints
-    api_spec.add_spec('api/specification/events.yaml')
-    api_spec.add_spec('api/specification/meetings.yaml')
-    api_spec.add_spec('api/specification/reactions.yaml')
-    api_spec.add_spec('api/specification/suggestions.yaml')
-    api_spec.add_spec('api/specification/tags.yaml')
-    api_spec.add_spec('api/specification/users.yaml')
+    api_spec = _build_swagger_spec(SpecBuilder())
 
     # In case you don't want to show the swagger_ui for private endpoints
     # You might want to split this into two apis
@@ -53,18 +40,13 @@ def create_app(config_object='config.DevelopmentConfig'):
 
     @flask_app.shell_context_processor
     def shell_context():
+        import api.models as models
+        from pprint import pprint
         return {
-            'db': db,
-            'User': User,
-            'Suggestion': Suggestion,
-            'Event': Event,
-            'Meeting': Meeting,
-            'Reaction': Reaction,
-            'Tag': Tag,
-            'EventTypes': EventTypes,
-            'SuggestionStatusTypes': SuggestionStatusTypes,
-            'SuggestionTypes': SuggestionTypes,
-            'TokenBlacklist': TokenBlacklist
+            'app': app,
+            'db': models.db,
+            'pprint': pprint,
+            'models': models
         }
 
     @flask_app.cli.command()
@@ -102,6 +84,23 @@ def create_app(config_object='config.DevelopmentConfig'):
         click.echo('Created admin user {}.'.format(email))
 
     return app
+
+
+def _build_swagger_spec(builder):
+    # Common
+    builder.add_spec('api/specification/api.yaml')
+    builder.add_spec('api/specification/definitions.yaml')
+    builder.add_spec('api/specification/authentication.yaml')
+
+    # API Endpoints
+    builder.add_spec('api/specification/events.yaml')
+    builder.add_spec('api/specification/meetings.yaml')
+    builder.add_spec('api/specification/reactions.yaml')
+    builder.add_spec('api/specification/suggestions.yaml')
+    builder.add_spec('api/specification/tags.yaml')
+    builder.add_spec('api/specification/users.yaml')
+
+    return builder
 
 
 if __name__ == '__main__':
