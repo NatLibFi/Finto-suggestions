@@ -36,7 +36,7 @@ class ProductionConfig(BaseConfig):
 
 class TestingConfig(BaseConfig):
     # testdb db will be created upon test initialization
-    SQLALCHEMY_DATABASE_ROOT = f'postgres://psql:{pw}@{user}:5432/'
+    SQLALCHEMY_DATABASE_ROOT = f'postgresql+psycopg2://{user}:{pw}@db:5432/'
     SQLALCHEMY_DATABASE_URI = SQLALCHEMY_DATABASE_ROOT + 'testdb'
     ENABLE_SWAGGER_UI = False
     DEBUG = True
