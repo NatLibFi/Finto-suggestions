@@ -150,4 +150,4 @@ Recording of an example migration / upgrade [here](img/migrate-and-upgrade.svg).
 
 **You can access a psql prompt** with a command `pipenv run psql` (See Pipfile -- unfortunately it doesn't use environmental variables for login credentials at this point).
 
-See the animation on using psql [here](https://cdn.rawgit.com/NatLibFi/Finto-suggestions/master/documentation/img/pipenv-psql.svg).
+See the animation on using psql [here](documentation/img/pipenv-psql.svg).

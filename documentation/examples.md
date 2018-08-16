@@ -31,9 +31,37 @@ Flask offers a nifty shell for debugging. You can start a Python shell initializ
 The Flask shell has the Flask available and database models already initialized and imported, so twiddling with the SQLAlchemy ORM is quite easy this way. For example adding a User this way is easy:
 
 ```
+$ pipenv run shell
 
-u = models.User(name='Peter', email='peter@test.com', password='password', role=models.UserRoles.ADMIN)
-db.session.add(u)
-db.session.commit()
-
+Python 3.7.0 (default, Aug  4 2018, 02:41:57)
+[GCC 6.4.0] on linux
+App: app [production]
+Instance: /app/instance
+>>>
+>>> u = models.User(name='Peter', email='peter@test.com', password='password', role=models.UserRoles.ADMIN)
+>>> db.session.add(u)
+>>> db.session.commit()
+>>>
+>>> db
+>>> models.User.query.all()
+[<User Peter>]
 ```
+
+#### Working with database
+
+You can use the psql cli to access the database the traditional way: `pipenv run psql`.
+See an example terminal recording [here](documentation/img/pipenv-psql.svg).
+
+For quickly dropping the database tables, you can call:
+> `docker-compose exec db psql devdb -Udevuser -c "DROP OWNED BY devuser;"`. Modify credentials accordingly.
+Run an upgrade after this to reinitialize: `pipenv run upgrade-db`.
+
+
+#### Bugs and issues
+
+Alembic doesn't properly support downgrading PostgreSQL ENUM types, which might occasionally cause an error. In this case you might need to drop enum types from the database manually. Do as follows:
+
+1. `pipenv run psql`
+2. `\dT` to list (enum) types
+3. `drop type {typename}` to drop a type
+
