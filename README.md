@@ -63,7 +63,7 @@ http://asciiflow.com/
 
 ## Installation and Development
 
-### Installing Development Environment
+### Setting up Development Environment
 
 1.  Copy the .env.default file and rename it to .env (from project root)
 2.  Modify the environment variables in .env as desired
@@ -79,7 +79,7 @@ You can start developing! Both api and web services should reload automatically.
 
 Please see [a terminal recording](documentation/img/docker-compose-up.svg) of a successful setup.
 
-### Halting containers, teardown
+### Halting Containers, Teardown
 
 All the running (composed) containers can be halted with command `docker-compose down`.
 You can remove previously built containers (and volumes) by executing `docker-compose rm -sv`.
