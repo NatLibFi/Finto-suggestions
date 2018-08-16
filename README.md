@@ -77,7 +77,7 @@ When the application is running, you should find the application running on loca
 
 You can start developing! Both api and web services should reload automatically.
 
-Please see [a terminal recording](img/docker-compose-up.svg) of a successful setup.
+Please see [a terminal recording](documentation/img/docker-compose-up.svg) of a successful setup.
 
 ### Halting containers, teardown
 
@@ -146,7 +146,7 @@ After creating a new migration file, upgrade the database by running `pipenv run
 
 In case you'd rather downgrade to a previous migration, run `pipenv run downgrade-db` and remove the latest migration file from migrations/versions.
 
-Recording of an example migration / upgrade [here](img/migrate-and-upgrade.svg).
+Recording of an example migration / upgrade [here](documentation/img/migrate-and-upgrade.svg).
 
 **You can access a psql prompt** with a command `pipenv run psql` (See Pipfile -- unfortunately it doesn't use environmental variables for login credentials at this point).
 
