@@ -73,7 +73,7 @@ http://asciiflow.com/
 5.  Run `docker-compose up` in project's **root** folder. This command builds the required containers (api, web and nginx) and starts them. Hitting `CTRL+C` should exit the output feed from docker. However the containers should still be running. You can check the container status with a command `docker ps`.
 6.  Initialize the database. In api directory (while the containers are running), run `pipenv run upgrade-db`
 
-When the application is running, you should find the application running on localhost:8080. The web frontend (Vue.js app) can be found on root url (localhost:8080/) and API on localhost:8080/api. Swagger ui can be found on localhost:8080/api/ui.
+When the application is running, you should find the application running on localhost:8080. The web frontend (Vue.js app) can be found on root url (localhost:8080/) and API on localhost:8080/api. Swagger ui can be found on localhost:8080/api/ui/#/.
 
 You can start developing! Both api and web services should reload automatically.
 
