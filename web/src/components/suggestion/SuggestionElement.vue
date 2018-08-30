@@ -13,7 +13,7 @@
 
 <script>
 
-import { format, differenceInDays, parse } from 'date-fns'
+import { differenceInDays, parse } from 'date-fns'
 
 export default {
   name: "SuggestionElement",

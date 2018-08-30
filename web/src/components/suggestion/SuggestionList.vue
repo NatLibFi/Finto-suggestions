@@ -18,6 +18,7 @@
 //   mapSuggestionActions,
 //   mapSuggestionGetters } from '../../store/modules/suggestion'
 import SuggestionElement from './SuggestionElement'
+import api from "../../api/index.js"
 
 export default {
   name: "SuggestionList",
@@ -28,27 +29,31 @@ export default {
     return {
       items:
       [
-        {
-          orderNumber: 123,
-          title: "Viru-Nigula",
-          created: "2018-08-27",
-          tags: ["created", "change"]
-        },
-        {
-          orderNumber: 231,
-          title: "Viru-Peruna",
-          created: "2018-08-26",
-          tags: ["created", "change"]
-        },
-        {
-          orderNumber: 321,
-          title: "Viru-Porkkana",
-          created: "2018-08-25",
-          tags: ["created", "change"]
-        }
+        // {
+        //   orderNumber: 123,
+        //   title: "Viru-Nigula",
+        //   created: "2018-08-27",
+        //   tags: ["created", "change"]
+        // },
+        // {
+        //   orderNumber: 231,
+        //   title: "Viru-Peruna",
+        //   created: "2018-08-26",
+        //   tags: ["created", "change"]
+        // },
+        // {
+        //   orderNumber: 321,
+        //   title: "Viru-Porkkana",
+        //   created: "2018-08-25",
+        //   tags: ["created", "change"]
+        // }
       ]
     }
-    
+  },
+  created: {
+    async getSuggestions() {
+      this.items = await api.suggestions.getSuggestions();
+    }
   }
 };
 </script>
