@@ -1,18 +1,18 @@
 <template>
   <div class="container">
     <!-- <img src="../assets/logo.png"> -->
-    <suggestionList />
+    <SuggestionList />
   </div>
 </template>
 
 <script>
 // @ is an alias to /src
-import suggestionList from "../components/suggestion/SuggestionList";
+import SuggestionList from "../components/suggestion/SuggestionList";
 
 export default {
   name: "index",
   components: {
-    suggestionList
+    SuggestionList
   }
 };
 </script>

@@ -30,10 +30,8 @@ export default {
       items: []
     };
   },
-  created: {
-    async getSuggestions() {
-      this.items = await api.suggestions.getSuggestions();
-    }
+  async created() {
+    this.items = await api.suggestions.getSuggestions();
   }
 };
 </script>
