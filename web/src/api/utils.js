@@ -1,7 +1,6 @@
 import axios from "axios";
 
 const client = axios.create({
-  // baseURL: process.env.VUE_APP_API_ADDRESS,
   baseURL: "/api",
   json: true
 });
@@ -9,7 +8,7 @@ const client = axios.create({
 const execute = async (method, resource, data) => {
   // inject the accessToken for each request
   //   let accessToken = await Vue.prototype.$auth.getAccessToken();
-  const accessToken = "";
+  let accessToken = process.env.ACCESS_TOKEN;
   return client({
     method,
     url: resource,
