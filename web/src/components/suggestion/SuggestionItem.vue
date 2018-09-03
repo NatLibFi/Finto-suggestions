@@ -28,7 +28,6 @@ export default {
     },
     buildLabel() {
       const whenSended = this.getDayDifference();
-      console.log(whenSended);
       return whenSended > 0 ? `${whenSended} päivää sitten` : 'tänään';
     }
   }
