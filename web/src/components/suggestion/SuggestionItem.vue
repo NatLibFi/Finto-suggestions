@@ -2,7 +2,7 @@
   <li class="suggestionItem">
         <span>
             <p class="title">
-                {{title}} {{tags}}
+                {{title}} {{ formatTags() }}
             </p>
             <p class="label">
                 #{{orderNumber}} Lähetetty {{ buildLabel() }}
@@ -20,6 +20,7 @@ export default {
     orderNumber: Number,
     title: String,
     created: String,
+    suggestionType: String,
     tags: Array
   },
   methods: {
@@ -29,6 +30,19 @@ export default {
     buildLabel() {
       const whenSended = this.getDayDifference();
       return whenSended > 0 ? `${whenSended} päivää sitten` : 'tänään';
+    },
+    formatTags() {
+      let tagListing = this.suggestionType;
+      console.log(this.suggestionType);
+
+      if (this.tags.length > 0) {
+        this.tags.forEach(tag => {
+          tagListing += `${tag},`
+        });
+        return tagListing.slice(0, -1); //removed last ,-mark from string
+      }
+
+      return tagListing;
     }
   }
 };

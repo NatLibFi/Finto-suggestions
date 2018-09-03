@@ -7,7 +7,8 @@
     :orderNumber=item.id
     :title=item.description
     :created=item.created
-    :tags=[] />
+    :suggestionType=item.suggestion_type
+    :tags=item.tags />
   </ul>
 </template>
 
