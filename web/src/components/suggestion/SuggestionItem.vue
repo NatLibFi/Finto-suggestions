@@ -5,7 +5,7 @@
                 {{title}} {{tags}}
             </p>
             <p class="label">
-                #{{orderNumber}} Lähetetty {{ getDayDifference() }} päivää sitten
+                #{{orderNumber}} Lähetetty {{ buildLabel() }}
             </p>
         </span>
   </li>
@@ -25,6 +25,11 @@ export default {
   methods: {
     getDayDifference() {
       return differenceInDays(parse(new Date()), parse(this.created));
+    },
+    buildLabel() {
+      const whenSended = this.getDayDifference();
+      console.log(whenSended);
+      return whenSended > 0 ? `${whenSended} päivää sitten` : 'tänään';
     }
   }
 };

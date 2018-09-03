@@ -2,12 +2,12 @@
   <ul class="suggestionList">
   <suggestion-item
     class="suggestionItem"
-    v-for="item in this.items"
-    v-bind:key="item.orderNumber"
-    :orderNumber=item.orderNumber
-    :title=item.title
+    v-for="item in items"
+    v-bind:key="item.id"
+    :orderNumber=item.id
+    :title=item.description
     :created=item.created
-    :tags=item.tags />
+    :tags=[] />
   </ul>
 </template>
 
@@ -25,13 +25,12 @@ export default {
   components: {
     SuggestionItem
   },
-  data() {
-    return {
-      items: []
-    };
-  },
+  data: () => ({
+    items: []
+  }),
   async created() {
-    this.items = await api.suggestions.getSuggestions();
+    const response = await api.suggestions.getSuggestions();
+    this.items = response.data;
   }
 };
 </script>
