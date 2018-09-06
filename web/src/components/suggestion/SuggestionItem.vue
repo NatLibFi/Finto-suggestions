@@ -29,7 +29,7 @@ export default {
     },
     buildLabel() {
       const whenSended = this.getDayDifference();
-      return whenSended > 0 ? `${whenSended} päivää sitten` : 'tänään';
+      return whenSended > 0 ? `${whenSended} päivää sitten` : "tänään";
     },
     formatTags() {
       let tagListing = this.suggestionType;
@@ -37,7 +37,7 @@ export default {
 
       if (this.tags.length > 0) {
         this.tags.forEach(tag => {
-          tagListing += `${tag},`
+          tagListing += `${tag},`;
         });
         return tagListing.slice(0, -1); //removed last ,-mark from string
       }
