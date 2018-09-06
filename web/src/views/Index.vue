@@ -1,18 +1,27 @@
 <template>
-  <div class="index">
+  <div class="container">
     <!-- <img src="../assets/logo.png"> -->
-    <HelloWorld msg="Welcome to Vue.js App"/>
+    <SuggestionList />
   </div>
 </template>
 
 <script>
 // @ is an alias to /src
-import HelloWorld from "@/components/HelloWorld.vue";
+import SuggestionList from "../components/suggestion/SuggestionList";
 
 export default {
   name: "index",
   components: {
-    HelloWorld
+    SuggestionList
   }
 };
 </script>
+
+<style>
+.container {
+  display: flex;
+  flex-flow: row wrap;
+  flex-direction: column;
+  justify-content: space-around;
+}
+</style>
