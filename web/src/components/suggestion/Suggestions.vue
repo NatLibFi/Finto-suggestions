@@ -27,7 +27,7 @@
 //   suggestionGetters,
 //   mapSuggestionActions,
 //   mapSuggestionGetters } from '../../store/modules/suggestion'
-import SuggestionHeader from './SuggestionHeader';
+import SuggestionHeader from "./SuggestionHeader";
 import SuggestionItem from "./SuggestionItem";
 import api from "../../api/index.js";
 
@@ -54,7 +54,7 @@ export default {
       const resolvedSuggestions = await api.suggestions.getAllResolvedSuggestions();
       this.resolvedSuggestionCount = resolvedSuggestions.items;
     },
-    async sortSuggestionList(sortValue){
+    async sortSuggestionList(sortValue) {
       const response = await api.suggestions.getSortedSuggestions(sortValue);
       this.items = response.data;
     }

@@ -24,33 +24,33 @@ export default {
   data: () => ({
     selectedSortOption: "",
     dropDownOptions: [
-      { label:"Uusin ensin", value: "NEWEST_FIRST" },
+      { label: "Uusin ensin", value: "NEWEST_FIRST" },
       { label: "Vanhin ensin", value: "OLDEST_FIRST" },
       { label: "Eniten kommentoitu", value: "MOST_COMMENTS" },
       { label: "Vähiten kommentoitu", value: "LEAST_COMMENTS" },
       { label: "Viimeksi päivitetty", value: "LAST_UPDATED" },
-      { label:"Eniten reaktiota", value: "MOST_REACTIONS" }
+      { label: "Eniten reaktiota", value: "MOST_REACTIONS" }
     ],
     selectedOptionsMapper: {
-      "NEWEST_FIRST" : sortConst.NEWEST_FIRST,
-      "OLDEST_FIRST" : sortConst.OLDEST_FIRST,
-      "MOST_COMMENTS" : sortConst.MOST_COMMENTS,
-      "FEWEST_COMMENTS" : sortConst.FEWEST_COMMENTS,
-      "LAST_UPDATED" : sortConst.LATEST_UPDATED,
-      "MOST_REACTIONS" : sortConst.MOST_REACTIONS
+      NEWEST_FIRST: sortConst.NEWEST_FIRST,
+      OLDEST_FIRST: sortConst.OLDEST_FIRST,
+      MOST_COMMENTS: sortConst.MOST_COMMENTS,
+      FEWEST_COMMENTS: sortConst.FEWEST_COMMENTS,
+      LAST_UPDATED: sortConst.LATEST_UPDATED,
+      MOST_REACTIONS: sortConst.MOST_REACTIONS
     }
   }),
   created() {
-    this.$emit('fetchOpenSuggestionCount');
-    this.$emit('fetchResolvedSuggestionCount');
+    this.$emit("fetchOpenSuggestionCount");
+    this.$emit("fetchResolvedSuggestionCount");
   },
   methods: {
     sortValueSelected() {
-        const selectedValue = this.dropDownOptions.find(e => e.label == this.selectedSortOption);
-        this.sortSuggestionList(this.selectedOptionsMapper[selectedValue.value]);
+      const selectedValue = this.dropDownOptions.find(e => e.label == this.selectedSortOption);
+      this.sortSuggestionList(this.selectedOptionsMapper[selectedValue.value]);
     },
     sortSuggestionList(selectedFiltering) {
-      this.$emit('sortSuggestionListBy', selectedFiltering);
+      this.$emit("sortSuggestionListBy", selectedFiltering);
     }
   }
 };
@@ -82,57 +82,40 @@ export default {
 }
 
 .filteringOptions select {
-  border: 0 !important;  /*Removes border*/
-  -webkit-appearance: none;  /*Removes default chrome and safari style*/
-  -moz-appearance: none;  /*Removes default style Firefox*/
+  border: 0 !important; /*Removes border*/
+  -webkit-appearance: none; /*Removes default chrome and safari style*/
+  -moz-appearance: none; /*Removes default style Firefox*/
 }
 
 .filteringOptions select:focus {
-    outline: none;
+  outline: none;
 }
 
 .filteringOptions option:hover {
-  box-shadow: 0 0 10px 100px #1882A8 inset;
+  box-shadow: 0 0 10px 100px #1882a8 inset;
 }
 
 /* CAUTION: IE hackery ahead */
 .filteringOptions select::-ms-expand {
-    display: none; /* remove default arrow on ie10 and ie11 */
+  display: none; /* remove default arrow on ie10 and ie11 */
 }
 
 /* target Internet Explorer 9 to undo the custom arrow */
-@media screen and (min-width:0\0) {
-    .filteringOptions select {
-        background:none\9;
-        padding: 5px\9;
-    }
+@media screen and (min-width: 0\0) {
+  .filteringOptions select {
+    background: none\9;
+    padding: 5px\9;
+  }
 }
 
 i {
-    border: solid black;
-    border-width: 0 3px 3px 0;
-    display: inline-block;
-    padding: 3px;
+  border: solid black;
+  border-width: 0 3px 3px 0;
+  display: inline-block;
+  padding: 3px;
 }
-
-.right {
-    transform: rotate(-45deg);
-    -webkit-transform: rotate(-45deg);
-}
-
-.left {
-    transform: rotate(135deg);
-    -webkit-transform: rotate(135deg);
-}
-
-.up {
-    transform: rotate(-135deg);
-    -webkit-transform: rotate(-135deg);
-}
-
 .down {
-    transform: rotate(45deg);
-    -webkit-transform: rotate(45deg);
+  transform: rotate(45deg);
+  -webkit-transform: rotate(45deg);
 }
-
 </style>
