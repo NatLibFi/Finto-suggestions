@@ -15,7 +15,6 @@
 import { differenceInDays, parse } from "date-fns";
 
 export default {
-  name: "SuggestionItem",
   props: {
     orderNumber: Number,
     title: String,
@@ -33,8 +32,6 @@ export default {
     },
     formatTags() {
       let tagListing = this.suggestionType;
-      console.log(this.suggestionType);
-
       if (this.tags.length > 0) {
         this.tags.forEach(tag => {
           tagListing += `${tag},`;
