@@ -57,7 +57,6 @@ export default {
     async sortSuggestionList(sortValue){
       const response = await api.suggestions.getSortedSuggestions(sortValue);
       this.items = response.data;
-      console.log(sortValue);
     }
   }
 };
