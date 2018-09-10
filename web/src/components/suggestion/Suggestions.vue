@@ -27,7 +27,7 @@
 //   suggestionGetters,
 //   mapSuggestionActions,
 //   mapSuggestionGetters } from '../../store/modules/suggestion'
-import SuggestionHeader from './SuggestionHeader';
+import SuggestionHeader from "./SuggestionHeader";
 import SuggestionItem from "./SuggestionItem";
 import api from "../../api/index.js";
 
