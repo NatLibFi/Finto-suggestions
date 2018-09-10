@@ -35,8 +35,8 @@ export default {
       NEWEST_FIRST: sortConst.NEWEST_FIRST,
       OLDEST_FIRST: sortConst.OLDEST_FIRST,
       MOST_COMMENTS: sortConst.MOST_COMMENTS,
-      FEWEST_COMMENTS: sortConst.FEWEST_COMMENTS,
-      LAST_UPDATED: sortConst.LATEST_UPDATED,
+      LEAST_COMMENTS: sortConst.LEAST_COMMENTS,
+      LAST_UPDATED: sortConst.LAST_UPDATED,
       MOST_REACTIONS: sortConst.MOST_REACTIONS
     }
   }),

@@ -42,10 +42,13 @@ export default {
     resolvedSuggestionCount: 0
   }),
   async created() {
-    const response = await api.suggestions.getSuggestions();
-    this.items = response.data;
+    this.getSuggestions();
   },
   methods: {
+    async getSuggestions() {
+      const response = await api.suggestions.getSuggestions();
+      this.items = response.data;
+    },
     async getOpenSuggestionCount() {
       const newSuggestions = await api.suggestions.getAllNewSuggestions();
       this.openSuggestionCount = newSuggestions.items;
@@ -55,8 +58,13 @@ export default {
       this.resolvedSuggestionCount = resolvedSuggestions.items;
     },
     async sortSuggestionList(sortValue) {
-      const response = await api.suggestions.getSortedSuggestions(sortValue);
-      this.items = response.data;
+      if(sortValue !== '') {
+        const response = await api.suggestions.getSortedSuggestions(sortValue);
+        this.items = response.data;
+        return;
+      }
+
+      this.getSuggestions();
     }
   }
 };
