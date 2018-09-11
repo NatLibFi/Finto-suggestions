@@ -3,10 +3,10 @@
     <span class="open">{{ openSuggestionCount }} käsittelemätöntä</span>
     <span class="resolved">{{ resolvedSuggestionCount }} käsiteltyä</span>
     <span class="filteringOptions">
-      <select v-model="selectedSortOption" @change="sortValueSelected">
+      <select v-model="selectedSortOption" @change="sortValueSelected" :required="true">
         <option disabled value="">Järjestele</option>
         <option value=""></option>
-        <option v-for="selection in dropDownOptions" :key="selection.label">{{ selection.label }}</option>
+        <option v-for="selection in dropDownOptions" :key="selection.label" :value="selection.label">{{ selection.label }}</option>
       </select>
     <i class="arrow down"></i>
     </span>
@@ -23,6 +23,7 @@ export default {
   },
   data: () => ({
     selectedSortOption: "",
+    selectedSortOptionIndex: 0,
     dropDownOptions: [
       { label: "Uusin ensin", value: "NEWEST_FIRST" },
       { label: "Vanhin ensin", value: "OLDEST_FIRST" },
@@ -45,9 +46,12 @@ export default {
     this.$emit("fetchResolvedSuggestionCount");
   },
   methods: {
-    sortValueSelected() {
-      if(this.selectedSortOption !== '') {
-        const selectedValue = this.dropDownOptions.find(e => e.label == this.selectedSortOption);
+    sortValueSelected(selected) {
+      handleSortDropDownSelectedIndicator();
+
+      if(selected && selected.target.value !== '') {
+        // do sorting by sorting key
+        const selectedValue = this.dropDownOptions.find(e => e.label == selected.target.value);
         this.sortSuggestionList(this.selectedOptionsMapper[selectedValue.value]);
       }
       else {
@@ -56,6 +60,19 @@ export default {
     },
     sortSuggestionList(selectedFiltering) {
       this.$emit("sortSuggestionListBy", selectedFiltering);
+    },
+    handleSortDropDownSelectedIndicator() {
+      // update dropdownlist selected value indicator as selected
+      // TODO: this is dirty way doing this, need to refactore more vuejs way doing this
+      if(this.selectedSortOptionIndex > 0) {
+        const selectedOption = selected.target[this.selectedSortOptionIndex];
+        selectedOption.innerText = selectedOption.value.slice(0, selectedOption.value.length)
+      }
+
+      const selectedIndex = selected.target.selectedIndex;
+
+      selected.target[selectedIndex].innerText = `> ${selected.target.value}`;
+      this.selectedSortOptionIndex = selectedIndex;
     }
   }
 };
@@ -122,5 +139,9 @@ i {
 .down {
   transform: rotate(45deg);
   -webkit-transform: rotate(45deg);
+}
+.right {
+  transform: rotate(-45deg);
+  -webkit-transform: rotate(-45deg);
 }
 </style>
