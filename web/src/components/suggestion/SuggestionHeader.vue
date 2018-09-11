@@ -5,7 +5,7 @@
     <span class="filteringOptions">
       <select v-model="selectedSortOption" @change="sortValueSelected">
         <option disabled value="">Järjestele</option>
-        <option v-if="selectedSortOption != ''" value=""></option>
+        <option value=""></option>
         <option v-for="selection in dropDownOptions" :key="selection.label">{{ selection.label }}</option>
       </select>
     <i class="arrow down"></i>
@@ -46,8 +46,13 @@ export default {
   },
   methods: {
     sortValueSelected() {
-      const selectedValue = this.dropDownOptions.find(e => e.label == this.selectedSortOption);
-      this.sortSuggestionList(this.selectedOptionsMapper[selectedValue.value]);
+      if(this.selectedSortOption !== '') {
+        const selectedValue = this.dropDownOptions.find(e => e.label == this.selectedSortOption);
+        this.sortSuggestionList(this.selectedOptionsMapper[selectedValue.value]);
+      }
+      else {
+        this.sortSuggestionList(this.selectedSortOption);
+      }
     },
     sortSuggestionList(selectedFiltering) {
       this.$emit("sortSuggestionListBy", selectedFiltering);
