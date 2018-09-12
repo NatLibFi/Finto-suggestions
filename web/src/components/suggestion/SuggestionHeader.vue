@@ -47,7 +47,7 @@ export default {
   },
   methods: {
     sortValueSelected(selected) {
-      handleSortDropDownSelectedIndicator();
+      this.handleSortDropDownSelectedIndicator(selected);
 
       if(selected && selected.target.value !== '') {
         // do sorting by sorting key
@@ -61,7 +61,7 @@ export default {
     sortSuggestionList(selectedFiltering) {
       this.$emit("sortSuggestionListBy", selectedFiltering);
     },
-    handleSortDropDownSelectedIndicator() {
+    handleSortDropDownSelectedIndicator(selected) {
       // update dropdownlist selected value indicator as selected
       // TODO: this is dirty way doing this, need to refactore more vuejs way doing this
       if(this.selectedSortOptionIndex > 0) {
@@ -71,8 +71,10 @@ export default {
 
       const selectedIndex = selected.target.selectedIndex;
 
-      selected.target[selectedIndex].innerText = `> ${selected.target.value}`;
-      this.selectedSortOptionIndex = selectedIndex;
+      if(selectedIndex > 1){
+        selected.target[selectedIndex].innerText = `> ${selected.target.value}`;
+        this.selectedSortOptionIndex = selectedIndex;
+      }
     }
   }
 };
