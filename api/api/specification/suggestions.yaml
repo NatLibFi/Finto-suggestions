@@ -28,6 +28,7 @@ paths:
               - CREATED_DESC
               - CREATED_ASC
               - COMMENTS_DESC
+              - COMMENTS_ASC
               - UPDATED_DESC
               - REACTIONS_DESC
         - name: filters

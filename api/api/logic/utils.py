@@ -66,6 +66,20 @@ SUGGESTION_SORT_FUNCTIONS = {
             Suggestion.created.desc()
         )
     ),
+    'COMMENTS_ASC': (
+        lambda session:
+        session.query(Suggestion)
+        .outerjoin(Event)
+        .filter(or_(
+            Event.event_type == 'COMMENT',
+            Event.event_type == None  # pylint: disable=C0121
+        ))
+        .group_by(Suggestion.id)
+        .order_by(
+            db.func.count(Event.event_type).asc(),
+            Suggestion.created.desc()
+        )
+    ),
     'UPDATED_DESC': (
         lambda session:
         session.query(Suggestion)
