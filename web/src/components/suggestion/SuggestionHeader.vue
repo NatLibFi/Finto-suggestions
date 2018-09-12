@@ -114,6 +114,7 @@ export default {
   min-width: 25%;
   color: green;
   font-weight: bold;
+  padding-right: 10px;
 }
 .resolved {
   min-width: 25%;
