@@ -1,16 +1,24 @@
 <template>
-  <section class="SuggestionListHeader">
-    <span class="open">{{ openSuggestionCount }} käsittelemätöntä</span>
-    <span class="resolved">{{ resolvedSuggestionCount }} käsiteltyä</span>
-    <span class="filteringOptions">
-      <select v-model="selectedSortOption" @change="sortValueSelected" :required="true">
-        <option disabled value="">Järjestele</option>
-        <option value=""></option>
-        <option v-for="selection in dropDownOptions" :key="selection.label" :value="selection.label">{{ selection.label }}</option>
-      </select>
-    <i class="arrow down"></i>
-    </span>
-  </section>
+  <div>
+    <section class="SuggestionListHeader">
+      <div class="headerContainer">
+        <div class="counts">
+          <span class="open">{{ openSuggestionCount }} käsittelemätöntä</span>
+          <span class="resolved">{{ resolvedSuggestionCount }} käsiteltyä</span>
+        </div>
+        <div class="dropDownList">
+          <span class="sortingOptions">
+            <select v-model="selectedSortOption" @change="sortValueSelected" :required="true">
+              <option disabled value="">Järjestele</option>
+              <option value=""></option>
+              <option v-for="selection in dropDownOptions" :key="selection.label" :value="selection.label">{{ selection.label }}</option>
+            </select>
+            <i class="arrow down"></i>
+          </span>
+        </div>
+      </div>
+    </section>
+  </div>
 </template>
 
 <script>
@@ -82,51 +90,68 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-.SuggestionListHeader {
-  font-weight: normal;
+.headerContainer {
+  width: 90%;
+  margin-left: 40px;
+  padding: 10px;
+  height: 30%;
   border-top: 2px solid #b1bfd6;
-  margin: 10px 0 0 10px;
+  font-weight: normal;
 }
-.SuggestionListHeader span {
-  margin: 10px;
-  justify-content: space-between;
-  flex-wrap: wrap;
+.counts {
+  display: inline-block;
+  width: 80%;
+  overflow: hidden;
+  text-align: left;
+}
+.dropDownList{
+  float: right;
+  width: 20%;
+  overflow: hidden;
+  text-align: right;
 }
 .open {
   min-width: 25%;
   color: green;
+  font-weight: bold;
 }
 .resolved {
   min-width: 25%;
   color: grey;
+  font-weight: bold;
 }
-.filteringOptions {
+.sortingOptions {
   flex-grow: 1;
-  width: 50%;
+  width: 70%;
+  right: 0;
+  position: relative;
 }
 
-.filteringOptions select {
+.sortingOptions select {
   border: 0 !important; /*Removes border*/
   -webkit-appearance: none; /*Removes default chrome and safari style*/
   -moz-appearance: none; /*Removes default style Firefox*/
+  font-size: 12pt;
+  width: 40%;
 }
 
-.filteringOptions select:focus {
+.sortingOptions select:focus {
   outline: none;
+  border: 2px solid red;
 }
 
-.filteringOptions option:hover {
+.sortingOptions option:hover {
   box-shadow: 0 0 10px 100px #1882a8 inset;
 }
 
 /* CAUTION: IE hackery ahead */
-.filteringOptions select::-ms-expand {
+.sortingOptions select::-ms-expand {
   display: none; /* remove default arrow on ie10 and ie11 */
 }
 
 /* target Internet Explorer 9 to undo the custom arrow */
 @media screen and (min-width: 0\0) {
-  .filteringOptions select {
+  .sortingOptions select {
     background: none\9;
     padding: 5px\9;
   }

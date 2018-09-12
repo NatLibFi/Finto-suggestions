@@ -7,14 +7,15 @@
     @fetchResolvedSuggestionCount="getResolvedSuggestionCount"
     @sortSuggestionListBy="sortSuggestionList"
   />
-  <ul class="suggestionList">
+  <ul class="list">
     <suggestion-item
-      class="suggestionItem"
+      class="item"
       v-for="item in items"
       :key="item.id"
       :orderNumber=item.id
       :title=item.description
       :created=item.created
+      :status=item.status
       :suggestionType=item.suggestion_type
       :tags=item.tags />
   </ul>
@@ -76,12 +77,12 @@ ul {
   list-style: none;
 }
 
-.suggestionList {
+.list {
   align-items: flex-start;
   text-align: start;
 }
 
-.suggestionItem {
+.item {
   margin: 10px 0 10px 0;
   border-top: 2px solid #b1bfd6;
   border-bottom: 2px solid #b1bfd6;

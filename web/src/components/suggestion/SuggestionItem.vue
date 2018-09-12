@@ -1,13 +1,20 @@
 <template>
-  <li class="suggestionItem">
-        <span>
-            <p class="title">
-                {{title}} {{ formatTags() }}
-            </p>
-            <p class="label">
-                #{{orderNumber}} Lähetetty {{ buildLabel() }}
-            </p>
+  <li class="item">
+    <div class="title">
+      <p>
+        {{title}}
+        <span class="status" v-if="status !== 'DEFAULT'">{{ status }}</span>
+        <span class="type">{{ suggestionType }}</span>
+        <span v-if="tags.length > 0">
+          <span class="tags" v-for="tag in tags" :key="tag.label">{{tag.label}}</span>
         </span>
+      </p>
+    </div>
+    <div class="label">
+      <p>
+        #{{ orderNumber }} Lähetetty {{ buildLabel() }}
+      </p>
+    </div>
   </li>
 </template>
 
@@ -19,6 +26,7 @@ export default {
     orderNumber: Number,
     title: String,
     created: String,
+    status: String,
     suggestionType: String,
     tags: Array
   },
@@ -29,40 +37,56 @@ export default {
     buildLabel() {
       const whenSended = this.getDayDifference();
       return whenSended > 0 ? `${whenSended} päivää sitten` : "tänään";
-    },
-    formatTags() {
-      let tagListing = this.suggestionType;
-      if (this.tags.length > 0) {
-        this.tags.forEach(tag => {
-          tagListing += `${tag},`;
-        });
-        return tagListing.slice(0, -1); //removed last ,-mark from string
-      }
-
-      return tagListing;
     }
   }
 };
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-.suggestionItem {
-  flex-basis: auto;
+.item {
   width: 100%;
   height: 100%;
-  margin-left: 3%;
 }
-
-.suggestionItem p {
+.item p {
   margin: 0;
 }
-
 .title {
   font-weight: bold;
+  margin: 5px;
 }
-
+.status {
+  margin: 5px;
+  font-weight: normal;
+  text-transform: lowercase;
+  font-size: smaller;
+  padding: 5px;
+  background-color: green;
+  color: white;
+  border: 2px solid green;
+}
+.type {
+  margin: 5px;
+  font-weight: normal;
+  text-transform: lowercase;
+  font-size: smaller;
+  padding: 5px;
+  background-color: orange;
+  color: white;
+  border: 2px solid orange;
+  border-radius: 3px;
+}
+.tags {
+  margin: 5px;
+  font-weight: normal;
+  text-transform: lowercase;
+  font-size: smaller;
+  padding: 5px;
+  background-color: white;
+  color: purple;
+  border: 2px solid purple;
+}
 .label {
   font-size: smaller;
+  padding-left: 5px;
 }
 </style>
