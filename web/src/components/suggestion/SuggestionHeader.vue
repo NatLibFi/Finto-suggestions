@@ -22,7 +22,7 @@
 </template>
 
 <script>
-import sortConst from "../../utils/suggestionSortConst.js";
+import sortConst from '../../utils/suggestionSortConst.js';
 
 export default {
   props: {
@@ -30,15 +30,15 @@ export default {
     resolvedSuggestionCount: Number
   },
   data: () => ({
-    selectedSortOption: "",
+    selectedSortOption: '',
     selectedSortOptionIndex: 0,
     dropDownOptions: [
-      { label: "Uusin ensin", value: "NEWEST_FIRST" },
-      { label: "Vanhin ensin", value: "OLDEST_FIRST" },
-      { label: "Eniten kommentoitu", value: "MOST_COMMENTS" },
-      { label: "Vähiten kommentoitu", value: "LEAST_COMMENTS" },
-      { label: "Viimeksi päivitetty", value: "LAST_UPDATED" },
-      { label: "Eniten reaktiota", value: "MOST_REACTIONS" }
+      { label: 'Uusin ensin', value: 'NEWEST_FIRST' },
+      { label: 'Vanhin ensin', value: 'OLDEST_FIRST' },
+      { label: 'Eniten kommentoitu', value: 'MOST_COMMENTS' },
+      { label: 'Vähiten kommentoitu', value: 'LEAST_COMMENTS' },
+      { label: 'Viimeksi päivitetty', value: 'LAST_UPDATED' },
+      { label: 'Eniten reaktiota', value: 'MOST_REACTIONS' }
     ],
     selectedOptionsMapper: {
       NEWEST_FIRST: sortConst.NEWEST_FIRST,
@@ -50,36 +50,42 @@ export default {
     }
   }),
   created() {
-    this.$emit("fetchOpenSuggestionCount");
-    this.$emit("fetchResolvedSuggestionCount");
+    this.$emit('fetchOpenSuggestionCount');
+    this.$emit('fetchResolvedSuggestionCount');
   },
   methods: {
     sortValueSelected(selected) {
       this.handleSortDropDownSelectedIndicator(selected);
 
-      if(selected && selected.target.value !== '') {
+      if (selected && selected.target.value !== '') {
         // do sorting by sorting key
-        const selectedValue = this.dropDownOptions.find(e => e.label == selected.target.value);
-        this.sortSuggestionList(this.selectedOptionsMapper[selectedValue.value]);
-      }
-      else {
+        const selectedValue = this.dropDownOptions.find(
+          e => e.label == selected.target.value
+        );
+        this.sortSuggestionList(
+          this.selectedOptionsMapper[selectedValue.value]
+        );
+      } else {
         this.sortSuggestionList(this.selectedSortOption);
       }
     },
     sortSuggestionList(selectedFiltering) {
-      this.$emit("sortSuggestionListBy", selectedFiltering);
+      this.$emit('sortSuggestionListBy', selectedFiltering);
     },
     handleSortDropDownSelectedIndicator(selected) {
       // update dropdownlist selected value indicator as selected
       // TODO: this is dirty way doing this, need to refactore more vuejs way doing this
-      if(this.selectedSortOptionIndex > 0) {
+      if (this.selectedSortOptionIndex > 0) {
         const selectedOption = selected.target[this.selectedSortOptionIndex];
-        selectedOption.innerText = selectedOption.value.slice(0, selectedOption.value.length)
+        selectedOption.innerText = selectedOption.value.slice(
+          0,
+          selectedOption.value.length
+        );
       }
 
       const selectedIndex = selected.target.selectedIndex;
 
-      if(selectedIndex > 1){
+      if (selectedIndex > 1) {
         selected.target[selectedIndex].innerText = `> ${selected.target.value}`;
         this.selectedSortOptionIndex = selectedIndex;
       }

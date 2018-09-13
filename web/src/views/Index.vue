@@ -6,7 +6,7 @@
 </template>
 
 <script>
-import Suggestions from "../components/suggestion/Suggestions";
+import Suggestions from '../components/suggestion/Suggestions';
 
 export default {
   components: {

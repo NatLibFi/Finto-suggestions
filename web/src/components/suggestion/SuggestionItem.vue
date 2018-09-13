@@ -19,7 +19,7 @@
 </template>
 
 <script>
-import { differenceInDays, parse } from "date-fns";
+import { differenceInDays, parse } from 'date-fns';
 
 export default {
   props: {
@@ -36,7 +36,7 @@ export default {
     },
     buildLabel() {
       const whenSended = this.getDayDifference();
-      return whenSended > 0 ? `${whenSended} päivää sitten` : "tänään";
+      return whenSended > 0 ? `${whenSended} päivää sitten` : 'tänään';
     }
   }
 };

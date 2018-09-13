@@ -1,4 +1,4 @@
-import suggestions from "./suggestions/suggestions";
+import suggestions from './suggestions/suggestions';
 
 export default {
   suggestions

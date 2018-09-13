@@ -1,7 +1,7 @@
-import axios from "axios";
+import axios from 'axios';
 
 const client = axios.create({
-  baseURL: "/api",
+  baseURL: '/api',
   json: true
 });
 
@@ -21,4 +21,4 @@ const execute = async (method, resource, data) => {
   });
 };
 
-export const get = async options => execute("get", options.resource, null);
+export const get = async options => execute('get', options.resource, null);
