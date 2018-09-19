@@ -1,12 +1,9 @@
 <template>
-<<<<<<< HEAD
   <div>
     <navigation></navigation>
-=======
   <div class="container">
     <!-- <img src="../assets/logo.png"> -->
     <SuggestionSearch />
->>>>>>> feat: added frames for search base component and child components
     <Suggestions />
   </div>
 </template>
