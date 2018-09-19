@@ -1,7 +1,7 @@
 <template>
-  <div class="container">
+  <div :class="container">
     <h3>YSE - YSAn ja YSOn käsite-ehdotukset</h3>
-    <div class="welcomeText">
+    <div :class="welcomeText">
       <p>
         Tämä palvelu on YSA/YSO -käsite-ehdotuksille ja niiden etenemisen seuraamiselle.
         Voit selata ja kommentoida ehdotuksia täällä. Ehdotusten selaaminen onnistuu ilman käyttäjätunnuksia,
