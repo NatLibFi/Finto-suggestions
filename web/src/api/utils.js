@@ -16,9 +16,14 @@ const execute = async (method, resource, data) => {
     headers: {
       Authorization: `Bearer ${accessToken}`
     }
-  }).then(req => {
-    return req.data;
-  });
+  })
+    .then(req => {
+      return req.data;
+    })
+    .catch(error => {
+      // TODO: needs to decide where errors are going to logged but for now just printing them to console
+      console.log(error);
+    });
 };
 
 export const get = async options => execute('get', options.resource, null);

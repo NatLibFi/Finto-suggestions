@@ -2,9 +2,9 @@ import { get } from '../utils';
 
 export default {
   getSuggestions: () => get({ resource: '/suggestions' }),
-  getAllNewSuggestions: () =>
+  getOpenSuggestions: () =>
     get({ resource: '/suggestions?filters=type%3Anew' }),
-  getAllResolvedSuggestions: () =>
+  getResolvedSuggestions: () =>
     get({
       resource: '/suggestions?filters=status%3AACCEPTED%7Cstatus%3AREJECTED'
     }),

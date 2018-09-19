@@ -49,10 +49,6 @@ export default {
       MOST_REACTIONS: sortConst.MOST_REACTIONS
     }
   }),
-  created() {
-    this.$emit('fetchOpenSuggestionCount');
-    this.$emit('fetchResolvedSuggestionCount');
-  },
   methods: {
     sortValueSelected(selected) {
       this.handleSortDropDownSelectedIndicator(selected);
@@ -110,7 +106,7 @@ export default {
   overflow: hidden;
   text-align: left;
 }
-.dropDownList{
+.dropDownList {
   float: right;
   width: 20%;
   overflow: hidden;
