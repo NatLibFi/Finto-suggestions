@@ -1,5 +1,5 @@
 <template>
-  <div :class="filterSuggestions">
+  <div class="filterSuggestions">
     <h4>Suodata hakutuloksia</h4>
     <span>
       <select>
