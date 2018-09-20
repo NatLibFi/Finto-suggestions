@@ -9,5 +9,7 @@ export default {
       resource: '/suggestions?filters=status%3AACCEPTED%7Cstatus%3AREJECTED'
     }),
   getSortedSuggestions: sortValue =>
-    get({ resource: `/suggestions?sort=${sortValue}` })
+    get({ resource: `/suggestions?sort=${sortValue}` }),
+  searchSuggestions: searchQuery =>
+    get({ resource: `/suggestions?search=${searchQuery}` })
 };
