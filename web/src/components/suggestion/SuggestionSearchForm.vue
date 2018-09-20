@@ -1,10 +1,10 @@
 <template>
-  <div :class="searchSuggestions">
+  <div class="searchSuggestions">
     <h4>Hae ehdotusta</h4>
     <span>
       <form>
-      <input type="text" value="Hae jotain" />
-          <input type="button" value="Hae" />
+        <input type="text" v-model="searchQuery" value="Hae jotain" />
+        <input type="button" value="Hae" @click="doSearch" />
         </form>
       </span>
     </div>
@@ -12,10 +12,17 @@
 
 <script>
 export default {
-  
+  data: () => ({
+    searchQuery: ''
+  }),
+  methods: {
+    doSearch() {
+      console.log(this.searchQuery);
+    }
+  }
 }
 </script>
 
 <style scoped>
-
+.searchSuggestions {}
 </style>
