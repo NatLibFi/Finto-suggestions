@@ -11,18 +11,23 @@
 </template>
 
 <script>
+import { suggestionActions } from '../../store/modules/suggestionConsts.js';
+import { mapSuggestionActions } from '../../store/modules/suggestion.js';
+
 export default {
   data: () => ({
-    searchQuery: ''
+    searchQuery: null
   }),
   methods: {
+    ...mapSuggestionActions({
+      setSearchQuery: suggestionActions.SET_SEARCH_QUERY
+    }),
     doSearch() {
-      console.log(this.searchQuery);
+      this.setSearchQuery(this.searchQuery);
     }
   }
-}
+};
 </script>
 
 <style scoped>
-.searchSuggestions {}
 </style>
