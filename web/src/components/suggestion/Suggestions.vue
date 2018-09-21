@@ -24,15 +24,9 @@
 import SuggestionHeader from './SuggestionHeader';
 import SuggestionItem from './SuggestionItem';
 
-import {
-  suggestionGetters,
-  suggestionActions
-} from '../../store/modules/suggestionConsts.js';
+import { suggestionGetters, suggestionActions } from '../../store/modules/suggestionConsts.js';
 
-import {
-  mapSuggestionActions,
-  mapSuggestionGetters
-} from '../../store/modules/suggestion.js';
+import { mapSuggestionActions, mapSuggestionGetters } from '../../store/modules/suggestion.js';
 
 export default {
   components: {
@@ -43,7 +37,8 @@ export default {
     ...mapSuggestionGetters({
       items: suggestionGetters.GET_SUGGESTIONS,
       openCount: suggestionGetters.GET_OPEN_SUGGESTIONS_COUNT,
-      resolvedCount: suggestionGetters.GET_RESOLVED_SUGGESTIONS_COUNT
+      resolvedCount: suggestionGetters.GET_RESOLVED_SUGGESTIONS_COUNT,
+      searchQuery: suggestionGetters.GET_SEARCH_QUERY
     })
   },
   created() {
@@ -56,12 +51,22 @@ export default {
       getSuggestions: suggestionActions.GET_SUGGESTIONS,
       getOpenSuggestionCount: suggestionActions.GET_OPEN_SUGGESTIONS,
       getResolvedSuggestionCount: suggestionActions.GET_RESOLVED_SUGGESTIONS,
-      getSortedSuggestions: suggestionActions.GET_SORTED_SUGGESTIONS
+      getSortedSuggestions: suggestionActions.GET_SORTED_SUGGESTIONS,
+      searchSuggestions: suggestionActions.GET_SEARCHED_SUGGESTIONS
     }),
     async sortSuggestionList(sortValue) {
       console.log(sortValue);
       if (sortValue !== '') {
         this.getSortedSuggestions(sortValue);
+      } else {
+        this.getSuggestions();
+      }
+    }
+  },
+  watch: {
+    searchQuery() {
+      if (this.searchQuery !== '') {
+        this.searchSuggestions(this.searchQuery);
       } else {
         this.getSuggestions();
       }
