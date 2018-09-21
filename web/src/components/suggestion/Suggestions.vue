@@ -75,6 +75,15 @@ export default {
         this.getSuggestions();
       }
     }
+  },
+  watch: {
+    searchQuery() {
+      if (this.searchQuery !== '') {
+        this.searchSuggestions(this.searchQuery);
+      } else {
+        this.getSuggestions();
+      }
+    }
   }
 };
 </script>
