@@ -11,7 +11,7 @@
       </p>
     </div>
     <div>
-      <suggestion-search-form />
+      <suggestion-search-form @searchQuery="sendQueryToParent" />
     </div>
     <div>
       <filter-suggestions />
