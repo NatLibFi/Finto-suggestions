@@ -11,7 +11,7 @@
       </p>
     </div>
     <div>
-      <suggestion-search-form />
+      <suggestion-search-form @searchQuery="sendQueryToParent" />
     </div>
     <div>
       <filter-suggestions />
@@ -28,10 +28,8 @@ export default {
     SuggestionSearchForm,
     FilterSuggestions
   }
-}
+};
 </script>
 
 <style scoped>
-.container {}
-.welcomeText {}
 </style>
