@@ -12,7 +12,7 @@ module.exports = {
     'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'off',
     'prettier/prettier': ['error', {singleQuote: true}],
     'max-len': [
-      "warning",
+      1,
       {
         'code': 100
       }
