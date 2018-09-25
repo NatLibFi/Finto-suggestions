@@ -1,20 +1,17 @@
 <template>
   <div>
-    <section class="SuggestionListHeader">
+    <section>
       <div class="headerContainer">
         <div class="counts">
           <span class="open">{{ openSuggestionCount }} käsittelemätöntä</span>
           <span class="resolved">{{ resolvedSuggestionCount }} käsiteltyä</span>
         </div>
-        <div class="dropDownList">
-          <span class="sortingOptions">
-            <select v-model="selectedSortOption" @change="sortValueSelected" :required="true">
-              <option disabled value="">Järjestele</option>
-              <option value=""></option>
-              <option v-for="selection in dropDownOptions" :key="selection.label" :value="selection.label">{{ selection.label }}</option>
-            </select>
-            <i class="arrow down"></i>
-          </span>
+         <div class="dropDownList">
+           <common-drop-down
+            :header="'Järjestele'"
+            :options="dropDownOptions"
+            :changeCallBack="sortValueSelected"
+           />
         </div>
       </div>
     </section>
@@ -22,15 +19,18 @@
 </template>
 
 <script>
-import sortConst from '../../utils/suggestionSortConst.js';
+import { suggestionSortingKeys } from '../../utils/suggestionMappings.js';
+import commonDropDown from '../common/CommonDropDown';
 
 export default {
+  components: {
+    commonDropDown
+  },
   props: {
     openSuggestionCount: Number,
     resolvedSuggestionCount: Number
   },
   data: () => ({
-    selectedSortOption: '',
     selectedSortOptionIndex: 0,
     dropDownOptions: [
       { label: 'Uusin ensin', value: 'NEWEST_FIRST' },
@@ -41,12 +41,12 @@ export default {
       { label: 'Eniten reaktiota', value: 'MOST_REACTIONS' }
     ],
     selectedOptionsMapper: {
-      NEWEST_FIRST: sortConst.NEWEST_FIRST,
-      OLDEST_FIRST: sortConst.OLDEST_FIRST,
-      MOST_COMMENTS: sortConst.MOST_COMMENTS,
-      LEAST_COMMENTS: sortConst.LEAST_COMMENTS,
-      LAST_UPDATED: sortConst.LAST_UPDATED,
-      MOST_REACTIONS: sortConst.MOST_REACTIONS
+      NEWEST_FIRST: suggestionSortingKeys.NEWEST_FIRST,
+      OLDEST_FIRST: suggestionSortingKeys.OLDEST_FIRST,
+      MOST_COMMENTS: suggestionSortingKeys.MOST_COMMENTS,
+      LEAST_COMMENTS: suggestionSortingKeys.LEAST_COMMENTS,
+      LAST_UPDATED: suggestionSortingKeys.LAST_UPDATED,
+      MOST_REACTIONS: suggestionSortingKeys.MOST_REACTIONS
     }
   }),
   methods: {
@@ -62,11 +62,11 @@ export default {
           this.selectedOptionsMapper[selectedValue.value]
         );
       } else {
-        this.sortSuggestionList(this.selectedSortOption);
+        this.sortSuggestionList(null);
       }
     },
-    sortSuggestionList(selectedFiltering) {
-      this.$emit('sortSuggestionListBy', selectedFiltering);
+    sortSuggestionList(selectedSorting) {
+      this.$emit('sortSuggestionListBy', selectedSorting);
     },
     handleSortDropDownSelectedIndicator(selected) {
       // update dropdownlist selected value indicator as selected
@@ -106,12 +106,6 @@ export default {
   overflow: hidden;
   text-align: left;
 }
-.dropDownList {
-  float: right;
-  width: 20%;
-  overflow: hidden;
-  text-align: right;
-}
 .open {
   min-width: 25%;
   color: green;
@@ -123,55 +117,10 @@ export default {
   color: grey;
   font-weight: bold;
 }
-.sortingOptions {
-  flex-grow: 1;
-  width: 70%;
-  right: 0;
-  position: relative;
-}
-
-.sortingOptions select {
-  border: 0 !important; /*Removes border*/
-  -webkit-appearance: none; /*Removes default chrome and safari style*/
-  -moz-appearance: none; /*Removes default style Firefox*/
-  font-size: 12pt;
-  width: 40%;
-}
-
-.sortingOptions select:focus {
-  outline: none;
-  border: 2px solid red;
-}
-
-.sortingOptions option:hover {
-  box-shadow: 0 0 10px 100px #1882a8 inset;
-}
-
-/* CAUTION: IE hackery ahead */
-.sortingOptions select::-ms-expand {
-  display: none; /* remove default arrow on ie10 and ie11 */
-}
-
-/* target Internet Explorer 9 to undo the custom arrow */
-@media screen and (min-width: 0\0) {
-  .sortingOptions select {
-    background: none\9;
-    padding: 5px\9;
-  }
-}
-
-i {
-  border: solid black;
-  border-width: 0 3px 3px 0;
-  display: inline-block;
-  padding: 3px;
-}
-.down {
-  transform: rotate(45deg);
-  -webkit-transform: rotate(45deg);
-}
-.right {
-  transform: rotate(-45deg);
-  -webkit-transform: rotate(-45deg);
+.dropDownList {
+  float: right;
+  width: 20%;
+  overflow: hidden;
+  text-align: right;
 }
 </style>
