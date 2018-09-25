@@ -18,8 +18,8 @@ export default {
     items: []
   },
   mutations: {
-    [meetingMutations.SET_MEETINGS](state, suggestions) {
-      Vue.set(state, storeStateNames.ITEMS, suggestions);
+    [meetingMutations.SET_MEETINGS](state, meetings) {
+      Vue.set(state, storeStateNames.ITEMS, meetings);
     }
   },
   getters: {
@@ -27,7 +27,7 @@ export default {
   },
   actions: {
     async [meetingActions.GET_MEETINGS]({ commit }) {
-      const result = await api.suggestions.getSuggestions();
+      const result = await api.meetings.getMeetings();
       commit(meetingMutations.SET_MEETINGS, result.data);
     }
   }
