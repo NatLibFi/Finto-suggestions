@@ -3,8 +3,7 @@
   <suggestion-header
     :openSuggestionCount="openCount"
     :resolvedSuggestionCount="resolvedCount"
-    @sortSuggestionListBy="sortSuggestionList"
-  />
+    @sortSuggestionListBy="sortSuggestionList" />
   <ul class="list">
     <suggestion-item
       class="item"
@@ -54,9 +53,8 @@ export default {
       getSortedSuggestions: suggestionActions.GET_SORTED_SUGGESTIONS,
       searchSuggestions: suggestionActions.GET_SEARCHED_SUGGESTIONS
     }),
-    async sortSuggestionList(sortValue) {
-      console.log(sortValue);
-      if (sortValue !== '') {
+    async sortSuggestionList(selectedSorting) {
+      if (selectedSorting && sortValue !== '') {
         this.getSortedSuggestions(sortValue);
       } else {
         this.getSuggestions();
