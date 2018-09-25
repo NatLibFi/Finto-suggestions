@@ -60,17 +60,8 @@ export default {
       searchSuggestions: suggestionActions.GET_SEARCHED_SUGGESTIONS
     }),
     async sortSuggestionList(selectedSorting) {
-      if (selectedSorting && selectedSorting !== '') {
-        this.getSortedSuggestions(selectedSorting);
-      } else {
-        this.getSuggestions();
-      }
-    }
-  },
-  watch: {
-    searchQuery() {
-      if (this.searchQuery !== '') {
-        this.searchSuggestions(this.searchQuery);
+      if (selectedSorting && sortValue !== '') {
+        this.getSortedSuggestions(sortValue);
       } else {
         this.getSuggestions();
       }
