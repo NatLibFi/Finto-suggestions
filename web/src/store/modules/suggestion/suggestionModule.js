@@ -1,6 +1,6 @@
 import Vue from 'vue';
 import { mapActions, mapGetters } from 'vuex';
-import api from '../../api';
+import api from '../../../api';
 import {
   namespace,
   storeStateNames,

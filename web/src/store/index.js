@@ -1,7 +1,7 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
 
-import suggestionModule from './modules/suggestion';
+import suggestionModule from './modules/suggestion/suggestionModule';
 
 Vue.use(Vuex);
 
