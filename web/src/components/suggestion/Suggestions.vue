@@ -1,10 +1,8 @@
 <template>
 <div>
   <suggestion-header
-    :openSuggestionCount="openSuggestionCount"
-    :resolvedSuggestionCount="resolvedSuggestionCount"
-    @fetchOpenSuggestionCount="getOpenSuggestionCount"
-    @fetchResolvedSuggestionCount="getResolvedSuggestionCount"
+    :openSuggestionCount="openCount"
+    :resolvedSuggestionCount="resolvedCount"
     @sortSuggestionListBy="sortSuggestionList"
   />
   <ul class="list">
@@ -23,49 +21,50 @@
 </template>
 
 <script>
-// import {
-//   suggestionActions,
-//   suggestionGetters,
-//   mapSuggestionActions,
-//   mapSuggestionGetters } from '../../store/modules/suggestion'
 import SuggestionHeader from './SuggestionHeader';
 import SuggestionItem from './SuggestionItem';
-import api from '../../api/index.js';
+
+import {
+  suggestionGetters,
+  suggestionActions
+} from '../../store/modules/suggestionConsts.js';
+
+import {
+  mapSuggestionActions,
+  mapSuggestionGetters
+} from '../../store/modules/suggestion.js';
 
 export default {
   components: {
     SuggestionHeader,
     SuggestionItem
   },
-  data: () => ({
-    items: [],
-    openSuggestionCount: 0,
-    resolvedSuggestionCount: 0
-  }),
-  async created() {
+  computed: {
+    ...mapSuggestionGetters({
+      items: suggestionGetters.GET_SUGGESTIONS,
+      openCount: suggestionGetters.GET_OPEN_SUGGESTIONS_COUNT,
+      resolvedCount: suggestionGetters.GET_RESOLVED_SUGGESTIONS_COUNT
+    })
+  },
+  created() {
     this.getSuggestions();
+    this.getOpenSuggestionCount();
+    this.getResolvedSuggestionCount();
   },
   methods: {
-    async getSuggestions() {
-      const response = await api.suggestions.getSuggestions();
-      this.items = response.data;
-    },
-    async getOpenSuggestionCount() {
-      const newSuggestions = await api.suggestions.getAllNewSuggestions();
-      this.openSuggestionCount = newSuggestions.items;
-    },
-    async getResolvedSuggestionCount() {
-      const resolvedSuggestions = await api.suggestions.getAllResolvedSuggestions();
-      this.resolvedSuggestionCount = resolvedSuggestions.items;
-    },
+    ...mapSuggestionActions({
+      getSuggestions: suggestionActions.GET_SUGGESTIONS,
+      getOpenSuggestionCount: suggestionActions.GET_OPEN_SUGGESTIONS,
+      getResolvedSuggestionCount: suggestionActions.GET_RESOLVED_SUGGESTIONS,
+      getSortedSuggestions: suggestionActions.GET_SORTED_SUGGESTIONS
+    }),
     async sortSuggestionList(sortValue) {
+      console.log(sortValue);
       if (sortValue !== '') {
-        const response = await api.suggestions.getSortedSuggestions(sortValue);
-        this.items = response.data;
-        return;
+        this.getSortedSuggestions(sortValue);
+      } else {
+        this.getSuggestions();
       }
-
-      this.getSuggestions();
     }
   }
 };
