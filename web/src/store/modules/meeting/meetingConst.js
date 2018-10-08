@@ -4,12 +4,12 @@ export const storeStateNames = {
   ITEMS: 'items'
 };
 
-export const meetingMutations = {
-  SET_MEETINGS: 'setMeetings'
-};
-
 export const meetingGetters = {
   GET_MEETINGS: 'getMeetings'
+};
+
+export const meetingMutations = {
+  SET_MEETINGS: 'setMeetings'
 };
 
 export const meetingActions = {
