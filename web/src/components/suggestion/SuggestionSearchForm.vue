@@ -11,8 +11,8 @@
 </template>
 
 <script>
-import { suggestionActions } from '../../store/modules/suggestionConsts.js';
-import { mapSuggestionActions } from '../../store/modules/suggestion.js';
+import { suggestionActions } from '../../store/modules/suggestion/suggestionConsts.js';
+import { mapSuggestionActions } from '../../store/modules/suggestion/suggestionModule.js';
 
 export default {
   data: () => ({
