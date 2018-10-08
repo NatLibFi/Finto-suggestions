@@ -7,6 +7,16 @@
   </div>
 </template>
 
+<script>
+export default {
+  created() {
+    $cookies.config('10d');
+    $cookies.set('access_token', process.env.ACCESS_TOKEN);
+  }
+};
+</script>
+
+
 <style>
 #app {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
