@@ -16,6 +16,13 @@ export const suggestionGetters = {
   GET_FILTERS: 'getFilters'
 };
 
+export const suggestionGetters = {
+  GET_SUGGESTIONS: 'getSuggestions',
+  GET_OPEN_SUGGESTIONS_COUNT: 'getOpenSuggestionCount',
+  GET_RESOLVED_SUGGESTIONS_COUNT: 'getResolvedSuggestionCount',
+  GET_SEARCH_QUERY: 'getSearchQuery'
+};
+
 export const suggestionMutations = {
   SET_SUGGESTIONS: 'setSuggestions',
   SET_OPEN_SUGGESTIONS_COUNT: 'setOpenSuggestionCount',
