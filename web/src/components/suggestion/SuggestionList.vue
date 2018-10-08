@@ -23,9 +23,15 @@
 import SuggestionHeader from './SuggestionHeader';
 import SuggestionItem from './SuggestionItem';
 
-import { suggestionGetters, suggestionActions } from '../../store/modules/suggestionConsts.js';
+import {
+  suggestionGetters,
+  suggestionActions
+} from '../../store/modules/suggestion/suggestionConsts.js';
 
-import { mapSuggestionActions, mapSuggestionGetters } from '../../store/modules/suggestion.js';
+import {
+  mapSuggestionActions,
+  mapSuggestionGetters
+} from '../../store/modules/suggestion/suggestionModule.js';
 
 export default {
   components: {
@@ -54,8 +60,8 @@ export default {
       searchSuggestions: suggestionActions.GET_SEARCHED_SUGGESTIONS
     }),
     async sortSuggestionList(selectedSorting) {
-      if (selectedSorting && sortValue !== '') {
-        this.getSortedSuggestions(sortValue);
+      if (selectedSorting && selectedSorting !== '') {
+        this.getSortedSuggestions(selectedSorting);
       } else {
         this.getSuggestions();
       }

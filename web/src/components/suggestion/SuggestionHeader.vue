@@ -55,12 +55,8 @@ export default {
 
       if (selected && selected.target.value !== '') {
         // do sorting by sorting key
-        const selectedValue = this.dropDownOptions.find(
-          e => e.label == selected.target.value
-        );
-        this.sortSuggestionList(
-          this.selectedOptionsMapper[selectedValue.value]
-        );
+        const selectedValue = this.dropDownOptions.find(e => e.label == selected.target.value);
+        this.sortSuggestionList(this.selectedOptionsMapper[selectedValue.value]);
       } else {
         this.sortSuggestionList(null);
       }
@@ -73,10 +69,7 @@ export default {
       // TODO: this is dirty way doing this, need to refactore more vuejs way doing this
       if (this.selectedSortOptionIndex > 0) {
         const selectedOption = selected.target[this.selectedSortOptionIndex];
-        selectedOption.innerText = selectedOption.value.slice(
-          0,
-          selectedOption.value.length
-        );
+        selectedOption.innerText = selectedOption.value.slice(0, selectedOption.value.length);
       }
 
       const selectedIndex = selected.target.selectedIndex;
