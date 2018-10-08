@@ -4,12 +4,12 @@ export const storeStateNames = {
   ITEMS: 'items'
 };
 
-export const tagMutations = {
-  SET_TAGS: 'setTags'
-};
-
 export const tagGetters = {
   GET_TAGS: 'getTags'
+};
+
+export const tagMutations = {
+  SET_TAGS: 'setTags'
 };
 
 export const tagActions = {

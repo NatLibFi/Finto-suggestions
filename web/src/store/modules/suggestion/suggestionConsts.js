@@ -7,6 +7,13 @@ export const storeStateNames = {
   SEARCH_QUERY: 'searchQuery'
 };
 
+export const suggestionGetters = {
+  GET_SUGGESTIONS: 'getSuggestions',
+  GET_OPEN_SUGGESTIONS_COUNT: 'getOpenSuggestionCount',
+  GET_RESOLVED_SUGGESTIONS_COUNT: 'getResolvedSuggestionCount',
+  GET_SEARCH_QUERY: 'getSearchQuery'
+};
+
 export const suggestionMutations = {
   SET_SUGGESTIONS: 'setSuggestions',
   SET_OPEN_SUGGESTIONS_COUNT: 'setOpenSuggestionCount',
@@ -21,11 +28,4 @@ export const suggestionActions = {
   GET_SORTED_SUGGESTIONS: 'getSortedSuggestions',
   GET_SEARCHED_SUGGESTIONS: 'getSearchedSuggestions',
   SET_SEARCH_QUERY: 'setSearchQuery'
-};
-
-export const suggestionGetters = {
-  GET_SUGGESTIONS: 'getSuggestions',
-  GET_OPEN_SUGGESTIONS_COUNT: 'getOpenSuggestionsCount',
-  GET_RESOLVED_SUGGESTIONS_COUNT: 'getResolvedSuggestionsCount',
-  GET_SEARCH_QUERY: 'getSearchQuery'
 };

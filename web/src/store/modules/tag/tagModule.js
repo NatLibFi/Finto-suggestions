@@ -11,13 +11,13 @@ export default {
   state: {
     items: []
   },
+  getters: {
+    [tagGetters.GET_TAGS]: state => state[storeStateNames.ITEMS]
+  },
   mutations: {
     [tagMutations.SET_TAGS](state, tags) {
       Vue.set(state, storeStateNames.ITEMS, tags);
     }
-  },
-  getters: {
-    [tagGetters.GET_TAGS]: state => state[storeStateNames.ITEMS]
   },
   actions: {
     async [tagActions.GET_TAGS]({ commit }) {
