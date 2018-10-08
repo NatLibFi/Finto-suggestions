@@ -21,6 +21,7 @@ const execute = async (method, resource, data) => {
       return req.data;
     })
     .catch(error => {
+      /* eslint-disable-next-line */
       // TODO: needs to decide where errors are going to logged but for now just printing them to console
       console.log(error);
     });
