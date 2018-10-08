@@ -17,13 +17,13 @@ export default {
   state: {
     items: []
   },
+  getters: {
+    [meetingGetters.GET_MEETINGS]: state => state[storeStateNames.ITEMS]
+  },
   mutations: {
     [meetingMutations.SET_MEETINGS](state, meetings) {
       Vue.set(state, storeStateNames.ITEMS, meetings);
     }
-  },
-  getters: {
-    [meetingGetters.GET_MEETINGS]: state => state[storeStateNames.ITEMS]
   },
   actions: {
     async [meetingActions.GET_MEETINGS]({ commit }) {

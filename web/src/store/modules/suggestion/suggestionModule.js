@@ -19,6 +19,13 @@ export default {
     openCount: 0,
     resolvedCount: 0
   },
+  getters: {
+    [suggestionGetters.GET_SUGGESTIONS]: state => state[storeStateNames.ITEMS],
+    [suggestionGetters.GET_OPEN_SUGGESTIONS_COUNT]: state => state[storeStateNames.OPEN_COUNT],
+    [suggestionGetters.GET_RESOLVED_SUGGESTIONS_COUNT]: state =>
+      state[storeStateNames.RESOLVED_COUNT],
+    [suggestionGetters.GET_SEARCH_QUERY]: state => state[storeStateNames.SEARCH_QUERY]
+  },
   mutations: {
     [suggestionMutations.SET_SUGGESTIONS](state, suggestions) {
       Vue.set(state, storeStateNames.ITEMS, suggestions);
@@ -32,13 +39,6 @@ export default {
     [suggestionMutations.SET_SEARCH_QUERY](state, searchQuery) {
       Vue.set(state, storeStateNames.SEARCH_QUERY, searchQuery);
     }
-  },
-  getters: {
-    [suggestionGetters.GET_SUGGESTIONS]: state => state[storeStateNames.ITEMS],
-    [suggestionGetters.GET_OPEN_SUGGESTIONS_COUNT]: state => state[storeStateNames.OPEN_COUNT],
-    [suggestionGetters.GET_RESOLVED_SUGGESTIONS_COUNT]: state =>
-      state[storeStateNames.RESOLVED_COUNT],
-    [suggestionGetters.GET_SEARCH_QUERY]: state => state[storeStateNames.SEARCH_QUERY]
   },
   actions: {
     async [suggestionActions.GET_SUGGESTIONS]({ commit }) {
