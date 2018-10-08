@@ -3,7 +3,10 @@
     <select v-model="selectedOption" @change="changeCallBack">
       <option disabled value="">{{ header }}</option>
       <option value=""></option>
-      <option v-for="selection in options" :key="selection.label" :value="selection.label">{{ selection.label }}</option>
+      <option v-for="selection in options"
+        :key="selection.label"
+        :value="selection.label">{{ selection.label }}
+      </option>
     </select>
     <select>
 
@@ -88,4 +91,3 @@ i {
   -webkit-transform: rotate(-45deg);
 }
 </style>
-
