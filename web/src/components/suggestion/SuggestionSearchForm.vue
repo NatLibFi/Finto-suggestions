@@ -11,17 +11,15 @@
 </template>
 
 <script>
-import { suggestionActions } from '../../store/modules/suggestion/suggestionConsts.js';
-import { mapSuggestionActions } from '../../store/modules/suggestion/suggestionModule.js';
+import { suggestionMutations } from '../../store/modules/suggestion/suggestionConsts.js';
+import { mapSuggestioMutations } from '../../store/modules/suggestion/suggestionModule.js';
 
 export default {
   data: () => ({
     searchQuery: null
   }),
   methods: {
-    ...mapSuggestionActions({
-      setSearchQuery: suggestionActions.SET_SEARCH_QUERY
-    }),
+    ...mapSuggestioMutations({ setSearchQuery: suggestionMutations.SET_SEARCH_QUERY }),
     doSearch() {
       this.setSearchQuery(this.searchQuery);
     }
