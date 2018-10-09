@@ -1,5 +1,5 @@
 import Vue from 'vue';
-import { mapActions, mapGetters } from 'vuex';
+import { mapActions, mapGetters, mapMutations } from 'vuex';
 import api from '../../../api';
 import {
   namespace,
@@ -11,20 +11,23 @@ import {
 
 export const mapSuggestionGetters = getters => mapGetters(namespace, getters);
 export const mapSuggestionActions = actions => mapActions(namespace, actions);
+export const mapSuggestioMutations = mutations => mapMutations(namespace, mutations);
 
 export default {
   namespaced: true,
   state: {
     items: [],
     openCount: 0,
-    resolvedCount: 0
+    resolvedCount: 0,
+    filters: []
   },
   getters: {
     [suggestionGetters.GET_SUGGESTIONS]: state => state[storeStateNames.ITEMS],
     [suggestionGetters.GET_OPEN_SUGGESTIONS_COUNT]: state => state[storeStateNames.OPEN_COUNT],
     [suggestionGetters.GET_RESOLVED_SUGGESTIONS_COUNT]: state =>
       state[storeStateNames.RESOLVED_COUNT],
-    [suggestionGetters.GET_SEARCH_QUERY]: state => state[storeStateNames.SEARCH_QUERY]
+    [suggestionGetters.GET_SEARCH_QUERY]: state => state[storeStateNames.SEARCH_QUERY],
+    [suggestionGetters.GET_FILTERS]: state => state[storeStateNames.FILTERS]
   },
   mutations: {
     [suggestionMutations.SET_SUGGESTIONS](state, suggestions) {
@@ -38,6 +41,9 @@ export default {
     },
     [suggestionMutations.SET_SEARCH_QUERY](state, searchQuery) {
       Vue.set(state, storeStateNames.SEARCH_QUERY, searchQuery);
+    },
+    [suggestionMutations.SET_FILTERS](state, filters) {
+      Vue.set(state, storeStateNames.FILTERS, filters);
     }
   },
   actions: {
@@ -60,9 +66,6 @@ export default {
     async [suggestionActions.GET_SEARCHED_SUGGESTIONS]({ commit }, searchQuery) {
       const result = await api.suggestions.searchSuggestions(searchQuery);
       commit(suggestionMutations.SET_SUGGESTIONS, result.data);
-    },
-    [suggestionActions.SET_SEARCH_QUERY]({ commit }, searchQuery) {
-      commit(suggestionMutations.SET_SEARCH_QUERY, searchQuery);
     }
   }
 };

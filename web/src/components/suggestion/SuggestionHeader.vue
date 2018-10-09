@@ -21,6 +21,7 @@
 <script>
 import { suggestionSortingKeys } from '../../utils/suggestionMappings.js';
 import commonDropDown from '../common/CommonDropDown';
+import { findValueFromDropDownOptions } from '../../utils/dropDownHelper.js'
 
 export default {
   components: {
@@ -55,8 +56,8 @@ export default {
 
       if (selected && selected.target.value !== '') {
         // do sorting by sorting key
-        const selectedValue = this.dropDownOptions.find(e => e.label == selected.target.value);
-        this.sortSuggestionList(this.selectedOptionsMapper[selectedValue.value]);
+        const selectedValue = findValueFromDropDownOptions(selected.target.value, this.dropDownOptions);
+        this.sortSuggestionList(this.selectedOptionsMapper[selectedValue]);
       } else {
         this.sortSuggestionList(null);
       }
