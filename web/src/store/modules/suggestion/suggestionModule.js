@@ -29,13 +29,6 @@ export default {
     [suggestionGetters.GET_SEARCH_QUERY]: state => state[storeStateNames.SEARCH_QUERY],
     [suggestionGetters.GET_FILTERS]: state => state[storeStateNames.FILTERS]
   },
-  getters: {
-    [suggestionGetters.GET_SUGGESTIONS]: state => state[storeStateNames.ITEMS],
-    [suggestionGetters.GET_OPEN_SUGGESTIONS_COUNT]: state => state[storeStateNames.OPEN_COUNT],
-    [suggestionGetters.GET_RESOLVED_SUGGESTIONS_COUNT]: state =>
-      state[storeStateNames.RESOLVED_COUNT],
-    [suggestionGetters.GET_SEARCH_QUERY]: state => state[storeStateNames.SEARCH_QUERY]
-  },
   mutations: {
     [suggestionMutations.SET_SUGGESTIONS](state, suggestions) {
       Vue.set(state, storeStateNames.ITEMS, suggestions);
