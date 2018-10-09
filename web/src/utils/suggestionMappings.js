@@ -8,11 +8,18 @@ export const suggestionSortingKeys = {
 };
 
 export const suggestionStateStatus = {
-  ACCEPTED: 'ACCEPTED',
-  REJECTED: 'REJECTED'
+  ACCEPTED: 'Accepted',
+  REJECTED: 'Rejected'
 };
 
 export const suggestionType = {
-  NEW: 'NEW',
-  MODIFY: 'MODIFY'
+  NEW: 'New',
+  MODIFY: 'Modify'
+};
+
+export const filterType = {
+  STATUS: 'status',
+  TAG: 'tag',
+  TYPE: 'type',
+  MEETING: 'meeting'
 };
