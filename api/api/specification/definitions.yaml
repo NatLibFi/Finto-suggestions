@@ -1,7 +1,6 @@
 # A common definitions file for Finto API endpoints
 
 definitions:
-
   # AUTHENTICATION
   LoginRequest:
     type: object
@@ -14,7 +13,7 @@ definitions:
     required:
       - email
       - password
-  
+
   LogoutResponse:
     type: object
     properties:
@@ -36,7 +35,7 @@ definitions:
     properties:
       data:
         $ref: "#/definitions/SuggestionResponseObject"
-  
+
   SuggestionResponseArray:
     type: object
     properties:
@@ -214,12 +213,12 @@ definitions:
       - DEFAULT
       - REJECTED
       - ACCEPTED
-    description: 'Processing state of a particular `Suggestion`.'
+    description: "Processing state of a particular `Suggestion`."
     example: DEFAULT
 
   uri:
     type: string
-    example: 'http://www.yso.fi/onto/ysa/Y505224'
+    example: "http://www.yso.fi/onto/ysa/Y505224"
 
   suggestion_type:
     type: string
@@ -235,7 +234,7 @@ definitions:
       type: string
       description: An array of broader concept URIs
     example:
-      - 'http://www.yso.fi/onto/ysa/Y98177'
+      - "http://www.yso.fi/onto/ysa/Y98177"
 
   narrower:
     type: array
@@ -243,7 +242,7 @@ definitions:
       type: string
       description: An array of narrower concept URIs
     example:
-      - 'http://www.yso.fi/onto/ysa/Y98176'
+      - "http://www.yso.fi/onto/ysa/Y98176"
 
   related:
     type: array
@@ -251,7 +250,7 @@ definitions:
       type: string
       description: An array of related concept URIs
     example:
-      - 'http://www.yso.fi/onto/ysa/Y12345'
+      - "http://www.yso.fi/onto/ysa/Y12345"
 
   group:
     type: array
@@ -259,8 +258,8 @@ definitions:
       type: string
       description: An array of group/collection uris the suggested concept is a member of
     example:
-      - 'http://www.yso.fi/onto/ysa/ryhma_07'
-      - 'http://www.yso.fi/onto/ysa/ryhma_09'
+      - "http://www.yso.fi/onto/ysa/ryhma_07"
+      - "http://www.yso.fi/onto/ysa/ryhma_09"
 
   description:
     type: string
@@ -270,21 +269,21 @@ definitions:
   reason:
     type: string
     description: Additional notes on why the suggested concept is necessary. What is the concept needed for (e.g. a ISBN or the URL of a document)?
-    example: 'KULOssa ja MAO-ontologiassa. Ei ole käytetty kovin usein sisällönkuvailuun, mutta vaikea korvata muulla asiasanalla.'
+    example: "KULOssa ja MAO-ontologiassa. Ei ole käytetty kovin usein sisällönkuvailuun, mutta vaikea korvata muulla asiasanalla."
 
   organization:
     type: string
     description: Organization of the suggester
     example: Ankkalinnan kaupunki
-  
+
   meeting_id:
     type: number
-  
+
   events:
     type: array
     items:
       type: number
-  
+
   reactions:
     type: array
     items:
@@ -297,7 +296,7 @@ definitions:
 
   created:
     type: string
-  
+
   modified:
     type: string
 
@@ -308,7 +307,7 @@ definitions:
     properties:
       data:
         $ref: "#/definitions/UserResponseObject"
-  
+
   UserResponseArray:
     type: object
     properties:
@@ -366,35 +365,34 @@ definitions:
       - email
       - password
 
-
   name:
     type: string
-    example: 'Kalle Käyttäjä'
-  
+    example: "Kalle Käyttäjä"
+
   email:
     type: string
-    example: 'kalle@kayttajat.fi'
-  
+    example: "kalle@kayttajat.fi"
+
   password:
     type: string
-    example: 'mysecretpassword'
-  
+    example: "mysecretpassword"
+
   role:
     type: string
     enum:
       - NORMAL
       - ADMIN
-    description: 'User role, NORMAL or ADMIN. '
+    description: "User role, NORMAL or ADMIN. "
     example: NORMAL
 
-# EVENT
+  # EVENT
 
   EventResponse:
     type: object
     properties:
       data:
         $ref: "#/definitions/EventResponseObject"
-  
+
   EventResponseArray:
     type: object
     properties:
@@ -421,7 +419,7 @@ definitions:
       - id
       - event_type
       - text
-  
+
   EventParameterObject:
     type: object
     additionalProperties: false
@@ -438,7 +436,7 @@ definitions:
       - event_type
       - text
       - suggestion_id
-  
+
   EventPatchObject:
     type: object
     additionalProperties: false
@@ -457,22 +455,21 @@ definitions:
     enum:
       - ACTION
       - COMMENT
-    description: 'The type of an event. Eithern an event stream ACTION or COMMENT.'
+    description: "The type of an event. Eithern an event stream ACTION or COMMENT."
     example: COMMENT
-  
+
   text:
     type: string
     example: "Hello there!"
 
-
-# MEETING
+  # MEETING
 
   MeetingResponse:
     type: object
     properties:
       data:
         $ref: "#/definitions/MeetingResponseObject"
-  
+
   MeetingResponseArray:
     type: object
     properties:
@@ -511,7 +508,7 @@ definitions:
     required:
       - id
       - name
-  
+
   MeetingParameterObject:
     type: object
     additionalProperties: false
@@ -533,7 +530,7 @@ definitions:
         items:
           type: number
     required:
-        - suggestion_ids  
+      - suggestion_ids
 
   meeting_date:
     type: string
@@ -560,14 +557,14 @@ definitions:
       type: number
       description: An array of suggestion ids
 
-# TAG
+  # TAG
 
   TagResponse:
     type: object
     properties:
       data:
         $ref: "#/definitions/TagResponseObject"
-  
+
   TagResponseArray:
     type: object
     properties:
@@ -599,15 +596,14 @@ definitions:
     required:
       - label
 
-
-# REACTIONS
+  # REACTIONS
 
   ReactionResponse:
     type: object
     properties:
       data:
         $ref: "#/definitions/ReactionResponseObject"
-  
+
   ReactionResponseArray:
     type: object
     properties:
