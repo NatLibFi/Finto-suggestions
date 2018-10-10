@@ -51,7 +51,7 @@ def get_all_or_404_custom(query_func) -> str:
         :param query_func: a function, that takes a query
             instance as a parameter and returns a query instance.
 
-            This is handy for filtering, sorting and searching. 
+            This is handy for filtering, sorting and searching.
 
             def query_func():
                 query = model.query
