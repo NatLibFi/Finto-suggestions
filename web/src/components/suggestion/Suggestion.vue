@@ -2,7 +2,7 @@
   <div class="suggestion">
     <div class="back-button">
       <a @click="goToSuggestions" unselectable="on">
-        <!-- <svg-icon icon-name="arrow"><icon-arrow /></svg-icon> -->
+        <svg-icon icon-name="arrow"><icon-arrow /></svg-icon>
         Takaisin käsite-ehdotuksiin
       </a>
     </div>
@@ -22,7 +22,7 @@
           </div>
         </div>
         <div class="suggestion-header-buttons">
-          <!-- <svg-icon icon-name="more"><icon-more /></svg-icon> -->
+          <svg-icon icon-name="more"><icon-more /></svg-icon>
         </div>
       </div>
 
@@ -38,16 +38,16 @@
 import axios from 'axios';
 
 import SuggestionContent from './SuggestionContent';
-// import IconArrow from '../icons/IconArrow';
-// import IconMore from '../icons/IconMore';
-// import SvgIcon from '../icons/SvgIcon';
+import IconArrow from '../icons/IconArrow';
+import IconMore from '../icons/IconMore';
+import SvgIcon from '../icons/SvgIcon';
 
 export default {
   components: {
     SuggestionContent,
-    // IconArrow,
-    // IconMore,
-    // SvgIcon
+    IconArrow,
+    IconMore,
+    SvgIcon
   },
   data: () => ({
     suggestion: null
