@@ -2,7 +2,7 @@
   <li class="item">
     <div class="title">
       <p>
-        {{title}}
+        <router-link :to="{name: 'suggestion', params: { suggestionID: orderNumber }}">{{title}}</router-link>
         <span class="status" v-if="status !== 'DEFAULT'">{{ status }}</span>
         <span class="type">{{ suggestionType }}</span>
         <span v-if="tags.length > 0">
