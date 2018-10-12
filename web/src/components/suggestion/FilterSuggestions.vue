@@ -25,8 +25,24 @@ export default {
     CommonDropDown
   },
   data: () => ({
-    suggestionStateStatuses = [suggestionStateStatus.ACCEPTED, suggestionStateStatus.REJECTED],
-    suggestionTypes = [suggestionType.NEW, suggestionType.MODIFY],
+    suggestionStateStatuses: [
+      {
+        label: suggestionStateStatus.ACCEPTED,
+        value: suggestionStateStatus.ACCEPTED
+      },
+      {
+        label: suggestionStateStatus.REJECTED,
+        value: suggestionStateStatus.REJECTED
+      }],
+    suggestionTypes: [
+      {
+        label: suggestionType.NEW,
+        value: suggestionType.NEW
+      },
+      {
+        label: suggestionType.MODIFY,
+        value: suggestionType.MODIFY
+      }],
     ...mapMeetingGetters({ meetings: meetingGetters.GET_MEETINGS }),
     ...mapTagGetters({ tags: tagGetters.GET_TAGS })
   }),
