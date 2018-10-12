@@ -10,12 +10,12 @@
       class="item"
       v-for="item in items"
       :key="item.id"
-      :orderNumber=item.id
-      :title=item.description
-      :created=item.created
-      :status=item.status
-      :suggestionType=item.suggestion_type
-      :tags=item.tags />
+      :orderNumber="item.id"
+      :title="item.preferred_label.fi"
+      :created="item.created"
+      :status="item.status"
+      :suggestionType="item.suggestion_type"
+      :tags="item.tags" />
   </ul>
 </div>
 </template>
@@ -77,13 +77,23 @@ ul {
 }
 
 .list {
-  align-items: flex-start;
-  text-align: start;
+  text-align: left;
+  background-color: #ffffff;
+  border: 2px solid #f5f5f5;
+  width: 60vw;
+  margin: 20px 20vw;
+  padding-left: 0; /* reset inital padding for ul tags */
 }
 
 .item {
   margin: 10px 0 10px 0;
-  border-top: 2px solid #b1bfd6;
-  border-bottom: 2px solid #b1bfd6;
+  border-bottom: 2px solid #f5f5f5;
+}
+
+@media (max-width: 700px) {
+  .list {
+    width: 80vw;
+    margin: 20px 10vw;
+  }
 }
 </style>
