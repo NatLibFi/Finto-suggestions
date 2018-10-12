@@ -1,13 +1,14 @@
 <template>
   <div class="suggestion-content">
 
-    <div>
+    <div v-if="s.tags && s.tags.length > 0">
       <p><strong>Käsitteen tyyppi</strong></p>
       <p>Maantieteellinen</p>
     </div>
 
     <div v-if="s.preferred_label.fi">
-      <p><strong>Ehdotettu termi suomeksi</strong></p>
+      <p v-if="s.suggestion_type == 'NEW'"><strong>Ehdotettu termi suomeksi</strong></p>
+      <p v-if="s.suggestion_type == 'MODIFY'"><strong>Päätermi/asiasana</strong></p>
       <p>{{ s.preferred_label.fi }}</p>
     </div>
 
