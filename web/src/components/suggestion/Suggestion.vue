@@ -192,6 +192,10 @@ div.suggestion-header-buttons {
     position: initial;
     text-align: left;
   }
+
+  div.suggestion-header-details {
+    line-height: 24px;
+  }
 }
 
 .suggestion-type {

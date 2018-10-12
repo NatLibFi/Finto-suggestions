@@ -1,18 +1,18 @@
 <template>
   <div>
     <navigation></navigation>
-    <Suggestions />
+    <suggestion-list></suggestion-list>
   </div>
 </template>
 
 <script>
 import Navigation from '../components/navigation/Navigation';
-import Suggestions from '../components/suggestion/Suggestions';
+import SuggestionList from '../components/suggestion/SuggestionList';
 
 export default {
   components: {
     Navigation,
-    Suggestions
+    SuggestionList
   }
 };
 </script>
