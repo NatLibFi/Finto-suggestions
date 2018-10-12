@@ -7,7 +7,9 @@
 <script>
 export default {
   created() {
+    // eslint-disable-next-line
     $cookies.config('10d');
+    // eslint-disable-next-line
     $cookies.set('access_token', process.env.ACCESS_TOKEN);
   }
 };
