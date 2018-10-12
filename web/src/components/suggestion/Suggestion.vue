@@ -46,7 +46,7 @@
 import axios from 'axios';
 
 import SuggestionContent from './SuggestionContent';
-import SuggestionEvent from './events/SuggestionEvent';
+import SuggestionEvent from './SuggestionEvent';
 import IconArrow from '../icons/IconArrow';
 import IconMore from '../icons/IconMore';
 import SvgIcon from '../icons/SvgIcon';
