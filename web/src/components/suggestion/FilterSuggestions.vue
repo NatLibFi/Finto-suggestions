@@ -78,11 +78,11 @@ export default {
     ...mapMeetingActions({ getMeetings: meetingActions.GET_MEETINGS }),
     ...mapTagActions({ getTags: tagActions.GET_TAGS }),
     ...mapSuggestioMutations({ setFilters: suggestionMutations.SET_FILTERS }),
-    stateChanged(value) {
-      console.log(value);
+    stateChanged(selected) {
+      this.handleSetFilters(selected, filterType.STATUS, this.suggestionStateStatuses);
     },
-    typeChanged(value) {
-      console.log(value);
+    typeChanged(selected) {
+      this.handleSetFilters(selected, filterType.TYPE, this.suggestionTypes);
     },
     mapMeetingsToDropDown() {
       let meetings = [];
@@ -105,7 +105,7 @@ export default {
       this.handleSetFilters(selected, filterType.TAG, this.mapTagsToDropDown());
     },
     handleSetFilters(selectedFilter, filterType, dropDownOptions) {
-      if(selectedFilter && selectedFilter.target.value !== '') {
+      if (selectedFilter && selectedFilter.target.value !== '') {
         const selectedValue = findValueFromDropDownOptions(selectedFilter.target.value, dropDownOptions);
         let filters = this.filters;
         filters.push({ type: filterType, value: selectedValue });

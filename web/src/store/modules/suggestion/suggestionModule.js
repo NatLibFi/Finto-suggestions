@@ -66,6 +66,10 @@ export default {
     async [suggestionActions.GET_SEARCHED_SUGGESTIONS]({ commit }, searchQuery) {
       const result = await api.suggestions.searchSuggestions(searchQuery);
       commit(suggestionMutations.SET_SUGGESTIONS, result.data);
+    },
+    async [suggestionActions.GET_FILTERED_SUGGESTIONS]({ commit }, filters) {
+      const result = await api.suggestions.filterSuggestions(filters);
+      commit(suggestionMutations.SET_SUGGESTIONS, result.data);
     }
   }
 };
