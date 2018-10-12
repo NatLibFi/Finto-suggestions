@@ -30,14 +30,23 @@
         :s="suggestion">
       </suggestion-content>
     </div>
+
+    <div v-if="events.length > 0">
+      <div v-for="event in events" :key="event.id">
+        <suggestion-event
+          :event="event"
+          :type="event.event_type">
+        </suggestion-event>
+      </div>
+    </div>
   </div>
 </template>
-
 
 <script>
 import axios from 'axios';
 
 import SuggestionContent from './SuggestionContent';
+import SuggestionEvent from './events/SuggestionEvent';
 import IconArrow from '../icons/IconArrow';
 import IconMore from '../icons/IconMore';
 import SvgIcon from '../icons/SvgIcon';
@@ -45,12 +54,14 @@ import SvgIcon from '../icons/SvgIcon';
 export default {
   components: {
     SuggestionContent,
+    SuggestionEvent,
     IconArrow,
     IconMore,
     SvgIcon
   },
   data: () => ({
-    suggestion: null
+    suggestion: null,
+    events: []
   }),
   created() {
     // TODO: Use getters
@@ -64,6 +75,19 @@ export default {
       })
       .catch(e => {
         console.log('Error in fetching Suggestion data: ');
+        console.log(e);
+      });
+    axios
+      .get(
+        'http://localhost:8080/api/suggestions/' +
+          this.$route.params.suggestionID +
+          '/events'
+      )
+      .then(response => {
+        this.events = response.data.data;
+      })
+      .catch(e => {
+        console.log('Error in fetching Suggestion events: ');
         console.log(e);
       });
   },
