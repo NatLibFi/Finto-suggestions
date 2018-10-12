@@ -29,5 +29,6 @@ export const suggestionActions = {
   GET_OPEN_SUGGESTIONS: 'getOpenSuggestionCount',
   GET_RESOLVED_SUGGESTIONS: 'getResolvedSuggestionCount',
   GET_SORTED_SUGGESTIONS: 'getSortedSuggestions',
-  GET_SEARCHED_SUGGESTIONS: 'getSearchedSuggestions'
+  GET_SEARCHED_SUGGESTIONS: 'getSearchedSuggestions',
+  GET_FILTERED_SUGGESTIONS: 'getFilteredSuggestions'
 };

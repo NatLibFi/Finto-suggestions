@@ -21,7 +21,7 @@
 <script>
 import { suggestionSortingKeys } from '../../utils/suggestionMappings.js';
 import commonDropDown from '../common/CommonDropDown';
-import { findValueFromDropDownOptions } from '../../utils/dropDownHelper.js'
+import { findValueFromDropDownOptions } from '../../utils/dropDownHelper.js';
 
 export default {
   components: {
