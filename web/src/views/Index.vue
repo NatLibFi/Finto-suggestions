@@ -8,7 +8,7 @@
 
 <script>
 import Navigation from '../components/navigation/Navigation';
-import SuggestionSearch from '../components/suggestion/SuggestionList';
+import SuggestionSearch from '../components/suggestion/SuggestionSearch';
 import SuggestionList from '../components/suggestion/SuggestionList';
 
 export default {
