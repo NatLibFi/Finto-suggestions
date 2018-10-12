@@ -97,7 +97,6 @@ export default {
   margin-left: 40px;
   padding: 10px;
   height: 30%;
-  border-top: 2px solid #b1bfd6;
   font-weight: normal;
 }
 .counts {
