@@ -1,4 +1,4 @@
-export const namespace = 'meeting';
+export const namespace = 'tag';
 
 export const storeStateNames = {
   ITEMS: 'items'
