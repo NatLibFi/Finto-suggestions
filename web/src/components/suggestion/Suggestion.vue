@@ -31,7 +31,7 @@
       </suggestion-content>
     </div>
 
-    <div v-if="events">
+    <div v-if="events.length > 0">
       <div v-for="event in events" :key="event.id">
         <suggestion-event
           :event="event"
