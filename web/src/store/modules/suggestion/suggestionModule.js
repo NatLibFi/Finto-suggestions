@@ -19,6 +19,7 @@ export default {
     items: [],
     openCount: 0,
     resolvedCount: 0,
+    searchQuery: [],
     filters: []
   },
   getters: {

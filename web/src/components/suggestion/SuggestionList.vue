@@ -43,7 +43,8 @@ export default {
       items: suggestionGetters.GET_SUGGESTIONS,
       openCount: suggestionGetters.GET_OPEN_SUGGESTIONS_COUNT,
       resolvedCount: suggestionGetters.GET_RESOLVED_SUGGESTIONS_COUNT,
-      searchQuery: suggestionGetters.GET_SEARCH_QUERY
+      searchQuery: suggestionGetters.GET_SEARCH_QUERY,
+      filters: suggestionGetters.GET_FILTERS
     })
   },
   created() {
@@ -57,7 +58,8 @@ export default {
       getOpenSuggestionCount: suggestionActions.GET_OPEN_SUGGESTIONS,
       getResolvedSuggestionCount: suggestionActions.GET_RESOLVED_SUGGESTIONS,
       getSortedSuggestions: suggestionActions.GET_SORTED_SUGGESTIONS,
-      searchSuggestions: suggestionActions.GET_SEARCHED_SUGGESTIONS
+      searchSuggestions: suggestionActions.GET_SEARCHED_SUGGESTIONS,
+      getFilteredSuggestions: suggestionActions.GET_FILTERED_SUGGESTIONS
     }),
     async sortSuggestionList(selectedSorting) {
       if (selectedSorting && selectedSorting !== '') {
@@ -72,6 +74,17 @@ export default {
       if (this.searchQuery !== '') {
         this.searchSuggestions(this.searchQuery);
       } else {
+        this.getSuggestions();
+      }
+    },
+    filters() {
+      if (this.filters.length > 0) {
+        console.log(this.searchQuery);
+        if (this.searchQuery.length <= 0) {
+          this.getFilteredSuggestions(this.filters);
+        }
+      }
+      else {
         this.getSuggestions();
       }
     }
