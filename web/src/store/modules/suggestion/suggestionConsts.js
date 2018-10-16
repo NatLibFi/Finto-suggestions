@@ -20,7 +20,6 @@ export const suggestionMutations = {
   SET_SUGGESTIONS: 'setSuggestions',
   SET_OPEN_SUGGESTIONS_COUNT: 'setOpenSuggestionCount',
   SET_RESOLVED_SUGGESTIONS_COUNT: 'setResolvedSuggestionCount',
-  SET_SEARCH_QUERY: 'setSearchQuery',
   SET_FILTERS: 'setFilters'
 };
 

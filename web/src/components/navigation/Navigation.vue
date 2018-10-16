@@ -27,7 +27,10 @@
       <div>Kirjaudu ulos</div>
     </div>
 
-    <div v-if="showMobileDropdown" v-on-clickaway="closeMobileDropdown" class="nav-mobile-dropdown dropdown">
+    <div
+      v-if="showMobileDropdown"
+      v-on-clickaway="closeMobileDropdown"
+      class="nav-mobile-dropdown dropdown">
       <div class="nav-mobile-dropdown-header">
         <div class="user-bubble">
           <span unselectable="on">{{ userInitials }}</span>

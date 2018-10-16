@@ -33,7 +33,6 @@ export default {
       ${asciiUriEncoding.NEXT_VAL}status${asciiUriEncoding.VALUE_OF_PARAM}${suggestionStateStatus}`
     }),
   getSortedSuggestions: sortValue => get({ resource: `/suggestions?sort=${sortValue}` }),
-  searchSuggestions: searchQuery => get({ resource: `/suggestions?search=${searchQuery}` }),
   filterSuggestions: filters =>
     get({ resource: `/suggestions?filters=${parseFilterArrayToValidUri(filters)}` })
 };

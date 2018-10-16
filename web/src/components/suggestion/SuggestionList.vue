@@ -70,21 +70,10 @@ export default {
     }
   },
   watch: {
-    searchQuery() {
-      if (this.searchQuery !== '') {
-        this.searchSuggestions(this.searchQuery);
-      } else {
-        this.getSuggestions();
-      }
-    },
     filters() {
       if (this.filters.length > 0) {
-        console.log(this.searchQuery);
-        if (this.searchQuery.length <= 0) {
-          this.getFilteredSuggestions(this.filters);
-        }
-      }
-      else {
+        this.getFilteredSuggestions(this.filters);
+      } else {
         this.getSuggestions();
       }
     }

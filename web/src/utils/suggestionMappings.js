@@ -21,7 +21,8 @@ export const filterType = {
   STATUS: 'status',
   TAG: 'tag',
   TYPE: 'type',
-  MEETING: 'meeting'
+  MEETING: 'meeting',
+  SEARCH: 'search'
 };
 
 export const filteringFields = {

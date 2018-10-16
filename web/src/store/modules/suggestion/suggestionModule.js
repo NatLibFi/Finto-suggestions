@@ -19,7 +19,6 @@ export default {
     items: [],
     openCount: 0,
     resolvedCount: 0,
-    searchQuery: [],
     filters: []
   },
   getters: {
@@ -27,7 +26,6 @@ export default {
     [suggestionGetters.GET_OPEN_SUGGESTIONS_COUNT]: state => state[storeStateNames.OPEN_COUNT],
     [suggestionGetters.GET_RESOLVED_SUGGESTIONS_COUNT]: state =>
       state[storeStateNames.RESOLVED_COUNT],
-    [suggestionGetters.GET_SEARCH_QUERY]: state => state[storeStateNames.SEARCH_QUERY],
     [suggestionGetters.GET_FILTERS]: state => state[storeStateNames.FILTERS]
   },
   mutations: {
@@ -39,9 +37,6 @@ export default {
     },
     [suggestionMutations.SET_RESOLVED_SUGGESTIONS_COUNT](state, count) {
       Vue.set(state, storeStateNames.RESOLVED_COUNT, count);
-    },
-    [suggestionMutations.SET_SEARCH_QUERY](state, searchQuery) {
-      Vue.set(state, storeStateNames.SEARCH_QUERY, searchQuery);
     },
     [suggestionMutations.SET_FILTERS](state, filters) {
       Vue.set(state, storeStateNames.FILTERS, filters);
@@ -62,10 +57,6 @@ export default {
     },
     async [suggestionActions.GET_SORTED_SUGGESTIONS]({ commit }, sortValue) {
       const result = await api.suggestions.getSortedSuggestions(sortValue);
-      commit(suggestionMutations.SET_SUGGESTIONS, result.data);
-    },
-    async [suggestionActions.GET_SEARCHED_SUGGESTIONS]({ commit }, searchQuery) {
-      const result = await api.suggestions.searchSuggestions(searchQuery);
       commit(suggestionMutations.SET_SUGGESTIONS, result.data);
     },
     async [suggestionActions.GET_FILTERED_SUGGESTIONS]({ commit }, filters) {

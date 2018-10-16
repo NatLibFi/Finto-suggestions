@@ -56,7 +56,10 @@ export default {
 
       if (selected && selected.target.value !== '') {
         // do sorting by sorting key
-        const selectedValue = findValueFromDropDownOptions(selected.target.value, this.dropDownOptions);
+        const selectedValue = findValueFromDropDownOptions(
+          selected.target.value,
+          this.dropDownOptions
+        );
         this.sortSuggestionList(this.selectedOptionsMapper[selectedValue]);
       } else {
         this.sortSuggestionList(null);

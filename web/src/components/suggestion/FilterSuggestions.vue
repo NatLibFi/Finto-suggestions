@@ -28,10 +28,20 @@
 
 <script>
 import CommonDropDown from '../common/CommonDropDown';
-import { suggestionStateStatus, suggestionType, filterType } from '../../utils/suggestionMappings.js';
+import {
+  suggestionStateStatus,
+  suggestionType,
+  filterType
+} from '../../utils/suggestionMappings.js';
 
-import { suggestionGetters, suggestionMutations } from '../../store/modules/suggestion/suggestionConsts.js';
-import { mapSuggestionGetters, mapSuggestioMutations } from '../../store/modules/suggestion/suggestionModule.js';
+import {
+  suggestionGetters,
+  suggestionMutations
+} from '../../store/modules/suggestion/suggestionConsts.js';
+import {
+  mapSuggestionGetters,
+  mapSuggestioMutations
+} from '../../store/modules/suggestion/suggestionModule.js';
 
 import { mapMeetingActions, mapMeetingGetters } from '../../store/modules/meeting/meetingModule.js';
 import { meetingActions, meetingGetters } from '../../store/modules/meeting/meetingConst.js';
@@ -39,7 +49,7 @@ import { meetingActions, meetingGetters } from '../../store/modules/meeting/meet
 import { mapTagActions, mapTagGetters } from '../../store/modules/tag/tagModule.js';
 import { tagActions, tagGetters } from '../../store/modules/tag/tagConst.js';
 
-import { findValueFromDropDownOptions } from '../../utils/dropDownHelper.js'
+import { handleDropDownSelection } from '../../utils/filterValueHelper.js';
 
 export default {
   components: {
@@ -54,7 +64,8 @@ export default {
       {
         label: suggestionStateStatus.REJECTED,
         value: suggestionStateStatus.REJECTED
-      }],
+      }
+    ],
     suggestionTypes: [
       {
         label: suggestionType.NEW,
@@ -63,7 +74,8 @@ export default {
       {
         label: suggestionType.MODIFY,
         value: suggestionType.MODIFY
-      }],
+      }
+    ]
   }),
   computed: {
     ...mapMeetingGetters({ meetings: meetingGetters.GET_MEETINGS }),
@@ -79,41 +91,54 @@ export default {
     ...mapTagActions({ getTags: tagActions.GET_TAGS }),
     ...mapSuggestioMutations({ setFilters: suggestionMutations.SET_FILTERS }),
     stateChanged(selected) {
-      this.handleSetFilters(selected, filterType.STATUS, this.suggestionStateStatuses);
+      handleDropDownSelection(
+        selected,
+        filterType.STATUS,
+        this.suggestionStateStatuses,
+        this.filters,
+        this.setFilters
+      );
     },
     typeChanged(selected) {
-      this.handleSetFilters(selected, filterType.TYPE, this.suggestionTypes);
+      handleDropDownSelection(
+        selected,
+        filterType.TYPE,
+        this.suggestionTypes,
+        this.filters,
+        this.setFilters
+      );
     },
     mapMeetingsToDropDown() {
       let meetings = [];
       this.meetings.forEach(meeting => {
-        meetings.push({label: `${meeting.name} ${meeting.meeting_date}`, value: meeting.id});
+        meetings.push({ label: `${meeting.name} ${meeting.meeting_date}`, value: meeting.id });
       });
       return meetings;
     },
     meetingChanged(selected) {
-      this.handleSetFilters(selected, filterType.MEETING, this.mapMeetingsToDropDown());
+      handleDropDownSelection(
+        selected,
+        filterType.MEETING,
+        this.mapMeetingsToDropDown(),
+        this.filters,
+        this.setFilters
+      );
     },
     mapTagsToDropDown() {
       let tags = [];
       this.tags.forEach(tag => {
-        tags.push({label: tag.label, value: tag.label });
+        tags.push({ label: tag.label, value: tag.label });
       });
       return tags;
     },
     tagChanged(selected) {
-      this.handleSetFilters(selected, filterType.TAG, this.mapTagsToDropDown());
-    },
-    handleSetFilters(selectedFilter, filterType, dropDownOptions) {
-      if (selectedFilter && selectedFilter.target.value !== '') {
-        const selectedValue = findValueFromDropDownOptions(selectedFilter.target.value, dropDownOptions);
-        let filters = this.filters;
-        filters.push({ type: filterType, value: selectedValue });
-        this.setFilters(filters);
-      } else {
-        const filters = this.filters.filter(f => f.type !== filterType);
-        this.setFilters(filters);
-      }
+      handleDropDownSelection(
+        selected,
+        filterType.TAG,
+        this.mapTagsToDropDown(),
+        this.filters,
+        this.setFilters
+      );
     }
   }
 };

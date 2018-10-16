@@ -11,17 +11,30 @@
 </template>
 
 <script>
-import { suggestionMutations } from '../../store/modules/suggestion/suggestionConsts.js';
-import { mapSuggestioMutations } from '../../store/modules/suggestion/suggestionModule.js';
+import {
+  suggestionGetters,
+  suggestionMutations
+} from '../../store/modules/suggestion/suggestionConsts.js';
+import {
+  mapSuggestionGetters,
+  mapSuggestioMutations
+} from '../../store/modules/suggestion/suggestionModule.js';
+
+import { handleSetFilters } from '../../utils/filterValueHelper.js';
+import { filterType } from '../../utils/suggestionMappings.js';
 
 export default {
   data: () => ({
-    searchQuery: null
+    searchQuery: ''
   }),
+  computed: {
+    ...mapSuggestionGetters({ filters: suggestionGetters.GET_FILTERS })
+  },
   methods: {
-    ...mapSuggestioMutations({ setSearchQuery: suggestionMutations.SET_SEARCH_QUERY }),
+    ...mapSuggestioMutations({ setFilters: suggestionMutations.SET_FILTERS }),
     doSearch() {
-      this.setSearchQuery(this.searchQuery);
+      const value = { type: filterType.SEARCH, value: this.searchQuery };
+      handleSetFilters(value, this.filters, this.setFilters);
     }
   }
 };
