@@ -1,8 +1,9 @@
 <template>
   <div>
     <navigation></navigation>
-    <SuggestionSearch />
-    <suggestion-list></suggestion-list>
+    <suggestion-search />
+    <suggestion-list />
+    <suggestion-list-pagination />
   </div>
 </template>
 
@@ -10,12 +11,14 @@
 import Navigation from '../components/navigation/Navigation';
 import SuggestionSearch from '../components/suggestion/SuggestionSearch';
 import SuggestionList from '../components/suggestion/SuggestionList';
+import SuggestionListPagination from '../components/suggestion/SuggestionListPagination';
 
 export default {
   components: {
     Navigation,
     SuggestionSearch,
-    SuggestionList
+    SuggestionList,
+    SuggestionListPagination
   }
 };
 </script>

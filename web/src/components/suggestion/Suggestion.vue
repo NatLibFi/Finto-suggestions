@@ -26,9 +26,7 @@
         </div>
       </div>
 
-      <suggestion-content
-        :s="suggestion">
-      </suggestion-content>
+      <suggestion-contentc:s="suggestion" />
     </div>
 
     <div v-if="events.length > 0">
