@@ -10,7 +10,6 @@
       <span>Järjestä</span>
       <svg-icon icon-name="triangle"><icon-triangle /></svg-icon>
     </div>
-    <!-- TODO: Create SortingComponent from this div -->
     <sorting-drop-down
       :selectedIndex="selectedSortOptionIndex"
       :isOpened="isDropDownOpened"
