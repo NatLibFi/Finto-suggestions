@@ -6,47 +6,34 @@
     </div>
     <div
       @click="isDropDownOpened = !isDropDownOpened"
-      :class="[isDropDownOpened ? 'selected' : '', 'drop-down-list']">
+      :class="[isDropDownOpened ? 'selected' : '', 'drop-down-button']">
       <span>Järjestä</span>
       <svg-icon icon-name="triangle"><icon-triangle /></svg-icon>
     </div>
     <!-- TODO: Create SortingComponent from this div -->
-    <div
-      v-if="isDropDownOpened"
-      class="drop-down-options"
-      v-on-clickaway="closeDropDown">
-      <div v-for="(option, i) in dropDownOptions" :key="option.id">
-        <div
-          @click="sortValueSelected(option, i)"
-          :class="[i == selectedSortOptionIndex ? 'selected' : '', 'option']">
-          <svg-icon
-            :class="[i == selectedSortOptionIndex ? '' : 'hidden-checkmark']"
-            icon-name="check"><icon-check />
-          </svg-icon>
-          <span>{{ option.label }}</span>
-        </div>
-      </div>
-    </div>
+    <sorting-drop-down
+      :selectedIndex="selectedSortOptionIndex"
+      :isOpened="isDropDownOpened"
+      :dropDownOptions="dropDownOptions"
+      :selectedOptionsMapper="selectedOptionsMapper"
+      @sortSuggestionListBy="sortSuggestionList"
+      @refreshSelectedIndex="selectedSortOptionIndex = $event"
+      @closeDropDown="closeDropDown"/>
   </div>
 </template>
 
 <script>
 import { suggestionSortingKeys } from '../../utils/suggestionMappings.js';
-import { findValueFromDropDownOptions } from '../../utils/dropDownHelper.js';
 
+import SortingDropDown from '../common/SortingDropDown';
 import SvgIcon from '../icons/SvgIcon';
 import IconTriangle from '../icons/IconTriangle';
-import IconCheck from '../icons/IconCheck';
-import { directive as onClickaway } from 'vue-clickaway';
 
 export default {
   components: {
+    SortingDropDown,
     SvgIcon,
-    IconTriangle,
-    IconCheck
-  },
-  directives: {
-    onClickaway: onClickaway
+    IconTriangle
   },
   props: {
     openSuggestionCount: Number,
@@ -74,23 +61,8 @@ export default {
     }
   }),
   methods: {
-    sortValueSelected(option, index) {
-      this.handleSortDropDownSelectedIndicator(index);
-
-      if (option && option.value !== '') {
-        // do sorting by sorting key
-        const selectedValue = findValueFromDropDownOptions(option.value, this.dropDownOptions);
-        this.sortSuggestionList(this.selectedOptionsMapper[selectedValue]);
-      } else {
-        this.sortSuggestionList(null);
-      }
-    },
-    sortSuggestionList(selectedSorting) {
+    sortSuggestionList: function(selectedSorting) {
       this.$emit('sortSuggestionListBy', selectedSorting);
-    },
-    handleSortDropDownSelectedIndicator(index) {
-      // update dropdownlist selected value indicator as selected
-      this.selectedSortOptionIndex = index;
     },
     closeDropDown: function() {
       this.isDropDownOpened = false;
@@ -128,7 +100,7 @@ export default {
   min-width: 25%;
   color: #a4a4a4;
 }
-.drop-down-list {
+.drop-down-button {
   position: absolute;
   top: 54%;
   right: 19px;
@@ -142,7 +114,7 @@ export default {
   cursor: hand;
 }
 
-.drop-down-list svg {
+.drop-down-button svg {
   display: inline-block;
   height: 16px;
   vertical-align: middle;
