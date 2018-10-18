@@ -1,9 +1,10 @@
 <template>
-<div>
+<div class="container">
   <suggestion-header
     :openSuggestionCount="openCount"
     :resolvedSuggestionCount="resolvedCount"
-    @sortSuggestionListBy="sortSuggestionList" />
+    @sortSuggestionListBy="sortSuggestionList"
+    class="header" />
   <ul class="list">
     <suggestion-item
       class="item"
@@ -83,6 +84,10 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+.container {
+  margin-bottom: 40px;
+}
+
 ul {
   list-style: none;
 }
@@ -91,8 +96,9 @@ ul {
   text-align: left;
   background-color: #ffffff;
   border: 2px solid #f5f5f5;
+  border-top: none;
   width: 60vw;
-  margin: 20px 20vw;
+  margin: 0 20vw 20px;
   padding-left: 0; /* reset inital padding for ul tags */
 }
 
@@ -104,7 +110,7 @@ ul {
 @media (max-width: 700px) {
   .list {
     width: 80vw;
-    margin: 20px 10vw;
+    margin: 0 10vw 20px;
   }
 }
 </style>
