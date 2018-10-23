@@ -104,7 +104,13 @@ li.item {
   padding: 0 6px;
   border-radius: 3px;
   color: #ffffff;
+  margin-right: 10px;
 }
+
+.tag:last-of-type {
+  margin-right: 0;
+}
+
 .status {
   background-color: #58ba81;
   color: white;
