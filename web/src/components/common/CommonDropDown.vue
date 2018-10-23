@@ -1,10 +1,9 @@
 <template>
   <span class="sortingOptions">
     <select v-model="selectedOption" @change="changeCallBack">
-      <option disabled value="">{{ header }}</option>
-      <option value=""></option>
+      <option value="">{{ header }}</option>
       <option v-for="selection in options"
-        :key="selection.label"
+        :key="selection.value"
         :value="selection.label">{{ selection.label }}
       </option>
     </select>

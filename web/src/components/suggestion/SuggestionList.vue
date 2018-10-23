@@ -1,9 +1,10 @@
 <template>
-<div>
+<div class="container">
   <suggestion-header
     :openSuggestionCount="openCount"
     :resolvedSuggestionCount="resolvedCount"
-    @sortSuggestionListBy="sortSuggestionList" />
+    @sortSuggestionListBy="sortSuggestionList"
+    class="header" />
   <ul class="list">
     <suggestion-item
       class="item"
@@ -43,7 +44,8 @@ export default {
       items: suggestionGetters.GET_SUGGESTIONS,
       openCount: suggestionGetters.GET_OPEN_SUGGESTIONS_COUNT,
       resolvedCount: suggestionGetters.GET_RESOLVED_SUGGESTIONS_COUNT,
-      searchQuery: suggestionGetters.GET_SEARCH_QUERY
+      searchQuery: suggestionGetters.GET_SEARCH_QUERY,
+      filters: suggestionGetters.GET_FILTERS
     })
   },
   created() {
@@ -57,7 +59,8 @@ export default {
       getOpenSuggestionCount: suggestionActions.GET_OPEN_SUGGESTIONS,
       getResolvedSuggestionCount: suggestionActions.GET_RESOLVED_SUGGESTIONS,
       getSortedSuggestions: suggestionActions.GET_SORTED_SUGGESTIONS,
-      searchSuggestions: suggestionActions.GET_SEARCHED_SUGGESTIONS
+      searchSuggestions: suggestionActions.GET_SEARCHED_SUGGESTIONS,
+      getFilteredSuggestions: suggestionActions.GET_FILTERED_SUGGESTIONS
     }),
     async sortSuggestionList(selectedSorting) {
       if (selectedSorting && selectedSorting !== '') {
@@ -68,9 +71,9 @@ export default {
     }
   },
   watch: {
-    searchQuery() {
-      if (this.searchQuery !== '') {
-        this.searchSuggestions(this.searchQuery);
+    filters() {
+      if (this.filters.length > 0) {
+        this.getFilteredSuggestions(this.filters);
       } else {
         this.getSuggestions();
       }
@@ -81,6 +84,10 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+.container {
+  margin-bottom: 40px;
+}
+
 ul {
   list-style: none;
 }
@@ -89,8 +96,9 @@ ul {
   text-align: left;
   background-color: #ffffff;
   border: 2px solid #f5f5f5;
+  border-top: none;
   width: 60vw;
-  margin: 20px 20vw;
+  margin: 0 20vw 20px;
   padding-left: 0; /* reset inital padding for ul tags */
 }
 
@@ -102,7 +110,7 @@ ul {
 @media (max-width: 700px) {
   .list {
     width: 80vw;
-    margin: 20px 10vw;
+    margin: 0 10vw 20px;
   }
 }
 </style>

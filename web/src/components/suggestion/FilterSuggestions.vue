@@ -2,23 +2,54 @@
   <div class="filterSuggestions">
     <h4>Suodata hakutuloksia</h4>
     <span>
-      <common-drop-down :header="'Käsittelyn tila'" :options="suggestionStateStatuses" />
-      <common-drop-down :header="'Ehdotustyyppi'" />
-      <common-drop-down :header="'Tyyppi'" :options="suggestionTypes" />
-      <common-drop-down :header="'Kokous'" />
+      <common-drop-down
+        :header="'Käsittelyn tila'"
+        :options="suggestionStateStatuses"
+        :changeCallBack="stateChanged"
+      />
+      <common-drop-down
+        :header="'Ehdotustyyppi'"
+        :options="mapTagsToDropDown()"
+        :changeCallBack="tagChanged"
+      />
+      <common-drop-down
+        :header="'Tyyppi'"
+        :options="suggestionTypes"
+        :changeCallBack="typeChanged"
+      />
+      <common-drop-down
+        :header="'Kokous'"
+        :options="mapMeetingsToDropDown()"
+        :changeCallBack="meetingChanged"
+      />
     </span>
   </div>
 </template>
 
 <script>
 import CommonDropDown from '../common/CommonDropDown';
-import { suggestionStateStatus, suggestionType } from '../../utils/suggestionMappings.js';
+import {
+  suggestionStateStatus,
+  suggestionType,
+  filterType
+} from '../../utils/suggestionMappings.js';
+
+import {
+  suggestionGetters,
+  suggestionMutations
+} from '../../store/modules/suggestion/suggestionConsts.js';
+import {
+  mapSuggestionGetters,
+  mapSuggestioMutations
+} from '../../store/modules/suggestion/suggestionModule.js';
 
 import { mapMeetingActions, mapMeetingGetters } from '../../store/modules/meeting/meetingModule.js';
 import { meetingActions, meetingGetters } from '../../store/modules/meeting/meetingConst.js';
 
 import { mapTagActions, mapTagGetters } from '../../store/modules/tag/tagModule.js';
 import { tagActions, tagGetters } from '../../store/modules/tag/tagConst.js';
+
+import { handleDropDownSelection } from '../../utils/filterValueHelper.js';
 
 export default {
   components: {
@@ -33,7 +64,8 @@ export default {
       {
         label: suggestionStateStatus.REJECTED,
         value: suggestionStateStatus.REJECTED
-      }],
+      }
+    ],
     suggestionTypes: [
       {
         label: suggestionType.NEW,
@@ -42,20 +74,74 @@ export default {
       {
         label: suggestionType.MODIFY,
         value: suggestionType.MODIFY
-      }],
-    ...mapMeetingGetters({ meetings: meetingGetters.GET_MEETINGS }),
-    ...mapTagGetters({ tags: tagGetters.GET_TAGS })
+      }
+    ]
   }),
+  computed: {
+    ...mapMeetingGetters({ meetings: meetingGetters.GET_MEETINGS }),
+    ...mapTagGetters({ tags: tagGetters.GET_TAGS }),
+    ...mapSuggestionGetters({ filters: suggestionGetters.GET_FILTERS })
+  },
   created() {
     this.getMeetings();
     this.getTags();
   },
   methods: {
     ...mapMeetingActions({ getMeetings: meetingActions.GET_MEETINGS }),
-    ...mapTagActions({ getTags: tagActions.GET_TAGS })
+    ...mapTagActions({ getTags: tagActions.GET_TAGS }),
+    ...mapSuggestioMutations({ setFilters: suggestionMutations.SET_FILTERS }),
+    stateChanged(selected) {
+      handleDropDownSelection(
+        selected,
+        filterType.STATUS,
+        this.suggestionStateStatuses,
+        this.filters,
+        this.setFilters
+      );
+    },
+    typeChanged(selected) {
+      handleDropDownSelection(
+        selected,
+        filterType.TYPE,
+        this.suggestionTypes,
+        this.filters,
+        this.setFilters
+      );
+    },
+    mapMeetingsToDropDown() {
+      let meetings = [];
+      this.meetings.forEach(meeting => {
+        meetings.push({ label: `${meeting.name} ${meeting.meeting_date}`, value: meeting.id });
+      });
+      return meetings;
+    },
+    meetingChanged(selected) {
+      handleDropDownSelection(
+        selected,
+        filterType.MEETING,
+        this.mapMeetingsToDropDown(),
+        this.filters,
+        this.setFilters
+      );
+    },
+    mapTagsToDropDown() {
+      let tags = [];
+      this.tags.forEach(tag => {
+        tags.push({ label: tag.label, value: tag.label });
+      });
+      return tags;
+    },
+    tagChanged(selected) {
+      handleDropDownSelection(
+        selected,
+        filterType.TAG,
+        this.mapTagsToDropDown(),
+        this.filters,
+        this.setFilters
+      );
+    }
   }
 };
-
 </script>
 
 <style scoped>
