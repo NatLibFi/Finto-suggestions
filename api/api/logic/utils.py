@@ -24,7 +24,7 @@ def _meeting_id_filter(query, value):
 
 
 SUGGESTION_FILTER_FUNCTIONS = {
-    'SUGGESTION_STATUS': (
+    'STATUS': (
         lambda query, value:
         query.filter(Suggestion.status == SuggestionStatusTypes[value])
         if value in SuggestionStatusTypes.__members__
