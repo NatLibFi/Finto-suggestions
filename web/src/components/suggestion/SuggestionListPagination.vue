@@ -1,11 +1,17 @@
 <template>
 <div class="paginate">
   <paginate
-    :page-count="20"
-    :click-handler="functionName"
-    :prev-text="'Prev'"
-    :next-text="'Next'"
-    :container-class="'paginate'">
+    v-model="page"
+    :page-count="pageCount"
+    :click-handler="changePageHandler"
+    :prev-text="'<<'"
+    :next-text="'>>'"
+    :container-class="'paginate'"
+    :page-link-class="'paginateLink'"
+    :page-class="'paginateItem'"
+    :next-class="'paginateItem'"
+    :prev-class="'paginateItem'"
+    >
   </paginate>
 </div>
 </template>
@@ -17,9 +23,15 @@ export default {
   components: {
     Paginate
   },
+  props: {
+    pageCount: Number
+  },
+  data: () => ({
+    page: 1
+  }),
   methods: {
-    testfunc(asd) {
-      console.log("test func");
+    changePageHandler(pageNumber) {
+      this.$emit('paginationPageChanged', pageNumber)
     }
   }
 };
@@ -35,5 +47,20 @@ export default {
   display: inline-block;
   padding: 10px 10px;
 }
+
+.active {
+  font-weight: bold;
+  border: none;
+}
+
+.paginateLink:focus {
+  outline: none;
+}
+
+.paginateItem {
+  border: 1px solid lightgray;
+  height: 15px;
+}
+
 
 </style>

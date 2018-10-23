@@ -1,5 +1,5 @@
 <template>
-<div>
+<div class="container">
   <suggestion-header
     :openSuggestionCount="openCount"
     :resolvedSuggestionCount="resolvedCount"
@@ -7,7 +7,7 @@
   <ul class="list">
     <suggestion-item
       class="item"
-      v-for="item in items"
+      v-for="item in paginated_items"
       :key="item.id"
       :orderNumber="item.id"
       :title="item.preferred_label.fi"
@@ -16,6 +16,10 @@
       :suggestionType="item.suggestion_type"
       :tags="item.tags" />
   </ul>
+  <suggestion-list-pagination
+    :pageCount="calcultePageCountForPagination()"
+    @paginationPageChanged="paginationPageChanged"
+  />
 </div>
 </template>
 
@@ -25,31 +29,41 @@ import SuggestionItem from './SuggestionItem';
 
 import {
   suggestionGetters,
-  suggestionActions
+  suggestionActions,
+  suggestionMutations
 } from '../../store/modules/suggestion/suggestionConsts.js';
 
 import {
   mapSuggestionActions,
-  mapSuggestionGetters
+  mapSuggestionGetters,
+  mapSuggestionMutations
 } from '../../store/modules/suggestion/suggestionModule.js';
+
+import SuggestionListPagination from './SuggestionListPagination';
 
 export default {
   components: {
     SuggestionHeader,
-    SuggestionItem
+    SuggestionItem,
+    SuggestionListPagination
   },
+  data: () => ({
+    paginationMaxCount: 10
+  }),
   computed: {
     ...mapSuggestionGetters({
       items: suggestionGetters.GET_SUGGESTIONS,
       openCount: suggestionGetters.GET_OPEN_SUGGESTIONS_COUNT,
       resolvedCount: suggestionGetters.GET_RESOLVED_SUGGESTIONS_COUNT,
-      searchQuery: suggestionGetters.GET_SEARCH_QUERY
+      searchQuery: suggestionGetters.GET_SEARCH_QUERY,
+      paginated_items: suggestionGetters.GET_PAGINATION_SUGGESTIONS,
     })
   },
-  created() {
-    this.getSuggestions();
-    this.getOpenSuggestionCount();
-    this.getResolvedSuggestionCount();
+  async created() {
+    await this.getSuggestions();
+    await this.getOpenSuggestionCount();
+    await this.getResolvedSuggestionCount();
+    this.paginationPageChanged();
   },
   methods: {
     ...mapSuggestionActions({
@@ -59,12 +73,35 @@ export default {
       getSortedSuggestions: suggestionActions.GET_SORTED_SUGGESTIONS,
       searchSuggestions: suggestionActions.GET_SEARCHED_SUGGESTIONS
     }),
+    ...mapSuggestionMutations({
+      setPaginatedSuggestions: suggestionMutations.SET_PAGINATION_SUGGESTIONS
+    }),
     async sortSuggestionList(selectedSorting) {
       if (selectedSorting && selectedSorting !== '') {
         this.getSortedSuggestions(selectedSorting);
       } else {
         this.getSuggestions();
       }
+    },
+    getPaginationStaringIndex(pageNumber) {
+      console.log(pageNumber);
+      return pageNumber > 1 ? (this.paginationMaxCount * pageNumber) - this.paginationMaxCount : 0;
+    },
+    getPaginationEndingIndex(pageNumber) {
+      const endIndex = (this.paginationMaxCount * pageNumber) -1
+      return endIndex > this.items.length ? this.items.length : endIndex;
+    },
+    paginationPageChanged(pageNumber = 1) {
+      const index = this.getPaginationStaringIndex(pageNumber);
+      const endindex = this.getPaginationEndingIndex(pageNumber);
+      const items = this.items.slice(index, endindex);
+      console.log(items);
+      this.setPaginatedSuggestions(items);
+    },
+    calcultePageCountForPagination() {
+      const pageCount = Math.ceil(this.items.length / this.paginationMaxCount);
+      console.log('pagecount calculated: ' + pageCount);
+      return pageCount;
     }
   },
   watch: {

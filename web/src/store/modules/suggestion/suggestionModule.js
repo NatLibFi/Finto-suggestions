@@ -1,5 +1,5 @@
 import Vue from 'vue';
-import { mapActions, mapGetters } from 'vuex';
+import { mapActions, mapGetters, mapMutations } from 'vuex';
 import api from '../../../api';
 import {
   namespace,
@@ -11,6 +11,7 @@ import {
 
 export const mapSuggestionGetters = getters => mapGetters(namespace, getters);
 export const mapSuggestionActions = actions => mapActions(namespace, actions);
+export const mapSuggestionMutations = mutations => mapMutations(namespace, mutations);
 
 export default {
   namespaced: true,
@@ -31,6 +32,9 @@ export default {
     },
     [suggestionMutations.SET_SEARCH_QUERY](state, searchQuery) {
       Vue.set(state, storeStateNames.SEARCH_QUERY, searchQuery);
+    },
+    [suggestionMutations.SET_PAGINATION_SUGGESTIONS](state, suggestions) {
+      Vue.set(state, storeStateNames.PAGINATED_ITEMS, suggestions);
     }
   },
   getters: {
@@ -38,7 +42,8 @@ export default {
     [suggestionGetters.GET_OPEN_SUGGESTIONS_COUNT]: state => state[storeStateNames.OPEN_COUNT],
     [suggestionGetters.GET_RESOLVED_SUGGESTIONS_COUNT]: state =>
       state[storeStateNames.RESOLVED_COUNT],
-    [suggestionGetters.GET_SEARCH_QUERY]: state => state[storeStateNames.SEARCH_QUERY]
+    [suggestionGetters.GET_SEARCH_QUERY]: state => state[storeStateNames.SEARCH_QUERY],
+    [suggestionGetters.GET_PAGINATION_SUGGESTIONS]: state => state[storeStateNames.PAGINATED_ITEMS]
   },
   actions: {
     async [suggestionActions.GET_SUGGESTIONS]({ commit }) {
