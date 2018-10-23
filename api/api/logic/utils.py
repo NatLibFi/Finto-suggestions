@@ -30,9 +30,9 @@ SUGGESTION_FILTER_FUNCTIONS = {
         if value in SuggestionStatusTypes.__members__
         else _raise_exception(value, 'STATUS', [e.name for e in SuggestionStatusTypes])
     ),
-    'SUGGESTION_TYPE': (
+    'TYPE': (
         lambda query, value:
-        query.filter(Suggestion.status == SuggestionTypes[value])
+        query.filter(Suggestion.suggestion_type == SuggestionTypes[value])
         if value in SuggestionTypes.__members__
         else _raise_exception(value, 'SUGGESTION_TYPE', [e.name for e in SuggestionTypes])
     ),
