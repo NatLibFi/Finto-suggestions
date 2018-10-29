@@ -1,4 +1,4 @@
-"""empty message
+"""Add tag_label field to events table
 
 Revision ID: e39a87d1faf7
 Revises: e008d81a779e

@@ -101,7 +101,7 @@ class Event(db.Model, SerializableMixin):
     tag_label = column_property(
       select([column('tag_label')])
       .select_from(SuggestionTags)
-      .where(SuggestionTags.suggestion_id==suggestion_id), info='tag_label')
+      .where(SuggestionTags.suggestion_id==suggestion_id))
 
     def __repr__(self):
         msg = self.text if len(self.text) <= 16 else (self.text[:16] + '...')
