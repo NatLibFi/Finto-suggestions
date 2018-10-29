@@ -20,6 +20,7 @@ def get_events(limit: int = None, offset: int = None, user_id: int = None, sugge
 
     def filter_func():
         query = Event.query
+        print(query)
         if user_id:
             query = query.filter(Event.user_id == user_id)
         if suggestion_id:
