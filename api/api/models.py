@@ -52,9 +52,6 @@ class SerializableMixin():
     def as_dict(self, strip=True):
         d = {c.name: self._serialize(getattr(self, c.name))
              for c in self.__table__.columns}
-        print(self.__table__.columns.values())
-        print(d)
-        print(getattr(self, 'tag_label'))
         if strip:  # strip hidden fields, such as meeting_id
             d = {k: v for k, v in d.items() if k in self.__public__}
         return d
@@ -105,7 +102,6 @@ class Event(db.Model, SerializableMixin):
 
     def __repr__(self):
         msg = self.text if len(self.text) <= 16 else (self.text[:16] + '...')
-        print(msg)
         return '<Event {} | \'{}\'>'.format(self.event_type.name, msg)
 
     def as_dict(self, strip=True):
