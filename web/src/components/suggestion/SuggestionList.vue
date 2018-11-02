@@ -126,8 +126,9 @@ ul {
   text-align: left;
   background-color: #ffffff;
   border: 2px solid #f5f5f5;
+  border-bottom: none;
   width: 60vw;
-  margin: 20px 20vw;
+  margin: 20px 20vw 0;
   padding-left: 0; /* reset inital padding for ul tags */
 }
 
