@@ -34,5 +34,6 @@ export default {
     }),
   getSortedSuggestions: sortValue => get({ resource: `/suggestions?sort=${sortValue}` }),
   filterSuggestions: filters =>
-    get({ resource: `/suggestions?filters=${parseFilterArrayToValidUri(filters)}` })
+    get({ resource: `/suggestions?filters=${parseFilterArrayToValidUri(filters)}` }),
+  getSuggestionById: suggestionId => get({ resource: `/suggestions/${suggestionId}` })
 };

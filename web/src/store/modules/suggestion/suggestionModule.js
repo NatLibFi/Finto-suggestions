@@ -16,10 +16,10 @@ export const mapSuggestioMutations = mutations => mapMutations(namespace, mutati
 export default {
   namespaced: true,
   state: {
-    items: [],
-    openCount: 0,
-    resolvedCount: 0,
-    filters: []
+    [storeStateNames.ITEMS]: [],
+    [storeStateNames.OPEN_COUNT]: 0,
+    [storeStateNames.RESOLVED_COUNT]: 0,
+    [storeStateNames.FILTERS]: []
   },
   getters: {
     [suggestionGetters.GET_SUGGESTIONS]: state => state[storeStateNames.ITEMS],
@@ -62,6 +62,10 @@ export default {
     async [suggestionActions.GET_FILTERED_SUGGESTIONS]({ commit }, filters) {
       const result = await api.suggestions.filterSuggestions(filters);
       commit(suggestionMutations.SET_SUGGESTIONS, result.data);
+    },
+    async [suggestionActions.GET_SUGGESTION_BY_ID]({ commit }, suggestionId) {
+      const result = await api.suggestions.getSuggestionById(suggestionId);
+      commit(suggestionMutations.SET_SUGGESTIONS, [result.data]);
     }
   }
 };

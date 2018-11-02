@@ -7,8 +7,8 @@ const client = axios.create({
 
 const execute = async (method, resource, data) => {
   // inject the accessToken for each request
-  //   let accessToken = await Vue.prototype.$auth.getAccessToken();
-  let accessToken = process.env.ACCESS_TOKEN;
+  let accessToken = process.env.VUE_APP_ACCESS_TOKEN;
+  // let accessToken = '';
   return client({
     method,
     url: resource,
@@ -28,3 +28,4 @@ const execute = async (method, resource, data) => {
 };
 
 export const get = async options => execute('get', options.resource, null);
+export const post = async options => execute('post', options.resource, options.data);

@@ -10,12 +10,8 @@
       class="item"
       v-for="item in items"
       :key="item.id"
-      :orderNumber="item.id"
-      :title="item.preferred_label.fi"
-      :created="item.created"
-      :status="item.status"
-      :suggestionType="item.suggestion_type"
-      :tags="item.tags" />
+      :suggestion="item"
+      />
   </ul>
 </div>
 </template>
@@ -44,7 +40,6 @@ export default {
       items: suggestionGetters.GET_SUGGESTIONS,
       openCount: suggestionGetters.GET_OPEN_SUGGESTIONS_COUNT,
       resolvedCount: suggestionGetters.GET_RESOLVED_SUGGESTIONS_COUNT,
-      searchQuery: suggestionGetters.GET_SEARCH_QUERY,
       filters: suggestionGetters.GET_FILTERS
     })
   },

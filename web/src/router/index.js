@@ -13,9 +13,10 @@ export default new Router({
       component: Index
     },
     {
-      path: '/suggestion/:suggestionID',
+      path: '/suggestion/:suggestionId',
       name: 'suggestion',
-      component: Suggestion
+      component: Suggestion,
+      props: true
     }
   ],
   mode: 'history'

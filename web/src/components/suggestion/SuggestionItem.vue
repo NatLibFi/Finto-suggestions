@@ -3,22 +3,22 @@
     <div class="item-summary">
       <div class="title">
         <p class="title-row">
-          <span class="item-name">{{title}}</span>
-          <span class="status tag" v-if="status !== 'DEFAULT'">{{ status }}</span>
+          <span class="item-name">{{ suggestion.preferred_label.fi }}</span>
+          <span class="status tag" v-if="suggestion.status !== 'DEFAULT'">{{ suggestion.status }}</span>
           <span
-            :class="[suggestionType == 'MODIFY'
+            :class="[suggestion.suggestion_type == 'MODIFY'
               ? 'type-modify'
               : 'type-new',
-            'tag']">{{ suggestionType }}
+            'tag']">{{ suggestion.suggestion_type }}
           </span>
-          <span v-if="tags.length > 0">
-            <span class="tags tag" v-for="tag in tags" :key="tag.label">{{tag.label}}</span>
+          <span v-if="suggestion.tags.length > 0">
+            <span class="tags tag" v-for="tag in suggestion.tags" :key="tag.label">{{ tag.label}}</span>
           </span>
         </p>
       </div>
       <div class="label">
         <p>
-          <strong>#{{ orderNumber }}</strong>
+          <strong>#{{ suggestion.id }}</strong>
           Lähetetty {{ buildLabel() }}
         </p>
       </div>
@@ -31,10 +31,10 @@
 </template>
 
 <script>
-import { differenceInDays, parse } from 'date-fns';
-
 import SvgIcon from '../icons/SvgIcon';
 import IconComments from '../icons/IconComments';
+import { suggestionType } from '../../utils/suggestionMappings.js';
+import { dateDiffLabel } from '../../utils/dateTimeStampHelper.js';
 
 export default {
   components: {
@@ -42,25 +42,22 @@ export default {
     IconComments
   },
   props: {
-    orderNumber: Number,
-    title: String,
-    created: String,
-    status: String,
-    suggestionType: String,
-    tags: Array
+    suggestion: {
+      type: Object,
+      required: true
+    }
   },
   methods: {
-    getDayDifference() {
-      return differenceInDays(parse(new Date()), parse(this.created));
-    },
     buildLabel() {
-      const whenSended = this.getDayDifference();
-      return whenSended > 0 ? `${whenSended} päivää sitten` : 'tänään';
+      return dateDiffLabel(this.suggestion.created)
     },
-    goToSuggestion: function() {
+    goToSuggestion() {
       this.$router.push({
         name: 'suggestion',
-        params: { suggestionID: this.orderNumber }
+        params: {
+          suggestionId: this.suggestion.id,
+          suggestion: this.suggestion
+          }
       });
     }
   }

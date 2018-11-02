@@ -53,7 +53,7 @@ def get_all_or_404_custom(query_func) -> str:
 
             This is handy for filtering, sorting and searching.
 
-            def query_func():
+            def query_func()
                 query = model.query
                 if limit:
                     query = query.limit(limit)

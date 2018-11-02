@@ -10,7 +10,9 @@ export default {
     // eslint-disable-next-line
     $cookies.config('10d');
     // eslint-disable-next-line
-    $cookies.set('access_token', process.env.ACCESS_TOKEN);
+    $cookies.set('access_token', process.env.VUE_APP_ACCESS_TOKEN);
+    // eslint-disable-next-line
+    $cookies.set('logged_user_id', process.env.VUE_APP_USER_ID); //TODO: remove this when login and logout is working
   }
 };
 </script>
