@@ -40,7 +40,7 @@ import {
 } from '../../store/modules/suggestion/suggestionConsts.js';
 import {
   mapSuggestionGetters,
-  mapSuggestioMutations
+  mapSuggestionMutations
 } from '../../store/modules/suggestion/suggestionModule.js';
 
 import { mapMeetingActions, mapMeetingGetters } from '../../store/modules/meeting/meetingModule.js';
@@ -89,7 +89,7 @@ export default {
   methods: {
     ...mapMeetingActions({ getMeetings: meetingActions.GET_MEETINGS }),
     ...mapTagActions({ getTags: tagActions.GET_TAGS }),
-    ...mapSuggestioMutations({ setFilters: suggestionMutations.SET_FILTERS }),
+    ...mapSuggestionMutations({ setFilters: suggestionMutations.SET_FILTERS }),
     stateChanged(selected) {
       handleDropDownSelection(
         selected,

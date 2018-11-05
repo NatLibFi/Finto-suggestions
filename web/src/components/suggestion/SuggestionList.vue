@@ -1,8 +1,8 @@
 <template>
 <div class="container">
   <suggestion-header
-    :openSuggestionCount="openCount"
-    :resolvedSuggestionCount="resolvedCount"
+    :openSuggestionCount="openCount ? openCount : 0"
+    :resolvedSuggestionCount="resolvedCount ? resolvedCount : 0"
     @sortSuggestionListBy="sortSuggestionList"
     class="header" />
   <ul class="list">
@@ -41,6 +41,7 @@ import {
 } from '../../store/modules/suggestion/suggestionModule.js';
 
 import SuggestionListPagination from './SuggestionListPagination';
+import { filterType, suggestionType } from '../../utils/suggestionMappings';
 
 export default {
   components: {
@@ -72,48 +73,65 @@ export default {
       getSuggestions: suggestionActions.GET_SUGGESTIONS,
       getOpenSuggestionCount: suggestionActions.GET_OPEN_SUGGESTIONS,
       getResolvedSuggestionCount: suggestionActions.GET_RESOLVED_SUGGESTIONS,
-      getSortedSuggestions: suggestionActions.GET_SORTED_SUGGESTIONS,
-      searchSuggestions: suggestionActions.GET_SEARCHED_SUGGESTIONS,
-      getFilteredSuggestions: suggestionActions.GET_FILTERED_SUGGESTIONS
+      getSortedSuggestions: suggestionActions.GET_SORTED_SUGGESTIONS
     }),
     ...mapSuggestionMutations({
-      setPaginatedSuggestions: suggestionMutations.SET_PAGINATION_SUGGESTIONS
+      setPaginatedSuggestions: suggestionMutations.SET_PAGINATION_SUGGESTIONS,
+      setFilteredSuggestions: suggestionMutations.SET_SUGGESTIONS
     }),
-    async sortSuggestionList(selectedSorting) {
+    sortSuggestionList(selectedSorting) {
       if (selectedSorting && selectedSorting !== '') {
+        console.log('sorting', selectedSorting);
         this.getSortedSuggestions(selectedSorting);
       } else {
         this.getSuggestions();
       }
     },
     getPaginationStaringIndex(pageNumber) {
-      console.log(pageNumber);
       return pageNumber > 1 ? (this.paginationMaxCount * pageNumber) - this.paginationMaxCount : 0;
     },
     getPaginationEndingIndex(pageNumber) {
-      const endIndex = (this.paginationMaxCount * pageNumber) -1
+      const endIndex = (this.paginationMaxCount * pageNumber)
       return endIndex > this.items.length ? this.items.length : endIndex;
     },
     paginationPageChanged(pageNumber = 1) {
       const index = this.getPaginationStaringIndex(pageNumber);
       const endindex = this.getPaginationEndingIndex(pageNumber);
-      const items = this.items.slice(index, endindex);
-      console.log(items);
-      this.setPaginatedSuggestions(items);
+      const items = this.items;
+      this.setPaginatedSuggestions(items.slice(index, endindex));
     },
     calcultePageCountForPagination() {
       const pageCount = Math.ceil(this.items.length / this.paginationMaxCount);
-      console.log('pagecount calculated: ' + pageCount);
       return pageCount;
     }
   },
   watch: {
-    filters() {
+    async filters() {
       if (this.filters.length > 0) {
-        this.getFilteredSuggestions(this.filters);
+        let items = this.items;
+        this.filters.forEach(filter => {
+          switch(filter.type) {
+            case filterType.STATUS:
+              items = items.filter(i => i.status === filter.value);
+              break;
+            case filterType.TAG:
+              break;
+            case filterType.TYPE:
+              items = items.filter(i => i.suggestion_type === filter.value);
+              break;
+            case filterType.MEETING:
+              items = items.filter(i => i.meeting_id === filter.value);
+              break;
+            case filterType.SEARCH:
+              items = items.filter(i => i.preferred_label && i.preferred_label.fi.startsWith(filter.value));
+              break;
+          }
+        });
+        this.setFilteredSuggestions(items);
       } else {
-        this.getSuggestions();
+        await this.getSuggestions();
       }
+      this.paginationPageChanged();
     }
   }
 };
