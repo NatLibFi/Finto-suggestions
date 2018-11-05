@@ -1,4 +1,4 @@
-"""empty message
+"""Init db default values
 
 Revision ID: e008d81a779e
 Revises: 
