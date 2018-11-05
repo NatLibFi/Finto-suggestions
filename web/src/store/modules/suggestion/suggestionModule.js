@@ -18,7 +18,17 @@ export default {
   state: {
     items: [],
     openCount: 0,
-    resolvedCount: 0
+    resolvedCount: 0,
+    filters: []
+  },
+  getters: {
+    [suggestionGetters.GET_SUGGESTIONS]: state => state[storeStateNames.ITEMS],
+    [suggestionGetters.GET_OPEN_SUGGESTIONS_COUNT]: state => state[storeStateNames.OPEN_COUNT],
+    [suggestionGetters.GET_RESOLVED_SUGGESTIONS_COUNT]: state =>
+      state[storeStateNames.RESOLVED_COUNT],
+    [suggestionGetters.GET_SEARCH_QUERY]: state => state[storeStateNames.SEARCH_QUERY],
+    [suggestionGetters.GET_FILTERS]: state => state[storeStateNames.FILTERS],
+    [suggestionGetters.GET_PAGINATION_SUGGESTIONS]: state => state[storeStateNames.PAGINATED_ITEMS]
   },
   mutations: {
     [suggestionMutations.SET_SUGGESTIONS](state, suggestions) {
@@ -33,17 +43,12 @@ export default {
     [suggestionMutations.SET_SEARCH_QUERY](state, searchQuery) {
       Vue.set(state, storeStateNames.SEARCH_QUERY, searchQuery);
     },
+    [suggestionMutations.SET_FILTERS](state, filters) {
+      Vue.set(state, storeStateNames.FILTERS, filters);
+    },
     [suggestionMutations.SET_PAGINATION_SUGGESTIONS](state, suggestions) {
       Vue.set(state, storeStateNames.PAGINATED_ITEMS, suggestions);
     }
-  },
-  getters: {
-    [suggestionGetters.GET_SUGGESTIONS]: state => state[storeStateNames.ITEMS],
-    [suggestionGetters.GET_OPEN_SUGGESTIONS_COUNT]: state => state[storeStateNames.OPEN_COUNT],
-    [suggestionGetters.GET_RESOLVED_SUGGESTIONS_COUNT]: state =>
-      state[storeStateNames.RESOLVED_COUNT],
-    [suggestionGetters.GET_SEARCH_QUERY]: state => state[storeStateNames.SEARCH_QUERY],
-    [suggestionGetters.GET_PAGINATION_SUGGESTIONS]: state => state[storeStateNames.PAGINATED_ITEMS]
   },
   actions: {
     async [suggestionActions.GET_SUGGESTIONS]({ commit }) {
@@ -66,8 +71,9 @@ export default {
       const result = await api.suggestions.searchSuggestions(searchQuery);
       commit(suggestionMutations.SET_SUGGESTIONS, result.data);
     },
-    [suggestionActions.SET_SEARCH_QUERY]({ commit }, searchQuery) {
-      commit(suggestionMutations.SET_SEARCH_QUERY, searchQuery);
+    async [suggestionActions.GET_FILTERED_SUGGESTIONS]({ commit }, filters) {
+      const result = await api.suggestions.filterSuggestions(filters);
+      commit(suggestionMutations.SET_SUGGESTIONS, result.data);
     }
   }
 };

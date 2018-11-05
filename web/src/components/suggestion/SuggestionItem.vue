@@ -6,7 +6,10 @@
           <span class="item-name">{{title}}</span>
           <span class="status tag" v-if="status !== 'DEFAULT'">{{ status }}</span>
           <span
-            :class="[suggestionType == 'MODIFY' ? 'type-modify' : 'type-new', 'tag']">{{ suggestionType }}
+            :class="[suggestionType == 'MODIFY'
+              ? 'type-modify'
+              : 'type-new',
+            'tag']">{{ suggestionType }}
           </span>
           <span v-if="tags.length > 0">
             <span class="tags tag" v-for="tag in tags" :key="tag.label">{{tag.label}}</span>
@@ -101,7 +104,13 @@ li.item {
   padding: 0 6px;
   border-radius: 3px;
   color: #ffffff;
+  margin-right: 10px;
 }
+
+.tag:last-of-type {
+  margin-right: 0;
+}
+
 .status {
   background-color: #58ba81;
   color: white;
