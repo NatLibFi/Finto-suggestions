@@ -4,7 +4,9 @@
       <div class="title">
         <p class="title-row">
           <span class="item-name">{{ suggestion.preferred_label.fi }}</span>
-          <span class="status tag" v-if="suggestion.status !== 'DEFAULT'">{{ suggestion.status }}</span>
+          <span class="status tag" v-if="suggestion.status !== 'DEFAULT'">
+            {{ suggestion.status }}
+          </span>
           <span
             :class="[suggestion.suggestion_type == 'MODIFY'
               ? 'type-modify'
@@ -12,7 +14,9 @@
             'tag']">{{ suggestion.suggestion_type }}
           </span>
           <span v-if="suggestion.tags.length > 0">
-            <span class="tags tag" v-for="tag in suggestion.tags" :key="tag.label">{{ tag.label}}</span>
+            <span class="tags tag" v-for="tag in suggestion.tags" :key="tag.label">
+              {{ tag.label}}
+            </span>
           </span>
         </p>
       </div>
@@ -33,7 +37,7 @@
 <script>
 import SvgIcon from '../icons/SvgIcon';
 import IconComments from '../icons/IconComments';
-import { suggestionType } from '../../utils/suggestionMappings.js';
+// import { suggestionType } from '../../utils/suggestionMappings.js';
 import { dateDiffLabel } from '../../utils/dateTimeStampHelper.js';
 
 export default {
@@ -49,7 +53,7 @@ export default {
   },
   methods: {
     buildLabel() {
-      return dateDiffLabel(this.suggestion.created)
+      return dateDiffLabel(this.suggestion.created);
     },
     goToSuggestion() {
       this.$router.push({
@@ -57,7 +61,7 @@ export default {
         params: {
           suggestionId: this.suggestion.id,
           suggestion: this.suggestion
-          }
+        }
       });
     }
   }

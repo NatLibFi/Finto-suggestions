@@ -11,7 +11,7 @@ import {
 
 export const mapSuggestionGetters = getters => mapGetters(namespace, getters);
 export const mapSuggestionActions = actions => mapActions(namespace, actions);
-export const mapSuggestioMutations = mutations => mapMutations(namespace, mutations);
+export const mapSuggestionMutations = mutations => mapMutations(namespace, mutations);
 
 export default {
   namespaced: true,

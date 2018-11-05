@@ -66,7 +66,9 @@
     </div>
 
     <div v-if="suggestion.description">
-      <p v-if="suggestion.suggestion_type == 'NEW'"><strong>Tarkoitusta täsmentävä selite</strong></p>
+      <p v-if="suggestion.suggestion_type == 'NEW'">
+        <strong>Tarkoitusta täsmentävä selite</strong>
+      </p>
       <p v-if="suggestion.suggestion_type == 'MODIFY'"><strong>Ehdotettu muutos</strong></p>
       <p>{{ suggestion.description }}</p>
     </div>

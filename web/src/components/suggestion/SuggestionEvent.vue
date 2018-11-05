@@ -43,7 +43,7 @@ export default {
   }),
   methods: {
     buildLabel() {
-      return dateDiffLabel(this.event.created)
+      return dateDiffLabel(this.event.created);
     }
   }
 };

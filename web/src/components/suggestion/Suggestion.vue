@@ -28,7 +28,21 @@
         </div>
       </div>
 
-      <suggestion-content v-if="suggestions && suggestions.length > 0" :suggestion="suggestions[0]" />
+      <suggestion-content
+        v-if="suggestions && suggestions.length > 0"
+        :suggestion="suggestions[0]" />
+
+      <div v-if="suggestions && suggestions[0].reactions.length > 0" class="suggestion-reactions">
+        <div v-for="reaction in suggestions[0].reactions" :key="reaction.id">
+          <div class="reaction">
+            <div class="emoji">{{ reaction.code }}</div>
+            <div class="counter">2</div>
+            <a @click="displayEmoji(reaction.code)">
+              button
+            </a>
+          </div>
+        </div>
+      </div>
     </div>
 
     <div v-if="events && events.length > 0">
@@ -54,8 +68,15 @@ import IconMore from '../icons/IconMore';
 import SvgIcon from '../icons/SvgIcon';
 import AddComment from './AddComment';
 
-import { suggestionGetters, suggestionActions } from '../../store/modules/suggestion/suggestionConsts.js';
-import { mapSuggestionGetters, mapSuggestionActions } from '../../store/modules/suggestion/suggestionModule.js';
+import {
+  suggestionGetters,
+  suggestionActions
+} from '../../store/modules/suggestion/suggestionConsts.js';
+
+import {
+  mapSuggestionGetters,
+  mapSuggestionActions
+} from '../../store/modules/suggestion/suggestionModule.js';
 
 import { eventGetters, eventActions } from '../../store/modules/event/eventConsts.js';
 import { mapEventGetters, mapEventActions } from '../../store/modules/event/eventModule.js';
@@ -76,6 +97,7 @@ export default {
     }
   },
   data: () => ({
+    // eslint-disable-next-line
     userId: $cookies.get('logged_user_id')
   }),
   computed: {
@@ -219,12 +241,11 @@ div.suggestion-header-buttons {
   font-size: 14px;
   font-weight: 600;
   background-color: #ffffff;
-  color: #AC63EF;
-  border: 1px solid #AC63EF;
+  color: #ac63ef;
+  border: 1px solid #ac63ef;
   padding: 3px 10px;
   margin-left: 10px;
   border-radius: 2px;
   text-transform: lowercase;
 }
-
 </style>

@@ -23,13 +23,16 @@
 </template>
 
 <script>
-import markdownEditor from "vue-simplemde/src/markdown-editor";
+import markdownEditor from 'vue-simplemde/src/markdown-editor';
 
-import { mapEventActions } from "../../store/modules/event/eventModule.js";
-import { eventActions } from "../../store/modules/event/eventConsts.js";
-import { eventTypes } from "../../utils/eventMappings.js";
-import { suggestionMutations, suggestionActions } from '../../store/modules/suggestion/suggestionConsts.js';
-import { mapSuggestioMutations } from '../../store/modules/suggestion/suggestionModule.js';
+import { mapEventActions } from '../../store/modules/event/eventModule.js';
+import { eventActions } from '../../store/modules/event/eventConsts.js';
+import { eventTypes } from '../../utils/eventMappings.js';
+// import {
+//   suggestionMutations,
+//   suggestionActions
+// } from '../../store/modules/suggestion/suggestionConsts.js';
+// import { mapSuggestionMutations } from '../../store/modules/suggestion/suggestionModule.js';
 
 export default {
   props: {
@@ -46,7 +49,7 @@ export default {
     markdownEditor
   },
   data: () => ({
-    content: ""
+    content: ''
   }),
   methods: {
     ...mapEventActions({
@@ -64,7 +67,10 @@ export default {
       return null;
     },
     saveNewComment() {
-      this.addNewEvent({ event: this.constructEventJsonObject(), suggestionId: parseInt(this.suggestionId) });
+      this.addNewEvent({
+        event: this.constructEventJsonObject(),
+        suggestionId: parseInt(this.suggestionId)
+      });
       this.content = '';
     }
   }
@@ -72,7 +78,7 @@ export default {
 </script>
 
 <style scoped>
-@import "~simplemde/dist/simplemde.min.css";
+@import '~simplemde/dist/simplemde.min.css';
 
 div.comment-divider {
   display: inline-block;
