@@ -39,25 +39,25 @@ export default {
     selectedOptionsMapper: Object
   },
   methods: {
-    sortValueSelected: function(option, index) {
+    sortValueSelected(option, index) {
       this.handleDropDownSelectedIndicator(index);
 
       if (option && option.value !== '') {
         // do sorting by sorting key
-        const selectedValue = findValueFromDropDownOptions(option.value, this.dropDownOptions);
+        const selectedValue = findValueFromDropDownOptions(option.label, this.dropDownOptions);
         this.sortSuggestionList(this.selectedOptionsMapper[selectedValue]);
       } else {
-        this.sortSuggestionList(null);
+        this.sortSuggestionList();
       }
     },
-    sortSuggestionList: function(selectedSorting) {
+    sortSuggestionList(selectedSorting = null)  {
       this.$emit('sortSuggestionListBy', selectedSorting);
     },
-    handleDropDownSelectedIndicator: function(index) {
+    handleDropDownSelectedIndicator(index) {
       // update dropdownlist selected value indicator as selected
       this.$emit('refreshSelectedIndex', index);
     },
-    closeDropDown: function() {
+    closeDropDown() {
       this.$emit('closeDropDown');
     }
   }

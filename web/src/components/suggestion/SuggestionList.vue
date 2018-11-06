@@ -79,13 +79,13 @@ export default {
       setPaginatedSuggestions: suggestionMutations.SET_PAGINATION_SUGGESTIONS,
       setFilteredSuggestions: suggestionMutations.SET_SUGGESTIONS
     }),
-    sortSuggestionList(selectedSorting) {
+    async sortSuggestionList(selectedSorting) {
       if (selectedSorting && selectedSorting !== '') {
-        console.log('sorting', selectedSorting);
-        this.getSortedSuggestions(selectedSorting);
+        await this.getSortedSuggestions(selectedSorting);
       } else {
-        this.getSuggestions();
+        await this.getSuggestions();
       }
+      this.paginationPageChanged();
     },
     getPaginationStaringIndex(pageNumber) {
       return pageNumber > 1 ? (this.paginationMaxCount * pageNumber) - this.paginationMaxCount : 0;
