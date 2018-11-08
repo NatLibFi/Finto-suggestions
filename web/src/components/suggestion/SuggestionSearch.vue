@@ -1,7 +1,7 @@
 <template>
-  <div class="container">
+  <div class="search-container  ">
     <h3>YSE - YSAn ja YSOn käsite-ehdotukset</h3>
-    <div class="welcomeText">
+    <div class="welcome-text">
       <p>{{ welcomeText }}</p>
     </div>
     <div>
@@ -34,4 +34,11 @@ export default {
 </script>
 
 <style scoped>
+  .search-container {
+    width: 60vw;
+    margin: 20px 20vw 0;
+  }
+  .welcome-text {
+    text-align: left;
+  }
 </style>

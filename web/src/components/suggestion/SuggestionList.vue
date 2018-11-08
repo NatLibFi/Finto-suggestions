@@ -1,5 +1,5 @@
 <template>
-<div class="container">
+<div class="list-container">
   <suggestion-header
     :openSuggestionCount="openCount || 0"
     :resolvedSuggestionCount="resolvedCount || 0"
@@ -134,7 +134,7 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-.container {
+.list-container {
   margin-bottom: 40px;
 }
 

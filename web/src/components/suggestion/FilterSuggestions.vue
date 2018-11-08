@@ -1,28 +1,36 @@
 <template>
   <div class="filterSuggestions">
     <h4>Suodata hakutuloksia</h4>
-    <span>
-      <common-drop-down
-        :header="'Käsittelyn tila'"
-        :options="suggestionStateStatuses"
-        :changeCallBack="stateChanged"
-      />
-      <common-drop-down
-        :header="'Ehdotustyyppi'"
-        :options="mapTagsToDropDown()"
-        :changeCallBack="tagChanged"
-      />
-      <common-drop-down
-        :header="'Tyyppi'"
-        :options="suggestionTypes"
-        :changeCallBack="typeChanged"
-      />
-      <common-drop-down
-        :header="'Kokous'"
-        :options="mapMeetingsToDropDown()"
-        :changeCallBack="meetingChanged"
-      />
-    </span>
+    <ul>
+      <li>
+        <common-drop-down
+          :header="'Käsittelyn tila'"
+          :options="suggestionStateStatuses"
+          :changeCallBack="stateChanged"
+        />
+      </li>
+      <li>
+        <common-drop-down
+          :header="'Ehdotustyyppi'"
+          :options="mapTagsToDropDown()"
+          :changeCallBack="tagChanged"
+        />
+      </li>
+      <li>
+        <common-drop-down
+          :header="'Tyyppi'"
+          :options="suggestionTypes"
+          :changeCallBack="typeChanged"
+        />
+      </li>
+      <li>
+        <common-drop-down
+          :header="'Kokous'"
+          :options="mapMeetingsToDropDown()"
+          :changeCallBack="meetingChanged"
+        />
+      </li>
+    </ul>
   </div>
 </template>
 
@@ -50,6 +58,8 @@ import { mapTagActions, mapTagGetters } from '../../store/modules/tag/tagModule.
 import { tagActions, tagGetters } from '../../store/modules/tag/tagConst.js';
 
 import { handleDropDownSelection } from '../../utils/filterValueHelper.js';
+
+import { format, parse } from 'date-fns'
 
 export default {
   components: {
@@ -115,7 +125,8 @@ export default {
     mapMeetingsToDropDown() {
       let meetings = [];
       this.meetings.forEach(meeting => {
-        meetings.push({ label: `${meeting.name} ${meeting.meeting_date}`, value: meeting.id });
+        //TODO: format date better with date-fns
+        meetings.push({ label: `${meeting.name} ${meeting.meeting_date.split('T')[0]}`, value: meeting.id });
       });
       return meetings;
     },
@@ -149,4 +160,18 @@ export default {
 </script>
 
 <style scoped>
+div.filterSuggestions ul {
+  width: 100%;
+  padding: 10px;
+  align: left;
+}
+
+div.filterSuggestions ul > li {
+  display: inline-block;
+  margin: 5px;
+  padding: 10px;
+  vertical-align: top;
+  width: 150px;
+}
+
 </style>

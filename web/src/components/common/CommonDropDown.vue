@@ -1,17 +1,14 @@
 <template>
-  <span class="sortingOptions">
+  <div class="sortingOptions">
     <select v-model="selectedOption" @change="changeCallBack">
       <option value="">{{ header }}</option>
       <option v-for="selection in options"
         :key="selection.value"
-        :value="selection.label">{{ selection.label }}
+        :value="selection.label">{{ formatLabel(selection.label) }}
       </option>
     </select>
-    <select>
-
-    </select>
     <i class="arrow down"></i>
-  </span>
+  </div>
 </template>
 
 <script>
@@ -33,14 +30,19 @@ export default {
   },
   data: () => ({
     selectedOption: ''
-  })
+  }),
+  methods: {
+    formatLabel(label) {
+      const tolowercased = label.toLowerCase();
+      return tolowercased.charAt(0).toUpperCase() + tolowercased.slice(1);
+    }
+  }
 };
 </script>
 
 <style>
 .sortingOptions {
   flex-grow: 1;
-  width: 70%;
   right: 0;
   position: relative;
 }
@@ -50,7 +52,8 @@ export default {
   -webkit-appearance: none; /*Removes default chrome and safari style*/
   -moz-appearance: none; /*Removes default style Firefox*/
   font-size: 12pt;
-  width: 40%;
+  width: 80%;
+  background-color: transparent;
 }
 
 .sortingOptions select:focus {
@@ -80,6 +83,7 @@ i {
   border-width: 0 3px 3px 0;
   display: inline-block;
   padding: 3px;
+  margin-left: 5px;
 }
 .down {
   transform: rotate(45deg);
