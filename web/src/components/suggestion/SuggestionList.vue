@@ -1,8 +1,8 @@
 <template>
 <div class="container">
   <suggestion-header
-    :openSuggestionCount="openCount"
-    :resolvedSuggestionCount="resolvedCount"
+    :openSuggestionCount="openCount || 0"
+    :resolvedSuggestionCount="resolvedCount || 0"
     @sortSuggestionListBy="sortSuggestionList"
     class="header" />
   <ul class="list">
@@ -72,8 +72,7 @@ export default {
       getSortedSuggestions: suggestionActions.GET_SORTED_SUGGESTIONS
     }),
   ...mapSuggestionMutations({
-      setPaginatedSuggestions: suggestionMutations.SET_PAGINATION_SUGGESTIONS,
-      setFilteredSuggestions: suggestionMutations.SET_SUGGESTIONS
+      setPaginatedSuggestions: suggestionMutations.SET_PAGINATION_SUGGESTIONS
     }),
     async sortSuggestionList(selectedSorting) {
       if (selectedSorting && selectedSorting !== '') {
@@ -90,11 +89,11 @@ export default {
       const endIndex = (this.paginationMaxCount * pageNumber)
       return endIndex > this.items.length ? this.items.length : endIndex;
     },
-    paginationPageChanged(pageNumber = 1) {
+    paginationPageChanged(pageNumber = 1, items = null) {
       const start = this.getPaginationStaringIndex(pageNumber);
       const end = this.getPaginationEndingIndex(pageNumber);
-      const items = this.items;
-      this.setPaginatedSuggestions(items.slice(start, end));
+      const paginatedItems = items ? items : this.items;
+      this.setPaginatedSuggestions(paginatedItems.slice(start, end));
     },
     calcultePageCountForPagination() {
       return Math.ceil(this.items.length / this.paginationMaxCount);
@@ -110,6 +109,7 @@ export default {
               items = items.filter(i => i.status === filter.value);
               break;
             case filterType.TAG:
+              // TODO: plan and implement tag filtering(that may include more than one tag)
               break;
             case filterType.TYPE:
               items = items.filter(i => i.suggestion_type === filter.value);
@@ -122,11 +122,11 @@ export default {
               break;
           }
         });
-        this.setFilteredSuggestions(items);
+        this.paginationPageChanged(1, items);
       } else {
         await this.getSuggestions();
+        this.paginationPageChanged();
       }
-      this.paginationPageChanged();
     }
   }
 };

@@ -64,6 +64,10 @@ export default {
       {
         label: suggestionStateStatus.REJECTED,
         value: suggestionStateStatus.REJECTED
+      },
+      {
+        label: suggestionStateStatus.DEFAULT,
+        value: suggestionStateStatus.DEFAULT
       }
     ],
     suggestionTypes: [

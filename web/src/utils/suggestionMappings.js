@@ -9,7 +9,8 @@ export const suggestionSortingKeys = {
 
 export const suggestionStateStatus = {
   ACCEPTED: 'ACCEPTED',
-  REJECTED: 'REJECTED'
+  REJECTED: 'REJECTED',
+  DEFAULT: 'DEFAULT'
 };
 
 export const suggestionType = {
