@@ -15,6 +15,7 @@ import {
   suggestionGetters,
   suggestionMutations
 } from '../../store/modules/suggestion/suggestionConsts.js';
+
 import {
   mapSuggestionGetters,
   mapSuggestionMutations

@@ -8,7 +8,7 @@
   <ul class="list">
     <suggestion-item
       class="item"
-      v-for="item in items"
+      v-for="item in paginated_items"
       :key="item.id"
       :suggestion="item"
       />
@@ -34,7 +34,8 @@ import {
   mapSuggestionActions,
   mapSuggestionGetters,
   mapSuggestionMutations
-} from '../../stor
+} from '../../store/modules/suggestion/suggestionModule.js';
+
 import SuggestionListPagination from './SuggestionListPagination';
 import { filterType, suggestionType } from '../../utils/suggestionMappings';
 
@@ -45,6 +46,9 @@ export default {
     SuggestionItem,
     SuggestionListPagination
   },
+  data: () => ({
+    paginationMaxCount: 10
+  }),
   computed: {
     ...mapSuggestionGetters({
       items: suggestionGetters.GET_SUGGESTIONS,
@@ -83,18 +87,19 @@ export default {
       return pageNumber > 1 ? (this.paginationMaxCount * pageNumber) - this.paginationMaxCount : 0;
     },
     getPaginationEndingIndex(pageNumber) {
-      const endIndex = (this.paginationMaxCount * pageNumber)
+      console.log('maxcount', this.paginationMaxCount, 'pagenumber', pageNumber);
+      const endIndex = (this.paginationMaxCount * pageNumber);
       return endIndex > this.items.length ? this.items.length : endIndex;
     },
     paginationPageChanged(pageNumber = 1) {
-      const index = this.getPaginationStaringIndex(pageNumber);
-      const endindex = this.getPaginationEndingIndex(pageNumber);
+      const start = this.getPaginationStaringIndex(pageNumber);
+      const end = this.getPaginationEndingIndex(pageNumber);
       const items = this.items;
-      this.setPaginatedSuggestions(items.slice(index, endindex));
+      console.log('start', start, 'end', end);
+      this.setPaginatedSuggestions(items.slice(start, end));
     },
     calcultePageCountForPagination() {
-      const pageCount = Math.ceil(this.items.length / this.paginationMaxCount);
-      return pageCount;
+      return Math.ceil(this.items.length / this.paginationMaxCount);
     }
   },
   watch: {
