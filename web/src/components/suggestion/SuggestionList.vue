@@ -87,15 +87,13 @@ export default {
       return pageNumber > 1 ? (this.paginationMaxCount * pageNumber) - this.paginationMaxCount : 0;
     },
     getPaginationEndingIndex(pageNumber) {
-      console.log('maxcount', this.paginationMaxCount, 'pagenumber', pageNumber);
-      const endIndex = (this.paginationMaxCount * pageNumber);
+      const endIndex = (this.paginationMaxCount * pageNumber)
       return endIndex > this.items.length ? this.items.length : endIndex;
     },
     paginationPageChanged(pageNumber = 1) {
       const start = this.getPaginationStaringIndex(pageNumber);
       const end = this.getPaginationEndingIndex(pageNumber);
       const items = this.items;
-      console.log('start', start, 'end', end);
       this.setPaginatedSuggestions(items.slice(start, end));
     },
     calcultePageCountForPagination() {
