@@ -1,20 +1,13 @@
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.ext.hybrid import hybrid_property, hybrid_method
-from sqlalchemy.orm import validates
+from sqlalchemy.orm import validates, column_property
+from sqlalchemy import select, column, table
 from passlib.hash import pbkdf2_sha256 as hash_algorithm
 from datetime import datetime
 from collections import Counter
 import enum
 
 db = SQLAlchemy()
-
-suggestions_to_tags = db.Table('suggestion_tags_association',
-                               db.Column('tag_label', db.String, db.ForeignKey(
-                                   'tags.label'), primary_key=True),
-                               db.Column('suggestion_id', db.Integer, db.ForeignKey(
-                                   'suggestions.id'), primary_key=True)
-                               )
-
 
 class EventTypes(enum.IntEnum):
     ACTION = 0
@@ -64,6 +57,17 @@ class SerializableMixin():
         return d
 
 
+class SuggestionTags(db.Model, SerializableMixin):
+  __tablename__ = 'suggestion_tags_association'
+  __public__ = ['tag_label', 'suggestion_id']
+
+  tag_label = db.Column(db.String, db.ForeignKey('tags.label'), primary_key=True)
+  suggestion_id = db.Column(db.Integer, db.ForeignKey('suggestions.id'), primary_key=True)
+
+  def __repr__(self):
+    return '<SuggestionTags {}>'.format(self.code)
+
+
 class Event(db.Model, SerializableMixin):
     """
     An object representing a single event in a suggestion's event stream.
@@ -72,7 +76,7 @@ class Event(db.Model, SerializableMixin):
 
     __tablename__ = 'events'
     __public__ = ['id', 'event_type', 'text',
-                  'reactions', 'user_id', 'suggestion_id', 'created', 'modified']
+                  'reactions', 'user_id', 'suggestion_id', 'created', 'modified', 'tag_label']
 
     id = db.Column(db.Integer, primary_key=True)
     created = db.Column(db.DateTime, index=True, default=datetime.utcnow)
@@ -87,6 +91,14 @@ class Event(db.Model, SerializableMixin):
 
     suggestion_id = db.Column(db.Integer, db.ForeignKey('suggestions.id'))
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+
+    # act as fake column to get mapping work in as_dict()
+    _tag_label = db.Column('tag_label', db.String(50))
+
+    tag_label = column_property(
+      select([column('tag_label')])
+      .select_from(SuggestionTags)
+      .where(SuggestionTags.suggestion_id==suggestion_id))
 
     def __repr__(self):
         msg = self.text if len(self.text) <= 16 else (self.text[:16] + '...')
@@ -176,9 +188,7 @@ class Suggestion(db.Model, SerializableMixin):
     events = db.relationship('Event', backref='suggestion')
     reactions = db.relationship('Reaction', backref='suggestion')
 
-    tags = db.relationship("Tag",
-                           secondary=suggestions_to_tags,
-                           backref="suggestions")
+    tags = db.relationship('Tag', secondary='suggestion_tags_association', backref=db.backref('suggestions'))
 
     meeting_id = db.Column(db.Integer, db.ForeignKey('meetings.id'))
 

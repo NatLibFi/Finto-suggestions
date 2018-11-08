@@ -13,6 +13,10 @@
       :suggestion="item"
       />
   </ul>
+  <suggestion-list-pagination
+    :pageCount="calcultePageCountForPagination()"
+    @paginationPageChanged="paginationPageChanged"
+  />
 </div>
 </template>
 
@@ -22,56 +26,104 @@ import SuggestionItem from './SuggestionItem';
 
 import {
   suggestionGetters,
-  suggestionActions
+  suggestionActions,
+  suggestionMutations
 } from '../../store/modules/suggestion/suggestionConsts.js';
 
 import {
   mapSuggestionActions,
-  mapSuggestionGetters
-} from '../../store/modules/suggestion/suggestionModule.js';
+  mapSuggestionGetters,
+  mapSuggestionMutations
+} from '../../stor
+import SuggestionListPagination from './SuggestionListPagination';
+import { filterType, suggestionType } from '../../utils/suggestionMappings';
+
 
 export default {
   components: {
     SuggestionHeader,
-    SuggestionItem
+    SuggestionItem,
+    SuggestionListPagination
   },
   computed: {
     ...mapSuggestionGetters({
       items: suggestionGetters.GET_SUGGESTIONS,
       openCount: suggestionGetters.GET_OPEN_SUGGESTIONS_COUNT,
       resolvedCount: suggestionGetters.GET_RESOLVED_SUGGESTIONS_COUNT,
-      filters: suggestionGetters.GET_FILTERS
+      filters: suggestionGetters.GET_FILTERS,
+      paginated_items: suggestionGetters.GET_PAGINATION_SUGGESTIONS
     })
   },
-  created() {
-    this.getSuggestions();
-    this.getOpenSuggestionCount();
-    this.getResolvedSuggestionCount();
+  async created() {
+    await this.getSuggestions();
+    await this.getOpenSuggestionCount();
+    await this.getResolvedSuggestionCount();
+    this.paginationPageChanged();
   },
   methods: {
     ...mapSuggestionActions({
       getSuggestions: suggestionActions.GET_SUGGESTIONS,
       getOpenSuggestionCount: suggestionActions.GET_OPEN_SUGGESTIONS,
       getResolvedSuggestionCount: suggestionActions.GET_RESOLVED_SUGGESTIONS,
-      getSortedSuggestions: suggestionActions.GET_SORTED_SUGGESTIONS,
-      searchSuggestions: suggestionActions.GET_SEARCHED_SUGGESTIONS,
-      getFilteredSuggestions: suggestionActions.GET_FILTERED_SUGGESTIONS
+      getSortedSuggestions: suggestionActions.GET_SORTED_SUGGESTIONS
+    }),
+  ...mapSuggestionMutations({
+      setPaginatedSuggestions: suggestionMutations.SET_PAGINATION_SUGGESTIONS,
+      setFilteredSuggestions: suggestionMutations.SET_SUGGESTIONS
     }),
     async sortSuggestionList(selectedSorting) {
       if (selectedSorting && selectedSorting !== '') {
-        this.getSortedSuggestions(selectedSorting);
+        await this.getSortedSuggestions(selectedSorting);
       } else {
-        this.getSuggestions();
+        await this.getSuggestions();
       }
+      this.paginationPageChanged();
+    },
+    getPaginationStaringIndex(pageNumber) {
+      return pageNumber > 1 ? (this.paginationMaxCount * pageNumber) - this.paginationMaxCount : 0;
+    },
+    getPaginationEndingIndex(pageNumber) {
+      const endIndex = (this.paginationMaxCount * pageNumber)
+      return endIndex > this.items.length ? this.items.length : endIndex;
+    },
+    paginationPageChanged(pageNumber = 1) {
+      const index = this.getPaginationStaringIndex(pageNumber);
+      const endindex = this.getPaginationEndingIndex(pageNumber);
+      const items = this.items;
+      this.setPaginatedSuggestions(items.slice(index, endindex));
+    },
+    calcultePageCountForPagination() {
+      const pageCount = Math.ceil(this.items.length / this.paginationMaxCount);
+      return pageCount;
     }
   },
   watch: {
-    filters() {
+    async filters() {
       if (this.filters.length > 0) {
-        this.getFilteredSuggestions(this.filters);
+        let items = this.items;
+        this.filters.forEach(filter => {
+          switch(filter.type) {
+            case filterType.STATUS:
+              items = items.filter(i => i.status === filter.value);
+              break;
+            case filterType.TAG:
+              break;
+            case filterType.TYPE:
+              items = items.filter(i => i.suggestion_type === filter.value);
+              break;
+            case filterType.MEETING:
+              items = items.filter(i => i.meeting_id === filter.value);
+              break;
+            case filterType.SEARCH:
+              items = items.filter(i => i.preferred_label && i.preferred_label.fi.startsWith(filter.value));
+              break;
+          }
+        });
+        this.setFilteredSuggestions(items);
       } else {
-        this.getSuggestions();
+        await this.getSuggestions();
       }
+      this.paginationPageChanged();
     }
   }
 };

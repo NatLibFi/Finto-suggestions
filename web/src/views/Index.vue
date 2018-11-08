@@ -1,8 +1,8 @@
 <template>
   <div>
     <navigation></navigation>
-    <SuggestionSearch />
-    <suggestion-list></suggestion-list>
+    <suggestion-search />
+    <suggestion-list />
   </div>
 </template>
 
