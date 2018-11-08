@@ -6,3 +6,5 @@ __pycache__
 .pytest_cache
 .env
 web/dist
+*.code-workspace
+api/.idea/
