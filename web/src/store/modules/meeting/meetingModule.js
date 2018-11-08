@@ -15,7 +15,7 @@ export const mapMeetingActions = actions => mapActions(namespace, actions);
 export default {
   namespaced: true,
   state: {
-    items: []
+    [storeStateNames.ITEMS]: []
   },
   getters: {
     [meetingGetters.GET_MEETINGS]: state => state[storeStateNames.ITEMS]

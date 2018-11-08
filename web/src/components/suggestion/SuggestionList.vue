@@ -1,21 +1,17 @@
 <template>
 <div class="container">
   <suggestion-header
-    :openSuggestionCount="openCount ? openCount : 0"
-    :resolvedSuggestionCount="resolvedCount ? resolvedCount : 0"
+    :openSuggestionCount="openCount"
+    :resolvedSuggestionCount="resolvedCount"
     @sortSuggestionListBy="sortSuggestionList"
     class="header" />
   <ul class="list">
     <suggestion-item
       class="item"
-      v-for="item in paginated_items"
+      v-for="item in items"
       :key="item.id"
-      :orderNumber="item.id"
-      :title="item.preferred_label.fi"
-      :created="item.created"
-      :status="item.status"
-      :suggestionType="item.suggestion_type"
-      :tags="item.tags" />
+      :suggestion="item"
+      />
   </ul>
   <suggestion-list-pagination
     :pageCount="calcultePageCountForPagination()"
@@ -38,10 +34,10 @@ import {
   mapSuggestionActions,
   mapSuggestionGetters,
   mapSuggestionMutations
-} from '../../store/modules/suggestion/suggestionModule.js';
-
+} from '../../stor
 import SuggestionListPagination from './SuggestionListPagination';
 import { filterType, suggestionType } from '../../utils/suggestionMappings';
+
 
 export default {
   components: {
@@ -49,15 +45,11 @@ export default {
     SuggestionItem,
     SuggestionListPagination
   },
-  data: () => ({
-    paginationMaxCount: 10
-  }),
   computed: {
     ...mapSuggestionGetters({
       items: suggestionGetters.GET_SUGGESTIONS,
       openCount: suggestionGetters.GET_OPEN_SUGGESTIONS_COUNT,
       resolvedCount: suggestionGetters.GET_RESOLVED_SUGGESTIONS_COUNT,
-      searchQuery: suggestionGetters.GET_SEARCH_QUERY,
       filters: suggestionGetters.GET_FILTERS,
       paginated_items: suggestionGetters.GET_PAGINATION_SUGGESTIONS
     })
@@ -75,7 +67,7 @@ export default {
       getResolvedSuggestionCount: suggestionActions.GET_RESOLVED_SUGGESTIONS,
       getSortedSuggestions: suggestionActions.GET_SORTED_SUGGESTIONS
     }),
-    ...mapSuggestionMutations({
+  ...mapSuggestionMutations({
       setPaginatedSuggestions: suggestionMutations.SET_PAGINATION_SUGGESTIONS,
       setFilteredSuggestions: suggestionMutations.SET_SUGGESTIONS
     }),
@@ -151,9 +143,9 @@ ul {
   text-align: left;
   background-color: #ffffff;
   border: 2px solid #f5f5f5;
-  border-bottom: none;
+  border-top: none;
   width: 60vw;
-  margin: 20px 20vw 0;
+  margin: 0 20vw 20px;
   padding-left: 0; /* reset inital padding for ul tags */
 }
 

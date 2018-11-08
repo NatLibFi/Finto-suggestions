@@ -1,24 +1,26 @@
 <template>
   <div class="suggestion">
     <div class="back-button">
-      <a @click="goToSuggestions" unselectable="on">
+      <a @click="goToSuggestion" unselectable="on">
         <svg-icon icon-name="arrow"><icon-arrow /></svg-icon>
         Takaisin käsite-ehdotuksiin
       </a>
     </div>
 
-    <div v-if="suggestion" class="suggestion-container">
-
+    <div v-if="suggestions && suggestions.length > 0" class="suggestion-container">
       <div class="suggestion-header">
         <div class="suggestion-header-headline">
-          <h1 class="suggestion-title">{{ suggestion.preferred_label.fi }}</h1>
-          <p class="suggestion-status">{{ suggestion.status }}</p>
+          <h1 class="suggestion-title">{{ suggestions[0].preferred_label.fi }}</h1>
+          <p class="suggestion-status">{{ suggestions[0].status }}</p>
 
           <div class="suggestion-header-details">
-            <span><strong>#{{ suggestion.id }} </strong></span>
+            <span><strong>#{{ suggestions[0].id }} </strong></span>
             <span>Lähetetty 3 päivää sitten</span>
-            <span class="suggestion-type">{{ suggestion.suggestion_type }}</span>
-            <!-- TODO: v-for suggestion's tags here -->
+            <span class="suggestion-type">{{ suggestions[0].suggestion_type }}</span>
+            <span class="tag"
+              v-if="suggestions[0].tags && suggestions[0].tags.length > 0"
+              v-for="tag in suggestions[0].tags"
+              :key="tag.label">{{ tag.label }}</span>
           </div>
         </div>
         <div class="suggestion-header-buttons">
@@ -27,10 +29,23 @@
       </div>
 
       <suggestion-content
-        :s="suggestion"/>
+        v-if="suggestions && suggestions.length > 0"
+        :suggestion="suggestions[0]" />
+
+      <div v-if="suggestions && suggestions[0].reactions.length > 0" class="suggestion-reactions">
+        <div v-for="reaction in suggestions[0].reactions" :key="reaction.id">
+          <div class="reaction">
+            <div class="emoji">{{ reaction.code }}</div>
+            <div class="counter">2</div>
+            <a @click="displayEmoji(reaction.code)">
+              button
+            </a>
+          </div>
+        </div>
+      </div>
     </div>
 
-    <div v-if="events.length > 0">
+    <div v-if="events && events.length > 0">
       <div v-for="event in events" :key="event.id">
         <suggestion-event
           :event="event"
@@ -38,17 +53,33 @@
         </suggestion-event>
       </div>
     </div>
+
+    <div>
+      <add-comment :userId="userId" :suggestionId="suggestionId" />
+    </div>
   </div>
 </template>
 
 <script>
-import axios from 'axios';
-
 import SuggestionContent from './SuggestionContent';
 import SuggestionEvent from './SuggestionEvent';
 import IconArrow from '../icons/IconArrow';
 import IconMore from '../icons/IconMore';
 import SvgIcon from '../icons/SvgIcon';
+import AddComment from './AddComment';
+
+import {
+  suggestionGetters,
+  suggestionActions
+} from '../../store/modules/suggestion/suggestionConsts.js';
+
+import {
+  mapSuggestionGetters,
+  mapSuggestionActions
+} from '../../store/modules/suggestion/suggestionModule.js';
+
+import { eventGetters, eventActions } from '../../store/modules/event/eventConsts.js';
+import { mapEventGetters, mapEventActions } from '../../store/modules/event/eventModule.js';
 
 export default {
   components: {
@@ -56,42 +87,40 @@ export default {
     SuggestionEvent,
     IconArrow,
     IconMore,
-    SvgIcon
+    SvgIcon,
+    AddComment
+  },
+  props: {
+    suggestionId: {
+      type: [String, Number],
+      require: true
+    }
   },
   data: () => ({
-    suggestion: null,
-    events: []
+    // eslint-disable-next-line
+    userId: $cookies.get('logged_user_id')
   }),
-  created() {
-    // TODO: Use getters
-    axios
-      .get(
-        'http://localhost:8080/api/suggestions/' +
-          this.$route.params.suggestionID
-      )
-      .then(response => {
-        this.suggestion = response.data.data;
-      })
-      .catch(e => {
-        console.log('Error in fetching Suggestion data: ');
-        console.log(e);
-      });
-    axios
-      .get(
-        'http://localhost:8080/api/suggestions/' +
-          this.$route.params.suggestionID +
-          '/events'
-      )
-      .then(response => {
-        this.events = response.data.data;
-      })
-      .catch(e => {
-        console.log('Error in fetching Suggestion events: ');
-        console.log(e);
-      });
+  computed: {
+    ...mapSuggestionGetters({
+      suggestions: suggestionGetters.GET_SUGGESTIONS
+    }),
+    ...mapEventGetters({
+      events: eventGetters.GET_EVENTS
+    })
+  },
+  async created() {
+    console.log(this.suggestionId);
+    await this.getSuggestions(parseInt(this.suggestionId));
+    await this.getEventsBySuggestionId(parseInt(this.suggestionId));
   },
   methods: {
-    goToSuggestions: function() {
+    ...mapSuggestionActions({
+      getSuggestions: suggestionActions.GET_SUGGESTION_BY_ID
+    }),
+    ...mapEventActions({
+      getEventsBySuggestionId: eventActions.GET_EVENTS_BY_SUGGESTION_ID
+    }),
+    goToSuggestion() {
       this.$router.push('/');
     }
   }
@@ -202,6 +231,18 @@ div.suggestion-header-buttons {
   font-weight: 600;
   background-color: #f2994a;
   color: #ffffff;
+  padding: 3px 10px;
+  margin-left: 10px;
+  border-radius: 2px;
+  text-transform: lowercase;
+}
+
+.tag {
+  font-size: 14px;
+  font-weight: 600;
+  background-color: #ffffff;
+  color: #ac63ef;
+  border: 1px solid #ac63ef;
   padding: 3px 10px;
   margin-left: 10px;
   border-radius: 2px;

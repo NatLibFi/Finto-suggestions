@@ -10,7 +10,7 @@
           <span class="user-name">{{ userName }} </span>
           <span v-if="type == 'ACTION'">{{ action }}</span>
         </p>
-        <p class="date-sent">5 päivää sitten</p>
+        <p class="date-sent">{{ buildLabel() }}</p>
       </div>
     </div>
 
@@ -23,6 +23,8 @@
 </template>
 
 <script>
+import { dateDiffLabel } from '../../utils/dateTimeStampHelper.js';
+
 export default {
   props: {
     event: {
@@ -38,7 +40,12 @@ export default {
     userInitials: 'MP',
     userName: 'Miki Pernu',
     action: 'vaihtoi tyypiksi '
-  })
+  }),
+  methods: {
+    buildLabel() {
+      return dateDiffLabel(this.event.created);
+    }
+  }
 };
 </script>
 

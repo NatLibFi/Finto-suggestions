@@ -32,5 +32,5 @@ export const suggestionActions = {
   GET_OPEN_SUGGESTIONS: 'getOpenSuggestionCount',
   GET_RESOLVED_SUGGESTIONS: 'getResolvedSuggestionCount',
   GET_SORTED_SUGGESTIONS: 'getSortedSuggestions',
-  SET_SEARCH_QUERY: 'setSearchQuery'
+  GET_SUGGESTION_BY_ID: 'getSuggestionById'
 };

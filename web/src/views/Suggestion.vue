@@ -1,7 +1,7 @@
 <template>
   <div>
-    <navigation></navigation>
-    <suggestion></suggestion>
+    <navigation />
+    <suggestion :suggestionId="suggestionId" />
   </div>
 </template>
 
@@ -13,6 +13,12 @@ export default {
   components: {
     Navigation,
     Suggestion
+  },
+  props: {
+    suggestionId: {
+      type: [String, Number],
+      required: true
+    }
   }
 };
 </script>

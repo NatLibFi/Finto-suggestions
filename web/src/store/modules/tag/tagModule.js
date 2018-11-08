@@ -9,7 +9,7 @@ export const mapTagActions = actions => mapActions(namespace, actions);
 export default {
   namespaced: true,
   state: {
-    items: []
+    [storeStateNames.ITEMS]: []
   },
   getters: {
     [tagGetters.GET_TAGS]: state => state[storeStateNames.ITEMS]
