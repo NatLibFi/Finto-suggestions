@@ -24,10 +24,3 @@ export const filterType = {
   MEETING: 'meeting',
   SEARCH: 'search'
 };
-
-export const filteringFields = {
-  [filterType.STATUS]: 'status',
-  [filterType.TAG]: '',
-  [filterType.TYPE]: 'suggestion_type',
-  [filterType.MEETING]: 'meeting_id'
-};

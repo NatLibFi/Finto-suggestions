@@ -17,7 +17,7 @@ import {
 } from '../../store/modules/suggestion/suggestionConsts.js';
 import {
   mapSuggestionGetters,
-  mapSuggestioMutations
+  mapSuggestionMutations
 } from '../../store/modules/suggestion/suggestionModule.js';
 
 import { handleSetFilters } from '../../utils/filterValueHelper.js';
@@ -31,7 +31,7 @@ export default {
     ...mapSuggestionGetters({ filters: suggestionGetters.GET_FILTERS })
   },
   methods: {
-    ...mapSuggestioMutations({ setFilters: suggestionMutations.SET_FILTERS }),
+    ...mapSuggestionMutations({ setFilters: suggestionMutations.SET_FILTERS }),
     doSearch() {
       const value = { type: filterType.SEARCH, value: this.searchQuery };
       handleSetFilters(value, this.filters, this.setFilters);
