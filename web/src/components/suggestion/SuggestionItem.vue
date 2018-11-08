@@ -35,6 +35,7 @@ import { differenceInDays, parse } from 'date-fns';
 
 import SvgIcon from '../icons/SvgIcon';
 import IconComments from '../icons/IconComments';
+import { suggestionStateStatus, suggestionType } from '../../utils/suggestionMappings.js';
 
 export default {
   components: {

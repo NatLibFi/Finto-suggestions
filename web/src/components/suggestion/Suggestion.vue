@@ -22,6 +22,12 @@
           </div>
         </div>
         <div class="suggestion-header-buttons">
+          <tag-selector :showTagSelector="openTagSelector" />
+           <span @click="handleOpenTagSelector">
+            <svg-icon icon-name="tag">
+            <icon-tag />
+          </svg-icon>
+          </span>
           <svg-icon icon-name="more"><icon-more /></svg-icon>
         </div>
       </div>
@@ -49,6 +55,8 @@ import SuggestionEvent from './SuggestionEvent';
 import IconArrow from '../icons/IconArrow';
 import IconMore from '../icons/IconMore';
 import SvgIcon from '../icons/SvgIcon';
+import IconTag from '../icons/IconTag';
+import TagSelector from '../tag/TagSelector';
 
 export default {
   components: {
@@ -56,11 +64,14 @@ export default {
     SuggestionEvent,
     IconArrow,
     IconMore,
-    SvgIcon
+    SvgIcon,
+    IconTag,
+    TagSelector
   },
   data: () => ({
     suggestion: null,
-    events: []
+    events: [],
+    openTagSelector: false
   }),
   created() {
     // TODO: Use getters
@@ -93,6 +104,11 @@ export default {
   methods: {
     goToSuggestions: function() {
       this.$router.push('/');
+    },
+    handleOpenTagSelector() {
+      this.openTagSelector
+        ? this.openTagSelector = false
+        : this.openTagSelector = true;
     }
   }
 };
