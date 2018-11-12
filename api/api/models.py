@@ -15,9 +15,8 @@ class EventTypes(enum.IntEnum):
 
 
 class SuggestionStatusTypes(enum.IntEnum):
-    DEFAULT = 0
-    REJECTED = 1
-    ACCEPTED = 2
+    REJECTED = 0
+    ACCEPTED = 1
 
 
 class SuggestionTypes(enum.IntEnum):
@@ -166,8 +165,7 @@ class Suggestion(db.Model, SerializableMixin):
 
     # suggestion_type = db.Column(db.Enum(SuggestionTypes), nullable=False)
     suggestion_type = db.Column(db.Enum(SuggestionTypes))
-    status = db.Column(db.Enum(SuggestionStatusTypes),
-                       default=SuggestionStatusTypes.DEFAULT)
+    status = db.Column(db.Enum(SuggestionStatusTypes), nullable=True)
     uri = db.Column(db.String(256))
 
     organization = db.Column(db.String(256))
