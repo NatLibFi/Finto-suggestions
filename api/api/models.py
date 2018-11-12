@@ -57,15 +57,16 @@ class SerializableMixin():
         return d
 
 
-class SuggestionTags(db.Model, SerializableMixin):
+class SuggestionTag(db.Model, SerializableMixin):
   __tablename__ = 'suggestion_tags_association'
-  __public__ = ['tag_label', 'suggestion_id']
+  __public__ = ['tag_label', 'suggestion_id', 'event_id']
 
   tag_label = db.Column(db.String, db.ForeignKey('tags.label'), primary_key=True)
   suggestion_id = db.Column(db.Integer, db.ForeignKey('suggestions.id'), primary_key=True)
+  event_id = db.Column(db.Integer, db.ForeignKey('events.id'))
 
   def __repr__(self):
-    return '<SuggestionTags {}>'.format(self.code)
+    return '<SuggestionTag {}>'.format(self.code)
 
 
 class Event(db.Model, SerializableMixin):
@@ -76,7 +77,7 @@ class Event(db.Model, SerializableMixin):
 
     __tablename__ = 'events'
     __public__ = ['id', 'event_type', 'text',
-                  'reactions', 'user_id', 'suggestion_id', 'created', 'modified', 'tag_label']
+                  'reactions', 'user_id', 'suggestion_id', 'created', 'modified', 'tags']
 
     id = db.Column(db.Integer, primary_key=True)
     created = db.Column(db.DateTime, index=True, default=datetime.utcnow)
@@ -89,16 +90,11 @@ class Event(db.Model, SerializableMixin):
     # user: backref
     # suggestion: backref
 
+
     suggestion_id = db.Column(db.Integer, db.ForeignKey('suggestions.id'))
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
 
-    # act as fake column to get mapping work in as_dict()
-    _tag_label = db.Column('tag_label', db.String(50))
-
-    tag_label = column_property(
-      select([column('tag_label')])
-      .select_from(SuggestionTags)
-      .where(SuggestionTags.suggestion_id==suggestion_id))
+    tags = db.relationship('Tag', secondary='suggestion_tags_association', backref=db.backref('events'))
 
     def __repr__(self):
         msg = self.text if len(self.text) <= 16 else (self.text[:16] + '...')
@@ -107,6 +103,7 @@ class Event(db.Model, SerializableMixin):
     def as_dict(self, strip=True):
         serialized = super(Event, self).as_dict()
         serialized['reactions'] = [e.as_dict() for e in self.reactions]
+        serialized['tags'] = [e.as_dict(strip=strip) for e in self.tags]
         return serialized
 
 
