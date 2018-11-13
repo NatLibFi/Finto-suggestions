@@ -1,8 +1,15 @@
 pipeline:
+  environment:
+    APP_SECRET_KEY:
+      from_secret: app_secret_key
+    POSTGRES_USER:
+      from_secret: postgres_user
+    POSTGRES_PASSWORD:
+      from_secret: postgres_password
   compose:
     image: docker/compose:1.23.1
     commands:
-    - docker-compose build
+    - docker-compose -f docker-compose.text.yml build
   docker:
     image: plugins/docker
     registry: quay.io
