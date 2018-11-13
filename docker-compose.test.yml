@@ -1,0 +1,62 @@
+version: '3.6'
+services:
+  api:
+    restart: always
+    build:
+      context: .
+      dockerfile: ./docker/api/Dockerfile
+    image: finto-suggestions_api:test
+    volumes:
+      - ./api:/app
+    networks:
+      - network_web
+      - network_db
+    depends_on:
+      - db
+    environment:
+      - APP_SECRET_KEY=${APP_SECRET_KEY}
+      - APP_CONFIG_OBJECT=config.DevelopmentConfig
+      - FLASK_APP=wsgi:flask_app
+  web:
+    restart: always
+    build:
+      context: .
+      dockerfile: ./docker/web/Dockerfile
+    image: finto-suggestions_web:test
+    volumes:
+      - ./web:/app
+      - /app/node_modules
+    networks:
+      - network_web
+  nginx:
+    image: nginx:alpine
+    restart: always
+    ports:
+      - "8080:80"
+    volumes:
+      - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf
+    networks:
+      - network_web
+    depends_on:
+      - api
+      - web
+  db:
+    image: postgres:10-alpine
+    restart: always
+    volumes:
+      - volume_db:/var/lib/postgresql/data
+    ports:
+      - 5432:5432
+    networks:
+      - network_db
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=finto-suggestion-db
+networks:
+  network_db:
+    driver: bridge
+  network_web:
+    driver: bridge
+volumes:
+  volume_db:
