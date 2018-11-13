@@ -1,16 +1,22 @@
 pipeline:
   compose:
     image: docker/compose:1.23.1
+    # secrets:
+    #   - app_secret_key
+    #   - postgres_user
+    #   - postgres_password
+    # commands:
+    # - docker-compose -f docker-compose.test.yml build
+  docker:
+    image: plugins/docker
+    registry: quay.io
+    repo: quay.io/repository/natlibfi/finto-suggestions
     secrets:
       - app_secret_key
       - postgres_user
       - postgres_password
     commands:
     - docker-compose -f docker-compose.test.yml build
-  docker:
-    image: plugins/docker
-    registry: quay.io
-    repo: quay.io/repository/natlibfi/finto-suggestions
     when:
       event: [push]
       branch: [feature/drone-pipeline-testing]
