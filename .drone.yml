@@ -1,7 +1,7 @@
 pipeline:
   compose:
     image: docker/compose:1.23.1
-    secret:
+    secrets:
       - app_secret_key
       - postgres_user
       - postgres_password
