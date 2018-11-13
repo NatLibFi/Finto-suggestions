@@ -4,9 +4,7 @@
       <div class="title">
         <p class="title-row">
           <span class="item-name">{{ suggestion.preferred_label.fi }}</span>
-          <span class="status tag" v-if="suggestion.status !== 'DEFAULT'">
-            {{ suggestion.status }}
-          </span>
+
           <span
             :class="[suggestion.suggestion_type == 'MODIFY'
               ? 'type-modify'
@@ -110,12 +108,6 @@ li.item {
 
 .tag:last-of-type {
   margin-right: 0;
-}
-
-.status {
-  background-color: #58ba81;
-  color: white;
-  border: 2px solid #58ba81;
 }
 .type-new {
   background-color: #1137ff;
