@@ -9,7 +9,7 @@ pipeline:
   compose:
     image: docker/compose:1.23.1
     commands:
-    - docker-compose -f docker-compose.text.yml build
+    - docker-compose -f docker-compose.test.yml build
   docker:
     image: plugins/docker
     registry: quay.io
