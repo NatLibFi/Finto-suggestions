@@ -5,6 +5,7 @@ services:
     build:
       context: .
       dockerfile: ./docker/api/Dockerfile
+      image: finto-suggestions_api:latest
     volumes:
       - ./api:/app
     env_file: .env
@@ -18,6 +19,7 @@ services:
     build:
       context: .
       dockerfile: ./docker/web/Dockerfile
+      image: finto-suggestions_api:latest
     volumes:
       - ./web:/app
       - /app/node_modules

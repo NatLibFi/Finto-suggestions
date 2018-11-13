@@ -1,0 +1,12 @@
+pipeline:
+  compose:
+    image: docker/compose:1.23.1
+    commands:
+    - docker-compose build
+  docker:
+    image: plugins/docker
+    registry: quay.io
+    repo: quay.io/repository/natlibfi/finto-suggestions
+    when:
+      event: [push]
+      branch: [feature/drone-pipeline-testing]
