@@ -4,9 +4,8 @@
       <div class="title">
         <p class="title-row">
           <span class="item-name">{{ suggestion.preferred_label.fi }}</span>
-
           <span
-            :class="[suggestion.suggestion_type == 'MODIFY'
+            :class="[suggestion.suggestion_type === `${suggestionType.MODIFY}`
               ? 'type-modify'
               : 'type-new',
             'tag']">{{ suggestion.suggestion_type }}
@@ -35,7 +34,7 @@
 <script>
 import SvgIcon from '../icons/SvgIcon';
 import IconComments from '../icons/IconComments';
-// import { suggestionType } from '../../utils/suggestionMappings.js';
+import { suggestionType } from '../../utils/suggestionMappings.js';
 import { dateDiffLabel } from '../../utils/dateTimeStampHelper.js';
 
 export default {
