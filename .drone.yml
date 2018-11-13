@@ -1,12 +1,12 @@
 pipeline:
   compose:
     environment:
-    APP_SECRET_KEY:
-      from_secret: app_secret_key
-    POSTGRES_USER:
-      from_secret: postgres_user
-    POSTGRES_PASSWORD:
-      from_secret: postgres_password
+      APP_SECRET_KEY:
+        from_secret: app_secret_key
+      POSTGRES_USER:
+        from_secret: postgres_user
+      POSTGRES_PASSWORD:
+        from_secret: postgres_password
     image: docker/compose:1.23.1
     commands:
     - docker-compose -f docker-compose.test.yml build
