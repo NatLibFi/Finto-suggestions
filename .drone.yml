@@ -1,20 +1,14 @@
 pipeline:
-  # compose:
-    # image: docker/compose:1.23.1
-    # secrets:
-    #   - app_secret_key
-    #   - postgres_user
-    #   - postgres_password
-    # commands:
-    # - docker-compose -f docker-compose.test.yml build
   compose:
-    image: plugins/docker
+    image: docker/compose:1.23.1
     secrets:
       - app_secret_key
       - postgres_user
       - postgres_password
     commands:
       - docker-compose -f docker-compose.test.yml build
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
   docker:
     image: plugins/docker
     registry: quay.io
