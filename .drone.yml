@@ -4,8 +4,8 @@ pipeline:
     registry: quay.io
     repo: quay.io/natlibfi/finto-suggestions
     secrets:
-      - quay_username
-      - quay_password
+      - docker_username
+      - docker_password
     tag: latest
     dockerfile: ./docker/web/Dockerfile
     when:
@@ -16,8 +16,8 @@ pipeline:
     registry: quay.io
     repo: quay.io/natlibfi/finto-suggestions
     secrets:
-      - quay_username
-      - quay_password
+      - docker_username
+      - docker_password
     tag: latest
     dockerfile: ./docker/api/Dockerfile
     when:
