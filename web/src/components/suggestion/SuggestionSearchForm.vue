@@ -46,10 +46,10 @@ div.search-wrapper {
   float: left;
   width: 100%;
   height: 4em;
-  padding: .5em;
+  padding: 0.5em;
   text-align: left;
 }
-div.search-wrapper > label > [type="text"] {
+div.search-wrapper > label > [type='text'] {
   display: inline-block;
   height: 50%;
   width: 80%;
@@ -61,11 +61,11 @@ div.search-wrapper > label > [type="text"] {
   text-indent: 32px;
   font-size: 14pt;
 }
-div.search-wrapper > [type="button"] {
+div.search-wrapper > [type='button'] {
   height: 60%;
   width: 13%;
-  background-color: #06A798;
-  color: #FFFFFF;
+  background-color: #06a798;
+  color: #ffffff;
   font-size: 14pt;
   border-radius: 2px;
 }
