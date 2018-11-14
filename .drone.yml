@@ -1,7 +1,10 @@
 pipeline:
   web:
     image: plugins/docker
-    repo: quay.io/repository/natlibfi/finto-suggestions/
+    registry: quay.io
+    repo: natlibfi/finto-suggestions/
+    username: $$QUAY_USERNAME
+    password: $$QUAY_PASSWORD
     tag: latest
     dockerfile: ./docker/web/Dockerfile
     when:
@@ -9,7 +12,10 @@ pipeline:
       branch: feature/drone-pipeline-testing
   api:
     image: plugins/docker
-    repo: quay.io/repository/natlibfi/finto-suggestions/
+    registry: quay.io
+    repo: natlibfi/finto-suggestions/
+    username: $$QUAY_USERNAME
+    password: $$QUAY_PASSWORD
     tag: latest
     dockerfile: ./docker/api/Dockerfile
     when:
