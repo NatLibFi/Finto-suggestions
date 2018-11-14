@@ -3,13 +3,13 @@ pipeline:
     image: plugins/docker
     # repo: quay.io/repository/natlibfi/finto-suggestions/
     #finto-suggestion_web
-    tag: finto-suggestion_web:latest
+    tag: latest
     dockerfile: ./docker/web/Dockerfile
   api:
     image: plugins/docker
     # repo: quay.io/repository/natlibfi/finto-suggestions/
     #finto-suggestion_api
-    tag: finto-suggestion_api:latest
+    tag: latest
     dockerfile: ./docker/api/Dockerfile
   docker:
     image: plugins/docker
