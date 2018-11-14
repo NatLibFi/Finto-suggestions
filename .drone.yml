@@ -1,7 +1,7 @@
 pipeline:
   web:
     image: plugins/docker
-    repo: quay.io/repository/natlibfi/finto-suggestions/finto-suggestions_web
+    repo: quay.io/repository/natlibfi/finto-suggestions/
     tag: latest
     dockerfile: ./docker/web/Dockerfile
     when:
@@ -9,7 +9,7 @@ pipeline:
       branch: feature/drone-pipeline-testing
   api:
     image: plugins/docker
-    repo: quay.io/repository/natlibfi/finto-suggestions/finto-suggestions_api
+    repo: quay.io/repository/natlibfi/finto-suggestions/
     tag: latest
     dockerfile: ./docker/api/Dockerfile
     when:
