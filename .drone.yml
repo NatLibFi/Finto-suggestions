@@ -3,8 +3,7 @@ pipeline:
     image: plugins/docker
     registry: quay.io
     repo: natlibfi/finto-suggestions/
-    username: $$QUAY_USERNAME
-    password: $$QUAY_PASSWORD
+    secrets: [ quay_username, quay_password ]
     tag: latest
     dockerfile: ./docker/web/Dockerfile
     when:
@@ -14,8 +13,7 @@ pipeline:
     image: plugins/docker
     registry: quay.io
     repo: natlibfi/finto-suggestions/
-    username: $$QUAY_USERNAME
-    password: $$QUAY_PASSWORD
+    secrets: [ quay_username, quay_password ]
     tag: latest
     dockerfile: ./docker/api/Dockerfile
     when:
