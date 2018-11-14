@@ -1,18 +1,18 @@
 pipeline:
-  # web:
-  #   image: plugins/docker
-  #   repo: quay.io/repository/natlibfi/finto-suggestions
-  #   dockerfile: ./docker/web/Dockerfile
-  # api:
-  #   image: plugins/docker
-  #   repo: quay.io/repository/natlibfi/finto-suggestions
-  #   dockerfile: ./docker/api/Dockerfile
+  web:
+    image: plugins/docker
+    repo: finto-suggestion_web
+    tag: latest
+    dockerfile: ./docker/web/Dockerfile
+  api:
+    image: plugins/docker
+    repo: finto-suggestion_api
+    tag: latest
+    dockerfile: ./docker/api/Dockerfile
   docker:
     image: plugins/docker
     registry: quay.io
     repo: quay.io/repository/natlibfi/finto-suggestions
-    dockerfile: ./docker/web/Dockerfile
-    dockerfile: ./docker/api/Dockerfile
     when:
       event: [push]
       branch: [feature/drone-pipeline-testing]
