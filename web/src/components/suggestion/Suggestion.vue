@@ -11,8 +11,6 @@
       <div class="suggestion-header">
         <div class="suggestion-header-headline">
           <h1 class="suggestion-title">{{ suggestions[0].preferred_label.fi }}</h1>
-          <p class="suggestion-status">{{ suggestions[0].status }}</p>
-
           <div class="suggestion-header-details">
             <span><strong>#{{ suggestions[0].id }} </strong></span>
             <span>Lähetetty 3 päivää sitten</span>
@@ -109,7 +107,6 @@ export default {
     })
   },
   async created() {
-    console.log(this.suggestionId);
     await this.getSuggestions(parseInt(this.suggestionId));
     await this.getEventsBySuggestionId(parseInt(this.suggestionId));
   },
@@ -181,19 +178,6 @@ h1.suggestion-title {
   vertical-align: middle;
   text-transform: lowercase;
   text-transform: capitalize;
-}
-
-p.suggestion-status {
-  display: inline;
-  margin-left: 10px;
-  padding: 3px 10px;
-  border-radius: 2px;
-  color: #ffffff;
-  background-color: #58ba81;
-  font-weight: 600;
-  font-size: 16px;
-  vertical-align: middle;
-  text-transform: lowercase;
 }
 
 div.suggestion-header-buttons {
