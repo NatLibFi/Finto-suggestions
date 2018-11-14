@@ -6,7 +6,7 @@
         <img @click="returnToHome" src="./finto-logo.svg" alt="">
         <span>Finto – Käsite-ehdotukset</span>
       </div>
-      <div class="nav-menu" @click="showDropdown = true">
+      <div v-if="userLoggedIn" class="nav-menu" @click="showDropdown = true">
         <div class="user-bubble">
           <span unselectable="on">{{ userInitials }}</span>
         </div>
@@ -15,16 +15,24 @@
         </div>
         <svg-icon icon-name="triangle"><icon-triangle /></svg-icon>
       </div>
+      <div v-if="!userLoggedIn" class="nav-login-buttons">
+        <div @click="showLoginDialog = !showLoginDialog">Kirjaudu sisään</div>
+        <div @click="showSignupDialog = !showSignupDialog">Luo tunnus</div>
+      </div>
       <!-- Mobile menu shown below screen width of 700px -->
-      <div class="nav-menu-mobile" @click="showMobileDropdown = true">
+      <div v-if="userLoggedIn" class="nav-menu-mobile" @click="showMobileDropdown = true">
         <svg-icon icon-name="more"><icon-more/></svg-icon>
+      </div>
+      <div v-if="!userLoggedIn" class="nav-login-buttons-mobile">
+        <div @click="showLoginDialog = !showLoginDialog">Kirjaudu sisään</div>
+        <div @click="showSignupDialog = !showSignupDialog">Luo tunnus</div>
       </div>
     </div>
 
     <div v-if="showDropdown" v-on-clickaway="closeDropdown" class="nav-menu-dropdown dropdown">
       <div>Profiili</div>
       <div>Asetukset</div>
-      <div>Kirjaudu ulos</div>
+      <div @click="logOut">Kirjaudu ulos</div>
     </div>
 
     <div
@@ -42,13 +50,33 @@
       <div class="nav-mobile-dropdown-content">
         <div>Profiili</div>
         <div>Asetukset</div>
-        <div>Kirjaudu ulos</div>
+        <div @click="logOut">Kirjaudu ulos</div>
       </div>
+    </div>
+
+    <div v-if="showLoginDialog">
+      <centered-dialog @close="closeDialog">
+        <the-login @login="login($event)"/>
+      </centered-dialog>
+    </div>
+    <div v-if="showSignupDialog">
+      <centered-dialog @close="closeDialog">
+        <the-signup @signup="signup($event)"/>
+      </centered-dialog>
+    </div>
+    <div v-if="showSignupConfirmation">
+      <centered-dialog @close="closeDialog">
+        <the-signup-confirmation/>
+      </centered-dialog>
     </div>
   </div>
 </template>
 
 <script>
+import CenteredDialog from '../common/CenteredDialog';
+import TheLogin from '../common/TheLogin';
+import TheSignup from '../common/TheSignup';
+import TheSignupConfirmation from '../common/TheSignupConfirmation';
 import SvgIcon from '../icons/SvgIcon';
 import IconMore from '../icons/IconMore';
 import IconTriangle from '../icons/IconTriangle';
@@ -56,6 +84,10 @@ import { directive as onClickaway } from 'vue-clickaway';
 
 export default {
   components: {
+    CenteredDialog,
+    TheLogin,
+    TheSignup,
+    TheSignupConfirmation,
     SvgIcon,
     IconMore,
     IconTriangle
@@ -67,7 +99,11 @@ export default {
     userInitials: 'MP',
     userName: 'Miki Pernu',
     showDropdown: false,
-    showMobileDropdown: false
+    showMobileDropdown: false,
+    showLoginDialog: false,
+    showSignupDialog: false,
+    showSignupConfirmation: false,
+    userLoggedIn: false
   }),
   methods: {
     returnToHome: function() {
@@ -78,6 +114,27 @@ export default {
     },
     closeMobileDropdown: function() {
       this.showMobileDropdown = false;
+    },
+    closeDialog: function() {
+      this.showLoginDialog = false;
+      this.showSignupDialog = false;
+      this.showSignupConfirmation = false;
+    },
+    // TODO: connect these with the authentication service, remove console.logs
+    login: function(service) {
+      this.userLoggedIn = true;
+      this.showLoginDialog = false;
+      console.log(service);
+    },
+    signup: function(service) {
+      this.showSignupDialog = false;
+      this.showSignupConfirmation = true;
+      console.log(service);
+    },
+    logOut: function() {
+      this.userLoggedIn = false;
+      this.closeDropdown();
+      this.closeMobileDropdown();
     }
   },
   mounted: function() {
@@ -138,6 +195,37 @@ div.nav-title span {
   left: 90px;
   transform: perspective(1px) translateY(-50%);
   font-weight: 600;
+}
+
+div.nav-login-buttons,
+div.nav-login-buttons-mobile {
+  position: absolute;
+  top: 50%;
+  right: 40px;
+  transform: perspective(1px) translateY(-47%);
+  height: 60px;
+  line-height: 60px;
+  width: 45%;
+  font-size: 14px;
+  font-weight: 600;
+  color: #06a798;
+  text-align: right;
+  cursor: pointer;
+  cursor: hand;
+}
+
+div.nav-login-buttons-mobile {
+  display: none;
+}
+
+div.nav-login-buttons div,
+div.nav-login-buttons-mobile div {
+  display: inline-block;
+}
+
+div.nav-login-buttons div:last-of-type,
+div.nav-login-buttons-mobile div:last-of-type {
+  margin-left: 20px;
 }
 
 div.nav-menu {
@@ -269,6 +357,23 @@ div.nav-mobile-dropdown-content div:hover {
 
   div.nav-title span {
     display: none;
+  }
+
+  div.nav-login-buttons {
+    display: none;
+  }
+
+  div.nav-login-buttons-mobile {
+    display: initial;
+  }
+
+  div.nav-login-buttons-mobile div {
+    font-size: 11px;
+  }
+
+  div.nav-login-buttons div:last-of-type,
+  div.nav-login-buttons-mobile div:last-of-type {
+    margin-left: 8px;
   }
 
   div.nav-menu {
