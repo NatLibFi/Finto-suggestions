@@ -34,11 +34,11 @@ export default {
 </script>
 
 <style scoped>
-  .search-container {
-    width: 60vw;
-    margin: 20px 20vw 0;
-  }
-  .welcome-text {
-    text-align: left;
-  }
+.search-container {
+  width: 60vw;
+  margin: 20px 20vw 0;
+}
+.welcome-text {
+  text-align: left;
+}
 </style>
