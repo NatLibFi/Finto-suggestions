@@ -2,7 +2,7 @@ pipeline:
   web:
     image: plugins/docker
     registry: quay.io
-    repo: natlibfi/finto-suggestions/
+    repo: natlibfi/finto-suggestions/finto-suggestions_web
     secrets: [ quay_username, quay_password ]
     tag: latest
     dockerfile: ./docker/web/Dockerfile
@@ -12,7 +12,7 @@ pipeline:
   api:
     image: plugins/docker
     registry: quay.io
-    repo: natlibfi/finto-suggestions/
+    repo: natlibfi/finto-suggestions/finto-suggestions_api
     secrets: [ quay_username, quay_password ]
     tag: latest
     dockerfile: ./docker/api/Dockerfile
