@@ -33,8 +33,14 @@ export default {
   }),
   methods: {
     formatLabel(label) {
-      const tolowercased = label.toLowerCase();
-      return tolowercased.charAt(0).toUpperCase() + tolowercased.slice(1);
+      if(label) {
+        const tolowercased = label.toLowerCase();
+        return tolowercased.charAt(0).toUpperCase() + tolowercased.slice(1);
+      }
+      else {
+        return '';
+      }
+
     }
   }
 };

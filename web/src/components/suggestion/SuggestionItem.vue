@@ -5,7 +5,7 @@
         <p class="title-row">
           <span class="item-name">{{ suggestion.preferred_label.fi }}</span>
           <span
-            :class="[suggestion.suggestion_type === `${suggestionType.MODIFY}`
+            :class="[suggestion.suggestion_type === modify
               ? 'type-modify'
               : 'type-new',
             'tag']">{{ suggestion.suggestion_type }}
@@ -48,6 +48,10 @@ export default {
       required: true
     }
   },
+  data:() => ({
+    //not the best way but seems that you cannot use imported module straight inside class binding clause
+    modify: suggestionType.MODIFY
+  }),
   methods: {
     buildLabel() {
       return dateDiffLabel(this.suggestion.created);
