@@ -148,7 +148,8 @@ class Meeting(db.Model, SerializableMixin):
             e.id for e in self.suggestions]  # only ids
 
         serialized['processed'] = Counter(
-            [s.status.name.upper() for s in self.suggestions])
+            #[s.status.name.upper() for s in self.suggestions])
+            [s.status.name.upper() for s in self.suggestions if s is not None and s.status is not None])
 
         return serialized
 
