@@ -1,22 +1,23 @@
 <template>
+<!-- Using 'login' as a catch-all term for signups and logins -->
 <div class="login-dialog">
-  <h3>Kirjaudu sisään</h3>
-  <p>Voit kirjautua sisään Github- ja Google-tunnuksilla</p>
+  <h3>Luo tunnus</h3>
+  <p>Voit luoda tilin Github- ja Google-tunnuksilla</p>
   <div class="login-services">
-    <div @click="login('github')" class="login-service-button">
+    <div @click="signup('github')" class="login-service-button">
       <div class="login-service-image"></div>
-      <span>Kirjaudu GitHub-tunnuksilla</span>
+      <span>Luo tili GitHub-tunnuksilla</span>
     </div>
-    <div @click="login('google')" class="login-service-button">
+    <div @click="signup('google')" class="login-service-button">
       <div class="login-service-image"></div>
-      <span>Kirjaudu Google-tunnuksilla</span>
+      <span>Luo tili Google-tunnuksilla</span>
     </div>
   </div>
   <div class="login-own-credentials">
-    <h4 v-if="!showOwnCredentialLogin" @click="showOwnCredentialLogin = !showOwnCredentialLogin">
-      Kirjaudu sisään omilla tunnuksilla
+    <h4 v-if="!showOwnCredentialSignup" @click="showOwnCredentialSignup = !showOwnCredentialSignup">
+      Luo tili omilla tunnuksilla
     </h4>
-    <div v-if="showOwnCredentialLogin" class="login-inputs">
+    <div v-if="showOwnCredentialSignup" class="login-inputs">
       <div class="login-input">
         <span>Käyttäjätunnus</span>
         <input type="text">
@@ -25,11 +26,8 @@
         <span>Salasana</span>
         <input type="password">
       </div>
-      <div @click="login()" class="login-submit">
-        <span>Kirjaudu sisään</span>
-      </div>
-      <div class="login-forgot-password">
-        <span>Unohditko salasanasi?</span>
+      <div @click="signup()" class="login-submit">
+        <span>Luo tili</span>
       </div>
     </div>
   </div>
@@ -39,11 +37,11 @@
 <script>
 export default {
   data: () => ({
-    showOwnCredentialLogin: false
+    showOwnCredentialSignup: false
   }),
   methods: {
-    login: function(service) {
-      this.$emit('login', service);
+    signup(service) {
+      this.$emit('signup', service);
     }
   }
 };
