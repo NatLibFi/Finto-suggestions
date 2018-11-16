@@ -6,7 +6,7 @@
         <img @click="returnToHome" src="./finto-logo.svg" alt="">
         <span>Finto – Käsite-ehdotukset</span>
       </div>
-      <div v-if="userLoggedIn" class="nav-menu" @click="showDropdown = true">
+      <div v-if="isAuthenticated" class="nav-menu" @click="showDropdown = true">
         <div class="user-bubble">
           <span unselectable="on">{{ userInitials }}</span>
         </div>
@@ -15,15 +15,15 @@
         </div>
         <svg-icon icon-name="triangle"><icon-triangle /></svg-icon>
       </div>
-      <div v-if="!userLoggedIn" class="nav-login-buttons">
+      <div v-if="!isAuthenticated" class="nav-login-buttons">
         <div @click="showLoginDialog = !showLoginDialog">Kirjaudu sisään</div>
         <div @click="showSignupDialog = !showSignupDialog">Luo tunnus</div>
       </div>
       <!-- Mobile menu shown below screen width of 700px -->
-      <div v-if="userLoggedIn" class="nav-menu-mobile" @click="showMobileDropdown = true">
+      <div v-if="isAuthenticated" class="nav-menu-mobile" @click="showMobileDropdown = true">
         <svg-icon icon-name="more"><icon-more/></svg-icon>
       </div>
-      <div v-if="!userLoggedIn" class="nav-login-buttons-mobile">
+      <div v-if="!isAuthenticated" class="nav-login-buttons-mobile">
         <div @click="showLoginDialog = !showLoginDialog">Kirjaudu sisään</div>
         <div @click="showSignupDialog = !showSignupDialog">Luo tunnus</div>
       </div>
@@ -74,13 +74,16 @@
 
 <script>
 import CenteredDialog from '../common/CenteredDialog';
-import TheLogin from '../common/TheLogin';
-import TheSignup from '../common/TheSignup';
-import TheSignupConfirmation from '../common/TheSignupConfirmation';
+import TheLogin from '../auth/TheLogin';
+import TheSignup from '../auth/TheSignup';
+import TheSignupConfirmation from '../auth/TheSignupConfirmation';
 import SvgIcon from '../icons/SvgIcon';
 import IconMore from '../icons/IconMore';
 import IconTriangle from '../icons/IconTriangle';
 import { directive as onClickaway } from 'vue-clickaway';
+
+import { mapAuthGetters, mapAuthActions } from '../../store/modules/auth/authModule.js';
+import { authGetters, authActions } from '../../store/modules/auth/authConsts.js';
 
 export default {
   components: {
@@ -102,44 +105,47 @@ export default {
     showMobileDropdown: false,
     showLoginDialog: false,
     showSignupDialog: false,
-    showSignupConfirmation: false,
-    userLoggedIn: false
+    showSignupConfirmation: false
   }),
+  computed: {
+    ...mapAuthGetters({ isAuthenticated: authGetters.GET_IS_USER_AUTHENTICATED })
+  },
   methods: {
-    returnToHome: function() {
+    ...mapAuthActions({ authenticate: authActions.AUTHENTICATE }),
+    returnToHome() {
       this.$router.push('/');
     },
-    closeDropdown: function() {
+    closeDropdown() {
       this.showDropdown = false;
     },
-    closeMobileDropdown: function() {
+    closeMobileDropdown() {
       this.showMobileDropdown = false;
     },
-    closeDialog: function() {
+    closeDialog() {
       this.showLoginDialog = false;
       this.showSignupDialog = false;
       this.showSignupConfirmation = false;
     },
     // TODO: connect these with the authentication service, remove console.logs
-    login: function(service) {
-      this.userLoggedIn = true;
+    login(service) {
       this.showLoginDialog = false;
       console.log(service);
+      this.authenticate({ providerName: service, user: {}, requestOptions: {} });
     },
-    signup: function(service) {
+    signup(service) {
+      console.log(service);
+      this.authenticate({ providerName: service, user: {}, requestOptions: {} });
       this.showSignupDialog = false;
       this.showSignupConfirmation = true;
-      console.log(service);
     },
-    logOut: function() {
-      this.userLoggedIn = false;
+    logOut() {
       this.closeDropdown();
       this.closeMobileDropdown();
     }
   },
   mounted: function() {
     document.addEventListener('keydown', e => {
-      if (e.keyCode == 27) {
+      if (e.keyCode === 27) {
         this.closeDropdown();
         this.closeMobileDropdown();
       }
