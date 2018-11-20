@@ -74,10 +74,6 @@ export default {
       {
         label: suggestionStateStatus.REJECTED,
         value: suggestionStateStatus.REJECTED
-      },
-      {
-        label: suggestionStateStatus.DEFAULT,
-        value: suggestionStateStatus.DEFAULT
       }
     ],
     suggestionTypes: [
@@ -163,7 +159,7 @@ export default {
 div.filterSuggestions ul {
   width: 100%;
   padding: 10px;
-  align: left;
+  text-align: left;
 }
 
 div.filterSuggestions ul > li {
@@ -173,5 +169,4 @@ div.filterSuggestions ul > li {
   vertical-align: top;
   width: 150px;
 }
-
 </style>
