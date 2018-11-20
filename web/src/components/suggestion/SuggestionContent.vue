@@ -7,8 +7,8 @@
     </div>
 
     <div v-if="suggestion.preferred_label.fi">
-      <p v-if="suggestion.suggestion_type == `${suggestionTypes.NEW}`"><strong>Ehdotettu termi suomeksi</strong></p>
-      <p v-if="suggestion.suggestion_type == `${suggestionTypes.MODIFY}`"><strong>Päätermi/asiasana</strong></p>
+      <p v-if="suggestion.suggestion_type == suggestionTypes.NEW"><strong>Ehdotettu termi suomeksi</strong></p>
+      <p v-if="suggestion.suggestion_type == suggestionTypes.MODIFY"><strong>Päätermi/asiasana</strong></p>
       <p>{{ suggestion.preferred_label.fi }}</p>
     </div>
 
@@ -66,10 +66,10 @@
     </div>
 
     <div v-if="suggestion.description">
-      <p v-if="suggestion.suggestion_type == `${suggestionTypes.NEW}`">
+      <p v-if="suggestion.suggestion_type == suggestionTypes.NEW">
         <strong>Tarkoitusta täsmentävä selite</strong>
       </p>
-      <p v-if="suggestion.suggestion_type == `${suggestionTypes.MODIFY}`"><strong>Ehdotettu muutos</strong></p>
+      <p v-if="suggestion.suggestion_type == suggestionTypes.MODIFY"><strong>Ehdotettu muutos</strong></p>
       <p>{{ suggestion.description }}</p>
     </div>
 
@@ -102,16 +102,11 @@ export default {
     }
   },
   data: () => ({
-    suggestionTypes: [
-      {
-        label: suggestionType.NEW,
-        value: suggestionType.NEW
-      },
-      {
-        label: suggestionType.MODIFY,
-        value: suggestionType.MODIFY
-      }
-    ]
+    suggestionTypes:
+    {
+      NEW: suggestionType.NEW,
+      MODIFY: suggestionType.MODIFY
+    }
   })
 };
 </script>
