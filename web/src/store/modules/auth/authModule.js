@@ -10,7 +10,6 @@ Vue.use(VueAxios, axios);
 
 const vueAuth = VueAuthenticate.factory(Vue.prototype.$http, {
   baseUrl: 'http://localhost:8080/api',
-  state: '0',
   providers: {
     github: {
       clientId: `${process.env.VUE_APP_GITHUB_CLIENT_ID}`,
