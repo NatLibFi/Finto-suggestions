@@ -233,9 +233,11 @@ class User(db.Model, SerializableMixin):
     name = db.Column(db.String(64), index=True, nullable=False)
     email = db.Column(db.String(128), index=True, unique=True, nullable=False)
     role = db.Column(db.Enum(UserRoles), default=UserRoles.NORMAL)
-    password_hash = db.Column(db.String(128))
+    password_hash = db.Column(db.String(128), nullable=True)
 
     events = db.relationship('Event', backref='user')
+
+    external_token = db.relationship('ExternalToken', backref='user')
 
     @hybrid_property
     def password(self):
@@ -243,10 +245,12 @@ class User(db.Model, SerializableMixin):
 
     @password.setter
     def password(self, value):
-        self.password_hash = hash_algorithm.hash(value)
+        if value is not None:
+            self.password_hash = hash_algorithm.hash(value)
 
     def validate_password(self, password):
-        return hash_algorithm.verify(password, self.password_hash)
+        if password is not None:
+            return hash_algorithm.verify(password, self.password_hash)
 
     def __repr__(self):
         return '<User {}>'.format(self.name)
@@ -257,7 +261,6 @@ class User(db.Model, SerializableMixin):
         # serialized['events'] = [e.as_dict(strip=strip) for e in self.events]  # whole events
         serialized['events'] = [e.id for e in self.events]  # only ids
         return serialized
-
 
 class TokenBlacklist(db.Model, SerializableMixin):
     """
@@ -272,3 +275,17 @@ class TokenBlacklist(db.Model, SerializableMixin):
     token_type = db.Column(db.String(10), nullable=False)
     revoked = db.Column(db.Boolean, nullable=False)
     expires = db.Column(db.DateTime, nullable=False)
+
+class ExternalToken(db.Model, SerializableMixin):
+    """
+    oAuth2 access tokens from external providers (Github and Google)
+    """
+
+    ___tablename___ = 'external_tokens'
+    ___public___ = ['id', 'user_id', 'provider']
+  
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    provider = db.Column(db.String(36), nullable=False)
+    code = db.Column(db.String(50), nullable=False)
+    access_token = db.Column(db.String(50), nullable=False)
