@@ -8,9 +8,7 @@ export const authGetters = {
   GET_IS_USER_AUTHENTICATED: 'getIsUserAuthenticated'
 };
 
-export const authMutations = {
-  SET_USER_AUTHENTICATED: 'setUserAuthenticated'
-};
+export const authMutations = {};
 
 export const authActions = {
   AUTHENTICATE: 'authenticate'
