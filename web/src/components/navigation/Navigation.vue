@@ -82,8 +82,8 @@ import IconMore from '../icons/IconMore';
 import IconTriangle from '../icons/IconTriangle';
 import { directive as onClickaway } from 'vue-clickaway';
 
-import { mapAuthGetters, mapAuthActions } from '../../store/modules/auth/authModule.js';
-import { authGetters, authActions } from '../../store/modules/auth/authConsts.js';
+import { mapUserGetters, mapUserActions } from '../../store/modules/user/userModule.js';
+import { userGetters, userActions } from '../../store/modules/user/userConsts.js';
 
 export default {
   components: {
@@ -107,11 +107,17 @@ export default {
     showSignupDialog: false,
     showSignupConfirmation: false
   }),
+  created() {
+    this.validateAuthentication();
+  },
   computed: {
-    ...mapAuthGetters({ isAuthenticated: authGetters.GET_IS_USER_AUTHENTICATED })
+    ...mapUserGetters({ isAuthenticated: userGetters.GET_AUTHENTICATE })
   },
   methods: {
-    ...mapAuthActions({ authenticate: authActions.AUTHENTICATE }),
+    ...mapUserActions({
+      authenticate: userActions.AUTHENTICATE,
+      validateAuthentication: userActions.VALIDATE_AUTHENTICATION
+    }),
     returnToHome() {
       this.$router.push('/');
     },
@@ -139,6 +145,7 @@ export default {
       this.showSignupConfirmation = true;
     },
     logOut() {
+
       this.closeDropdown();
       this.closeMobileDropdown();
     }
