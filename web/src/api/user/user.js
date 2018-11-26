@@ -1,3 +1,5 @@
-import { get } from '../utils';
+import { post } from '../utils';
 
-export default {};
+export default {
+  revokeAuthentication: data => post({ resource: '/revokeAuthentication', data })
+};
