@@ -386,8 +386,12 @@ definitions:
     example: NORMAL
 
   UserIdRequest:
-    type: string
-    example: "123"
+    type: object
+    properties:
+      user_id:
+        type: string
+      access_token:
+        type: string
 
   # EVENT
 

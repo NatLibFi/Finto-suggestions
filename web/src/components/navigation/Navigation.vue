@@ -116,7 +116,8 @@ export default {
   methods: {
     ...mapUserActions({
       authenticate: userActions.AUTHENTICATE,
-      validateAuthentication: userActions.VALIDATE_AUTHENTICATION
+      validateAuthentication: userActions.VALIDATE_AUTHENTICATION,
+      revokeAuthentication: userActions.REVOKE_AUTHENTICATION
     }),
     returnToHome() {
       this.$router.push('/');
@@ -134,18 +135,20 @@ export default {
     },
     // TODO: connect these with the authentication service, remove console.logs
     login(service) {
+      if(service !== 'local') {
+        this.authenticate({ providerName: service});
+      }
       this.showLoginDialog = false;
-      console.log(service);
-      this.authenticate({ providerName: service, user: {}, requestOptions: {} });
     },
     signup(service) {
-      console.log(service);
-      this.authenticate({ providerName: service, user: {}, requestOptions: {} });
+      if(service !== 'local') {
+        this.authenticate({ providerName: service });
+      }
       this.showSignupDialog = false;
       this.showSignupConfirmation = true;
     },
     logOut() {
-
+      this.revokeAuthentication();
       this.closeDropdown();
       this.closeMobileDropdown();
     }

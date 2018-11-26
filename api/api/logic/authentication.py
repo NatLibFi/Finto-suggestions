@@ -129,26 +129,25 @@ def revokeAuthentication() -> str:
 
     :returns: A JWT access token wrapped in a response object or an error message
     """
-
     user_id = connexion.request.json.get('user_id', None)
 
     try:
         if user_id is not None and len(user_id):
-            tokens = AccessToken.query.filter_by(user_id=user_id)
+            tokens = AccessToken.query.filter_by(user_id=user_id).all()
             if tokens is not None and len(tokens) > 0:
                 for token in tokens:
                     if token.provider is not 'local':
-                        token.delete()
+                        token_to_be_deleted = AccessToken.query.filter_by(id=token.id).delete()
                     else:
                         blacklist_token(token.access_token)
                         blacklist_token(token.refresh_token)
-                        token.delete()
+                        token_to_be_deleted = AccessToken.query.filter_by(id=token.id).delete()
         return create_response({}, 200, 'Successfully revoked user authentication tokens.')
     except Exception as ex:
         print(ex)
         db.session.rollback()
         
-        return create_response({}, 200, 'There was errors while trying to blacklist and remove tokens ' + err.message)
+        return create_response({}, 200, 'There was errors while trying to blacklist and remove tokens ')
         
 
 def github() -> str:

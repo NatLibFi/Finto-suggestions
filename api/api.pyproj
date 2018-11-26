@@ -34,7 +34,6 @@
     <Compile Include="app.py" />
     <Compile Include="config.py" />
     <Compile Include="migrations\env.py" />
-    <Compile Include="migrations\versions\e008d81a779e_.py" />
     <Compile Include="tests\conftest.py" />
     <Compile Include="tests\fixtures.py" />
     <Compile Include="tests\test_authentication.py" />

@@ -61,8 +61,8 @@ export default {
     [userMutations.SET_USER_ID](state, userId) {
       Vue.set(state, storeStateNames.USER_ID, userId);
     },
-    [userMutations.SET_STORAGE_USER_ID](userId) {
-      sessionStorage.setItem(storeKeyNames.USER_ID, userId);
+    [userMutations.SET_STORAGE_USER_ID](user) {
+      sessionStorage.setItem(storeKeyNames.USER_ID, user.userId);
     }
   },
   actions: {
@@ -70,7 +70,6 @@ export default {
       await vueAuth
         .authenticate(payload.providerName)
         .then(response => {
-          console.log(response);
           commit(userMutations.SET_AUTHENTICATE, true);
           commit(userMutations.SET_USER_ID, response.data.user_id);
           commit(userMutations.SET_STORAGE_USER_ID, response.data.user_id);
@@ -99,21 +98,20 @@ export default {
       // eslint-disable-next-line no-undef
       const token = $cookies.get(storeKeyNames.ACCESS_TOKEN);
       const userId =
-        this.session[storeStateNames.USER_ID] || sessionStorage.getItem(storeKeyNames.USER_ID);
+        this.state[storeStateNames.USER_ID] || sessionStorage.getItem(storeKeyNames.USER_ID);
       if (token && userId > 0) {
-        const payload = { user_id: userId, access_token: token };
+        const payload = { user_id: userId };
 
         try {
           await api.user.revokeAuthentication(payload);
+          // eslint-disable-next-line no-undef
+          $cookies.remove(storeKeyNames.ACCESS_TOKEN);
+          commit(userMutations.SET_AUTHENTICATE, false);
+          commit(userMutations.SET_USER_ID, 0);
+          commit(userMutations.SET_STORAGE_USER_ID, 0);
         } catch (err) {
           console.log(err);
         }
-
-        // eslint-disable-next-line no-undef
-        $cookies.remove(storeKeyNames.ACCESS_TOKEN);
-        commit(userMutations.SET_AUTHENTICATE, false);
-        commit(userMutations.SET_STORAGE_USER_ID, 0);
-        commit(userMutations.SET_USER_ID, 0);
       }
     }
   }
