@@ -27,11 +27,11 @@ export default {
   },
   actions: {
     async [eventActions.ADD_NEW_EVENT]({ dispatch }, params) {
-      await api.events.addNewComment(params.event);
+      await api.event.addNewComment(params.event);
       dispatch(eventActions.GET_EVENTS_BY_SUGGESTION_ID, params.suggestionId);
     },
     async [eventActions.GET_EVENTS_BY_SUGGESTION_ID]({ commit }, suggestionId) {
-      const result = await api.events.getEventsBySuggestionId(suggestionId);
+      const result = await api.event.getEventsBySuggestionId(suggestionId);
       commit(eventMutations.SET_EVENTS, result.data);
     }
   }

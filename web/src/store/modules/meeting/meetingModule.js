@@ -27,7 +27,7 @@ export default {
   },
   actions: {
     async [meetingActions.GET_MEETINGS]({ commit }) {
-      const result = await api.meetings.getMeetings();
+      const result = await api.meeting.getMeetings();
       commit(meetingMutations.SET_MEETINGS, result.data);
     }
   }

@@ -21,7 +21,7 @@ export default {
   },
   actions: {
     async [tagActions.GET_TAGS]({ commit }) {
-      const result = await api.tags.getTags();
+      const result = await api.tag.getTags();
       commit(tagMutations.SET_TAGS, result.data);
     }
   }
