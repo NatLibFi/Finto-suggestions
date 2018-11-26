@@ -35,7 +35,7 @@ from flask_jwt_extended import (
 )
 
 from .common import create_response
-from ..models import db, User, UserRoles, ExternalToken
+from ..models import db, User, UserRoles, AccessToken
 from ..authentication import blacklist_token
 
 import requests
@@ -114,6 +114,43 @@ def logout() -> str:
 
     return create_response({}, 200, "Successfully logged out.")
 
+@jwt_required
+def revokeAuthentication() -> str:
+    """
+    Log the user out by blacklisting the tokens.
+
+    POST request requires a body with
+    an access_token and refresh_token.
+
+    {
+        "access_token": "eyJ0eXAiOiJKV1Q...",
+        "refresh_token": "eyJ0eXAiOiJKV1..."
+    }
+
+    :returns: A JWT access token wrapped in a response object or an error message
+    """
+
+    user_id = connexion.request.json.get('user_id', None)
+
+    try:
+        if user_id is not None and len(user_id):
+            tokens = AccessToken.query.filter_by(user_id=user_id)
+            if tokens is not None and len(tokens) > 0:
+                for token in tokens:
+                    if token.provider is not 'local':
+                        token.delete()
+                    else:
+                        blacklist_token(token.access_token)
+                        blacklist_token(token.refresh_token)
+                        token.delete()
+        return create_response({}, 200, 'Successfully revoked user authentication tokens.')
+    except Exception as ex:
+        print(ex)
+        db.session.rollback()
+        
+        return create_response({}, 200, 'There was errors while trying to blacklist and remove tokens ' + err.message)
+        
+
 def github() -> str:
     """
     Callback method for Github oAuth2 authorization
@@ -163,20 +200,30 @@ def github() -> str:
             db.session.add(user)
             db.session.commit()
 
-        existing_ext_token = ExternalToken.query.filter_by(user_id=user.id).first()
+        existing_ext_token = AccessToken.query.filter_by(user_id=user.id).first()
         if existing_ext_token is not None:
             db.session.delete(existing_ext_token)
 
-        ext_token = ExternalToken(user_id=user.id, provider='github', code=code, access_token=github_access_token)
+        ext_token = AccessToken(user_id=user.id, provider='github', code=code, access_token=github_access_token)
 
         try:
             db.session.add(ext_token)
             db.session.commit()
-        except db.Error as err:
-            print(err)
+        except Exception as ex:
+            print(ex)
+            db.session.rollback()
 
         serialized_user = super(User, user).as_dict()
         access_token = create_access_token(identity=serialized_user)
         refresh_token = create_refresh_token(identity=serialized_user)
 
-    return {'access_token' : access_token, 'refresh_token': refresh_token}, 200
+        token = AccessToken(user_id=user.id, provider='local', access_token=access_token, refresh_token=refresh_token)
+
+        try:
+            db.session.add(token)
+            db.session.commit()
+        except Exception as ex:
+            print(ex)
+            db.session.rollback()
+
+    return {'access_token' : access_token, 'user_id': user.id}, 200
