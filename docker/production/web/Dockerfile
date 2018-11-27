@@ -13,7 +13,7 @@ RUN cp -a /tmp/node_modules /app/
 
 COPY ./web/* /app/
 
-RUN vue build
+RUN vue build ./src/main.js
 
 EXPOSE 8040
 
