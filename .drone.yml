@@ -1,5 +1,6 @@
 pipeline:
   web:
+    group: build
     image: plugins/docker
     registry: quay.io
     repo: quay.io/natlibfi/finto-suggestions-web
@@ -12,6 +13,7 @@ pipeline:
       event: push
       branch: feature/drone-pipeline-testing
   api:
+    group: build
     image: plugins/docker
     registry: quay.io
     repo: quay.io/natlibfi/finto-suggestions-api
