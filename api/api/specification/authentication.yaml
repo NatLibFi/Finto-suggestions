@@ -57,6 +57,7 @@ paths:
           description:  JWT Token
           schema:
             $ref: '#/definitions/LogoutResponse'
+
   /auth/github:
     post:
       description: Callback method to handle Github oAuth2 authroization
