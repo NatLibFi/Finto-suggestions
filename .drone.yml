@@ -11,7 +11,7 @@ pipeline:
     dockerfile: ./docker/production/web/Dockerfile
     when:
       event: push
-      branch: feature/drone-pipeline-testing
+      branch: master
   api:
     group: build
     image: plugins/docker
@@ -24,4 +24,4 @@ pipeline:
     dockerfile: ./docker/production/api/Dockerfile
     when:
       event: push
-      branch: feature/drone-pipeline-testing
+      branch: master
