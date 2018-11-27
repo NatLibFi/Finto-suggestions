@@ -39,6 +39,7 @@ export default {
     }
   }
 };
+/* eslint-disable */
 </script>
 
 <style scoped>
@@ -49,7 +50,7 @@ div.search-wrapper {
   padding: .5em;
   text-align: left;
 }
-div.search-wrapper > label > [type="text"] {
+div.search-wrapper > label > [type='text'] {
   display: inline-block;
   height: 50%;
   width: 80%;
@@ -61,7 +62,7 @@ div.search-wrapper > label > [type="text"] {
   text-indent: 32px;
   font-size: 14pt;
 }
-div.search-wrapper > [type="button"] {
+div.search-wrapper > [type='button'] {
   height: 60%;
   width: 13%;
   background-color: #06A798;

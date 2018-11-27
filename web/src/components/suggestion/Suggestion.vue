@@ -109,7 +109,6 @@ export default {
     })
   },
   async created() {
-    console.log(this.suggestionId);
     await this.getSuggestions(parseInt(this.suggestionId));
     await this.getEventsBySuggestionId(parseInt(this.suggestionId));
   },

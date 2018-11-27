@@ -59,7 +59,7 @@ import { tagActions, tagGetters } from '../../store/modules/tag/tagConst.js';
 
 import { handleDropDownSelection } from '../../utils/filterValueHelper.js';
 
-import { format, parse } from 'date-fns'
+// import { format, parse } from 'date-fns';
 
 export default {
   components: {
@@ -126,7 +126,10 @@ export default {
       let meetings = [];
       this.meetings.forEach(meeting => {
         //TODO: format date better with date-fns
-        meetings.push({ label: `${meeting.name} ${meeting.meeting_date.split('T')[0]}`, value: meeting.id });
+        meetings.push({
+          label: `${meeting.name} ${meeting.meeting_date.split('T')[0]}`,
+          value: meeting.id
+        });
       });
       return meetings;
     },
@@ -173,5 +176,4 @@ div.filterSuggestions ul > li {
   vertical-align: top;
   width: 150px;
 }
-
 </style>
