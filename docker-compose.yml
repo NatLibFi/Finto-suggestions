@@ -4,7 +4,8 @@ services:
     restart: always
     build:
       context: .
-      dockerfile: ./docker/api/Dockerfile
+      dockerfile: ./docker/develop/api/Dockerfile
+    image: finto-suggestions_api:latest
     volumes:
       - ./api:/app
     env_file: .env
@@ -17,7 +18,8 @@ services:
     restart: always
     build:
       context: .
-      dockerfile: ./docker/web/Dockerfile
+      dockerfile: ./docker/develop/web/Dockerfile
+    image: finto-suggestions_web:latest
     volumes:
       - ./web:/app
       - /app/node_modules
@@ -29,7 +31,7 @@ services:
     ports:
       - "8080:80"
     volumes:
-      - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf
+      - ./docker/develop/nginx/default.conf:/etc/nginx/conf.d/default.conf
     networks:
       - network_web
     depends_on:

@@ -1,0 +1,27 @@
+pipeline:
+  web:
+    group: build
+    image: plugins/docker
+    registry: quay.io
+    repo: quay.io/natlibfi/finto-suggestions-web
+    secrets:
+      - docker_username
+      - docker_password
+    tag: latest
+    dockerfile: ./docker/production/web/Dockerfile
+    when:
+      event: push
+      branch: feature/drone-pipeline-testing
+  api:
+    group: build
+    image: plugins/docker
+    registry: quay.io
+    repo: quay.io/natlibfi/finto-suggestions-api
+    secrets:
+      - docker_username
+      - docker_password
+    tag: latest
+    dockerfile: ./docker/production/api/Dockerfile
+    when:
+      event: push
+      branch: feature/drone-pipeline-testing
