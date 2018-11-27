@@ -11,9 +11,9 @@ WORKDIR /app
 
 RUN cp -a /tmp/node_modules /app/
 
-COPY ./web/* /app/
+RUN ./web/npm run build
 
-RUN npm run build
+COPY ./web/dist/* /app
 
 EXPOSE 8040
 
