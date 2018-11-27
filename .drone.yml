@@ -7,7 +7,7 @@ pipeline:
       - docker_username
       - docker_password
     tag: latest
-    dockerfile: ./docker/web/Dockerfile
+    dockerfile: ./docker/production/web/Dockerfile
     when:
       event: push
       branch: feature/drone-pipeline-testing
@@ -19,7 +19,7 @@ pipeline:
       - docker_username
       - docker_password
     tag: latest
-    dockerfile: ./docker/api/Dockerfile
+    dockerfile: ./docker/production/api/Dockerfile
     when:
       event: push
       branch: feature/drone-pipeline-testing
