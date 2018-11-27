@@ -72,6 +72,7 @@ http://asciiflow.com/
 4.  Start the freshly installed Docker
 5.  Run `docker-compose up` in project's **root** folder. This command builds the required containers (api, web and nginx) and starts them. Hitting `CTRL+C` should exit the output feed from docker. However the containers should still be running. You can check the container status with a command `docker ps`.
 6.  Initialize the database. In api directory (while the containers are running), run `pipenv run upgrade-db`
+7.  In web/.env.local set VUE_APP_GITHUB_CLIENT_ID if you wanna use github login/registeration, developer team will provide this for you.
 
 When the application is running, you should find the application running on localhost:8080. The web frontend (Vue.js app) can be found on root url (localhost:8080/) and API on localhost:8080/api. Swagger ui can be found on localhost:8080/api/ui/#/.
 
@@ -84,15 +85,23 @@ Please see [a terminal recording](documentation/img/docker-compose-up.svg) of a 
 All the running (composed) containers can be halted with command `docker-compose down`.
 You can remove previously built containers (and volumes) by executing `docker-compose rm -sv`.
 
-### Production Installation
+### Local Production Installation
 
 An example docker-compose file has been created for a simple and minimal production setup.
 
 1. In production environment, copy the .env.default file and rename it to .env (from project root). Modify accordingly.
-2. Manually (!) run `yarn docker:build` in web directory to build the production-ready distribution (web/dist).
+2. Manually (!) run `npm docker:build` in web directory to build the production-ready distribution (web/dist).
 3. Run docker-compose with an extra production file, that overwrites a few serve commands: `docker-compose -f docker-compose.yml -f docker-compose.prod.yml up`
 
 Backend is served using [gunicorn](http://gunicorn.org/) and frontend using [http-server](https://www.npmjs.com/package/http-server). Ideally, you would want to serve the static files directly with Nginx.
+
+### Staging Installation
+
+Our Staging installation are automated and for now they are automatic installed when any commit goes to master branch
+
+### Production Installation
+
+Production installation will be automated something sameway as staging enviroment, will be updated this when that time comes.
 
 ### Development Workflow
 
