@@ -1,7 +1,7 @@
 FROM node:10.13.0-alpine
 
 # install simple http server for serving static content
-RUN npm install -g http-server
+RUN npm install -g http-server && npm install -g @vue/cli && npm install @vue/cli-service-global
 
 COPY ./web/package*.json /tmp/
 
@@ -13,7 +13,7 @@ RUN cp -a /tmp/node_modules /app/
 
 COPY ./web/* /app/
 
-RUN npm run build
+RUN vue build
 
 EXPOSE 8040
 
