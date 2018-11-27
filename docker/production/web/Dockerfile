@@ -13,7 +13,7 @@ RUN cp -a /tmp/node_modules /app/
 
 COPY ./web/* /app/
 
-RUN npm run build
+RUN vue-cli-service build ./src/main.js --modern
 
 EXPOSE 8040
 
