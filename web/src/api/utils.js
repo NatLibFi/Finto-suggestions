@@ -7,8 +7,7 @@ const client = axios.create({
 
 const execute = async (method, resource, data) => {
   // inject the accessToken for each request
-  let accessToken = process.env.VUE_APP_ACCESS_TOKEN;
-  // let accessToken = '';
+  let accessToken = '';
   return client({
     method,
     url: resource,

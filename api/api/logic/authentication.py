@@ -35,9 +35,10 @@ from flask_jwt_extended import (
 )
 
 from .common import create_response
-from ..models import User
+from ..models import db, User, UserRoles, ExternalToken
 from ..authentication import blacklist_token
 
+import requests
 
 def login() -> str:
     """
@@ -60,7 +61,8 @@ def login() -> str:
     if email and password:
         user = User.query.filter_by(email=email).first()
         if user and user.validate_password(password):
-            # this time, skip overriden as_dict() to disable event serialization
+            # this time, skip overriden as_dict() to disable event
+            # serialization
             serialized_user = super(User, user).as_dict()
             access_token = create_access_token(identity=serialized_user)
             refresh_token = create_refresh_token(identity=serialized_user)
@@ -90,7 +92,7 @@ def refresh() -> str:
 @jwt_required
 def logout() -> str:
     """
-    Logs the user out by blacklisting the tokens.
+    Log the user out by blacklisting the tokens.
 
     POST request requires a body with
     an access_token and refresh_token.
@@ -111,3 +113,70 @@ def logout() -> str:
         blacklist_token(refresh_token)
 
     return create_response({}, 200, "Successfully logged out.")
+
+def github() -> str:
+    """
+    Callback method for Github oAuth2 authorization
+    """
+
+    code = connexion.request.json.get('code')
+    state = connexion.request.json.get('state')
+    github_access_token = ''
+
+    if state is '0':
+        redirect_uri = 'http://localhost:8080/api/auth/github'
+        payload = {
+            'client_id': 'b7aca67b03ae97580e12',
+            'client_secret': 'f362c6f9ab737f68fdbb25ffbfe89de98a8fa75d',
+            'code': code,
+            'redirect_uri': redirect_uri
+        }
+
+        token_response = requests.post('https://github.com/login/oauth/access_token', data=payload)
+
+        if len(token_response.text) > 0:
+            github_access_token = token_response.text.split('&')[0].split('=')[1]
+
+    if github_access_token is not None and len(github_access_token) > 0:
+
+        name = ''
+        email = ''
+
+        user_data_response = requests.get('https://api.github.com/user?access_token=' + github_access_token)
+
+        if user_data_response.ok is True:
+            user_data = user_data_response.json()
+            name = user_data['name']
+
+        user_email_data_response = requests.get('https://api.github.com/user/emails?access_token=' + github_access_token)
+
+        if user_email_data_response.ok is True:
+            user_email_data = user_email_data_response.json()
+            for data in user_email_data:
+                if data['primary'] is True:
+                    email = data['email']
+
+        user = User.query.filter_by(email=email).first()
+
+        if user is None:
+            user = User(name=name, email=email, password=None, role=UserRoles.NORMAL)
+            db.session.add(user)
+            db.session.commit()
+
+        existing_ext_token = ExternalToken.query.filter_by(user_id=user.id).first()
+        if existing_ext_token is not None:
+            db.session.delete(existing_ext_token)
+
+        ext_token = ExternalToken(user_id=user.id, provider='github', code=code, access_token=github_access_token)
+
+        try:
+            db.session.add(ext_token)
+            db.session.commit()
+        except db.Error as err:
+            print(err)
+
+        serialized_user = super(User, user).as_dict()
+        access_token = create_access_token(identity=serialized_user)
+        refresh_token = create_refresh_token(identity=serialized_user)
+
+    return {'access_token' : access_token, 'refresh_token': refresh_token}, 200
