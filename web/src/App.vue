@@ -6,12 +6,6 @@
 
 <script>
 export default {
-  created() {
-    // eslint-disable-next-line
-    $cookies.config('10d');
-    // eslint-disable-next-line
-    $cookies.set('logged_user_id', process.env.VUE_APP_USER_ID); //TODO: remove this when login and logout is working
-  }
 };
 </script>
 

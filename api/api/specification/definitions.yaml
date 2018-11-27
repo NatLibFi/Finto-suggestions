@@ -385,6 +385,14 @@ definitions:
     description: "User role, NORMAL or ADMIN. "
     example: NORMAL
 
+  UserIdRequest:
+    type: object
+    properties:
+      user_id:
+        type: string
+      access_token:
+        type: string
+
   # EVENT
 
   EventResponse:

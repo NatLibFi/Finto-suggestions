@@ -1,5 +1,4 @@
 import Vue from 'vue';
-import VueCookies from 'vue-cookies';
 
 import App from './App.vue';
 import router from './router/index';
