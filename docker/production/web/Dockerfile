@@ -13,6 +13,10 @@ RUN cp -a /tmp/node_modules /app/
 
 COPY ./web/* /app/
 
+RUN echo "NODE_ENV=development \
+VUE_APP_BASE_DOMAIN=${BASE_DOMAIN} \
+VUE_APP_GITHUB_CLIENT_ID=${GITHUB_CLIENT_ID}" > /app/.env.production
+
 RUN vue build main.js
 
 EXPOSE 8040
