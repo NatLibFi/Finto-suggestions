@@ -200,11 +200,11 @@ def github() -> str:
             db.session.add(user)
             db.session.commit()
 
-        existing_ext_token = ExternalToken.query.filter_by(user_id=user.id).first()
+        existing_ext_token = AccessToken.query.filter_by(user_id=user.id).first()
         if existing_ext_token is not None:
             db.session.delete(existing_ext_token)
 
-        ext_token = ExternalToken(user_id=user.id, provider='github', code=code, access_token=github_access_token)
+        ext_token = AccessToken(user_id=user.id, provider='github', code=code, access_token=github_access_token)
 
         try:
             db.session.add(ext_token)
