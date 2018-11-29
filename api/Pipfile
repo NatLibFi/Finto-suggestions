@@ -1,12 +1,9 @@
 [[source]]
-
 url = "https://pypi.python.org/simple"
 verify_ssl = true
 name = "pypi"
 
-
 [packages]
-
 gunicorn = "*"
 connexion = "*"
 flask-sqlalchemy = "*"
@@ -17,19 +14,14 @@ passlib = "*"
 flask-jwt-extended = "*"
 flask-cors = "*"
 
-
 [dev-packages]
-
 pytest = "*"
-
+pylint = "*"
 
 [requires]
-
-python_version = "3.6"
-
+python_version = "3."
 
 [scripts]
-
 start = "docker-compose up"
 psql = "docker-compose exec db psql devdb -Udevuser"
 shell = "docker-compose exec api flask shell"
