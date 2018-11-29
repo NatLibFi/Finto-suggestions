@@ -69,10 +69,11 @@ http://asciiflow.com/
 2.  Modify the environment variables in .env as desired
 3.  Download and install [Docker CE](https://docs.docker.com/install/) to your computer. Docker-compose should be included with the installation.
 4.  Download and install [Python 3.6+](https://www.python.org/downloads/) and after that install pipenv with command `pip install pipenv`. Pipenv is used to install/remove packages and run scripts api-side.
-4.  Start the freshly installed Docker
-5.  Run `docker-compose up` in project's **root** folder. This command builds the required containers (api, web and nginx) and starts them. Hitting `CTRL+C` should exit the output feed from docker. However the containers should still be running. You can check the container status with a command `docker ps`.
-6.  Initialize the database. In api directory (while the containers are running), run `pipenv run upgrade-db`
-7.  In web/.env.local set VUE_APP_GITHUB_CLIENT_ID if you wanna use github login/registeration, developer team will provide this for you.
+5. Download and install latest LTS Node.Js (https://nodejs.org/en/download/)
+6.  Start the freshly installed Docker
+7.  Run `docker-compose up` in project's **root** folder. This command builds the required containers (api, web and nginx) and starts them. Hitting `CTRL+C` should exit the output feed from docker. However the containers should still be running. You can check the container status with a command `docker ps`.
+8.  Initialize the database. In api directory (while the containers are running), run `pipenv run upgrade-db`
+9.  In web/.env.local set VUE_APP_GITHUB_CLIENT_ID if you wanna use github login/registeration, developer team will provide this for you.
 
 When the application is running, you should find the application running on localhost:8080. The web frontend (Vue.js app) can be found on root url (localhost:8080/) and API on localhost:8080/api. Swagger ui can be found on localhost:8080/api/ui/#/.
 
@@ -109,7 +110,7 @@ Both API and Frontend can be developed simultaneously. All the changes to the co
 
 ### Frontend
 
-Frontend is initialized with vue-cli (beta 3.0, https://github.com/vuejs/vue-cli).
+Frontend is initialized with vue-cli (3.0.3, https://github.com/vuejs/vue-cli).
 
 Add new dependencies `npm install package-name` or `npm install package-name --save-dev`. In this case, you need to rebuild the containers by running `docker-compose build web`. You need to have node installed on your computer to do this. You could also just simply modify package.json.
 
