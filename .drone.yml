@@ -7,8 +7,6 @@ pipeline:
     secrets:
       - docker_username
       - docker_password
-      - base_domain
-      - github_client_id
     tag: latest
     dockerfile: ./docker/production/web/Dockerfile
     when:
