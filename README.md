@@ -110,7 +110,7 @@ Both API and Frontend can be developed simultaneously. All the changes to the co
 
 ### Frontend
 
-Frontend is initialized with vue-cli (beta 3.0, https://github.com/vuejs/vue-cli).
+Frontend is initialized with vue-cli (3.0.3, https://github.com/vuejs/vue-cli).
 
 Add new dependencies `npm install package-name` or `npm install package-name --save-dev`. In this case, you need to rebuild the containers by running `docker-compose build web`. You need to have node installed on your computer to do this. You could also just simply modify package.json.
 
