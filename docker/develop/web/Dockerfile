@@ -1,4 +1,4 @@
-FROM node:9.11.1-alpine
+FROM node:10.13.0-alpine
 
 COPY ./web/package*.json /tmp/
 
