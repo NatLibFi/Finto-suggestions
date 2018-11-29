@@ -13,7 +13,7 @@ RUN cp -a /tmp/node_modules /app/
 
 COPY ./web/* /app/
 
-RUN npm run build
+RUN npm run build:staging
 
 EXPOSE 8040
 

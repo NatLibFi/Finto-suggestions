@@ -8,10 +8,10 @@ pipeline:
       - docker_username
       - docker_password
     tag: latest
-    dockerfile: ./docker/production/web/Dockerfile
+    dockerfile: ./docker/staging/web/Dockerfile
     when:
       event: push
-      branch: master
+      branch: [master, feature/staging-build]
   api:
     group: build
     image: plugins/docker
@@ -21,7 +21,7 @@ pipeline:
       - docker_username
       - docker_password
     tag: latest
-    dockerfile: ./docker/production/api/Dockerfile
+    dockerfile: ./docker/staging/api/Dockerfile
     when:
       event: push
-      branch: master
+      branch: [master, feature/staging-build]
