@@ -30,7 +30,7 @@ const vueAuth = VueAuthenticate.factory(Vue.prototype.$http, {
   providers: {
     github: {
       clientId: `${process.env.VUE_APP_GITHUB_CLIENT_ID}`,
-      redirectUri: `http://localhost:8080/api/auth/github`,
+      redirectUri: `${process.env.VUE_APP_BASE_DOMAIN}/api/auth/github`,
       state: '0',
       optionalUrlParams: ['scope', 'state']
     },
