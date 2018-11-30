@@ -1,5 +1,5 @@
 pipeline:
-  web:
+  web_staging:
     group: build
     image: plugins/docker
     registry: quay.io
@@ -7,12 +7,12 @@ pipeline:
     secrets:
       - docker_username
       - docker_password
-    tag: latest
+    tag: staging
     dockerfile: ./docker/staging/web/Dockerfile
     when:
       event: push
       branch: [master, feature/staging-build]
-  api:
+  api_staging:
     group: build
     image: plugins/docker
     registry: quay.io
@@ -20,7 +20,7 @@ pipeline:
     secrets:
       - docker_username
       - docker_password
-    tag: latest
+    tag: staging
     dockerfile: ./docker/staging/api/Dockerfile
     when:
       event: push
