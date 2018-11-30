@@ -27,7 +27,7 @@ def create_app(config_object='config.DevelopmentConfig'):
     # In case you don't want to show the swagger_ui for private endpoints
     # You might want to split this into two apis
     enable_swagger = flask_app.config['ENABLE_SWAGGER_UI']
-    app.add_api(api_spec, swagger_ui=enable_swagger)
+    app.add_api(api_spec, options={"swagger_ui": enable_swagger})
 
     db.init_app(flask_app)
     jwt.init_app(flask_app)
