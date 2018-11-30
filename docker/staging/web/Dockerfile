@@ -11,7 +11,7 @@ WORKDIR /app
 
 RUN cp -a /tmp/node_modules /app/
 
-COPY ./web/* /app/
+COPY ./web/. /app/
 
 RUN npm run build:staging
 
