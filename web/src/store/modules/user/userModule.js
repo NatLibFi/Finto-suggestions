@@ -36,7 +36,7 @@ const vueAuth = VueAuthenticate.factory(Vue.prototype.$http, {
     },
     google: {
       clientId: '',
-      redirectUri: `${process.env.VUE_APP_APPURL}/api/auth/google`
+      redirectUri: `${process.env.VUE_APP_BASE_DOMAIN}/api/auth/google`
     }
   }
 });
