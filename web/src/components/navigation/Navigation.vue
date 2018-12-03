@@ -135,13 +135,13 @@ export default {
     },
     // TODO: connect these with the authentication service, remove console.logs
     login(service) {
-      if(service !== 'local') {
-        this.authenticate({ providerName: service});
+      if (service !== 'local') {
+        this.authenticate({ providerName: service });
       }
       this.showLoginDialog = false;
     },
     signup(service) {
-      if(service !== 'local') {
+      if (service !== 'local') {
         this.authenticate({ providerName: service });
       }
       this.showSignupDialog = false;
