@@ -173,3 +173,29 @@ paths:
       responses:
         '204':
           description: List of deleted tags
+  /suggestions/{suggestion_id}/assign/{user_id}:
+    parameters:
+      - name: suggestion_id
+        in: path
+        type: integer
+        required: true
+      - name: user_id
+        in: path
+        type: integer
+        required: true
+    put:
+      operationId: api.logic.suggestions.assign_to_user
+      responses:
+        "200":
+          description: Assigned suggestion to user
+  /suggestions/{suggestion_id}/unassign:
+    parameters:
+      - name: suggestion_id
+        in: path
+        type: integer
+        required: true
+    put:
+      operationId: api.logic.suggestions.unassign
+      responses:
+        "200":
+          description: Removed assignment from user

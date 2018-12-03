@@ -40,6 +40,10 @@ def suggestion_parameter_validator(f):
         if meeting_id is not None and not id_exists(Meeting, meeting_id):
             return create_response({}, 404, _error_messagify(Meeting))
 
+        user_id = payload.get('user_id')
+        if user_id is not None and not id_exists(User, user_id):
+            return create_response({}, 404, _error_messagify(User))
+
         # tag strings need to be converted to actual tags
         # please note, that nonexisting tags are removed from the list here
         tag_labels = payload.get('tags')

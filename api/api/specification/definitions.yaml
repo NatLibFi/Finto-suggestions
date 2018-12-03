@@ -96,6 +96,8 @@ definitions:
         $ref: "#/definitions/tags"
       id:
         type: number
+      user_id:
+        type: number
     required:
       - uri
       - preferred_label
@@ -131,6 +133,8 @@ definitions:
         $ref: "#/definitions/organization"
       meeting_id:
         type: number
+      user_id:
+        type: number
       tags:
         type: array
         items:
@@ -165,6 +169,8 @@ definitions:
       organization:
         $ref: "#/definitions/organization"
       meeting_id:
+        type: number
+      user_id:
         type: number
       tags:
         type: array

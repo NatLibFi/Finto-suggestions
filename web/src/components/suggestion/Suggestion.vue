@@ -21,31 +21,34 @@
       </div>
     </div>
 
-    <div v-if="suggestions && suggestions.length > 0" class="suggestion-container">
+    <div v-if="suggestion" class="suggestion-container">
       <div class="suggestion-header">
         <div class="suggestion-header-headline">
-          <h1 class="suggestion-title">{{ suggestions[0].preferred_label.fi }}</h1>
+          <h1 class="suggestion-title">{{ suggestion.preferred_label.fi }}</h1>
           <div class="suggestion-header-details">
-            <span><strong>#{{ suggestions[0].id }} </strong></span>
+            <span><strong>#{{ suggestion.id }} </strong></span>
             <span>Lähetetty 3 päivää sitten</span>
-            <span class="suggestion-type">{{ suggestionTypeToString[suggestions[0].suggestion_type] }}</span>
+            <span class="suggestion-type">{{ suggestionTypeToString[suggestion.suggestion_type] }}</span>
             <span class="tag"
-              v-if="suggestions[0].tags && suggestions[0].tags.length > 0"
-              v-for="tag in suggestions[0].tags"
+              v-if="suggestion.tags && suggestion.tags.length > 0"
+              v-for="tag in suggestion.tags"
               :key="tag.label">{{ tag.label }}</span>
           </div>
         </div>
         <div class="suggestion-header-buttons">
+          <assign-user :suggestion="suggestion"/>
           <svg-icon icon-name="more"><icon-more /></svg-icon>
         </div>
       </div>
 
       <suggestion-content
-        v-if="suggestions && suggestions.length > 0"
-        :suggestion="suggestions[0]" />
+        :suggestion="suggestion"
+        :user-name="userName"
+      />
 
-      <div v-if="suggestions && suggestions[0].reactions.length > 0" class="suggestion-reactions">
-        <div v-for="reaction in suggestions[0].reactions" :key="reaction.id">
+
+      <div v-if="suggestion && suggestion.reactions.length > 0" class="suggestion-reactions">
+        <div v-for="reaction in suggestion.reactions" :key="reaction.id">
           <div class="reaction">
             <div class="emoji">{{ reaction.code }}</div>
             <div class="counter">2</div>
@@ -87,6 +90,7 @@ import IconArrow from '../icons/IconArrow';
 import IconMore from '../icons/IconMore';
 import SvgIcon from '../icons/SvgIcon';
 import AddComment from './AddComment';
+import AssignUser from './AssignUser';
 
 import {
   suggestionGetters,
@@ -102,6 +106,8 @@ import { eventGetters, eventActions } from '../../store/modules/event/eventConst
 import { mapEventGetters, mapEventActions } from '../../store/modules/event/eventModule.js';
 
 import { suggestionTypeToString } from '../../utils/suggestionMappings.js';
+import { userActions, userGetters } from "../../store/modules/user/userConsts";
+import { mapUserActions, mapUserGetters } from '../../store/modules/user/userModule';
 
 export default {
   components: {
@@ -112,7 +118,8 @@ export default {
     IconArrow,
     IconMore,
     SvgIcon,
-    AddComment
+    AddComment,
+    AssignUser
   },
   props: {
     suggestionId: {
@@ -128,27 +135,35 @@ export default {
     return {
       // eslint-disable-next-line
       userId: this.$cookies.get('logged_user_id'),
-      suggestionTypeToString
+      suggestionTypeToString,
+      userName: ''
     }
   },
   computed: {
     ...mapSuggestionGetters({
-      suggestions: suggestionGetters.GET_SUGGESTIONS
+      suggestion: suggestionGetters.GET_SUGGESTION
     }),
     ...mapEventGetters({
       events: eventGetters.GET_EVENTS
+    }),
+    ...mapUserGetters({
+      user: userGetters.GET_USER
     })
   },
   async created() {
-    await this.getSuggestions(parseInt(this.suggestionId));
+    await this.getSuggestionById(parseInt(this.suggestionId));
     await this.getEventsBySuggestionId(parseInt(this.suggestionId));
+    await this.getUserName();
   },
   methods: {
     ...mapSuggestionActions({
-      getSuggestions: suggestionActions.GET_SUGGESTION_BY_ID
+      getSuggestionById: suggestionActions.GET_SUGGESTION_BY_ID
     }),
     ...mapEventActions({
       getEventsBySuggestionId: eventActions.GET_EVENTS_BY_SUGGESTION_ID
+    }),
+    ...mapUserActions({
+      getUserData: userActions.GET_USER_DATA
     }),
     goToSuggestionList() {
       if (!this.meetingId) {
@@ -157,10 +172,23 @@ export default {
         this.$router.push({
           name: 'meeting-suggestion-list',
           params: {
-            meetingId: this.meetingId
+             meetingId: this.meetingId
           }
         })
       }
+    },
+    async getUserName() {
+      if (this.suggestion.user_id) {
+        await this.getUserData(this.suggestion.user_id);
+        this.userName = this.user.name;
+      } else {
+        this.userName = '';
+      }
+    }
+  },
+  watch: {
+    async suggestion() {
+      await this.getUserName();
     }
   }
 };

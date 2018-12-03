@@ -157,7 +157,7 @@ class Meeting(db.Model, SerializableMixin):
 class Suggestion(db.Model, SerializableMixin):
     __tablename__ = 'suggestions'
     __public__ = ["alternative_label", "broader", "created", "description", "group", "id", "created", "modified",
-                  "narrower", "organization", "preferred_label", "reason", "related", "status", "suggestion_type", "uri", "meeting_id"]
+                  "narrower", "organization", "preferred_label", "reason", "related", "status", "suggestion_type", "uri", "meeting_id", "user_id"]
 
     id = db.Column(db.Integer, primary_key=True)
     created = db.Column(db.DateTime, index=True, default=datetime.utcnow)
@@ -190,6 +190,7 @@ class Suggestion(db.Model, SerializableMixin):
                            cascade_backrefs=False)
 
     meeting_id = db.Column(db.Integer, db.ForeignKey('meetings.id'))
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
 
     def __repr__(self):
         label = self.preferred_label.get('fi')
