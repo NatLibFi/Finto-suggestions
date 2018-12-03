@@ -31,8 +31,8 @@ class DevelopmentConfig(BaseConfig):
 
 class TestingConfig(BaseConfig):
     # testdb db will be created upon test initialization
-    SQLALCHEMY_DATABASE_ROOT = f'postgresql+psycopg2://{user}:{pw}@db:5432/'
-    SQLALCHEMY_DATABASE_URI = SQLALCHEMY_DATABASE_ROOT + 'testdb'
+    host = 'ehdotus.dev.finto.fi'
+    SQLALCHEMY_DATABASE_URI = f'postgresql+psycopg2://{user}:{pw}@{host}:5432/{db}'
     DEBUG = True
 
 class ProductionConfig(BaseConfig):

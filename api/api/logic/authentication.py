@@ -146,9 +146,9 @@ def revokeAuthentication() -> str:
     except Exception as ex:
         print(ex)
         db.session.rollback()
-        
+
         return create_response({}, 200, 'There was errors while trying to blacklist and remove tokens ')
-        
+
 
 
 def github() -> str:
