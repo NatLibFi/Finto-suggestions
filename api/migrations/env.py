@@ -19,8 +19,10 @@ logger = logging.getLogger('alembic.env')
 # target_metadata = mymodel.Base.metadata
 from flask import current_app
 
-print("SQLALCHEMY_DATABASE_URI=")
-print(current_app.config.get('SQLALCHEMY_DATABASE_URI'))
+import sys
+# print('This is error output', file=sys.stderr)
+print('"SQLALCHEMY_DATABASE_URI="', file=sys.stdout)
+print(current_app.config.get('SQLALCHEMY_DATABASE_URI'), file=sys.stdout)
 
 config.set_main_option('sqlalchemy.url',
                        current_app.config.get('SQLALCHEMY_DATABASE_URI'))
