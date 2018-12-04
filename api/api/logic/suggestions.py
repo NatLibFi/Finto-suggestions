@@ -8,6 +8,8 @@ from .common import (create_response, get_one_or_404, get_all_or_404_custom,
 from .utils import SUGGESTION_FILTER_FUNCTIONS, SUGGESTION_SORT_FUNCTIONS
 from ..models import db, Suggestion, Tag
 
+import os
+
 
 def get_suggestions(limit: int = None, offset: int = None, filters: str = None, search: str = None, sort: str = 'DEFAULT') -> str:
     """
@@ -19,6 +21,8 @@ def get_suggestions(limit: int = None, offset: int = None, filters: str = None, 
     :param offset: Start the query from offset (e.g. for paging)
     :returns: All suggestion matching the query in json format
     """
+
+    print(os.environ.get('APP_CONFIG_OBJECT', 'config.DevelopmentConfig'))
 
     def query_func():
         if sort in SUGGESTION_SORT_FUNCTIONS:
