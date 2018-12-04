@@ -3,6 +3,9 @@
     <h3>YSE - YSAn ja YSOn käsite-ehdotukset</h3>
     <div class="welcome-text">
       <p>{{ welcomeText }}</p>
+      <p class="meetings-link">
+        <strong>Tarkastele tulevia YSO-kokouksia <a @click="goToMeetings()">täältä</a>.</strong>
+      </p>
     </div>
     <div>
       <suggestion-search-form />
@@ -29,7 +32,12 @@ export default {
       tukesi ehdotukselle kommentoimalla sitä. Halutessasi voit nopeuttaa ehdotuksen
       käsittelyä jättämällä ehdotuksen kommenttikenttään täsmennyksiä ja lisätietoja.
       Uusien käsite-ehdotuksien tekeminen onnistuu Fintossa.`
-  })
+  }),
+  methods: {
+    goToMeetings: function() {
+      this.$router.push('/meetings');
+    }
+  }
 };
 </script>
 
@@ -40,5 +48,9 @@ export default {
 }
 .welcome-text {
   text-align: left;
+}
+.meetings-link a:hover {
+  cursor: pointer;
+  cursor: hand;
 }
 </style>
