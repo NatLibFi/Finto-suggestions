@@ -156,8 +156,10 @@ def github() -> str:
     Callback method for Github oAuth2 authorization
     """
 
-    code = connexion.request.json.get('code')
-    state = connexion.request.json.get('state')
+    # code = connexion.request.json.get('code')
+    # state = connexion.request.json.get('state')
+    code = connexion.request.args['code']
+    state = connexion.request.args['state']
     github_access_token = ''
     access_token = ''
 

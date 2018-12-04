@@ -22,11 +22,6 @@ def get_suggestions(limit: int = None, offset: int = None, filters: str = None, 
     :returns: All suggestion matching the query in json format
     """
 
-    print(os.environ.get('APP_CONFIG_OBJECT', 'config.DevelopmentConfig'))
-    print(os.environ.get('POSTGRES_USER'))
-    print(os.environ.get('POSTGRES_PASSWORD'))
-    print(os.environ.get('POSTGRES_DB'))
-
     def query_func():
         if sort in SUGGESTION_SORT_FUNCTIONS:
             query = SUGGESTION_SORT_FUNCTIONS.get(sort)(db.session)

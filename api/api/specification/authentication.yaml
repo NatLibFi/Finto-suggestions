@@ -1,5 +1,4 @@
 paths:
-
   /login:
     post:
       operationId: api.logic.authentication.login
@@ -60,6 +59,12 @@ paths:
 
   /auth/github:
     post:
+      description: Callback method to handle Github oAuth2 authroization
+      operationId: api.logic.authentication.github
+      responses:
+        "200":
+          description: Response was the authorization success or not
+    get:
       description: Callback method to handle Github oAuth2 authroization
       operationId: api.logic.authentication.github
       responses:
