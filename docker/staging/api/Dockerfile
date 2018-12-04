@@ -18,4 +18,4 @@ RUN pip install pipenv \
 
 EXPOSE 8050
 
-ENTRYPOINT ["gunicorn", "--bind", ":8050", "--access-logfile", "-", "--error-logfile", "-", '--log-level=DEBUG', '-', "wsgi:connexion_app"]
+ENTRYPOINT ["gunicorn", "--bind", ":8050", "--log-level=DEBUG", "-", "--access-logfile", "-", "--error-logfile", "-", "wsgi:connexion_app"]
