@@ -82,7 +82,7 @@ export default {
       this.paginationPageChanged();
     },
     getPaginationStaringIndex(pageNumber) {
-      return pageNumber > 1 ? (this.paginationMaxCount * pageNumber) - this.paginationMaxCount : 0;
+      return pageNumber > 1 ? this.paginationMaxCount * pageNumber - this.paginationMaxCount : 0;
     },
     getPaginationEndingIndex(pageNumber) {
       const endIndex = this.paginationMaxCount * pageNumber;
