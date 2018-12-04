@@ -59,8 +59,7 @@ paths:
             $ref: '#/definitions/LogoutResponse'
 
   /auth/github:
-    # post:
-    get:
+    post:
       description: Callback method to handle Github oAuth2 authroization
       operationId: api.logic.authentication.github
       responses:
