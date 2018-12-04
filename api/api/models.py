@@ -283,10 +283,10 @@ class AccessToken(db.Model, SerializableMixin):
 
     ___tablename___ = 'access_tokens'
     ___public___ = ['id', 'user_id', 'provider']
-  
+
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     provider = db.Column(db.String(36), nullable=False)
     code = db.Column(db.String(50), nullable=True)
-    access_token = db.Column(db.String(50), nullable=False)
-    refresh_token = db.Column(db.String(50), nullable=True)
+    access_token = db.Column(db.String(400), nullable=False)
+    refresh_token = db.Column(db.String(400), nullable=True)

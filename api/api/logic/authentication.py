@@ -159,6 +159,7 @@ def github() -> str:
     code = connexion.request.json.get('code')
     state = connexion.request.json.get('state')
     github_access_token = ''
+    access_token = ''
 
     if state is '0':
         redirect_uri = 'http://localhost:8080/api/auth/github'
