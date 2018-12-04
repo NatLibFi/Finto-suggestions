@@ -168,8 +168,9 @@ def github() -> str:
         payload = {
             'client_id': 'b7aca67b03ae97580e12',
             'client_secret': 'f362c6f9ab737f68fdbb25ffbfe89de98a8fa75d',
-            'code': code,
-            'redirect_uri': redirect_uri
+            'code': code
+            # ,
+            # 'redirect_uri': redirect_uri
         }
 
         token_response = requests.post('https://github.com/login/oauth/access_token', data=payload)
