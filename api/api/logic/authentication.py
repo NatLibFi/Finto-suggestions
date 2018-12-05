@@ -175,8 +175,7 @@ def github_post() -> str:
         print(name, email)
 
         user = None
-
-        print(User.query.all())
+        print(db.session.query(User).all())
 
         try:
             user = User.query.filter_by(email=email).first()
