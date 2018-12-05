@@ -67,7 +67,7 @@ export default {
   },
   actions: {
     async [userActions.AUTHENTICATE]({ commit }, payload) {
-      console.log(vueAuth.options.providers.github.redirectUri)
+      console.log(vueAuth.options.providers.github.redirectUri);
       await vueAuth
         .authenticate(payload.providerName)
         .then(response => {
