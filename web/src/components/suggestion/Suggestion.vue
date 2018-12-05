@@ -1,7 +1,7 @@
 <template>
   <div class="suggestion">
     <div class="back-button">
-      <a @click="goToSuggestion" unselectable="on">
+      <a @click="goToSuggestionList" unselectable="on">
         <svg-icon icon-name="arrow"><icon-arrow /></svg-icon>
         Takaisin käsite-ehdotuksiin
       </a>
@@ -120,7 +120,7 @@ export default {
     ...mapEventActions({
       getEventsBySuggestionId: eventActions.GET_EVENTS_BY_SUGGESTION_ID
     }),
-    goToSuggestion() {
+    goToSuggestionList() {
       this.$router.push('/');
     }
   }

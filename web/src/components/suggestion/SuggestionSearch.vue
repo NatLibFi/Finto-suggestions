@@ -1,14 +1,16 @@
 <template>
-  <div class="search-container  ">
-    <h3>YSE - YSAn ja YSOn käsite-ehdotukset</h3>
-    <div class="welcome-text">
-      <p>{{ welcomeText }}</p>
-    </div>
-    <div>
-      <suggestion-search-form />
-    </div>
-    <div>
-      <filter-suggestions />
+  <div class="search-container">
+    <div class="content">
+      <h3>YSE - YSAn ja YSOn käsite-ehdotukset</h3>
+      <div class="welcome-text">
+        <p>{{ welcomeText }}</p>
+      </div>
+      <div>
+        <suggestion-search-form />
+      </div>
+      <div>
+        <filter-suggestions />
+      </div>
     </div>
   </div>
 </template>
@@ -37,8 +39,26 @@ export default {
 .search-container {
   width: 60vw;
   margin: 20px 20vw 0;
+  border: 2px solid #f5f5f5;
+  background-color: #ffffff;
+}
+.search-container .content {
+  padding: 20px 30px 10px;
 }
 .welcome-text {
   text-align: left;
+}
+@media (max-width: 700px) {
+  .search-container {
+    width: 80vw;
+    margin: 20px 10vw 0;
+  }
+  .search-container .content {
+    padding: 20px 20px 10px;
+  }
+  .welcome-text {
+    font-size: 15px;
+    line-height: 1.3;
+  }
 }
 </style>

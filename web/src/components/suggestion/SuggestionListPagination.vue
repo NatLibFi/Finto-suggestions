@@ -105,4 +105,11 @@ ul.paginate .paginate-item {
   border-color: #eeeeee;
   cursor: initial;
 }
+
+@media (max-width: 700px) {
+  div.paginate-container {
+    width: 80vw;
+    margin: 0 10vw 50px;
+  }
+}
 </style>

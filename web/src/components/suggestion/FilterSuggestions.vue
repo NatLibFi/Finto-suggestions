@@ -1,41 +1,79 @@
 <template>
-  <div class="filterSuggestions">
+  <div class="filter-suggestions">
     <h4>Suodata hakutuloksia</h4>
-    <ul>
-      <li>
-        <common-drop-down
-          :header="'Käsittelyn tila'"
-          :options="suggestionStateStatuses"
-          :changeCallBack="stateChanged"
-        />
-      </li>
-      <li>
-        <common-drop-down
-          :header="'Ehdotustyyppi'"
-          :options="mapTagsToDropDown()"
-          :changeCallBack="tagChanged"
-        />
-      </li>
-      <li>
-        <common-drop-down
-          :header="'Tyyppi'"
-          :options="suggestionTypes"
-          :changeCallBack="typeChanged"
-        />
-      </li>
-      <li>
-        <common-drop-down
-          :header="'Kokous'"
-          :options="mapMeetingsToDropDown()"
-          :changeCallBack="meetingChanged"
-        />
-      </li>
-    </ul>
+    <div @click="isDropDownOpened.STATUS = !isDropDownOpened.STATUS" class="filter-item">
+      <div :class="[isDropDownOpened.STATUS ? 'selected' : '', 'drop-down-button']">
+        <span>Käsittelyn tila</span>
+        <svg-icon icon-name="triangle"><icon-triangle /></svg-icon>
+      </div>
+      <filter-drop-down 
+        :selectedIndex="selectedOptionIndex.STATUS"
+        :isOpened="isDropDownOpened.STATUS"
+        :dropDownOptions="suggestionStateStatuses"
+        :selectedOptionsMapper="suggestionStateStatusMapper"
+        :noOptionsMessage="'Ei valittavia käsittelyn tiloja.'"
+        @applyFilter="stateChanged($event)"
+        @refreshSelectedIndex="selectedOptionIndex.STATUS = $event"
+        @closeDropDown="closeDropDown" />
+    </div>
+    <div 
+      @click="isDropDownOpened.TAG = !isDropDownOpened.TAG"
+      class="filter-item">
+      <div :class="[isDropDownOpened.TAG ? 'selected' : '', 'drop-down-button']">
+        <span>Tunniste</span>
+        <svg-icon icon-name="triangle"><icon-triangle /></svg-icon>
+      </div>
+      <multiple-choice-drop-down 
+        :selectedIndexes="selectedOptionIndex.TAGS"
+        :isOpened="isDropDownOpened.TAG"
+        :dropDownOptions="mapTagsToDropDown()"
+        :noOptionsMessage="'Ehdotustyyppejä ei valittavissa.'"
+        @applyFilter="tagChanged($event)"
+        @addToSelectedIndexes="addSelectedTagIndex($event)"
+        @resetTags="resetTags()"
+        @closeDropDown="closeDropDown" />
+    </div>
+    <div @click="isDropDownOpened.TYPE = !isDropDownOpened.TYPE" class="filter-item">
+      <div :class="[isDropDownOpened.TYPE ? 'selected' : '', 'drop-down-button']">
+        <span>Ehdotustyyppi</span>
+        <svg-icon icon-name="triangle"><icon-triangle /></svg-icon>
+      </div>
+      <filter-drop-down 
+        :selectedIndex="selectedOptionIndex.TYPE"
+        :isOpened="isDropDownOpened.TYPE"
+        :dropDownOptions="suggestionTypes"
+        :selectedOptionsMapper="suggestionTypeMapper"
+        :noOptionsMessage="'Käsitetyyppejä ei valittavissa.'"
+        @applyFilter="typeChanged($event)"
+        @refreshSelectedIndex="selectedOptionIndex.TYPE = $event"
+        @closeDropDown="closeDropDown" />
+    </div>
+    <div v-if="mapMeetingsToDropDown().length > 0"
+      @click="isDropDownOpened.MEETING = !isDropDownOpened.MEETING"
+      class="filter-item">
+      <div :class="[isDropDownOpened.MEETING ? 'selected' : '', 'drop-down-button']">
+        <span>Kokous</span>
+        <svg-icon icon-name="triangle"><icon-triangle /></svg-icon>
+      </div>
+      <!-- TODO: Fix functionality of meeting selection-->
+      <filter-drop-down 
+        :selectedIndex="selectedOptionIndex.MEETING"
+        :isOpened="isDropDownOpened.MEETING"
+        :dropDownOptions="mapMeetingsToDropDown()"
+        :noOptionsMessage="'Kokouksia ei valittavissa.'"
+        @applyFilter="meetingChanged($event)"
+        @refreshSelectedIndex="selectedOptionIndex.MEETING = $event"
+        @closeDropDown="closeDropDown" />
+    </div>
   </div>
 </template>
 
 <script>
-import CommonDropDown from '../common/CommonDropDown';
+import FilterDropDown from '../common/FilterDropDown';
+import MultipleChoiceDropDown from '../common/MultipleChoiceDropDown';
+import SvgIcon from '../icons/SvgIcon';
+import IconTriangle from '../icons/IconTriangle';
+
 import {
   suggestionStateStatus,
   suggestionType,
@@ -63,29 +101,62 @@ import { handleDropDownSelection } from '../../utils/filterValueHelper.js';
 
 export default {
   components: {
-    CommonDropDown
+    FilterDropDown,
+    MultipleChoiceDropDown,
+    SvgIcon,
+    IconTriangle
   },
   data: () => ({
+    selectedOptionIndex: {
+      STATUS: 0, // one always selected
+      TAGS: [], // multiple choice
+      TYPE: 0, // multiple choice
+      MEETING: null // no default
+    },
+    isDropDownOpened: {
+      STATUS: false,
+      TAG: false,
+      TYPE: false,
+      MEETING: false
+    },
     suggestionStateStatuses: [
       {
-        label: suggestionStateStatus.ACCEPTED,
-        value: suggestionStateStatus.ACCEPTED
+        label: 'Käsittelemätön',
+        value: 'NONE'
       },
       {
-        label: suggestionStateStatus.REJECTED,
-        value: suggestionStateStatus.REJECTED
+        label: 'Hyväksytty',
+        value: 'ACCEPTED'
+      },
+      {
+        label: 'Hylätty',
+        value: 'REJECTED'
       }
     ],
+    suggestionStateStatusMapper: {
+      ACCEPTED: suggestionStateStatus.ACCEPTED,
+      REJECTED: suggestionStateStatus.REJECTED,
+      NONE: null
+    },
     suggestionTypes: [
       {
-        label: suggestionType.NEW,
-        value: suggestionType.NEW
+        label: 'Kaikki ehdotustyypit',
+        value: 'NONE'
       },
       {
-        label: suggestionType.MODIFY,
-        value: suggestionType.MODIFY
+        label: 'Käsite-ehdotus',
+        value: 'NEW'
+      },
+      {
+        label: 'Käsitemuutos',
+        value: 'MODIFY'
       }
-    ]
+    ],
+    suggestionTypeMapper: {
+      NONE: null,
+      NEW: suggestionType.NEW,
+      MODIFY: suggestionType.MODIFY
+    }
   }),
   computed: {
     ...mapMeetingGetters({ meetings: meetingGetters.GET_MEETINGS }),
@@ -123,7 +194,7 @@ export default {
       this.meetings.forEach(meeting => {
         //TODO: format date better with date-fns
         meetings.push({
-          label: `${meeting.name} ${meeting.meeting_date.split('T')[0]}`,
+          label: `${meeting.meeting_date.split('T')[0]}`,
           value: meeting.id
         });
       });
@@ -140,9 +211,11 @@ export default {
     },
     mapTagsToDropDown() {
       let tags = [];
-      this.tags.forEach(tag => {
-        tags.push({ label: tag.label, value: tag.label });
-      });
+      if (this.tags && this.tags.length > 0) {
+        this.tags.forEach(tag => {
+          tags.push({ label: tag.label, value: tag.label });
+        });
+      }
       return tags;
     },
     tagChanged(selected) {
@@ -153,23 +226,89 @@ export default {
         this.filters,
         this.setFilters
       );
+    },
+    addSelectedTagIndex(tagIndex) {
+      if (this.selectedOptionIndex.TAGS.indexOf(tagIndex) == -1) {
+        this.selectedOptionIndex.TAGS.push(tagIndex);
+      } else {
+        let i = this.selectedOptionIndex.TAGS.indexOf(tagIndex);
+        this.selectedOptionIndex.TAGS.splice(i, 1);
+      }
+    },
+    resetTags() {
+      this.selectedOptionIndex.TAGS = [];
+    },
+    closeDropDown() {
+      this.isDropDownOpened.STATUS = false;
+      this.isDropDownOpened.TAG = false;
+      this.isDropDownOpened.TYPE = false;
+      this.isDropDownOpened.MEETING = false;
     }
   }
 };
 </script>
 
 <style scoped>
-div.filterSuggestions ul {
+.filter-suggestions {
   width: 100%;
-  padding: 10px;
+  padding-right: 10px;
   text-align: left;
 }
 
-div.filterSuggestions ul > li {
+.filter-item {
+  position: relative;
+  height: 35px;
+  width: 135px;
   display: inline-block;
-  margin: 5px;
-  padding: 10px;
-  vertical-align: top;
-  width: 150px;
+  border: 2px solid #eeeeee;
+  margin: 6px 10px 6px 0;
+  cursor: pointer;
+  cursor: hand;
+  transition: border-color 0.1s;
+}
+
+.filter-item:hover {
+  border-color: #a7e7e1;
+}
+
+.drop-down-button {
+  position: absolute;
+  top: 53.5%;
+  left: 14px;
+  transform: perspective(1px) translateY(-50%);
+  overflow: hidden;
+  font-size: 13px;
+  font-weight: 600;
+  color: #606060;
+  cursor: pointer;
+  cursor: hand;
+  width: 100%;
+  -webkit-user-select: none; /* Safari */
+  -moz-user-select: none; /* Firefox */
+  -ms-user-select: none; /* IE10+/Edge */
+  user-select: none; /* Standard */
+}
+
+.drop-down-button svg {
+  position: absolute;
+  top: 66%;
+  right: 16px;
+  transform: perspective(1px) translateY(-50%);
+  display: inline-block;
+  height: 16px;
+  margin: 0 0 -4px 2px;
+}
+
+.selected {
+  font-weight: 600;
+  color: #111111;
+}
+
+@media (max-width: 700px) {
+  .filter-item {
+    margin: 3px 10px 3px 0;
+    height: 40px;
+    width: 150px;
+  }
 }
 </style>
