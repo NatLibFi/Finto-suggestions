@@ -1,20 +1,17 @@
 <template>
 <div class="comment">
-  <div class="comment-divider"></div>
-
   <div class="comment-container">
     <div class="comment-header">
       <div class="comment-info">
         <p>Kommentoi ehdotusta</p>
       </div>
     </div>
-
     <div class="comment-box">
-        <markdown-editor v-model="content" ref="markdownEditor"></markdown-editor>
+      <markdown-editor v-model="content" ref="markdownEditor"></markdown-editor>
     </div>
     <div class="comment-submit">
-      <span>
-        <button class="submitButton" @click="saveNewComment">Lähetä</button>
+      <span @click="saveNewComment" class="submit-button">
+        Lähetä kommentti
       </span>
     </div>
   </div>
@@ -80,32 +77,21 @@ export default {
 <style scoped>
 @import '~simplemde/dist/simplemde.min.css';
 
-div.comment-divider {
-  display: inline-block;
-  text-align: center;
-  width: 2px;
-  height: 40px;
-  margin-top: 20px;
-  background-color: #dddddd;
-}
-
 div.comment-container {
   width: 100%;
-  background-color: #ffffff;
-  border: 2px solid #f5f5f5;
   text-align: left;
-  margin-top: 10px;
+  overflow: hidden;
 }
 
 div.comment-header {
-  padding: 20px 40px;
+  padding: 20px 40px 0;
 }
 
 div.comment-header .comment-info {
   display: inline-block;
   vertical-align: middle;
-  margin-left: 20px;
 }
+
 div.comment-header .comment-info p {
   vertical-align: middle;
   margin: 0;
@@ -113,36 +99,36 @@ div.comment-header .comment-info p {
 }
 
 div.comment-box {
-  width: 100%;
-  border-top: 1px solid #f5f5f5;
-  padding: 10px 40px;
+  width: calc(100% - 80px);
+  padding: 20px 40px 10px;
   margin: 0;
-}
-
-div.markdown-editor {
-  padding-left: 10px;
-  padding-right: 10px;
-  width: 90%;
 }
 
 div.comment-submit {
-  width: 100%;
-  padding: 10px 40px;
-  margin: 0;
+  width: calc(100% - 80px);
+  padding: 0 40px 15px;
+  margin: 4px 0 10px;
   text-align: right;
 }
 
-.submitButton {
+.submit-button {
   background-color: #06a798;
   border: none;
+  border-radius: 1px;
   color: white;
-  padding: 15px 32px;
+  padding: 10px 18px;
   text-align: center;
   text-decoration: none;
   display: inline-block;
   font-size: 16px;
-  margin: 4px 62px;
+  font-weight: 600;
   cursor: pointer;
+  cursor: hand;
+  transition: background-color 0.1s;
+}
+
+.submit-button:hover {
+  background-color: #44bdb2;
 }
 
 @media (max-width: 750px) {
@@ -151,8 +137,20 @@ div.comment-submit {
   }
 
   div.comment-box {
+    width: calc(100% - 40px);
     padding-left: 20px;
     padding-right: 20px;
   }
+
+  div.comment-submit {
+    width: calc(100% - 40px);
+    padding: 10px 20px;
+  }
+}
+</style>
+
+<style>
+.markdown-editor .CodeMirror, .markdown-editor .CodeMirror-scroll {
+  min-height: 100px;
 }
 </style>

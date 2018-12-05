@@ -85,6 +85,10 @@ li.item {
   cursor: pointer;
   cursor: hand;
   overflow: hidden;
+  transition: background-color, 0.1s;
+}
+li.item:hover {
+  background-color: #f3fbfa;
 }
 .item-summary {
   padding: 10px 30px 10px;

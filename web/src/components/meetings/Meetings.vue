@@ -1,6 +1,6 @@
 <template>
 <div class="meetings">
-  <div class="back-button">
+  <div class="arrow-button">
     <a @click="goToHome" unselectable="on">
       <svg-icon icon-name="arrow"><icon-arrow /></svg-icon>
       Takaisin etusivulle
@@ -42,7 +42,7 @@ export default {
   margin: 40px 20vw 20px;
 }
 
-.back-button {
+.arrow-button {
   color: #1ea195;
   font-weight: 800;
   font-size: 16px;
@@ -54,12 +54,12 @@ export default {
   user-select: none; /* Standard */
 }
 
-.back-button a:hover {
+.arrow-button a:hover {
   cursor: pointer;
   cursor: hand;
 }
 
-.back-button svg {
+.arrow-button svg {
   margin: 0 -15px -27px 0;
   width: 37px;
   height: 37px;
