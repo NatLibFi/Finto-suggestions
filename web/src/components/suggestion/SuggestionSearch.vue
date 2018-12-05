@@ -63,6 +63,7 @@ export default {
 .meetings-link a:hover {
   cursor: pointer;
   cursor: hand;
+}
 @media (max-width: 700px) {
   .search-container {
     width: 80vw;
