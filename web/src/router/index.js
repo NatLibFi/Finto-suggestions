@@ -3,8 +3,8 @@ import Router from 'vue-router';
 import Index from '../views/Index.vue';
 import Suggestion from '../views/Suggestion.vue';
 import Meetings from '../views/Meetings.vue';
-import MeetingSuggestion from '../views/MeetingSuggestion.vue';
 import MeetingSuggestionList from '../views/MeetingSuggestionList.vue';
+import MeetingSuggestion from '../views/MeetingSuggestion.vue';
 
 Vue.use(Router);
 
@@ -27,13 +27,13 @@ export default new Router({
       component: Meetings
     },
     {
-      path: 'meetings/:meetingId',
+      path: '/meetings/:meetingId',
       name: 'meeting-suggestion-list',
       component: MeetingSuggestionList,
       props: true
     },
     {
-      path: 'meetings/:meetingId/:suggestionId',
+      path: '/meetings/:meetingId/:suggestionId',
       name: 'meeting-suggestion',
       component: MeetingSuggestion,
       props: true
