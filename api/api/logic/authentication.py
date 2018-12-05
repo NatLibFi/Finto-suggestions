@@ -236,8 +236,8 @@ def handle_github_request(code, state) -> (str, str):
 
             github_client_id = os.environ.get('GITHUB_CLIENT_ID')
             github_client_secret = os.environ.get('GITHUB_CLIENT_SECRET')
+            redirect_uri = os.environ.get('GITHUB_REDIRECT_URI')
 
-            redirect_uri = 'http://localhost:8080/api/auth/github'
             payload = {
               'client_id': github_client_id,
               'client_secret': github_client_secret,
