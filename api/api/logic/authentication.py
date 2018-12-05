@@ -174,7 +174,12 @@ def github_post() -> str:
 
         print(name, email)
 
-        user = User.query.filter_by(email=email).first()
+        user = None
+
+        try:
+            user = User.query.filter_by(email=email).first()
+        except Exception as ex:
+            print(ex)
 
         print(user)
 
