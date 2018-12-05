@@ -31,11 +31,8 @@ export const handleDropDownSelection = (
   filters,
   setFilters
 ) => {
-  if (dropDownOptions && selectedFilter && selectedFilter.target.value !== '') {
-    const selectedValue = findValueFromDropDownOptions(
-      selectedFilter.target.value,
-      dropDownOptions
-    );
+  if (dropDownOptions && selectedFilter && selectedFilter !== '') {
+    const selectedValue = findValueFromDropDownOptions(selectedFilter, dropDownOptions);
     const value = { type: filterType, value: selectedValue };
     handleSetFilters(value, filters, setFilters);
   } else {

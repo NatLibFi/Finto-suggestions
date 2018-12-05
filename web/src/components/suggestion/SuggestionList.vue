@@ -39,8 +39,7 @@ import {
 } from '../../store/modules/suggestion/suggestionModule.js';
 
 import SuggestionListPagination from './SuggestionListPagination';
-import { filterType, suggestionType } from '../../utils/suggestionMappings';
-
+import { filterType } from '../../utils/suggestionMappings';
 
 export default {
   components: {
@@ -77,7 +76,7 @@ export default {
       getResolvedSuggestionCount: suggestionActions.GET_RESOLVED_SUGGESTIONS,
       getSortedSuggestions: suggestionActions.GET_SORTED_SUGGESTIONS
     }),
-  ...mapSuggestionMutations({
+    ...mapSuggestionMutations({
       setPaginatedSuggestions: suggestionMutations.SET_PAGINATION_SUGGESTIONS
     }),
     async sortSuggestionList(selectedSorting) {
@@ -89,10 +88,10 @@ export default {
       this.paginationPageChanged();
     },
     getPaginationStaringIndex(pageNumber) {
-      return pageNumber > 1 ? (this.paginationMaxCount * pageNumber) - this.paginationMaxCount : 0;
+      return pageNumber > 1 ? this.paginationMaxCount * pageNumber - this.paginationMaxCount : 0;
     },
     getPaginationEndingIndex(pageNumber) {
-      const endIndex = (this.paginationMaxCount * pageNumber)
+      const endIndex = this.paginationMaxCount * pageNumber;
       return endIndex > this.items.length ? this.items.length : endIndex;
     },
     paginationPageChanged(pageNumber = 1, items = null) {
@@ -110,12 +109,17 @@ export default {
       if (this.filters.length > 0) {
         let items = this.items;
         this.filters.forEach(filter => {
-          switch(filter.type) {
+          switch (filter.type) {
             case filterType.STATUS:
               items = items.filter(i => i.status === filter.value);
               break;
             case filterType.TAG:
-              // TODO: plan and implement tag filtering(that may include more than one tag)
+              items = items.filter(i => {
+                let hasFilterTag = i.tags.findIndex(tag => {
+                  return tag.label == filter.value;
+                });
+                return hasFilterTag != -1;
+              });
               break;
             case filterType.TYPE:
               items = items.filter(i => i.suggestion_type === filter.value);
@@ -124,7 +128,9 @@ export default {
               items = items.filter(i => i.meeting_id === filter.value);
               break;
             case filterType.SEARCH:
-              items = items.filter(i => i.preferred_label && i.preferred_label.fi.startsWith(filter.value));
+              items = items.filter(
+                i => i.preferred_label && i.preferred_label.fi.startsWith(filter.value)
+              );
               break;
           }
         });

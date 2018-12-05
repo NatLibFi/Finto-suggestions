@@ -1,19 +1,21 @@
 <template>
-  <div class="search-container  ">
-    <h3>YSE - YSAn ja YSOn käsite-ehdotukset</h3>
-    <div class="welcome-text">
-      <p>{{ welcomeText }}</p>
-      <p class="meetings-link">
-        <strong>
-          Voit tarkastella tulevia YSO-kokouksia <a @click="goToMeetings()">täällä</a>.
-        </strong>
-      </p>
-    </div>
-    <div>
-      <suggestion-search-form />
-    </div>
-    <div>
-      <filter-suggestions :isMeeting="false" />
+  <div class="search-container">
+    <div class="content">
+      <h3>YSE - YSAn ja YSOn käsite-ehdotukset</h3>
+      <div class="welcome-text">
+        <p>{{ welcomeText }}</p>
+        <p class="meetings-link">
+          <strong>
+            Voit tarkastella tulevia YSO-kokouksia <a @click="goToMeetings()">täällä</a>.
+          </strong>
+        </p>
+      </div>
+      <div>
+        <suggestion-search-form />
+      </div>
+      <div>
+        <filter-suggestions :isMeeting="false" />
+      </div>
     </div>
   </div>
 </template>
@@ -27,14 +29,16 @@ export default {
     SuggestionSearchForm,
     FilterSuggestions
   },
-  data: () => ({
-    welcomeText: `Tämä palvelu on YSA/YSO -käsite-ehdotuksille ja niiden etenemisen seuraamiselle.
-      Voit selata ja kommentoida ehdotuksia täällä. Ehdotusten selaaminen onnistuu ilman
-      käyttäjätunnuksia,mutta kommentointi edellyttää tunnuksen luomista. Voit osoittaa
-      tukesi ehdotukselle kommentoimalla sitä. Halutessasi voit nopeuttaa ehdotuksen
-      käsittelyä jättämällä ehdotuksen kommenttikenttään täsmennyksiä ja lisätietoja.
-      Uusien käsite-ehdotuksien tekeminen onnistuu Fintossa.`
-  }),
+  data () {
+    return {
+      welcomeText: `Tämä palvelu on YSA/YSO -käsite-ehdotuksille ja niiden etenemisen seuraamiselle.
+        Voit selata ja kommentoida ehdotuksia täällä. Ehdotusten selaaminen onnistuu ilman
+        käyttäjätunnuksia,mutta kommentointi edellyttää tunnuksen luomista. Voit osoittaa
+        tukesi ehdotukselle kommentoimalla sitä. Halutessasi voit nopeuttaa ehdotuksen
+        käsittelyä jättämällä ehdotuksen kommenttikenttään täsmennyksiä ja lisätietoja.
+        Uusien käsite-ehdotuksien tekeminen onnistuu Fintossa.`
+    }
+  },
   methods: {
     goToMeetings: function() {
       this.$router.push('/meetings');
@@ -47,6 +51,11 @@ export default {
 .search-container {
   width: 60vw;
   margin: 20px 20vw 0;
+  border: 2px solid #f5f5f5;
+  background-color: #ffffff;
+}
+.search-container .content {
+  padding: 20px 30px 10px;
 }
 .welcome-text {
   text-align: left;
@@ -54,5 +63,17 @@ export default {
 .meetings-link a:hover {
   cursor: pointer;
   cursor: hand;
+@media (max-width: 700px) {
+  .search-container {
+    width: 80vw;
+    margin: 20px 10vw 0;
+  }
+  .search-container .content {
+    padding: 20px 20px 10px;
+  }
+  .welcome-text {
+    font-size: 15px;
+    line-height: 1.3;
+  }
 }
 </style>

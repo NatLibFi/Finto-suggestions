@@ -5,10 +5,7 @@
         <p class="title-row">
           <span class="item-name">{{ suggestion.preferred_label.fi }}</span>
           <span
-            :class="[suggestion.suggestion_type === modify
-              ? 'type-modify'
-              : 'type-new',
-            'tag']">{{ suggestion.suggestion_type }}
+            :class="[suggestionTypeToStyleClass[suggestion.suggestion_type], 'tag']">{{ suggestionTypeToString[suggestion.suggestion_type] }}
           </span>
           <span v-if="suggestion.tags.length > 0">
             <span class="tags tag" v-for="tag in suggestion.tags" :key="tag.label">
@@ -34,7 +31,7 @@
 <script>
 import SvgIcon from '../icons/SvgIcon';
 import IconComments from '../icons/IconComments';
-import { suggestionType } from '../../utils/suggestionMappings.js';
+import { suggestionTypeToStyleClass, suggestionTypeToString } from '../../utils/suggestionMappings.js';
 import { dateDiffLabel } from '../../utils/dateTimeStampHelper.js';
 
 export default {
@@ -51,7 +48,8 @@ export default {
   },
   data:() => ({
     //not the best way but seems that you cannot use imported module straight inside class binding clause
-    modify: suggestionType.MODIFY
+    suggestionTypeToStyleClass,
+    suggestionTypeToString
   }),
   methods: {
     buildLabel() {

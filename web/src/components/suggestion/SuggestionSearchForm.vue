@@ -1,11 +1,11 @@
 <template>
-  <div class="searchSuggestions">
+  <div class="search-suggestions">
     <h4>Hae ehdotusta</h4>
     <div class="search-wrapper">
-      <label>
-        <input type="text" v-model="searchQuery" />
-      </label>
-      <input type="button" value="Hae" @click="doSearch" />
+      <input type="text" v-model="searchQuery" />
+      <div @click="doSearch" class="search-button">
+        <span>Hae</span>
+      </div>
     </div>
   </div>
 </template>
@@ -43,31 +43,77 @@ export default {
 </script>
 
 <style scoped>
-div.search-wrapper {
-  float: left;
+.search-suggestions {
+  height: 100%;
+  padding-bottom: 20px;
+}
+
+h4 {
+  font-size: 16px;
+  text-align: left;
+}
+
+.search-wrapper {
+  position: relative;
+  height: 100%;
   width: 100%;
-  height: 4em;
-  padding: 0.5em;
   text-align: left;
 }
-div.search-wrapper > label > [type='text'] {
+
+.search-wrapper input {
   display: inline-block;
-  height: 50%;
-  width: 80%;
-  vertical-align: middle;
+  width: 58%;
+  height: 36px;
   margin-right: 30px;
+  padding-left: 8px;
   text-align: left;
-  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='25' height='25' viewBox='0 0 35 25' fill-rule='evenodd'%3E%3Cpath d='M16.036 18.455l2.404-2.405 5.586 5.587-2.404 2.404zM8.5 2C12.1 2 15 4.9 15 8.5S12.1 15 8.5 15 2 12.1 2 8.5 4.9 2 8.5 2zm0-2C3.8 0 0 3.8 0 8.5S3.8 17 8.5 17 17 13.2 17 8.5 13.2 0 8.5 0zM15 16a1 1 0 1 1 2 0 1 1 0 1 1-2 0'%3E%3C/path%3E%3C/svg%3E") center / contain no-repeat;
-  background-position: left;
-  text-indent: 32px;
-  font-size: 14pt;
+  border: 2px solid #eeeeee;
+  font-size: 14px;
+  font-weight: 500;
 }
-div.search-wrapper > [type='button'] {
-  height: 60%;
-  width: 13%;
-  background-color: #06a798;
+
+.search-button {
+  display: inline-block;
+  height: 42px;
+  width: 140px;
   color: #ffffff;
-  font-size: 14pt;
-  border-radius: 2px;
+  font-weight: 600;
+  font-size: 16px;
+  background-color: #06A798;
+  position: relative;
+  margin-bottom: -14px;
+  text-align: center;
+  cursor: pointer;
+  cursor: hand;
+  -webkit-user-select: none; /* Safari */
+  -moz-user-select: none; /* Firefox */
+  -ms-user-select: none; /* IE10+/Edge */
+  user-select: none; /* Standard */
+  transition: background-color 0.1s;
+}
+
+.search-button:hover {
+  background-color: #0EB6A6;
+}
+
+.search-button span {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: perspective(1px) translate(-50%, -50%);
+}
+
+@media (max-width: 700px) {
+  .search-wrapper input, .search-button {
+    display: block;
+    position: relative;
+    width: 100%;
+  }
+
+  .search-button {
+    left: 0;
+    margin-top: 10px;
+    margin-bottom: 0;
+  }
 }
 </style>

@@ -1,7 +1,7 @@
 <template>
   <div class="suggestion">
     <div class="arrow-button">
-      <a @click="goToHome()" unselectable="on">
+      <a @click="goToSuggestionList()" unselectable="on">
         <svg-icon icon-name="arrow"><icon-arrow /></svg-icon>
         Takaisin käsite-ehdotuksiin
       </a>
@@ -28,7 +28,7 @@
           <div class="suggestion-header-details">
             <span><strong>#{{ suggestions[0].id }} </strong></span>
             <span>Lähetetty 3 päivää sitten</span>
-            <span class="suggestion-type">{{ suggestions[0].suggestion_type }}</span>
+            <span class="suggestion-type">{{ suggestionTypeToString[suggestions[0].suggestion_type] }}</span>
             <span class="tag"
               v-if="suggestions[0].tags && suggestions[0].tags.length > 0"
               v-for="tag in suggestions[0].tags"
@@ -101,6 +101,8 @@ import {
 import { eventGetters, eventActions } from '../../store/modules/event/eventConsts.js';
 import { mapEventGetters, mapEventActions } from '../../store/modules/event/eventModule.js';
 
+import { suggestionTypeToString } from '../../utils/suggestionMappings.js';
+
 export default {
   components: {
     SuggestionContent,
@@ -122,7 +124,7 @@ export default {
       required: false
     }
   },
-  data: function() {
+  data () {
     return {
       // eslint-disable-next-line
       userId: this.$cookies.get('logged_user_id')
@@ -147,7 +149,7 @@ export default {
     ...mapEventActions({
       getEventsBySuggestionId: eventActions.GET_EVENTS_BY_SUGGESTION_ID
     }),
-    goToHome() {
+    goToSuggestionList() {
       if (!this.meetingId) {
         this.$router.push('/');
       } else {
@@ -158,7 +160,6 @@ export default {
           }
         })
       }
-
     }
   }
 };
