@@ -272,4 +272,5 @@ def handle_github_request(code, state) -> (str, str):
 
 def github_get() -> str:
   print(connexion.request.args)
+  print(os.environ)
   return 200
