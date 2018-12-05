@@ -26,18 +26,6 @@ export default new Router({
       name: 'meetings',
       component: Meetings
     },
-    // {
-    //   path: 'meetings/:meetingId',
-    //   name: 'meeting-suggestion-list',
-    //   component: MeetingSuggestionList,
-    //   props: true
-    // },
-    // {
-    //   path: 'meetings/:meetingId/:suggestionIndex',
-    //   name: 'meeting-suggestion',
-    //   component: MeetingSuggestion,
-    //   props: true
-    // },
     {
       path: 'meetings/:meetingId',
       name: 'meeting-suggestion-list',
@@ -45,7 +33,7 @@ export default new Router({
       props: true
     },
     {
-      path: 'meetings/1/1',
+      path: 'meetings/:meetingId/:suggestionId',
       name: 'meeting-suggestion',
       component: MeetingSuggestion,
       props: true
