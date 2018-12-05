@@ -4,7 +4,9 @@
     <div class="welcome-text">
       <p>{{ welcomeText }}</p>
       <p class="meetings-link">
-        <strong>Tarkastele tulevia YSO-kokouksia <a @click="goToMeetings()">täältä</a>.</strong>
+        <strong>
+          Voit tarkastella tulevia YSO-kokouksia <a @click="goToMeetings()">täällä</a>.
+        </strong>
       </p>
     </div>
     <div>
