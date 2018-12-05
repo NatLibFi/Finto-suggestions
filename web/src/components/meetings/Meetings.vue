@@ -69,7 +69,6 @@ export default {
   text-align: left;
   background-color: #ffffff;
   border: 2px solid #f5f5f5;
-  border-top: none;
   padding-left: 0; /* reset inital padding for ul tags */
 }
 
