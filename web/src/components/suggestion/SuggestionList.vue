@@ -11,10 +11,12 @@
       v-for="item in paginated_items"
       :key="item.id"
       :suggestion="item"
+      :meetingId="meetingId"
       />
   </ul>
   <suggestion-list-pagination
-    :pageCount="calcultePageCountForPagination()"
+    v-if="calculatePageCountForPagination() > 1"
+    :pageCount="calculatePageCountForPagination()"
     @paginationPageChanged="paginationPageChanged"
   />
 </div>
@@ -44,6 +46,10 @@ export default {
     SuggestionHeader,
     SuggestionItem,
     SuggestionListPagination
+  },
+  props: {
+    // TODO: use meetingId to filter suggestions under this meeting for Meeting's Suggestion list
+    meetingId: [String, Number, null]
   },
   data: () => ({
     paginationMaxCount: 10
@@ -94,7 +100,7 @@ export default {
       const paginatedItems = items ? items : this.items;
       this.setPaginatedSuggestions(paginatedItems.slice(start, end));
     },
-    calcultePageCountForPagination() {
+    calculatePageCountForPagination() {
       return Math.ceil(this.items.length / this.paginationMaxCount);
     }
   },

@@ -1,5 +1,5 @@
 <template>
-  <li @click="goToSuggestion" class="item">
+  <li @click="goToSuggestion()" class="item">
     <div class="item-summary">
       <div class="title">
         <p class="title-row">
@@ -43,7 +43,8 @@ export default {
     suggestion: {
       type: Object,
       required: true
-    }
+    },
+    meetingId: [String, Number]
   },
   data:() => ({
     //not the best way but seems that you cannot use imported module straight inside class binding clause
@@ -55,13 +56,24 @@ export default {
       return dateDiffLabel(this.suggestion.created);
     },
     goToSuggestion() {
-      this.$router.push({
-        name: 'suggestion',
-        params: {
-          suggestionId: this.suggestion.id,
-          suggestion: this.suggestion
-        }
-      });
+      if (!this.meetingId) {
+        this.$router.push({
+          name: 'suggestion',
+          params: {
+            suggestionId: this.suggestion.id,
+            suggestion: this.suggestion
+          }
+        });
+      } else {
+        this.$router.push({
+          name: 'meeting-suggestion',
+          params: {
+            suggestionId: this.suggestion.id,
+            suggestion: this.suggestion,
+            meetingId: this.meetingId
+          }
+        })
+      }
     }
   }
 };
@@ -79,6 +91,10 @@ li.item {
   cursor: pointer;
   cursor: hand;
   overflow: hidden;
+  transition: background-color, 0.1s;
+}
+li.item:hover {
+  background-color: #f3fbfa;
 }
 .item-summary {
   padding: 10px 30px 10px;
@@ -93,7 +109,7 @@ li.item {
   line-height: 26px;
 }
 .item-name {
-  font-size: 19px;
+  font-size: 17px;
   margin-right: 8px;
   vertical-align: middle;
 }

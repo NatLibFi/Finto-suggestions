@@ -106,6 +106,9 @@ export default {
     SvgIcon,
     IconTriangle
   },
+  props: {
+    isMeeting: Boolean
+  },
   data: () => ({
     selectedOptionIndex: {
       STATUS: 0, // one always selected
