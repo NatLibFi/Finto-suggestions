@@ -2,7 +2,7 @@
   <div>
     <navigation></navigation>
     <suggestion-search />
-    <suggestion-list />
+    <suggestion-list :meetingId="null" />
   </div>
 </template>
 

@@ -25,6 +25,7 @@
       </li>
       <li>
         <common-drop-down
+          v-if="!isMeeting"
           :header="'Kokous'"
           :options="mapMeetingsToDropDown()"
           :changeCallBack="meetingChanged"
@@ -64,6 +65,9 @@ import { handleDropDownSelection } from '../../utils/filterValueHelper.js';
 export default {
   components: {
     CommonDropDown
+  },
+  props: {
+    isMeeting: Boolean
   },
   data: () => ({
     suggestionStateStatuses: [

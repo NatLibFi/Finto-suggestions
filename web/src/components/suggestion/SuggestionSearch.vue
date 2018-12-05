@@ -13,7 +13,7 @@
       <suggestion-search-form />
     </div>
     <div>
-      <filter-suggestions />
+      <filter-suggestions :isMeeting="false" />
     </div>
   </div>
 </template>
