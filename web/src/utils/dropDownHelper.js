@@ -5,7 +5,7 @@
 */
 export const findValueFromDropDownOptions = (selectedValue, options) => {
   if (selectedValue && options && selectedValue !== '') {
-    const selection = options.find(e => e.value == selectedValue);
+    const selection = options.find(e => e.value === selectedValue);
     return selection.value;
   }
   return null;

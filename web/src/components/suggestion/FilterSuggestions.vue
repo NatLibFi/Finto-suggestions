@@ -238,7 +238,7 @@ export default {
     resetTags() {
       this.selectedOptionIndex.TAGS = [];
     },
-    closeDropDown: function() {
+    closeDropDown() {
       this.isDropDownOpened.STATUS = false;
       this.isDropDownOpened.TAG = false;
       this.isDropDownOpened.TYPE = false;
