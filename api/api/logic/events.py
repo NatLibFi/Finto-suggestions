@@ -56,7 +56,6 @@ def post_event() -> str:
     :returns: the created event as json
     """
 
-    print(connexion.request.json)
     return create_or_404(Event, connexion.request.json)
 
 

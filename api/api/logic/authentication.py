@@ -132,7 +132,7 @@ def revokeAuthentication() -> str:
     """
 
     user_id = connexion.request.json.get('user_id', None)
-    print(user_id)
+
     try:
         if user_id is not None and user_id > 0:
             tokens = AccessToken.query.filter_by(user_id=user_id).all()
