@@ -53,7 +53,7 @@
     </div>
 
     <div>
-      <add-comment :userId="userId" :suggestionId="suggestionId" />
+      <add-comment :suggestionId="suggestionId" />
     </div>
   </div>
 </template>

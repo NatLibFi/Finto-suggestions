@@ -28,18 +28,12 @@ import markdownEditor from 'vue-simplemde/src/markdown-editor';
 import { mapEventActions } from '../../store/modules/event/eventModule.js';
 import { eventActions } from '../../store/modules/event/eventConsts.js';
 import { eventTypes } from '../../utils/eventMappings.js';
-// import {
-//   suggestionMutations,
-//   suggestionActions
-// } from '../../store/modules/suggestion/suggestionConsts.js';
-// import { mapSuggestionMutations } from '../../store/modules/suggestion/suggestionModule.js';
+
+import { mapUserGetters, mapUserActions } from '../../store/modules/user/userModule.js';
+import { userGetters, userActions } from '../../store/modules/user/userConsts.js';
 
 export default {
   props: {
-    userId: {
-      type: [String, Number],
-      required: true
-    },
     suggestionId: {
       type: [String, Number],
       required: true
@@ -51,6 +45,9 @@ export default {
   data: () => ({
     content: ''
   }),
+  computed: {
+    ...mapUserGetters({ userId: userGetters.GET_USER_ID })
+  },
   methods: {
     ...mapEventActions({
       addNewEvent: eventActions.ADD_NEW_EVENT
@@ -68,6 +65,7 @@ export default {
     },
     saveNewComment() {
       this.addNewEvent({
+        // TODO: needs to give user some error message because if not logged in cannot add comments
         event: this.constructEventJsonObject(),
         suggestionId: parseInt(this.suggestionId)
       });

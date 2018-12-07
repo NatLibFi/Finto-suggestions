@@ -130,10 +130,11 @@ def revokeAuthentication() -> str:
 
     :returns: A JWT access token wrapped in a response object or an error message
     """
-    user_id = connexion.request.json.get('user_id', None)
 
+    user_id = connexion.request.json.get('user_id', None)
+    print(user_id)
     try:
-        if user_id is not None and len(user_id):
+        if user_id is not None and user_id > 0:
             tokens = AccessToken.query.filter_by(user_id=user_id).all()
             if tokens is not None and len(tokens) > 0:
                 for token in tokens:
@@ -151,7 +152,7 @@ def revokeAuthentication() -> str:
         return create_response({}, 200, 'There was errors while trying to blacklist and remove tokens ')
 
 
-def github_post() -> str:
+def post_github() -> str:
     """
     Callback method for Github oAuth2 authorization
 
@@ -241,8 +242,6 @@ def handle_github_request(code, state) -> (str, str):
 
             token_response = requests.post('https://github.com/login/oauth/access_token', data=payload)
 
-            print(token_response)
-
             if len(token_response.text) > 0:
                 github_access_token = token_response.text.split('&')[0].split('=')[1]
 
@@ -264,7 +263,5 @@ def handle_github_request(code, state) -> (str, str):
     return (name, email)
 
 
-def github_get() -> str:
-  print(connexion.request.args)
-  print(os.environ)
+def get_github() -> str:
   return 200

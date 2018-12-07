@@ -60,13 +60,13 @@ paths:
   /auth/github:
     post:
       description: Callback method to handle Github oAuth2 authroization
-      operationId: api.logic.authentication.github_post
+      operationId: api.logic.authentication.post_github
       responses:
         "200":
           description: Response was the authorization success or not
     get:
       description: Callback method to handle Github oAuth2 authroization
-      operationId: api.logic.authentication.github_get
+      operationId: api.logic.authentication.get_github
       responses:
         "200":
           description: Response was the authorization success or not

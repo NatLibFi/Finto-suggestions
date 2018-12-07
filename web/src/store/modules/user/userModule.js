@@ -67,7 +67,6 @@ export default {
   },
   actions: {
     async [userActions.AUTHENTICATE]({ commit }, payload) {
-      console.log(vueAuth.options.providers.github.redirectUri);
       await vueAuth
         .authenticate(payload.providerName)
         .then(response => {
@@ -88,7 +87,7 @@ export default {
         : commit(userMutations.SET_AUTHENTICATE, false);
       //TODO: needs to validate token from backend and also check that token has correct userid,
       // if not log out the user and revoke all tokens
-      if (this.state[storeStateNames.USER_ID] === 0) {
+      if (this.state.user[storeStateNames.USER_ID] === 0) {
         const storageUserId = sessionStorage.getItem(storeKeyNames.USER_ID);
         if (storageUserId && storageUserId > 0) {
           commit(userMutations.SET_USER_ID, storageUserId);
@@ -99,7 +98,7 @@ export default {
       // eslint-disable-next-line no-undef
       const token = $cookies.get(storeKeyNames.ACCESS_TOKEN);
       const userId =
-        this.state[storeStateNames.USER_ID] || sessionStorage.getItem(storeKeyNames.USER_ID);
+        this.state.user[storeStateNames.USER_ID] || sessionStorage.getItem(storeKeyNames.USER_ID);
       if (token && userId > 0) {
         const payload = { user_id: userId };
 

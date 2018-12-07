@@ -120,13 +120,17 @@ export default {
     },
     mapMeetingsToDropDown() {
       let meetings = [];
-      this.meetings.forEach(meeting => {
-        //TODO: format date better with date-fns
-        meetings.push({
-          label: `${meeting.name} ${meeting.meeting_date.split('T')[0]}`,
-          value: meeting.id
+
+      if (this.meetings && this.meetings.length > 0) {
+        this.meetings.forEach(meeting => {
+          //TODO: format date better with date-fns
+          meetings.push({
+            label: `${meeting.name} ${meeting.meeting_date.split('T')[0]}`,
+            value: meeting.id
+          });
         });
-      });
+      }
+
       return meetings;
     },
     meetingChanged(selected) {
@@ -140,9 +144,13 @@ export default {
     },
     mapTagsToDropDown() {
       let tags = [];
-      this.tags.forEach(tag => {
-        tags.push({ label: tag.label, value: tag.label });
-      });
+
+      if (this.tags && this.tags.lenght > 0) {
+        this.tags.forEach(tag => {
+          tags.push({ label: tag.label, value: tag.label });
+        });
+      }
+
       return tags;
     },
     tagChanged(selected) {
