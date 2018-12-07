@@ -72,7 +72,7 @@ def create_app(config_object='config.DevelopmentConfig'):
         Creates an admin user
 
         Run this from command line
-        >> flask create_admin 
+        >> flask create_admin
         """
 
         user = User(name=name,

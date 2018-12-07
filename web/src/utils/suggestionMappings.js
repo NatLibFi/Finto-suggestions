@@ -17,6 +17,16 @@ export const suggestionType = {
   MODIFY: 'MODIFY'
 };
 
+export const suggestionTypeToString = {
+  NEW: 'Käsite-ehdotus',
+  MODIFY: 'Käsitemuutos'
+};
+
+export const suggestionTypeToStyleClass = {
+  NEW: 'type-new',
+  MODIFY: 'type-modify'
+};
+
 export const filterType = {
   STATUS: 'status',
   TAG: 'tag',
