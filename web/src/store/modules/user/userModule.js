@@ -48,11 +48,13 @@ export default {
   namespaced: true,
   state: {
     [storeStateNames.IS_AUTHENTICATED]: false,
-    [storeStateNames.USER_ID]: 0
+    [storeStateNames.USER_ID]: 0,
+    [storeStateNames.USERNAME]: ''
   },
   getters: {
     [userGetters.GET_AUTHENTICATE]: state => state[storeStateNames.IS_AUTHENTICATED],
-    [userGetters.GET_USER_ID]: state => state[storeStateNames.USER_ID]
+    [userGetters.GET_USER_ID]: state => state[storeStateNames.USER_ID],
+    [userGetters.GET_USER_NAME]: state => state[storeStateNames.USERNAME]
   },
   mutations: {
     [userMutations.SET_AUTHENTICATE](state, authenticate) {
@@ -63,6 +65,9 @@ export default {
     },
     [userMutations.SET_STORAGE_USER_ID](user) {
       sessionStorage.setItem(storeKeyNames.USER_ID, user.userId);
+    },
+    [userMutations.SET_USER_NAME](state, name) {
+      Vue.set(state, storeStateNames.USERNAME, name);
     }
   },
   actions: {
@@ -87,7 +92,7 @@ export default {
         : commit(userMutations.SET_AUTHENTICATE, false);
       //TODO: needs to validate token from backend and also check that token has correct userid,
       // if not log out the user and revoke all tokens
-      if (this.state[storeStateNames.USER_ID] === 0) {
+      if (this.state.user[storeStateNames.USER_ID] === 0) {
         const storageUserId = sessionStorage.getItem(storeKeyNames.USER_ID);
         if (storageUserId && storageUserId > 0) {
           commit(userMutations.SET_USER_ID, storageUserId);
@@ -98,7 +103,7 @@ export default {
       // eslint-disable-next-line no-undef
       const token = $cookies.get(storeKeyNames.ACCESS_TOKEN);
       const userId =
-        this.state[storeStateNames.USER_ID] || sessionStorage.getItem(storeKeyNames.USER_ID);
+        this.state.user[storeStateNames.USER_ID] || sessionStorage.getItem(storeKeyNames.USER_ID);
       if (token && userId > 0) {
         const payload = { user_id: userId };
 
@@ -112,6 +117,12 @@ export default {
         } catch (err) {
           console.log(err);
         }
+      }
+    },
+    async [userActions.GET_USER_DATA]({ commit }, userId) {
+      const response = await api.user.getUserData(userId);
+      if (response) {
+        commit(userMutations.SET_USER_NAME, response.data);
       }
     }
   }

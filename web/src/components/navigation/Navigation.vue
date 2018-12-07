@@ -99,8 +99,8 @@ export default {
     onClickaway: onClickaway
   },
   data: () => ({
-    userInitials: 'MP',
-    userName: 'Miki Pernu',
+    userInitials: '',
+    userName: '',
     showDropdown: false,
     showMobileDropdown: false,
     showLoginDialog: false,
@@ -109,15 +109,22 @@ export default {
   }),
   created() {
     this.validateAuthentication();
+    console.log(this.userId);
+    console.log(process.env);
   },
   computed: {
-    ...mapUserGetters({ isAuthenticated: userGetters.GET_AUTHENTICATE })
+    ...mapUserGetters({
+      isAuthenticated: userGetters.GET_AUTHENTICATE,
+      userId: userGetters.GET_USER_ID,
+      userData: userGetters.GET_USER_NAME
+    })
   },
   methods: {
     ...mapUserActions({
       authenticate: userActions.AUTHENTICATE,
       validateAuthentication: userActions.VALIDATE_AUTHENTICATION,
-      revokeAuthentication: userActions.REVOKE_AUTHENTICATION
+      revokeAuthentication: userActions.REVOKE_AUTHENTICATION,
+      getUserData: userActions.GET_USER_DATA
     }),
     returnToHome() {
       this.$router.push('/');
@@ -151,6 +158,18 @@ export default {
       this.revokeAuthentication();
       this.closeDropdown();
       this.closeMobileDropdown();
+    },
+    userNameInitials() {
+      if (this.userName && this.userName.length > 0) {
+        let initials = '';
+        const splitArray = this.userName.split(' ');
+        if(splitArray && splitArray.length > 0) {
+          const firstElement = splitArray[0];
+          const lastElement = splitArray.slice(-1)[0];
+          initials = `${firstElement[0].toUpperCase()}${lastElement[0].toUpperCase()}`;
+          this.userInitials = initials;
+        }
+      }
     }
   },
   mounted: function() {
@@ -160,6 +179,18 @@ export default {
         this.closeMobileDropdown();
       }
     });
+  },
+  watch: {
+    userId() {
+      console.log(this.userId);
+      if(this.userId > 0) {
+        this.getUserData(this.userId);
+      }
+    },
+    userData() {
+      this.userName = this.userData.name;
+      this.userNameInitials();
+    }
   }
 };
 </script>

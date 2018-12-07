@@ -21,7 +21,6 @@ def get_users(limit: int = None, offset: int = None) -> str:
     return get_all_or_404(User, limit, offset)
 
 
-@admin_only
 def get_user(user_id: int) -> str:
     """
     Returns a user by id.
