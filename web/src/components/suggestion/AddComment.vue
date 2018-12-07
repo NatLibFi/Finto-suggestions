@@ -29,8 +29,8 @@ import { mapEventActions } from '../../store/modules/event/eventModule.js';
 import { eventActions } from '../../store/modules/event/eventConsts.js';
 import { eventTypes } from '../../utils/eventMappings.js';
 
-import { mapUserGetters, mapUserActions } from '../../store/modules/user/userModule.js';
-import { userGetters, userActions } from '../../store/modules/user/userConsts.js';
+import { mapUserGetters } from '../../store/modules/user/userModule.js';
+import { userGetters } from '../../store/modules/user/userConsts.js';
 
 export default {
   props: {

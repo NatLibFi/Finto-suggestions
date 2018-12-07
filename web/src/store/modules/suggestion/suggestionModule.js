@@ -1,9 +1,5 @@
 import Vue from 'vue';
-import {
-  mapActions,
-  mapGetters,
-  mapMutations
-} from 'vuex';
+import { mapActions, mapGetters, mapMutations } from 'vuex';
 import api from '../../../api';
 import {
   namespace,
