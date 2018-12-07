@@ -160,29 +160,18 @@ def github_post() -> str:
 
     code = connexion.request.json.get('code')
     state = connexion.request.json.get('state')
-    
+
     github_access_token = ''
     access_token = ''
 
     user_data = handle_github_request(code, state)
-    
-    print(user_data)
+
     if user_data is not None and len(user_data[0]) > 0 and len(user_data[1]) > 0:
 
         name = user_data[0]
         email = user_data[1]
 
-        print(name, email)
-
-        user = None
-        print(db.session.query(User).all())
-
-        try:
-            user = User.query.filter_by(email=email).first()
-        except Exception as ex:
-            print(ex)
-
-        print(user)
+        user = User.query.filter_by(email=email).first()
 
         if user is None:
           user = User(name=name, email=email, password=None, role=UserRoles.NORMAL)
@@ -194,8 +183,6 @@ def github_post() -> str:
               print(ex)
               db.session.rollback()
 
-        print(user)
-
         existing_ext_token = AccessToken.query.filter_by(user_id=user.id).first()
 
         if existing_ext_token is not None:
@@ -203,7 +190,6 @@ def github_post() -> str:
 
         ext_token = AccessToken(user_id=user.id, provider='github', code=code, access_token=github_access_token)
 
-        print(ext_token)
 
         try:
             db.session.add(ext_token)
@@ -216,8 +202,6 @@ def github_post() -> str:
         serialized_user = super(User, user).as_dict()
         access_token = create_access_token(identity=serialized_user)
         refresh_token = create_refresh_token(identity=serialized_user)
-
-        print(access_token, refresh_token)
 
         token = AccessToken(user_id=user.id, provider='local', access_token=access_token, refresh_token=refresh_token)
 

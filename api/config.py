@@ -33,7 +33,6 @@ class TestingConfig(BaseConfig):
     # testdb db will be created upon test initialization
     db_container_name = 'db'
     SQLALCHEMY_DATABASE_URI = f'postgresql+psycopg2://{user}:{pw}@{db_container_name}:5432/{db}'
-    # SQLALCHEMY_DATABASE_URI = f'postgresql://{user}:{pw}@{host}:5432/{db}'
     DEBUG = True
 
 class ProductionConfig(BaseConfig):
