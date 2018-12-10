@@ -184,7 +184,10 @@ class Suggestion(db.Model, SerializableMixin):
     events = db.relationship('Event', backref='suggestion')
     reactions = db.relationship('Reaction', backref='suggestion')
 
-    tags = db.relationship('Tag', secondary='suggestion_tags_association', backref=db.backref('suggestions'))
+    tags = db.relationship('Tag',
+                           secondary='suggestion_tags_association',
+                           backref=db.backref('suggestions'),
+                           cascade_backrefs=False)
 
     meeting_id = db.Column(db.Integer, db.ForeignKey('meetings.id'))
 
