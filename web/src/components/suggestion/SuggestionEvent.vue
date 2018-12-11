@@ -7,7 +7,7 @@
       <div class="event-user-initials"></div>
       <div class="event-info">
         <p class="event-user">
-          <span class="user-name">{{ userName }} </span>
+          <span class="user-name">{{ userData ? userData.name : '' }} </span>
           <span v-if="type == 'ACTION'">{{ action }}</span>
         </p>
         <p class="date-sent">{{ buildLabel() }}</p>
@@ -25,6 +25,9 @@
 <script>
 import { dateDiffLabel } from '../../utils/dateTimeStampHelper.js';
 
+import { mapUserGetters, mapUserActions } from '../../store/modules/user/userModule.js';
+import { userGetters, userActions } from '../../store/modules/user/userConsts.js';
+
 export default {
   props: {
     event: {
@@ -37,11 +40,23 @@ export default {
     }
   },
   data: () => ({
-    userInitials: 'MP',
-    userName: 'Miki Pernu',
+    // userName: 'Miki Pernu',
+    userName: '',
     action: 'vaihtoi tyypiksi '
   }),
+  created() {
+    this.getUserData(event.user_id);
+    console.log(this.event);
+  },
+  computed: {
+    ...mapUserGetters({
+      userData: userGetters.GET_USER_DATA
+    })
+  },
   methods: {
+    ...mapUserActions({
+      getUserData: userActions.GET_USER_DATA,
+    }),
     buildLabel() {
       return dateDiffLabel(this.event.created);
     }
