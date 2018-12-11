@@ -198,10 +198,12 @@ export default {
       if (this.meetings && this.meetings.length > 0) {
         this.meetings.forEach(meeting => {
           //TODO: format date better with date-fns
-          meetings.push({
-            label: `${meeting.meeting_date.split('T')[0]}`,
-            value: meeting.id
-          });
+          if (meeting.meeting_date) {
+            meetings.push({
+              label: `${meeting.meeting_date.split('T')[0]}`,
+              value: meeting.id
+            });
+          }
         });
       }
 
