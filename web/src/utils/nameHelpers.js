@@ -4,7 +4,7 @@ export const userNameInitials = userName => {
     const splitArray = userName.split(' ');
     if (splitArray && splitArray.length > 0) {
       const firstElement = splitArray[0];
-      const lastElement = splitArray.slice(-1)[0];
+      const lastElement = splitArray[1];
       initials = `${firstElement[0].toUpperCase()}${lastElement[0].toUpperCase()}`;
       return initials;
     }
