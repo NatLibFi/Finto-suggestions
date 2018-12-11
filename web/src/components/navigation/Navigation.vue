@@ -119,7 +119,7 @@ export default {
     ...mapUserGetters({
       isAuthenticated: userGetters.GET_AUTHENTICATE,
       userId: userGetters.GET_USER_ID,
-      userData: userGetters.GET_USERNAME
+      userData: userGetters.GET_USER_DATA
     })
   },
   methods: {
