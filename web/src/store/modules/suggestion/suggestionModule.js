@@ -53,23 +53,33 @@ export default {
   actions: {
     async [suggestionActions.GET_SUGGESTIONS]({ commit }) {
       const result = await api.suggestion.getSuggestions();
-      commit(suggestionMutations.SET_SUGGESTIONS, result.data);
+      if (result && result.code == 200) {
+        commit(suggestionMutations.SET_SUGGESTIONS, result.data);
+      }
     },
     async [suggestionActions.GET_OPEN_SUGGESTIONS]({ commit }) {
       const result = await api.suggestion.getOpenSuggestions();
-      commit(suggestionMutations.SET_OPEN_SUGGESTIONS_COUNT, result.items);
+      if (result && result.code == 200) {
+        commit(suggestionMutations.SET_OPEN_SUGGESTIONS_COUNT, result.items);
+      }
     },
     async [suggestionActions.GET_RESOLVED_SUGGESTIONS]({ commit }) {
       const result = await api.suggestion.getResolvedSuggestions();
-      commit(suggestionMutations.SET_RESOLVED_SUGGESTIONS_COUNT, result.items);
+      if (result && result.code == 200) {
+        commit(suggestionMutations.SET_RESOLVED_SUGGESTIONS_COUNT, result.items);
+      }
     },
     async [suggestionActions.GET_SORTED_SUGGESTIONS]({ commit }, sortValue) {
       const result = await api.suggestion.getSortedSuggestions(sortValue);
-      commit(suggestionMutations.SET_SUGGESTIONS, result.data);
+      if (result && result.code == 200) {
+        commit(suggestionMutations.SET_SUGGESTIONS, result.data);
+      }
     },
     async [suggestionActions.GET_SUGGESTION_BY_ID]({ commit }, suggestionId) {
       const result = await api.suggestion.getSuggestionById(suggestionId);
-      commit(suggestionMutations.SET_SUGGESTIONS, [result.data]);
+      if (result && result.code == 200) {
+        commit(suggestionMutations.SET_SUGGESTIONS, [result.data]);
+      }
     }
   }
 };

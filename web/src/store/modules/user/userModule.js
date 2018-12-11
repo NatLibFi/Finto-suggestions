@@ -30,13 +30,13 @@ const vueAuth = VueAuthenticate.factory(Vue.prototype.$http, {
   providers: {
     github: {
       clientId: `${process.env.VUE_APP_GITHUB_CLIENT_ID}`,
-      redirectUri: `http://localhost:8080/api/auth/github`,
+      redirectUri: `${process.env.VUE_APP_BASE_DOMAIN}/api/auth/github`,
       state: '0',
       optionalUrlParams: ['scope', 'state']
     },
     google: {
       clientId: '',
-      redirectUri: `${process.env.VUE_APP_APPURL}/api/auth/google`
+      redirectUri: `${process.env.VUE_APP_BASE_DOMAIN}/api/auth/google`
     }
   }
 });
@@ -87,7 +87,7 @@ export default {
         : commit(userMutations.SET_AUTHENTICATE, false);
       //TODO: needs to validate token from backend and also check that token has correct userid,
       // if not log out the user and revoke all tokens
-      if (this.state[storeStateNames.USER_ID] === 0) {
+      if (this.state.user[storeStateNames.USER_ID] === 0) {
         const storageUserId = sessionStorage.getItem(storeKeyNames.USER_ID);
         if (storageUserId && storageUserId > 0) {
           commit(userMutations.SET_USER_ID, storageUserId);
@@ -98,7 +98,7 @@ export default {
       // eslint-disable-next-line no-undef
       const token = $cookies.get(storeKeyNames.ACCESS_TOKEN);
       const userId =
-        this.state[storeStateNames.USER_ID] || sessionStorage.getItem(storeKeyNames.USER_ID);
+        this.state.user[storeStateNames.USER_ID] || sessionStorage.getItem(storeKeyNames.USER_ID);
       if (token && userId > 0) {
         const payload = { user_id: userId };
 

@@ -39,6 +39,7 @@ from ..models import db, User, UserRoles, AccessToken
 from ..authentication import blacklist_token
 
 import requests
+import os
 
 def login() -> str:
     """
@@ -129,10 +130,11 @@ def revokeAuthentication() -> str:
 
     :returns: A JWT access token wrapped in a response object or an error message
     """
+
     user_id = connexion.request.json.get('user_id', None)
 
     try:
-        if user_id is not None and len(user_id):
+        if user_id is not None and user_id > 0:
             tokens = AccessToken.query.filter_by(user_id=user_id).all()
             if tokens is not None and len(tokens) > 0:
                 for token in tokens:
@@ -146,65 +148,49 @@ def revokeAuthentication() -> str:
     except Exception as ex:
         print(ex)
         db.session.rollback()
-        
+
         return create_response({}, 200, 'There was errors while trying to blacklist and remove tokens ')
-        
 
 
-def github() -> str:
+def post_github() -> str:
     """
     Callback method for Github oAuth2 authorization
+
+    :returns: A JWT access token wrapped in a response object or an error message
     """
 
     code = connexion.request.json.get('code')
     state = connexion.request.json.get('state')
+
     github_access_token = ''
+    access_token = ''
 
-    if state is '0':
-        redirect_uri = 'http://localhost:8080/api/auth/github'
-        payload = {
-            'client_id': 'b7aca67b03ae97580e12',
-            'client_secret': 'f362c6f9ab737f68fdbb25ffbfe89de98a8fa75d',
-            'code': code,
-            'redirect_uri': redirect_uri
-        }
+    user_data = handle_github_request(code, state)
 
-        token_response = requests.post('https://github.com/login/oauth/access_token', data=payload)
+    if user_data is not None and len(user_data[0]) > 0 and len(user_data[1]) > 0:
 
-        if len(token_response.text) > 0:
-            github_access_token = token_response.text.split('&')[0].split('=')[1]
-
-    if github_access_token is not None and len(github_access_token) > 0:
-
-        name = ''
-        email = ''
-
-        user_data_response = requests.get('https://api.github.com/user?access_token=' + github_access_token)
-
-        if user_data_response.ok is True:
-            user_data = user_data_response.json()
-            name = user_data['name']
-
-        user_email_data_response = requests.get('https://api.github.com/user/emails?access_token=' + github_access_token)
-
-        if user_email_data_response.ok is True:
-            user_email_data = user_email_data_response.json()
-            for data in user_email_data:
-                if data['primary'] is True:
-                    email = data['email']
+        name = user_data[0]
+        email = user_data[1]
 
         user = User.query.filter_by(email=email).first()
 
         if user is None:
-            user = User(name=name, email=email, password=None, role=UserRoles.NORMAL)
-            db.session.add(user)
-            db.session.commit()
+          user = User(name=name, email=email, password=None, role=UserRoles.NORMAL)
+
+          try:
+              db.session.add(user)
+              db.session.commit()
+          except Exception as ex:
+              print(ex)
+              db.session.rollback()
 
         existing_ext_token = AccessToken.query.filter_by(user_id=user.id).first()
+
         if existing_ext_token is not None:
             db.session.delete(existing_ext_token)
 
         ext_token = AccessToken(user_id=user.id, provider='github', code=code, access_token=github_access_token)
+
 
         try:
             db.session.add(ext_token)
@@ -228,3 +214,54 @@ def github() -> str:
             db.session.rollback()
 
     return {'access_token' : access_token, 'user_id': user.id}, 200
+
+def handle_github_request(code, state) -> (str, str):
+    """
+    Handles github request
+    :returns tuple(name, email) values might be empty if request not success
+
+    """
+
+
+    name = ''
+    email = ''
+
+    if code is not None and state is not None:
+        if state is '0':
+
+            github_client_id = os.environ.get('GITHUB_CLIENT_ID')
+            github_client_secret = os.environ.get('GITHUB_CLIENT_SECRET')
+            redirect_uri = os.environ.get('GITHUB_REDIRECT_URI')
+
+            payload = {
+              'client_id': github_client_id,
+              'client_secret': github_client_secret,
+              'code': code,
+              'redirect_uri': redirect_uri
+              }
+
+            token_response = requests.post('https://github.com/login/oauth/access_token', data=payload)
+
+            if len(token_response.text) > 0:
+                github_access_token = token_response.text.split('&')[0].split('=')[1]
+
+            if github_access_token is not None and len(github_access_token) > 0:
+
+              user_data_response = requests.get('https://api.github.com/user?access_token=' + github_access_token)
+
+              if user_data_response.ok is True:
+                user_data = user_data_response.json()
+                name = user_data['name']
+
+                user_email_data_response = requests.get('https://api.github.com/user/emails?access_token=' + github_access_token)
+
+                if user_email_data_response.ok is True:
+                    user_email_data = user_email_data_response.json()
+                    for data in user_email_data:
+                        if data['primary'] is True:
+                            email = data['email']
+    return (name, email)
+
+
+def get_github() -> str:
+  return 200

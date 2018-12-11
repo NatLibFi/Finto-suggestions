@@ -98,7 +98,7 @@ export default {
       const start = this.getPaginationStaringIndex(pageNumber);
       const end = this.getPaginationEndingIndex(pageNumber);
       const paginatedItems = items ? items : this.items;
-      this.setPaginatedSuggestions(paginatedItems.slice(start, end));
+      this.setPaginatedSuggestions(paginatedItems && paginatedItems.length > 0 ? paginatedItems.slice(start, end) : []);
     },
     calculatePageCountForPagination() {
       return Math.ceil(this.items.length / this.paginationMaxCount);

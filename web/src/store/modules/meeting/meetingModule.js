@@ -28,7 +28,9 @@ export default {
   actions: {
     async [meetingActions.GET_MEETINGS]({ commit }) {
       const result = await api.meeting.getMeetings();
-      commit(meetingMutations.SET_MEETINGS, result.data);
+      if (result && result.code === 200) {
+        commit(meetingMutations.SET_MEETINGS, result.data);
+      }
     }
   }
 };

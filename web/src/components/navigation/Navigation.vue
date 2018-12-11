@@ -136,7 +136,7 @@ export default {
     // TODO: connect these with the authentication service, remove console.logs
     login(service) {
       if (service !== 'local') {
-        this.authenticate({ providerName: service });
+        this.authenticate({ providerName: service});
       }
       this.showLoginDialog = false;
     },

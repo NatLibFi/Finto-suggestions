@@ -27,12 +27,16 @@ export default {
   },
   actions: {
     async [eventActions.ADD_NEW_EVENT]({ dispatch }, params) {
-      await api.event.addNewComment(params.event);
-      dispatch(eventActions.GET_EVENTS_BY_SUGGESTION_ID, params.suggestionId);
+      if (params.event) {
+        await api.event.addNewComment(params.event);
+        dispatch(eventActions.GET_EVENTS_BY_SUGGESTION_ID, params.suggestionId);
+      }
     },
     async [eventActions.GET_EVENTS_BY_SUGGESTION_ID]({ commit }, suggestionId) {
       const result = await api.event.getEventsBySuggestionId(suggestionId);
-      commit(eventMutations.SET_EVENTS, result.data);
+      if (result && result.code === 200) {
+        commit(eventMutations.SET_EVENTS, result.data);
+      }
     }
   }
 };

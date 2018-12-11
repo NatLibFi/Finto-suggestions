@@ -58,7 +58,7 @@
     </div>
 
     <div v-if="meetingId" class="meeting-actions">
-      <meeting-actions 
+      <meeting-actions
         :userId="userId"
         :suggestionId="suggestionId"
         :meetingId="meetingId"/>
@@ -72,8 +72,8 @@
       </div>
     </div>
 
-    <div class="comment-container">
-      <add-comment :userId="userId" :suggestionId="suggestionId" />
+    <div>
+      <add-comment :suggestionId="suggestionId" />
     </div>
   </div>
 </template>

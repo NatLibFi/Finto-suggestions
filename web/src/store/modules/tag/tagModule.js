@@ -22,7 +22,9 @@ export default {
   actions: {
     async [tagActions.GET_TAGS]({ commit }) {
       const result = await api.tag.getTags();
-      commit(tagMutations.SET_TAGS, result.data);
+      if (result && result.code == 200) {
+        commit(tagMutations.SET_TAGS, result.data);
+      }
     }
   }
 };

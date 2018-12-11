@@ -22,8 +22,8 @@ def upgrade():
     sa.Column('user_id', sa.Integer(), nullable=True),
     sa.Column('provider', sa.String(length=36), nullable=False),
     sa.Column('code', sa.String(length=50), nullable=True),
-    sa.Column('access_token', sa.String(length=50), nullable=False),
-    sa.Column('refresh_token', sa.String(length=50), nullable=True),
+    sa.Column('access_token', sa.String(length=400), nullable=False),
+    sa.Column('refresh_token', sa.String(length=400), nullable=True),
     sa.ForeignKeyConstraint(['user_id'], ['users.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
