@@ -42,7 +42,7 @@ import requests
 
 def login() -> str:
     """
-    Logs the user in returning a valid access token (JWT).
+    Logs the user in returning a valid access token (JWT) and user_id.
 
     POST request requires a body with user email and password.
     This should be sent over https!
@@ -67,7 +67,7 @@ def login() -> str:
             access_token = create_access_token(identity=serialized_user)
             refresh_token = create_refresh_token(identity=serialized_user)
 
-            return create_response({}, 200, access_token=access_token, refresh_token=refresh_token)
+            return {'access_token' : access_token, 'refresh_token': refresh_token, 'user_id': user.id, 'code': 200}, 200
 
     return create_response(None, 401, "Incorrect email or password.")
 
@@ -137,18 +137,18 @@ def revokeAuthentication() -> str:
             if tokens is not None and len(tokens) > 0:
                 for token in tokens:
                     if token.provider is not 'local':
-                        token_to_be_deleted = AccessToken.query.filter_by(id=token.id).delete()
+                        AccessToken.query.filter_by(id=token.id).delete()
                     else:
                         blacklist_token(token.access_token)
                         blacklist_token(token.refresh_token)
-                        token_to_be_deleted = AccessToken.query.filter_by(id=token.id).delete()
+                        AccessToken.query.filter_by(id=token.id).delete()
         return create_response({}, 200, 'Successfully revoked user authentication tokens.')
     except Exception as ex:
         print(ex)
         db.session.rollback()
-        
+
         return create_response({}, 200, 'There was errors while trying to blacklist and remove tokens ')
-        
+
 
 
 def github() -> str:

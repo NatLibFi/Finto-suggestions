@@ -14,7 +14,7 @@ paths:
         "200":
           description:  JWT Token
           schema:
-            $ref: '#/definitions/Token'
+            $ref: '#/definitions/LoginResponse'
 
   /refresh:
     post:

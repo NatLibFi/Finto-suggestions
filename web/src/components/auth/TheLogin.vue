@@ -18,14 +18,14 @@
     </h4>
     <div v-if="showOwnCredentialLogin" class="login-inputs">
       <div class="login-input">
-        <span>Käyttäjätunnus</span>
-        <input type="text">
+        <span>Sähköposti</span>
+        <input type="text" v-model="email">
       </div>
       <div class="login-input">
         <span>Salasana</span>
-        <input type="password">
+        <input type="password" v-model="password">
       </div>
-      <div @click="login()" class="login-submit">
+      <div @click="login('local')" class="login-submit">
         <span>Kirjaudu sisään</span>
       </div>
       <div class="login-forgot-password">
@@ -39,11 +39,19 @@
 <script>
 export default {
   data: () => ({
-    showOwnCredentialLogin: false
+    showOwnCredentialLogin: false,
+    email: '',
+    password: ''
   }),
   methods: {
     login(service) {
-      this.$emit('login', service);
+      const loginData = this.gatherLoginData();
+      const data = { service, loginData };
+
+      this.$emit('login', data);
+    },
+    gatherLoginData() {
+      return { email: this.email, password: this.password };
     }
   }
 };

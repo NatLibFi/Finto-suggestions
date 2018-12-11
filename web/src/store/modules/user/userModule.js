@@ -54,7 +54,7 @@ export default {
   getters: {
     [userGetters.GET_AUTHENTICATE]: state => state[storeStateNames.IS_AUTHENTICATED],
     [userGetters.GET_USER_ID]: state => state[storeStateNames.USER_ID],
-    [userGetters.GET_USER_NAME]: state => state[storeStateNames.USERNAME]
+    [userGetters.GET_USERNAME]: state => state[storeStateNames.USERNAME]
   },
   mutations: {
     [userMutations.SET_AUTHENTICATE](state, authenticate) {
@@ -66,8 +66,8 @@ export default {
     [userMutations.SET_STORAGE_USER_ID](user) {
       sessionStorage.setItem(storeKeyNames.USER_ID, user.userId);
     },
-    [userMutations.SET_USER_NAME](state, name) {
-      Vue.set(state, storeStateNames.USERNAME, name);
+    [userMutations.SET_USERNAME](state, user) {
+      Vue.set(state, storeStateNames.USERNAME, user);
     }
   },
   actions: {
@@ -121,8 +121,24 @@ export default {
     },
     async [userActions.GET_USER_DATA]({ commit }, userId) {
       const response = await api.user.getUserData(userId);
-      if (response) {
-        commit(userMutations.SET_USER_NAME, response.data);
+      if (response && response.code === 200) {
+        commit(userMutations.SET_USERNAME, response.data);
+      }
+    },
+    async [userActions.AUTHENTICATE_LOCAL_USER]({ commit }, authenticateData) {
+      const response = await api.user.authenticateLocalUser(authenticateData);
+
+      if (response && response.code === 200) {
+        commit(userMutations.SET_AUTHENTICATE, true);
+        commit(userMutations.SET_USER_ID, response.user_id);
+        commit(userMutations.SET_STORAGE_USER_ID, response.user_id);
+
+        // eslint-disable-next-line no-undef
+        $cookies.set(storeKeyNames.ACCESS_TOKEN, response.access_token);
+        // eslint-disable-next-line no-undef
+        $cookies.set(storeKeyNames.REFRESH_TOKEN, response.refresh_token);
+      } else {
+        commit(userMutations.SET_AUTHENTICATE, false);
       }
     }
   }

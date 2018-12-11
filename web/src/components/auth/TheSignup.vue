@@ -19,14 +19,18 @@
     </h4>
     <div v-if="showOwnCredentialSignup" class="login-inputs">
       <div class="login-input">
-        <span>Käyttäjätunnus</span>
-        <input type="text">
+        <span>Nimi</span>
+        <input type="text" v-model="name">
+      </div>
+      <div class="login-input">
+        <span>Sähköposti</span>
+        <input type="text" v-model="email">
       </div>
       <div class="login-input">
         <span>Salasana</span>
-        <input type="password">
+        <input type="password" v-model="password">
       </div>
-      <div @click="signup()" class="login-submit">
+      <div @click="signup('local')" class="login-submit">
         <span>Luo tili</span>
       </div>
     </div>
@@ -37,11 +41,21 @@
 <script>
 export default {
   data: () => ({
-    showOwnCredentialSignup: false
+    showOwnCredentialSignup: false,
+    name: '',
+    email: '',
+    password: ''
   }),
   methods: {
+    gatherLocalSignupData() {
+      return { name: this.name, email: this.email, password: this.password };
+    },
     signup(service) {
-      this.$emit('signup', service);
+      const userdata = service === 'local' ? this.gatherLocalSignupData() : null;
+
+      let data = { service, userdata };
+
+      this.$emit('signup', data);
     }
   }
 };
