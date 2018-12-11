@@ -40,8 +40,6 @@ export default {
     }
   },
   data: () => ({
-    // userName: 'Miki Pernu',
-    userName: '',
     action: 'vaihtoi tyypiksi '
   }),
   created() {
