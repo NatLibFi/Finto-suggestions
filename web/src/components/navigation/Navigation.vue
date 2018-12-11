@@ -86,6 +86,7 @@ import { mapUserGetters, mapUserActions } from '../../store/modules/user/userMod
 import { userGetters, userActions } from '../../store/modules/user/userConsts.js';
 
 import api from '../../api/index.js';
+import { userNameInitials } from '../../utils/nameHelpers.js';
 
 export default {
   components: {
@@ -168,18 +169,6 @@ export default {
       this.closeDropdown();
       this.closeMobileDropdown();
     },
-    userNameInitials() {
-      if (this.userName && this.userName.length > 0) {
-        let initials = '';
-        const splitArray = this.userName.split(' ');
-        if(splitArray && splitArray.length > 0) {
-          const firstElement = splitArray[0];
-          const lastElement = splitArray.slice(-1)[0];
-          initials = `${firstElement[0].toUpperCase()}${lastElement[0].toUpperCase()}`;
-          this.userInitials = initials;
-        }
-      }
-    },
     async oAuth2Authenticate(provider) {
       await this.authenticateGithubUser({ providerName: provider });
     },
@@ -203,9 +192,9 @@ export default {
     },
     userData() {
       this.userName = this.userData.name;
-      this.userNameInitials();
+      userNameInitials();
     }
-    }
+  }
 };
 
 </script>

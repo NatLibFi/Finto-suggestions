@@ -22,9 +22,7 @@ export const userMutations = {
   SET_AUTHENTICATE: 'setAuthenticate',
   SET_USER_ID: 'setUserId',
   SET_STORAGE_USER_ID: 'setStorageUserId',
-  SET_USERNAME: 'setUserName',
-  SET_ACCESS_TOKEN: 'setAccessToken',
-  SET_REFRESH_TOKEN: 'setRefreshToken'
+  SET_USERNAME: 'setUserName'
 };
 
 export const userActions = {
