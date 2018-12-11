@@ -15,8 +15,7 @@ def import_meeting(meeting):
     new_meeting = Meeting()
     new_meeting.name = meeting
     meetings_cache.append(new_meeting)
-    db.session.add(new_meeting)
-    db.session.commit()
+    insert(new_meeting)
     return new_meeting
 
 
@@ -34,8 +33,7 @@ def import_tags(tags):
         if existing_tag is None:
             new_tag = Tag()
             new_tag.label = tag
-            db.session.add(new_tag)
-            db.session.commit()
+            insert(new_tag)
             result_tags.append(new_tag)
             tags_cache.append(new_tag)
         else:
@@ -49,8 +47,7 @@ def import_suggestion_tags_association(suggestion, tags):
         suggestion_tag = SuggestionTag()
         suggestion_tag.suggestion_id = suggestion.id
         suggestion_tag.tag_label = tag.label
-        db.session.add(suggestion_tag)
-        db.session.commit()
+        insert(suggestion_tag)
 
 
 def import_suggestion(suggestion):
@@ -66,10 +63,18 @@ def import_suggestion(suggestion):
     new_suggestion.groups = suggestion["groups"]
     # new_suggestion.tags = import_tags(suggestion["tags"])
     new_suggestion.meeting_id = import_meeting(suggestion["meeting"]["name"]).id
-    db.session.add(new_suggestion)
-    db.session.commit()
+    insert(new_suggestion)
     import_suggestion_tags_association(new_suggestion, tags)
     # not implemented yet new_suggestion.needed_for = suggestion["needed_for"]
+
+
+def insert(model):
+    try:
+        db.session.add(model)
+        db.session.commit()
+    except Exception as exception:
+        db.session.rollback()
+        raise exception
 
 
 if __name__ == '__main__':
