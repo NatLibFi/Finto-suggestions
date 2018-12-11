@@ -1,7 +1,6 @@
 FROM python:3-alpine
 
 ENV PYTHONUNBUFFERED 1
-ENV APP_CONFIG_OBJECT=config.ProductionConfig
 
 COPY ./api /app
 WORKDIR /app

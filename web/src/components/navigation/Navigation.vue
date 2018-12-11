@@ -144,7 +144,6 @@ export default {
       this.showSignupDialog = false;
       this.showSignupConfirmation = false;
     },
-    // TODO: connect these with the authentication service, remove console.logs
     async login(data) {
       if(data) {
         if (data.service !== '' && data.service !== 'local') {
