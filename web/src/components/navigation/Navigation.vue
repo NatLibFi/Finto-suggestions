@@ -56,12 +56,12 @@
 
     <div v-if="showLoginDialog">
       <centered-dialog @close="closeDialog">
-        <the-login @login="login($event)"/>
+        <the-login @login="login"/>
       </centered-dialog>
     </div>
     <div v-if="showSignupDialog">
       <centered-dialog @close="closeDialog">
-        <the-signup @signup="signup($event)"/>
+        <the-signup @signup="signup"/>
       </centered-dialog>
     </div>
     <div v-if="showSignupConfirmation">
@@ -85,6 +85,9 @@ import { directive as onClickaway } from 'vue-clickaway';
 import { mapUserGetters, mapUserActions } from '../../store/modules/user/userModule.js';
 import { userGetters, userActions } from '../../store/modules/user/userConsts.js';
 
+import api from '../../api/index.js';
+import { userNameInitials } from '../../utils/nameHelpers.js';
+
 export default {
   components: {
     CenteredDialog,
@@ -99,8 +102,10 @@ export default {
     onClickaway: onClickaway
   },
   data: () => ({
-    userInitials: 'MP',
-    userName: 'Miki Pernu',
+    userInitials: '',
+    userName: '',
+    loginProvider: '',
+    registerData: null,
     showDropdown: false,
     showMobileDropdown: false,
     showLoginDialog: false,
@@ -111,13 +116,19 @@ export default {
     this.validateAuthentication();
   },
   computed: {
-    ...mapUserGetters({ isAuthenticated: userGetters.GET_AUTHENTICATE })
+    ...mapUserGetters({
+      isAuthenticated: userGetters.GET_AUTHENTICATE,
+      userId: userGetters.GET_USER_ID,
+      userData: userGetters.GET_USERNAME
+    })
   },
   methods: {
     ...mapUserActions({
-      authenticate: userActions.AUTHENTICATE,
+      authenticateGithubUser: userActions.AUTHENTICATE,
       validateAuthentication: userActions.VALIDATE_AUTHENTICATION,
-      revokeAuthentication: userActions.REVOKE_AUTHENTICATION
+      revokeAuthentication: userActions.REVOKE_AUTHENTICATION,
+      getUserData: userActions.GET_USER_DATA,
+      authenticateLocalUser: userActions.AUTHENTICATE_LOCAL_USER
     }),
     returnToHome() {
       this.$router.push('/');
@@ -133,16 +144,21 @@ export default {
       this.showSignupDialog = false;
       this.showSignupConfirmation = false;
     },
-    // TODO: connect these with the authentication service, remove console.logs
-    login(service) {
-      if (service !== 'local') {
-        this.authenticate({ providerName: service});
+    async login(data) {
+      if(data) {
+        if (data.service !== '' && data.service !== 'local') {
+          await this.oAuth2Authenticate(data.service);
+        } else {
+          await this.authenticateLocalUser(data.loginData);
+        }
       }
       this.showLoginDialog = false;
     },
-    signup(service) {
-      if (service !== 'local') {
-        this.authenticate({ providerName: service });
+    async signup(data) {
+      if (data && data.service !== 'local') {
+        const x = await this.oAuth2Authenticate(data.service);
+      } else {
+        const y = await this.registerLocalUser(data.userdata);
       }
       this.showSignupDialog = false;
       this.showSignupConfirmation = true;
@@ -151,6 +167,12 @@ export default {
       this.revokeAuthentication();
       this.closeDropdown();
       this.closeMobileDropdown();
+    },
+    async oAuth2Authenticate(provider) {
+      await this.authenticateGithubUser({ providerName: provider });
+    },
+    async registerLocalUser(userdata) {
+      await api.user.registerLocalUser(userdata);
     }
   },
   mounted: function() {
@@ -160,8 +182,20 @@ export default {
         this.closeMobileDropdown();
       }
     });
+  },
+  watch: {
+    userId() {
+      if(this.userId > 0) {
+        this.getUserData(this.userId);
+      }
+    },
+    userData() {
+      this.userName = this.userData.name;
+      userNameInitials();
+    }
   }
 };
+
 </script>
 
 <style scoped>
