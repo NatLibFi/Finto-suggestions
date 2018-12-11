@@ -3,9 +3,12 @@ import os
 
 from api.models import Suggestion, Tag, Meeting, SuggestionTag, db
 from app import create_app
+from datetime import datetime
 
 meetings_cache = []
 tags_cache = []
+suggestions_cache = []
+suggestion_tags_associations_cache = []
 
 
 def import_meeting(meeting):
@@ -14,6 +17,7 @@ def import_meeting(meeting):
             return existing_meeting
     new_meeting = Meeting()
     new_meeting.name = meeting
+    new_meeting.meeting_date = datetime.now()
     meetings_cache.append(new_meeting)
     insert(new_meeting)
     return new_meeting
@@ -47,6 +51,7 @@ def import_suggestion_tags_association(suggestion, tags):
         suggestion_tag = SuggestionTag()
         suggestion_tag.suggestion_id = suggestion.id
         suggestion_tag.tag_label = tag.label
+        suggestion_tags_associations_cache.append(suggestion_tag)
         insert(suggestion_tag)
 
 
@@ -63,6 +68,7 @@ def import_suggestion(suggestion):
     new_suggestion.groups = suggestion["groups"]
     # new_suggestion.tags = import_tags(suggestion["tags"])
     new_suggestion.meeting_id = import_meeting(suggestion["meeting"]["name"]).id
+    suggestions_cache.append(new_suggestion)
     insert(new_suggestion)
     import_suggestion_tags_association(new_suggestion, tags)
     # not implemented yet new_suggestion.needed_for = suggestion["needed_for"]
@@ -80,8 +86,14 @@ def insert(model):
 if __name__ == '__main__':
     app = create_app()
     db.app = app.app
+    print("Starting import of testdata from suggestions.json")
     with open(os.path.join(os.path.dirname(__file__), "suggestions.json")) as suggestions_file:
         raw_suggestions = json.load(suggestions_file)
         for suggestion in raw_suggestions:
             import_suggestion(suggestion)
+    print("Finished importing")
+    print("Imported %d meetings" % len(meetings_cache))
+    print("Imported %d suggestions" % len(suggestions_cache))
+    print("Imported %d tags" % len(tags_cache))
+    print("Imported %d suggestion_tags_associations" % len(suggestion_tags_associations_cache))
 
