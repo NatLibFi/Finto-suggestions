@@ -139,8 +139,8 @@ def revokeAuthentication() -> str:
             if tokens is not None and len(tokens) > 0:
                 for token in tokens:
                     if token.provider is 'local':
-                      blacklist_token(token.access_token)
-                      blacklist_token(token.refresh_token)
+                        blacklist_token(token.access_token)
+                        blacklist_token(token.refresh_token)
                     AccessToken.query.filter_by(id=token.id).delete()
 
         return create_response({}, 200, 'Successfully revoked user authentication tokens.')
