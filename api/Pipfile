@@ -13,6 +13,7 @@ spec-synthase = "*"
 passlib = "*"
 flask-jwt-extended = "*"
 flask-cors = "*"
+pgcli = "*"
 
 [dev-packages]
 pytest = "*"

@@ -399,7 +399,7 @@ definitions:
     type: object
     properties:
       user_id:
-        type: string
+        type: number
       access_token:
         type: string
 

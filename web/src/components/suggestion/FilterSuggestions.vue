@@ -6,7 +6,7 @@
         <span>Käsittelyn tila</span>
         <svg-icon icon-name="triangle"><icon-triangle /></svg-icon>
       </div>
-      <filter-drop-down 
+      <filter-drop-down
         :selectedIndex="selectedOptionIndex.STATUS"
         :isOpened="isDropDownOpened.STATUS"
         :dropDownOptions="suggestionStateStatuses"
@@ -16,14 +16,14 @@
         @refreshSelectedIndex="selectedOptionIndex.STATUS = $event"
         @closeDropDown="closeDropDown" />
     </div>
-    <div 
+    <div
       @click="isDropDownOpened.TAG = !isDropDownOpened.TAG"
       class="filter-item">
       <div :class="[isDropDownOpened.TAG ? 'selected' : '', 'drop-down-button']">
         <span>Tunniste</span>
         <svg-icon icon-name="triangle"><icon-triangle /></svg-icon>
       </div>
-      <multiple-choice-drop-down 
+      <multiple-choice-drop-down
         :selectedIndexes="selectedOptionIndex.TAGS"
         :isOpened="isDropDownOpened.TAG"
         :dropDownOptions="mapTagsToDropDown()"
@@ -38,7 +38,7 @@
         <span>Ehdotustyyppi</span>
         <svg-icon icon-name="triangle"><icon-triangle /></svg-icon>
       </div>
-      <filter-drop-down 
+      <filter-drop-down
         :selectedIndex="selectedOptionIndex.TYPE"
         :isOpened="isDropDownOpened.TYPE"
         :dropDownOptions="suggestionTypes"
@@ -56,7 +56,7 @@
         <svg-icon icon-name="triangle"><icon-triangle /></svg-icon>
       </div>
       <!-- TODO: Fix functionality of meeting selection-->
-      <filter-drop-down 
+      <filter-drop-down
         :selectedIndex="selectedOptionIndex.MEETING"
         :isOpened="isDropDownOpened.MEETING"
         :dropDownOptions="mapMeetingsToDropDown()"
@@ -194,13 +194,17 @@ export default {
     },
     mapMeetingsToDropDown() {
       let meetings = [];
-      this.meetings.forEach(meeting => {
-        //TODO: format date better with date-fns
-        meetings.push({
-          label: `${meeting.meeting_date.split('T')[0]}`,
-          value: meeting.id
+
+      if (this.meetings && this.meetings.length > 0) {
+        this.meetings.forEach(meeting => {
+          //TODO: format date better with date-fns
+          meetings.push({
+            label: `${meeting.meeting_date.split('T')[0]}`,
+            value: meeting.id
+          });
         });
-      });
+      }
+
       return meetings;
     },
     meetingChanged(selected) {
@@ -214,7 +218,8 @@ export default {
     },
     mapTagsToDropDown() {
       let tags = [];
-      if (this.tags && this.tags.length > 0) {
+
+      if (this.tags && this.tags.lenght > 0) {
         this.tags.forEach(tag => {
           tags.push({ label: tag.label, value: tag.label });
         });
