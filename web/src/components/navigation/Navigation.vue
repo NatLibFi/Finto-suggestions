@@ -191,7 +191,7 @@ export default {
     },
     userData() {
       this.userName = this.userData.name;
-      userNameInitials();
+      this.userInitials = userNameInitials(this.userName);
     }
   }
 };
