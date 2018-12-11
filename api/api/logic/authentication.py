@@ -149,7 +149,7 @@ def revokeAuthentication() -> str:
         print(ex)
         db.session.rollback()
 
-        return create_response({}, 200, 'There was errors while trying to blacklist and remove tokens ')
+    return create_response({}, 200, 'There was errors while trying to blacklist and remove tokens ')
 
 
 def post_github() -> str:
