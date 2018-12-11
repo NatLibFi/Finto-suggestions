@@ -127,7 +127,8 @@ export default {
   data () {
     return {
       // eslint-disable-next-line
-      userId: this.$cookies.get('logged_user_id')
+      userId: this.$cookies.get('logged_user_id'),
+      suggestionTypeToString
     }
   },
   computed: {
