@@ -162,6 +162,14 @@ Recording of an example migration / upgrade [here](documentation/img/migrate-and
 
 See the animation on using psql [here](documentation/img/pipenv-psql.svg).
 
+### Continous deployment and git strategy
+
+Strategy how to use version control is that **master** -branch handles the latest staging and production version while development features and task are made in
+**develop**-branch.
+
+Feature task flow is that you made first your feature branch **feature/<some_task>** and when you are ready, made pull request that are targeted to **develop**-branch. After that when develop are tested in localy, features by pull request commits are transfered to master, which are automaticly builded to images that will be used in testin enviroment. When staging are tested out, that version is pushed to tag to handle correct version that is installed to production.
+
+Our continous deployment flow works semiautomatic. It listens commits in **master**-branch, when ne commit is pushed it pulls new version and builds api and web images, pushes them to quay and after that you have to add them by hand in portainer -service to use newest images in staging or production.
 
 #### Bugs and quirks
 
