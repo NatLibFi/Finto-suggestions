@@ -3,7 +3,7 @@
   <suggestion-header
     :openSuggestionCount="openCount || 0"
     :resolvedSuggestionCount="resolvedCount || 0"
-    @sortSuggestionListBy="sortSuggestionList"
+    @sortListBy="sortSuggestionList"
     class="header" />
   <ul class="list">
     <suggestion-item

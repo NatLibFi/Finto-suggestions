@@ -15,14 +15,14 @@
       :isOpened="isDropDownOpened"
       :dropDownOptions="dropDownOptions"
       :selectedOptionsMapper="selectedOptionsMapper"
-      @sortSuggestionListBy="sortSuggestionList"
+      @sortListBy="sortSuggestionList"
       @refreshSelectedIndex="selectedSortOptionIndex = $event"
       @closeDropDown="closeDropDown"/>
   </div>
 </template>
 
 <script>
-import { suggestionSortingKeys } from '../../utils/suggestionMappings.js';
+import { sortingKeys } from '../../utils/sortingHelper.js';
 
 import SortingDropDown from '../common/SortingDropDown';
 import SvgIcon from '../icons/SvgIcon';
@@ -51,15 +51,16 @@ export default {
       { label: 'Eniten reaktiota', value: 'MOST_REACTIONS' }
     ],
     selectedOptionsMapper: {
-      NEWEST_FIRST: suggestionSortingKeys.NEWEST_FIRST,
-      OLDEST_FIRST: suggestionSortingKeys.OLDEST_FIRST,
-      MOST_COMMENTS: suggestionSortingKeys.MOST_COMMENTS,
-      LEAST_COMMENTS: suggestionSortingKeys.LEAST_COMMENTS,
-      LAST_UPDATED: suggestionSortingKeys.LAST_UPDATED,
-      MOST_REACTIONS: suggestionSortingKeys.MOST_REACTIONS
+      NEWEST_FIRST: sortingKeys.NEWEST_FIRST,
+      OLDEST_FIRST: sortingKeys.OLDEST_FIRST,
+      MOST_COMMENTS: sortingKeys.MOST_COMMENTS,
+      LEAST_COMMENTS: sortingKeys.LEAST_COMMENTS,
+      LAST_UPDATED: sortingKeys.LAST_UPDATED,
+      MOST_REACTIONS: sortingKeys.MOST_REACTIONS
     }
   }),
   methods: {
+    //TODO: move this to somewhere else, it's not good practice to emit -> emit
     sortSuggestionList: function(selectedSorting) {
       this.$emit('sortSuggestionListBy', selectedSorting);
     },

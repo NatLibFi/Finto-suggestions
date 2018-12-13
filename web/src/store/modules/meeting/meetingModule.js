@@ -12,6 +12,8 @@ import isAfter from 'date-fns/is_after';
 import isEqual from 'date-fns/is_equal';
 import parse from 'date-fns/parse';
 
+import { comparerAsc } from '../../../utils/sortingHelper';
+
 export const mapMeetingGetters = getters => mapGetters(namespace, getters);
 export const mapMeetingActions = actions => mapActions(namespace, actions);
 
@@ -30,6 +32,7 @@ export default {
   },
   mutations: {
     [meetingMutations.SET_MEETINGS](state, meetings) {
+      meetings.sort(comparerAsc('meeting_date'));
       Vue.set(state, storeStateNames.ITEMS, meetings);
     },
     [meetingMutations.SET_FUTURE_MEETINGS_COUNT](state, count) {
@@ -54,7 +57,6 @@ export default {
         const today = Date();
         result.data.forEach(meeting => {
           if (meeting.meeting_date) {
-            console.log(today, parse(meeting.meeting_date));
             if (
               isAfter(parse(meeting.meeting_date), today) ||
               isEqual(parse(meeting.meeting_date), today)
