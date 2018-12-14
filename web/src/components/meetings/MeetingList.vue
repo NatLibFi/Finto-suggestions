@@ -70,22 +70,12 @@ export default {
       let meetings = this.meetings;
       if(sort === sortingKeys.NEWEST_FIRST) {
         meetings.sort(comparerDesc('meeting_date'));
-        console.log(meetings[0].meeting_date);
       }
-
       if(sort === sortingKeys.OLDEST_FIRST) {
-        // meetings.sort(this.meetingsSortMeetingDateComparerAsc());
         meetings.sort(comparerAsc('meeting_date'));
-        console.log(meetings[0].meeting_date);
       }
       this.paginated_items = meetings;
-    },
-    // meetingsSortMeetingDateComparerDesc() {
-    //   return (obj1, obj2) => parse(obj2.meeting_date) - parse(obj1.meeting_date);
-    // },
-    // meetingsSortMeetingDateComparerAsc() {
-    //   return (obj1, obj2) => parse(obj1.meeting_date) - parse(obj2.meeting_date);
-    // }
+    }
   },
   watch: {
     meetings() {
