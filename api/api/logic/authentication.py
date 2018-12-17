@@ -266,7 +266,7 @@ def handle_github_request(code, state) -> (str, str):
     if name is not None and email is not None:
         return (name, email)
     else:
-        raise ValueError('name and email values are not valid');
+        raise ValueError('name and email values are not valid')
 
 
 def get_github() -> str:
