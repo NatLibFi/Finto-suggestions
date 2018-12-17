@@ -125,18 +125,19 @@ Add new dependencies by running `pipenv install package-name` or `npm install pa
 
 #### Backend Commands
 
-| **command**  | **description**                                                                                             | **example**                                           |
-|--------------|-------------------------------------------------------------------------------------------------------------|-------------------------------------------------------|
-| start        | Starts the Docker containers (docker-compose up)                                                            | pipenv run start                                      |
-| psql         | Opens a psql console within the db container                                                                | pipenv run psql                                       |
-| shell        | Opens an interactive Python shell within the api container. Flask context is automatically available.       | pipenv run shell                                      |
-| prune        | Prunes all blacklisted (/logout) access tokens. This should be run occasionally to keep the database clean. | pipenv run prune                                      |
-| test         | Runs Python API tests.                                                                                      | pipenv run test                                       |
-| create-admin | Creates a new admin user.                                                                                   | pipenv run create-admin admin admin@admin.fi password |
-| start-db     | Starts the database container.                                                                              | pipenv run start-db                                   |
-| migrate-db   | Creates a new Alembic migration file.                                                                       | pipenv run migrate-db                                 |
-| upgrade-db   | Upgrades the database (to the next migration version).                                                      | pipenv run upgrade-db                                 |
-| downgrade-db | Downgrades the database (to the previous migration version).                                                | pipenv run downgrade-db                               |
+| **command**     | **description**                                                                                             | **example**                                           |
+|-----------------|-------------------------------------------------------------------------------------------------------------|-------------------------------------------------------|
+| start           | Starts the Docker containers (docker-compose up)                                                            | pipenv run start                                      |
+| psql            | Opens a psql console within the db container                                                                | pipenv run psql                                       |
+| shell           | Opens an interactive Python shell within the api container. Flask context is automatically available.       | pipenv run shell                                      |
+| prune           | Prunes all blacklisted (/logout) access tokens. This should be run occasionally to keep the database clean. | pipenv run prune                                      |
+| test            | Runs Python API tests.                                                                                      | pipenv run test                                       |
+| create-admin    | Creates a new admin user.                                                                                   | pipenv run create-admin admin admin@admin.fi password |
+| start-db        | Starts the database container.                                                                              | pipenv run start-db                                   |
+| migrate-db      | Creates a new Alembic migration file.                                                                       | pipenv run migrate-db                                 |
+| upgrade-db      | Upgrades the database (to the next migration version).                                                      | pipenv run upgrade-db                                 |
+| downgrade-db    | Downgrades the database (to the previous migration version).                                                | pipenv run downgrade-db                               |
+| testdata-import | Imports testdata from api/scripts/suggestions.json                                                          | pipenv run testdata-import                            |
 
 See [examples](documentation/examples.md) for additional tips and examples for development.
 
