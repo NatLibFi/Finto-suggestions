@@ -251,18 +251,22 @@ def handle_github_request(code, state) -> (str, str):
 
               if user_data_response.ok is True:
                 user_data = user_data_response.json()
+                print(user_data)
                 name = user_data['name']
-                print (name)
 
                 user_email_data_response = requests.get('https://api.github.com/user/emails?access_token=' + github_access_token)
 
                 if user_email_data_response.ok is True:
                     user_email_data = user_email_data_response.json()
+                    print(user_email_data)
                     for data in user_email_data:
-                        print (data)
                         if data['primary'] is True:
                             email = data['email']
-    return (name, email)
+
+    if name is not None and email is not None:
+        return (name, email)
+    else:
+        raise ValueError('name and email values are not valid');
 
 
 def get_github() -> str:
