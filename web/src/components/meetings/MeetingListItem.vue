@@ -9,10 +9,10 @@
       <div class="label">
         <p>
           <strong>#{{ meeting.id }}</strong>
-          <span v-if="meeting.meeting_date.length > 0">
+          <span v-if="meeting.meeting_date">
             Järjestetään {{ meeting.meeting_date.split('T')[0] }}
           </span>
-          <span v-if="meeting.meeting_date.length == 0">
+          <span v-if="!meeting.meeting_date">
             Ei asetettua päivämäärää
           </span>
         </p>
