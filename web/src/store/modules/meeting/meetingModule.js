@@ -54,7 +54,6 @@ export default {
         const today = Date();
         result.data.forEach(meeting => {
           if (meeting.meeting_date) {
-            console.log(today, parse(meeting.meeting_date));
             if (
               isAfter(parse(meeting.meeting_date), today) ||
               isEqual(parse(meeting.meeting_date), today)
