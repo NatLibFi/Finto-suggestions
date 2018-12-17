@@ -32,7 +32,6 @@ import { meetingGetters, meetingActions } from '../../store/modules/meeting/meet
 
 import { sortingKeys, comparerDesc, comparerAsc } from '../../utils/sortingHelper.js';
 import { compareDesc, compareAsc, parse } from 'date-fns';
-import { mapMutations } from 'vuex';
 
 export default {
   components: {
