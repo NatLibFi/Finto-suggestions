@@ -10,8 +10,8 @@
       </div>
       <div class="status-summary">
         <p>0/28 ehdotusta käsitelty (0%)</p>
-        <p 
-          v-if="['meeting-suggestion-list'].includes($route.name)" 
+        <p
+          v-if="['meeting-suggestion-list'].includes($route.name)"
           class="next-suggestion-link">
           <!-- @click="goToNextSuggestion()" -->
           Jatka käsittelyä
