@@ -79,13 +79,7 @@ export default {
         console.log(meetings[0].meeting_date);
       }
       this.paginated_items = meetings;
-    },
-    // meetingsSortMeetingDateComparerDesc() {
-    //   return (obj1, obj2) => parse(obj2.meeting_date) - parse(obj1.meeting_date);
-    // },
-    // meetingsSortMeetingDateComparerAsc() {
-    //   return (obj1, obj2) => parse(obj1.meeting_date) - parse(obj2.meeting_date);
-    // }
+    }
   },
   watch: {
     meetings() {
