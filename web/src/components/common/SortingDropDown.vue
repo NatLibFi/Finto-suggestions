@@ -51,7 +51,7 @@ export default {
       }
     },
     sortSuggestionList(selectedSorting = null) {
-      this.$emit('sortSuggestionListBy', selectedSorting);
+      this.$emit('sortListBy', selectedSorting);
     },
     handleDropDownSelectedIndicator(index) {
       // update dropdownlist selected value indicator as selected

@@ -3,7 +3,9 @@
   <meeting-list-header
     :futureMeetingCount="futureMeetingCount"
     :pastMeetingCount="pastMeetingCount"
-    class="header" />
+    class="header"
+    @sortListBy="sortMeetingList"
+  />
   <ul :class="['list', pageCount > 1 ? 'with-pagionation' : '']">
     <meeting-list-item
       class="item"
@@ -28,6 +30,10 @@ import MeetingListPagination from './MeetingListPagination';
 import { mapMeetingGetters, mapMeetingActions } from '../../store/modules/meeting/meetingModule.js';
 import { meetingGetters, meetingActions } from '../../store/modules/meeting/meetingConst.js';
 
+import { sortingKeys, comparerDesc, comparerAsc } from '../../utils/sortingHelper.js';
+import { compareDesc, compareAsc, parse } from 'date-fns';
+import { mapMutations } from 'vuex';
+
 export default {
   components: {
     MeetingListHeader,
@@ -37,40 +43,47 @@ export default {
   data: function() {
     return {
       pageCount: 1,
-      // TODO: use store to get real meetings
-      paginated_items: [
-        {
-          id: 1,
-          name: 'YSA-kokous 2018/4 – Ongelmakokous',
-          created: '2018-11-20T17:19:31.114000Z',
-          modified: '2018-11-20T17:19:31.114000Z',
-          meeting_date: '2018-12-24T10:00:31.114000Z'
-        },
-        {
-          id: 2,
-          name: 'YSA-kokous 2019/1',
-          created: '2018-11-20T17:19:31.114000Z',
-          modified: '2018-11-20T17:19:31.114000Z',
-          meeting_date: '2019-02-13T10:00:31.114000Z'
-        },
-      ]
+      // TODO: fix pagination
+      paginated_items: []
     }
   },
   created() {
     this.getFutureAndPastMeetingCounts();
+    this.getMeetings();
   },
   computed: {
     ...mapMeetingGetters({
       futureMeetingCount: meetingGetters.GET_FUTURE_MEETINGS_COUNT,
-      pastMeetingCount: meetingGetters.GET_PAST_MEETINGS_COUNT
+      pastMeetingCount: meetingGetters.GET_PAST_MEETINGS_COUNT,
+      meetings: meetingGetters.GET_MEETINGS
     })
   },
   methods: {
     ...mapMeetingActions({
-      getFutureAndPastMeetingCounts: meetingActions.GET_FUTURE_AND_PAST_MEETINGS_COUNT
+      getFutureAndPastMeetingCounts: meetingActions.GET_FUTURE_AND_PAST_MEETINGS_COUNT,
+      getMeetings: meetingActions.GET_MEETINGS
     }),
     calculatePageCountForPagination: function() {
       return 10;
+    },
+    sortMeetingList(sort) {
+      let meetings = this.meetings;
+      if(sort === sortingKeys.NEWEST_FIRST) {
+        meetings.sort(comparerDesc('meeting_date'));
+        console.log(meetings[0].meeting_date);
+      }
+
+      if(sort === sortingKeys.OLDEST_FIRST) {
+        // meetings.sort(this.meetingsSortMeetingDateComparerAsc());
+        meetings.sort(comparerAsc('meeting_date'));
+        console.log(meetings[0].meeting_date);
+      }
+      this.paginated_items = meetings;
+    }
+  },
+  watch: {
+    meetings() {
+      this.paginated_items = this.meetings;
     }
   }
 };
