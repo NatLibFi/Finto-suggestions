@@ -167,8 +167,8 @@ def post_github() -> str:
 
     user_data = handle_github_request(code, state)
 
-    if user_data is not None and len(user_data[0]) > 0 and len(user_data[1]) > 0:
-
+    # TODO: this if is not the prettiest one, refactor to check nullable in handle_github_request
+    if user_data is not None and user_data[0] is not None and len(user_data[0]) > 0 and user_data[1] is not None and len(user_data[1]) > 0:
         name = user_data[0]
         email = user_data[1]
 
@@ -252,12 +252,14 @@ def handle_github_request(code, state) -> (str, str):
               if user_data_response.ok is True:
                 user_data = user_data_response.json()
                 name = user_data['name']
+                print (name)
 
                 user_email_data_response = requests.get('https://api.github.com/user/emails?access_token=' + github_access_token)
 
                 if user_email_data_response.ok is True:
                     user_email_data = user_email_data_response.json()
                     for data in user_email_data:
+                        print (data)
                         if data['primary'] is True:
                             email = data['email']
     return (name, email)
