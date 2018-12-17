@@ -21,11 +21,13 @@ export default {
   namespaced: true,
   state: {
     [storeStateNames.ITEMS]: [],
+    [storeStateNames.ITEM]: null,
     [storeStateNames.FUTURE_MEETINGS_COUNT]: 0,
     [storeStateNames.PAST_MEETINGS_COUNT]: 0
   },
   getters: {
     [meetingGetters.GET_MEETINGS]: state => state[storeStateNames.ITEMS],
+    [meetingGetters.GET_MEETING]: state => state[storeStateNames.ITEM],
     [meetingGetters.GET_FUTURE_MEETINGS_COUNT]: state =>
       state[storeStateNames.FUTURE_MEETINGS_COUNT],
     [meetingGetters.GET_PAST_MEETINGS_COUNT]: state => state[storeStateNames.PAST_MEETINGS_COUNT]
@@ -34,6 +36,9 @@ export default {
     [meetingMutations.SET_MEETINGS](state, meetings) {
       meetings.sort(comparerAsc('meeting_date'));
       Vue.set(state, storeStateNames.ITEMS, meetings);
+    },
+    [meetingMutations.SET_MEETING](state, meeting) {
+      Vue.set(state, storeStateNames.ITEM, meeting);
     },
     [meetingMutations.SET_FUTURE_MEETINGS_COUNT](state, count) {
       Vue.set(state, storeStateNames.FUTURE_MEETINGS_COUNT, count);
@@ -47,6 +52,12 @@ export default {
       const result = await api.meeting.getMeetings();
       if (result && result.code === 200) {
         commit(meetingMutations.SET_MEETINGS, result.data);
+      }
+    },
+    async [meetingActions.GET_MEETING]({ commit }, meetingId) {
+      const result = await api.meeting.getMeeting(meetingId);
+      if (result && result.code === 200) {
+        commit(meetingMutations.SET_MEETING, result.data);
       }
     },
     async [meetingActions.GET_FUTURE_AND_PAST_MEETINGS_COUNT]({ commit }) {
