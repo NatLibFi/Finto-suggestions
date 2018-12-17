@@ -1,8 +1,8 @@
 <template>
 <div class="list-container">
   <meeting-list-header
-    :futureMeetingCount="2"
-    :pastMeetingCount="2"
+    :futureMeetingCount="futureMeetingCount"
+    :pastMeetingCount="pastMeetingCount"
     class="header" />
   <ul :class="['list', pageCount > 1 ? 'with-pagionation' : '']">
     <meeting-list-item
@@ -24,6 +24,9 @@
 import MeetingListHeader from './MeetingListHeader';
 import MeetingListItem from './MeetingListItem';
 import MeetingListPagination from './MeetingListPagination';
+
+import { mapMeetingGetters, mapMeetingActions } from '../../store/modules/meeting/meetingModule.js';
+import { meetingGetters, meetingActions } from '../../store/modules/meeting/meetingConst.js';
 
 export default {
   components: {
@@ -53,7 +56,19 @@ export default {
       ]
     }
   },
+  created() {
+    this.getFutureAndPastMeetingCounts();
+  },
+  computed: {
+    ...mapMeetingGetters({
+      futureMeetingCount: meetingGetters.GET_FUTURE_MEETINGS_COUNT,
+      pastMeetingCount: meetingGetters.GET_PAST_MEETINGS_COUNT
+    })
+  },
   methods: {
+    ...mapMeetingActions({
+      getFutureAndPastMeetingCounts: meetingActions.GET_FUTURE_AND_PAST_MEETINGS_COUNT
+    }),
     calculatePageCountForPagination: function() {
       return 10;
     }

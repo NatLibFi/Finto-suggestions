@@ -52,7 +52,6 @@ export default {
     },
     signup(service) {
       const userdata = service === 'local' ? this.gatherLocalSignupData() : null;
-
       let data = { service, userdata };
 
       this.$emit('signup', data);
