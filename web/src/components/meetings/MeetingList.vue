@@ -70,13 +70,9 @@ export default {
       let meetings = this.meetings;
       if(sort === sortingKeys.NEWEST_FIRST) {
         meetings.sort(comparerDesc('meeting_date'));
-        console.log(meetings[0].meeting_date);
       }
-
       if(sort === sortingKeys.OLDEST_FIRST) {
-        // meetings.sort(this.meetingsSortMeetingDateComparerAsc());
         meetings.sort(comparerAsc('meeting_date'));
-        console.log(meetings[0].meeting_date);
       }
       this.paginated_items = meetings;
     }
