@@ -170,7 +170,7 @@ def post_github() -> str:
       return handle_user_creation(code, oauth_data)
     except ValueError as ex:
       print(ex)
-      return { 'error': ex }, 412
+      return { 'error': str(ex) }, 400
 
 
 def handle_github_request(code, state) -> (str, str):
