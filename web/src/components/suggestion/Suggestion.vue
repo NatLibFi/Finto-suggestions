@@ -163,7 +163,7 @@ export default {
       getEventsBySuggestionId: eventActions.GET_EVENTS_BY_SUGGESTION_ID
     }),
     ...mapUserActions({
-      getUserData: userActions.GET_USER_DATA
+      getUser: userActions.GET_USER
     }),
     goToSuggestionList() {
       if (!this.meetingId) {
@@ -179,7 +179,7 @@ export default {
     },
     async getUserName() {
       if (this.suggestion.user_id) {
-        await this.getUserData(this.suggestion.user_id);
+        await this.getUser(this.suggestion.user_id);
         this.userName = this.user.name;
       } else {
         this.userName = '';

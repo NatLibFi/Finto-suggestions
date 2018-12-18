@@ -43,16 +43,16 @@ export default {
     action: 'vaihtoi tyypiksi '
   }),
   created() {
-    this.getUserData(this.event.user_id);
+    this.getUser(this.event.user_id);
   },
   computed: {
     ...mapUserGetters({
-      userData: userGetters.GET_USER_DATA
+      userData: userGetters.GET_USER
     })
   },
   methods: {
     ...mapUserActions({
-      getUserData: userActions.GET_USER_DATA
+      getUser: userActions.GET_USER
     }),
     buildLabel() {
       return dateDiffLabel(this.event.created);

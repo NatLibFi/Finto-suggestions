@@ -32,7 +32,7 @@ export const userActions = {
   AUTHENTICATE: 'authenticate',
   VALIDATE_AUTHENTICATION: 'validateAuthentication',
   REVOKE_AUTHENTICATION: 'revokeAuthentication',
-  GET_USER_DATA: 'getUserData',
+  GET_USER: 'getUser',
   GET_USERS: 'getUsers',
   AUTHENTICATE_LOCAL_USER: 'authenticateLocalUser'
 };

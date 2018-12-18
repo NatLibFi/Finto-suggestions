@@ -127,7 +127,7 @@ export default {
       authenticateGithubUser: userActions.AUTHENTICATE,
       validateAuthentication: userActions.VALIDATE_AUTHENTICATION,
       revokeAuthentication: userActions.REVOKE_AUTHENTICATION,
-      getUserData: userActions.GET_USER_DATA,
+      getUser: userActions.GET_USER,
       authenticateLocalUser: userActions.AUTHENTICATE_LOCAL_USER
     }),
     returnToHome() {
@@ -186,7 +186,7 @@ export default {
   watch: {
     userId() {
       if (this.userId > 0) {
-        this.getUserData(this.userId);
+        this.getUser(this.userId);
       }
     },
     userData() {

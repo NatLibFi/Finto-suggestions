@@ -122,8 +122,8 @@ export default {
       commit(userMutations.SET_USER_ID, 0);
       commit(userMutations.SET_STORAGE_USER_ID, 0);
     },
-    async [userActions.GET_USER_DATA]({ commit }, userId) {
-      const response = await api.user.getUserData(userId);
+    async [userActions.GET_USER]({ commit }, userId) {
+      const response = await api.user.getUser(userId);
       if (response && response.code === 200) {
         commit(userMutations.SET_USER, response.data);
       }
