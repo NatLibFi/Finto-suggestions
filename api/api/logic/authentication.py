@@ -179,7 +179,7 @@ def handle_github_request(code, state) -> (str, str):
     :returns tuple(name, email, provider=github, github_access_token) or valueerror exception
 
     """
-    
+
     name = ''
     email = ''
     provider_name = 'github'
@@ -262,34 +262,34 @@ def handle_user_creation(code, oauth_data) -> str:
             db.session.rollback()
             raise ex
 
-        existing_ext_token = AccessToken.query.filter_by(user_id=user.id).first()
+    existing_ext_token = AccessToken.query.filter_by(user_id=user.id).first()
 
-        if existing_ext_token is not None:
-            db.session.delete(existing_ext_token)
+    if existing_ext_token is not None:
+        db.session.delete(existing_ext_token)
 
-        ext_token = AccessToken(user_id=user.id, provider=provider, code=code, access_token=oauth_access_token)
+    ext_token = AccessToken(user_id=user.id, provider=provider, code=code, access_token=oauth_access_token)
 
-        try:
-            db.session.add(ext_token)
-            db.session.commit()
+    try:
+        db.session.add(ext_token)
+        db.session.commit()
+    except Exception as ex:
+        db.session.rollback()
+        raise ex
 
-        except Exception as ex:
-            db.session.rollback()
-            raise ex
+    serialized_user = super(User, user).as_dict()
+    local_access_token = create_access_token(identity=serialized_user)
+    refresh_token = create_refresh_token(identity=serialized_user)
 
-        serialized_user = super(User, user).as_dict()
-        local_access_token = create_access_token(identity=serialized_user)
-        refresh_token = create_refresh_token(identity=serialized_user)
+    token = AccessToken(user_id=user.id, provider='local', access_token=local_access_token, refresh_token=refresh_token)
 
-        token = AccessToken(user_id=user.id, provider='local', access_token=local_access_token, refresh_token=refresh_token)
+    try:
+        db.session.add(token)
+        db.session.commit()
+    except Exception as ex:
+        db.session.rollback()
+        raise ex
 
-        try:
-          db.session.add(token)
-          db.session.commit()
-        except Exception as ex:
-          db.session.rollback()
-          raise ex
-
+    print(local_access_token)
     return {'access_token' : local_access_token, 'user_id': user.id}, 200
 
 def get_github() -> str:
