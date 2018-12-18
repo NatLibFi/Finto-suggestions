@@ -75,7 +75,6 @@ export default {
       await vueAuth
         .authenticate(payload.providerName)
         .then(response => {
-          console.log(response);
           commit(userMutations.SET_AUTHENTICATE, true);
           commit(userMutations.SET_USER_ID, response.data.user_id);
           commit(userMutations.SET_STORAGE_USER_ID, response.data.user_id);
