@@ -43,7 +43,7 @@ export default {
     action: 'vaihtoi tyypiksi '
   }),
   created() {
-    this.getUserData(event.user_id);
+    this.getUserData(this.event.user_id);
   },
   computed: {
     ...mapUserGetters({
