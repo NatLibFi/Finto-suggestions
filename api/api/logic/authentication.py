@@ -41,6 +41,7 @@ from ..authentication import blacklist_token
 import requests
 import os
 
+
 def login() -> str:
     """
     Logs the user in returning a valid access token (JWT) and user_id.
@@ -68,7 +69,7 @@ def login() -> str:
             access_token = create_access_token(identity=serialized_user)
             refresh_token = create_refresh_token(identity=serialized_user)
 
-            return {'access_token' : access_token, 'refresh_token': refresh_token, 'user_id': user.id, 'code': 200}, 200
+            return {'access_token': access_token, 'refresh_token': refresh_token, 'user_id': user.id, 'code': 200}, 200
 
     return create_response(None, 401, "Incorrect email or password.")
 
@@ -114,6 +115,7 @@ def logout() -> str:
         blacklist_token(refresh_token)
 
     return create_response({}, 200, "Successfully logged out.")
+
 
 @jwt_required
 def revokeAuthentication() -> str:
@@ -162,69 +164,26 @@ def post_github() -> str:
     code = connexion.request.json.get('code')
     state = connexion.request.json.get('state')
 
-    github_access_token = ''
-    access_token = ''
+    oauth_data = ()
+    try:
+      oauth_data = handle_github_request(code, state)
+      return handle_user_creation(code, oauth_data)
+    except ValueError as ex:
+      print(ex)
+      return { 'error': ex }, 412
 
-    user_data = handle_github_request(code, state)
-
-    # TODO: this if is not the prettiest one, refactor to check nullable in handle_github_request
-    if user_data is not None and user_data[0] is not None and len(user_data[0]) > 0 and user_data[1] is not None and len(user_data[1]) > 0:
-        name = user_data[0]
-        email = user_data[1]
-
-        user = User.query.filter_by(email=email).first()
-
-        if user is None:
-          user = User(name=name, email=email, password=None, role=UserRoles.NORMAL)
-
-          try:
-              db.session.add(user)
-              db.session.commit()
-          except Exception as ex:
-              print(ex)
-              db.session.rollback()
-
-        existing_ext_token = AccessToken.query.filter_by(user_id=user.id).first()
-
-        if existing_ext_token is not None:
-            db.session.delete(existing_ext_token)
-
-        ext_token = AccessToken(user_id=user.id, provider='github', code=code, access_token=github_access_token)
-
-
-        try:
-            db.session.add(ext_token)
-            db.session.commit()
-
-        except Exception as ex:
-            print(ex)
-            db.session.rollback()
-
-        serialized_user = super(User, user).as_dict()
-        access_token = create_access_token(identity=serialized_user)
-        refresh_token = create_refresh_token(identity=serialized_user)
-
-        token = AccessToken(user_id=user.id, provider='local', access_token=access_token, refresh_token=refresh_token)
-
-        try:
-            db.session.add(token)
-            db.session.commit()
-        except Exception as ex:
-            print(ex)
-            db.session.rollback()
-
-    return {'access_token' : access_token, 'user_id': user.id}, 200
 
 def handle_github_request(code, state) -> (str, str):
     """
     Handles github request
-    :returns tuple(name, email) values might be empty if request not success
+    :returns tuple(name, email, provider=github, github_access_token) or valueerror exception
 
     """
 
-
     name = ''
     email = ''
+    provider_name = 'github'
+    github_access_token = ''
 
     if code is not None and state is not None:
         if state is '0':
@@ -240,21 +199,25 @@ def handle_github_request(code, state) -> (str, str):
               'redirect_uri': redirect_uri
               }
 
-            token_response = requests.post('https://github.com/login/oauth/access_token', data=payload)
+            token_response = requests.post(
+                'https://github.com/login/oauth/access_token', data=payload)
 
             if len(token_response.text) > 0:
-                github_access_token = token_response.text.split('&')[0].split('=')[1]
+                github_access_token = token_response.text.split('&')[
+                                                                0].split('=')[1]
 
             if github_access_token is not None and len(github_access_token) > 0:
 
-              user_data_response = requests.get('https://api.github.com/user?access_token=' + github_access_token)
+              user_data_response = requests.get(
+                  'https://api.github.com/user?access_token=' + github_access_token)
 
               if user_data_response.ok is True:
                 user_data = user_data_response.json()
                 print(user_data)
                 name = user_data['name']
 
-                user_email_data_response = requests.get('https://api.github.com/user/emails?access_token=' + github_access_token)
+                user_email_data_response = requests.get(
+                    'https://api.github.com/user/emails?access_token=' + github_access_token)
 
                 if user_email_data_response.ok is True:
                     user_email_data = user_email_data_response.json()
@@ -264,10 +227,70 @@ def handle_github_request(code, state) -> (str, str):
                             email = data['email']
 
     if name is not None and email is not None:
-        return (name, email)
+        return (name, email, provider_name, github_access_token)
     else:
         raise ValueError('name and email values are not valid')
 
+
+def handle_user_creation(code, oauth_data) -> str:
+    """
+    Handles user creation
+    :parameters oauth application code and oauthdata(name, email, provider, oauht_access_token)
+    :returns success response or exception that is upper method catched
+    """
+
+    name = oauth_data[0]
+    email = oauth_data[1]
+    provider = oauth_data[2]
+    oauth_access_token = oauth_data[3]
+    local_access_token = ''
+
+    user = User.query.filter_by(email=email).first()
+
+    if user is None:
+        user = User(
+          name=name,
+          email=email,
+          password=None,
+          role=UserRoles.NORMAL
+        )
+
+        try:
+            db.session.add(user)
+            db.session.commit()
+        except Exception as ex:
+            db.session.rollback()
+            raise ex
+
+        existing_ext_token = AccessToken.query.filter_by(user_id=user.id).first()
+
+        if existing_ext_token is not None:
+            db.session.delete(existing_ext_token)
+
+        ext_token = AccessToken(user_id=user.id, provider=provider, code=code, access_token=oauth_access_token)
+
+        try:
+            db.session.add(ext_token)
+            db.session.commit()
+
+        except Exception as ex:
+            db.session.rollback()
+            raise ex
+
+        serialized_user = super(User, user).as_dict()
+        local_access_token = create_access_token(identity=serialized_user)
+        refresh_token = create_refresh_token(identity=serialized_user)
+
+        token = AccessToken(user_id=user.id, provider='local', access_token=local_access_token, refresh_token=refresh_token)
+
+        try:
+          db.session.add(token)
+          db.session.commit()
+        except Exception as ex:
+          db.session.rollback()
+          raise ex
+
+    return {'access_token' : local_access_token, 'user_id': user.id}, 200
 
 def get_github() -> str:
   return 200
