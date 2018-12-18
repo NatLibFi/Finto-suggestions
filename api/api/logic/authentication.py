@@ -179,7 +179,7 @@ def handle_github_request(code, state) -> (str, str):
     :returns tuple(name, email, provider=github, github_access_token) or valueerror exception
 
     """
-
+    
     name = ''
     email = ''
     provider_name = 'github'
