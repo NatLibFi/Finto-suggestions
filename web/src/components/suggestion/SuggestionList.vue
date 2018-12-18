@@ -3,7 +3,6 @@
   <suggestion-header
     :openSuggestionCount="openCount || 0"
     :resolvedSuggestionCount="resolvedCount || 0"
-    @sortListBy="sortSuggestionList"
     class="header" />
   <ul class="list">
     <suggestion-item
@@ -60,11 +59,18 @@ export default {
       openCount: suggestionGetters.GET_OPEN_SUGGESTIONS_COUNT,
       resolvedCount: suggestionGetters.GET_RESOLVED_SUGGESTIONS_COUNT,
       filters: suggestionGetters.GET_FILTERS,
-      paginated_items: suggestionGetters.GET_PAGINATION_SUGGESTIONS
+      paginated_items: suggestionGetters.GET_PAGINATION_SUGGESTIONS,
+      selectedSort: suggestionGetters.GET_SELECTED_SORT
     })
   },
   async created() {
     await this.getSuggestions();
+
+    this.getSelectedSortKey();
+    if (this.selectedSort && this.selectedSort.length > 0) {
+      await this.sortSuggestionList(this.selectedSort);
+    }
+
     await this.getOpenSuggestionCount();
     await this.getResolvedSuggestionCount();
     this.paginationPageChanged();
@@ -74,14 +80,15 @@ export default {
       getSuggestions: suggestionActions.GET_SUGGESTIONS,
       getOpenSuggestionCount: suggestionActions.GET_OPEN_SUGGESTIONS,
       getResolvedSuggestionCount: suggestionActions.GET_RESOLVED_SUGGESTIONS,
-      getSortedSuggestions: suggestionActions.GET_SORTED_SUGGESTIONS
+      getSortedSuggestions: suggestionActions.GET_SORTED_SUGGESTIONS,
+      getSelectedSortKey: suggestionActions.GET_SELECTED_SORT_KEY
     }),
     ...mapSuggestionMutations({
       setPaginatedSuggestions: suggestionMutations.SET_PAGINATION_SUGGESTIONS
     }),
-    async sortSuggestionList(selectedSorting) {
-      if (selectedSorting && selectedSorting !== '') {
-        await this.getSortedSuggestions(selectedSorting);
+    async sortSuggestionList(selectedSort) {
+      if (selectedSort && selectedSort !== '') {
+        await this.getSortedSuggestions(selectedSort);
       } else {
         await this.getSuggestions();
       }
@@ -98,7 +105,9 @@ export default {
       const start = this.getPaginationStaringIndex(pageNumber);
       const end = this.getPaginationEndingIndex(pageNumber);
       const paginatedItems = items ? items : this.items;
-      this.setPaginatedSuggestions(paginatedItems && paginatedItems.length > 0 ? paginatedItems.slice(start, end) : []);
+      this.setPaginatedSuggestions(
+        paginatedItems && paginatedItems.length > 0 ? paginatedItems.slice(start, end) : []
+      );
     },
     calculatePageCountForPagination() {
       return Math.ceil(this.items.length / this.paginationMaxCount);
@@ -139,6 +148,9 @@ export default {
         await this.getSuggestions();
         this.paginationPageChanged();
       }
+    },
+    async selectedSort() {
+      await this.sortSuggestionList(this.selectedSort);
     }
   }
 };

@@ -14,8 +14,7 @@
       :selectedIndex="selectedSortOptionIndex"
       :isOpened="isDropDownOpened"
       :dropDownOptions="dropDownOptions"
-      :selectedOptionsMapper="selectedOptionsMapper"
-      @sortListBy="sortSuggestionList"
+      @sortSuggestionListBy="sortSuggestionList"
       @refreshSelectedIndex="selectedSortOptionIndex = $event"
       @closeDropDown="closeDropDown"/>
   </div>
@@ -43,14 +42,9 @@ export default {
     selectedSortOptionIndex: 1,
     isDropDownOpened: false,
     dropDownOptions: [
-      { label: 'Uusin ensin', value: 'NEWEST_FIRST' },
-      { label: 'Vanhin ensin', value: 'OLDEST_FIRST' }
-    ],
-    // TODO: create a sorting functionality for Meetings
-    selectedOptionsMapper: {
-      NEWEST_FIRST: sortingKeys.NEWEST_FIRST,
-      OLDEST_FIRST: sortingKeys.OLDEST_FIRST
-    }
+      { label: 'Uusin ensin', value: suggestionSortingKeys.NEWEST_FIRST },
+      { label: 'Vanhin ensin', value: suggestionSortingKeys.OLDEST_FIRST }
+    ]
   }),
   methods: {
     sortSuggestionList(selectedSorting) {

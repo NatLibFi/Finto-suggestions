@@ -29,7 +29,7 @@ export default {
     SuggestionSearchForm,
     FilterSuggestions
   },
-  data () {
+  data() {
     return {
       welcomeText: `Tämä palvelu on YSA/YSO -käsite-ehdotuksille ja niiden etenemisen seuraamiselle.
         Voit selata ja kommentoida ehdotuksia täällä. Ehdotusten selaaminen onnistuu ilman
@@ -37,7 +37,7 @@ export default {
         tukesi ehdotukselle kommentoimalla sitä. Halutessasi voit nopeuttaa ehdotuksen
         käsittelyä jättämällä ehdotuksen kommenttikenttään täsmennyksiä ja lisätietoja.
         Uusien käsite-ehdotuksien tekeminen onnistuu Fintossa.`
-    }
+    };
   },
   methods: {
     goToMeetings: function() {

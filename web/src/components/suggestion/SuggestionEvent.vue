@@ -43,8 +43,7 @@ export default {
     action: 'vaihtoi tyypiksi '
   }),
   created() {
-    this.getUserData(event.user_id);
-    console.log(this.event);
+    this.getUserData(this.event.user_id);
   },
   computed: {
     ...mapUserGetters({
@@ -53,7 +52,7 @@ export default {
   },
   methods: {
     ...mapUserActions({
-      getUserData: userActions.GET_USER_DATA,
+      getUserData: userActions.GET_USER_DATA
     }),
     buildLabel() {
       return dateDiffLabel(this.event.created);

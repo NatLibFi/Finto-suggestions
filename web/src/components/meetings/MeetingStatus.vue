@@ -77,7 +77,7 @@ export default {
           // TODO: create a method to calculate the next unprocessed suggestion in the meeting
           suggestionId: 1
         }
-      })
+      });
     },
     handleMeetingProgressionCounts(countData) {
       if (countData) {
@@ -94,7 +94,7 @@ export default {
       this.backgroundWidth = meetingProgressionWidths.backgroundWidth;
     }
   }
-}
+};
 </script>
 
 <style scoped>
@@ -115,7 +115,7 @@ export default {
 }
 .meeting-status .status-bar .progress-bar,
 .meeting-status .status-bar .progress-background
- {
+{
   display: inline-block;
   height: 6px;
   background-color: #eeeeee;

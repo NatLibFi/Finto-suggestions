@@ -57,10 +57,10 @@ export default {
   // },
   methods: {
     goToMeetings: function() {
-      this.$router.push('/meetings')
+      this.$router.push('/meetings');
     }
   }
-}
+};
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->

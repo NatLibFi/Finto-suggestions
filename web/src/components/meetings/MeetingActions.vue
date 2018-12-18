@@ -33,7 +33,7 @@ export default {
       required: false
     }
   }
-}
+};
 </script>
 
 <style scoped>
@@ -81,7 +81,7 @@ export default {
   transition: background-color, 0.1s;
   transition: border, 0.1s;
   margin: 0 12px;
-  margin-left: auto
+  margin-left: auto;
 }
 
 .action-buttons .dismiss:hover {
