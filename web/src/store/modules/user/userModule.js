@@ -84,19 +84,17 @@ export default {
           commit(userMutations.SET_AUTHENTICATE, false);
         });
     },
-    [userActions.VALIDATE_AUTHENTICATION]({ commit }) {
+    [userActions.VALIDATE_AUTHENTICATION]({ commit, dispatch }) {
       // eslint-disable-next-line no-undef
       const token = $cookies.get(storeKeyNames.ACCESS_TOKEN);
-      token && token.length > 0
-        ? commit(userMutations.SET_AUTHENTICATE, true)
-        : commit(userMutations.SET_AUTHENTICATE, false);
-      //TODO: needs to validate token from backend and also check that token has correct userid,
-      // if not log out the user and revoke all tokens
-      if (this.state.user[storeStateNames.USER_ID] === 0) {
-        const storageUserId = sessionStorage.getItem(storeKeyNames.USER_ID);
-        if (storageUserId && storageUserId > 0) {
-          commit(userMutations.SET_USER_ID, storageUserId);
-        }
+      // eslint-disable-next-line no-unused-vars
+      const userId =
+        this.state.user[storeStateNames.USER_ID] || sessionStorage.getItem(storeKeyNames.USER_ID);
+      //TODO: needs to validate token from backend and also check that token has correct userid
+      if (token && token.length > 0 && parseInt(userId) > 0) {
+        commit(userMutations.SET_AUTHENTICATE, true);
+      } else {
+        dispatch(userActions.REVOKE_AUTHENTICATION);
       }
     },
     async [userActions.REVOKE_AUTHENTICATION]({ commit }) {
@@ -104,20 +102,21 @@ export default {
       const token = $cookies.get(storeKeyNames.ACCESS_TOKEN);
       const userId =
         this.state.user[storeStateNames.USER_ID] || sessionStorage.getItem(storeKeyNames.USER_ID);
-      if (token && userId > 0) {
-        const payload = { user_id: userId };
 
+      if (token && token.length > 0 && parseInt(userId) > 0) {
+        const payload = { user_id: userId };
         try {
           await api.user.revokeAuthentication(payload);
-          // eslint-disable-next-line no-undef
-          $cookies.remove(storeKeyNames.ACCESS_TOKEN);
-          commit(userMutations.SET_AUTHENTICATE, false);
-          commit(userMutations.SET_USER_ID, 0);
-          commit(userMutations.SET_STORAGE_USER_ID, 0);
         } catch (err) {
           console.log(err);
         }
       }
+
+      // eslint-disable-next-line no-undef
+      $cookies.remove(storeKeyNames.ACCESS_TOKEN);
+      commit(userMutations.SET_AUTHENTICATE, false);
+      commit(userMutations.SET_USER_ID, 0);
+      commit(userMutations.SET_STORAGE_USER_ID, 0);
     },
     async [userActions.GET_USER_DATA]({ commit }, userId) {
       const response = await api.user.getUserData(userId);
