@@ -93,13 +93,13 @@ export default {
     },
     async [suggestionActions.ASSIGN_SUGGESTION_TO_USER]({ commit }, { suggestionId, userId }) {
       const result = await api.suggestion.assignUserToSuggestion(suggestionId, userId);
-      if (result && result.code == 200) {
+      if (result && result.code == 202) {
         commit(suggestionMutations.SET_SUGGESTION, result.data);
       }
     },
     async [suggestionActions.UNASSIGN_SUGGESTION_FROM_USER]({ commit }, suggestionId) {
       const result = await api.suggestion.unassignUserFromSuggestion(suggestionId);
-      if (result && result.code == 200) {
+      if (result && result.code == 202) {
         commit(suggestionMutations.SET_SUGGESTION, result.data);
       }
     },

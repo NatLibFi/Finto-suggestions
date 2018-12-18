@@ -186,7 +186,7 @@ paths:
     put:
       operationId: api.logic.suggestions.assign_to_user
       responses:
-        "200":
+        "202":
           description: Assigned suggestion to user
   /suggestions/{suggestion_id}/unassign:
     parameters:
@@ -197,5 +197,5 @@ paths:
     put:
       operationId: api.logic.suggestions.unassign
       responses:
-        "200":
+        "202":
           description: Removed assignment from user

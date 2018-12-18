@@ -187,7 +187,7 @@ def assign_to_user(suggestion_id: int, user_id: int) -> str:
     suggestion.user_id = user_id
     db.session.add(suggestion)
     db.session.commit()
-    return create_response(suggestion.as_dict(), 200)
+    return create_response(suggestion.as_dict(), 202)
 
 @admin_only
 @suggestion_id_validator
@@ -196,4 +196,4 @@ def unassign(suggestion_id: int) -> str:
     suggestion.user_id = None
     db.session.add(suggestion)
     db.session.commit()
-    return create_response(suggestion.as_dict(), 200)
+    return create_response(suggestion.as_dict(), 202)
