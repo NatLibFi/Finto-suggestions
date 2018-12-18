@@ -49,12 +49,13 @@ export default {
   state: {
     [storeStateNames.IS_AUTHENTICATED]: false,
     [storeStateNames.USER_ID]: 0,
-    [storeStateNames.USER_DATA]: ''
+    [storeStateNames.USER]: ''
   },
   getters: {
     [userGetters.GET_AUTHENTICATE]: state => state[storeStateNames.IS_AUTHENTICATED],
     [userGetters.GET_USER_ID]: state => state[storeStateNames.USER_ID],
-    [userGetters.GET_USER_DATA]: state => state[storeStateNames.USER_DATA]
+    [userGetters.GET_USER]: state => state[storeStateNames.USER],
+    [userGetters.GET_USERS]: state => state[storeStateNames.USERS],
   },
   mutations: {
     [userMutations.SET_AUTHENTICATE](state, authenticate) {
@@ -66,9 +67,12 @@ export default {
     [userMutations.SET_STORAGE_USER_ID](user) {
       sessionStorage.setItem(storeKeyNames.USER_ID, user.userId);
     },
-    [userMutations.SET_USER_DATA](state, user) {
-      Vue.set(state, storeStateNames.USER_DATA, user);
-    }
+    [userMutations.SET_USER](state, user) {
+      Vue.set(state, storeStateNames.USER, user);
+    },
+    [userMutations.SET_USERS](state, user) {
+        Vue.set(state, storeStateNames.USERS, user);
+    },
   },
   actions: {
     async [userActions.AUTHENTICATE]({ commit }, payload) {
@@ -121,7 +125,13 @@ export default {
     async [userActions.GET_USER_DATA]({ commit }, userId) {
       const response = await api.user.getUserData(userId);
       if (response && response.code === 200) {
-        commit(userMutations.SET_USER_DATA, response.data);
+        commit(userMutations.SET_USER, response.data);
+      }
+    },
+    async [userActions.GET_USERS]({ commit }) {
+      const response = await api.user.getUsers();
+      if (response && response.code === 200) {
+        commit(userMutations.SET_USERS, response.data);
       }
     },
     async [userActions.AUTHENTICATE_LOCAL_USER]({ commit }, authenticateData) {
