@@ -10,7 +10,6 @@
         :selectedIndex="selectedOptionIndex.STATUS"
         :isOpened="isDropDownOpened.STATUS"
         :dropDownOptions="suggestionStateStatuses"
-        :selectedOptionsMapper="suggestionStateStatusMapper"
         :noOptionsMessage="'Ei valittavia käsittelyn tiloja.'"
         @applyFilter="stateChanged($event)"
         @refreshSelectedIndex="selectedOptionIndex.STATUS = $event"
@@ -42,7 +41,6 @@
         :selectedIndex="selectedOptionIndex.TYPE"
         :isOpened="isDropDownOpened.TYPE"
         :dropDownOptions="suggestionTypes"
-        :selectedOptionsMapper="suggestionTypeMapper"
         :noOptionsMessage="'Käsitetyyppejä ei valittavissa.'"
         @applyFilter="typeChanged($event)"
         @refreshSelectedIndex="selectedOptionIndex.TYPE = $event"
@@ -136,11 +134,6 @@ export default {
         value: 'REJECTED'
       }
     ],
-    suggestionStateStatusMapper: {
-      ACCEPTED: suggestionStateStatus.ACCEPTED,
-      REJECTED: suggestionStateStatus.REJECTED,
-      NONE: null
-    },
     suggestionTypes: [
       {
         label: 'Kaikki ehdotustyypit',
@@ -154,12 +147,7 @@ export default {
         label: 'Käsitemuutos',
         value: 'MODIFY'
       }
-    ],
-    suggestionTypeMapper: {
-      NONE: null,
-      NEW: suggestionType.NEW,
-      MODIFY: suggestionType.MODIFY
-    }
+    ]
   }),
   computed: {
     ...mapMeetingGetters({ meetings: meetingGetters.GET_MEETINGS }),
@@ -175,8 +163,9 @@ export default {
     ...mapTagActions({ getTags: tagActions.GET_TAGS }),
     ...mapSuggestionMutations({ setFilters: suggestionMutations.SET_FILTERS }),
     stateChanged(selected) {
+      console.log('stateChanged', selected);
       handleDropDownSelection(
-        selected,
+        selected === 'NONE' ? null : selected,
         filterType.STATUS,
         this.suggestionStateStatuses,
         this.filters,
@@ -184,8 +173,9 @@ export default {
       );
     },
     typeChanged(selected) {
+      console.log('typeChanged', selected);
       handleDropDownSelection(
-        selected,
+        selected === 'NONE' ? null : selected,
         filterType.TYPE,
         this.suggestionTypes,
         this.filters,

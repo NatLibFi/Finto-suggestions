@@ -14,12 +14,14 @@ const handleSearchFilter = (value, filters) => {
 };
 
 export const handleSetFilters = (value, filters, setFilters) => {
-  if (value && value.type !== filterType.SEARCH) {
-    filters = removeOldFilterParamFromFilterList(filters, value.type);
-    filters.push(value);
-  }
-  if (value && value.type === filterType.SEARCH) {
-    filters = handleSearchFilter(value, filters);
+  if (value) {
+    if (value.type !== filterType.SEARCH) {
+      filters = removeOldFilterParamFromFilterList(filters, value.type);
+      filters.push(value);
+    }
+    if (value.type === filterType.SEARCH) {
+      filters = handleSearchFilter(value, filters);
+    }
   }
   setFilters(filters);
 };

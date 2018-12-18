@@ -35,8 +35,7 @@ export default {
   props: {
     selectedIndex: Number,
     isOpened: Boolean,
-    dropDownOptions: Array,
-    selectedOptionsMapper: Object
+    dropDownOptions: Array
   },
   methods: {
     sortValueSelected(option, index) {
@@ -45,7 +44,7 @@ export default {
       if (option && option.value !== '') {
         // do sorting by sorting key
         const selectedValue = findValueFromDropDownOptions(option.value, this.dropDownOptions);
-        this.sortSuggestionList(this.selectedOptionsMapper[selectedValue]);
+        this.sortSuggestionList(selectedValue);
       } else {
         this.sortSuggestionList();
       }
