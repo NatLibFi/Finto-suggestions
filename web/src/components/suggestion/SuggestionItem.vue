@@ -21,9 +21,9 @@
         </p>
       </div>
     </div>
-    <div class="item-comments">
+    <div class="item-comments" v-if="suggestion.events.filter((event) => event.event_type === eventTypes.COMMENT).length > 0">
       <svg-icon icon-name="comments"><icon-comments /></svg-icon>
-      <span>2</span>
+      <span>{{ suggestion.events.filter((event) => event.event_type === eventTypes.COMMENT).length }}</span>
     </div>
   </li>
 </template>
@@ -31,8 +31,9 @@
 <script>
 import SvgIcon from '../icons/SvgIcon';
 import IconComments from '../icons/IconComments';
-import { suggestionTypeToStyleClass, suggestionTypeToString } from '../../utils/suggestionMappings.js';
-import { dateDiffLabel } from '../../utils/dateTimeStampHelper.js';
+import { suggestionTypeToStyleClass, suggestionTypeToString } from '../../utils/suggestionMappings';
+import { dateDiffLabel } from '../../utils/dateTimeStampHelper';
+import { eventTypes } from '../../utils/eventMappings';
 
 export default {
   components: {
@@ -49,7 +50,8 @@ export default {
   data:() => ({
     //not the best way but seems that you cannot use imported module straight inside class binding clause
     suggestionTypeToStyleClass,
-    suggestionTypeToString
+    suggestionTypeToString,
+    eventTypes
   }),
   methods: {
     buildLabel() {
