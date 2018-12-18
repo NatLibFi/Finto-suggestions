@@ -53,7 +53,7 @@ export default {
       backgroundWidth: {
         width: 100 - this.calculateStatusBarWidth() + '%'
       }
-    }
+    };
   },
   methods: {
     goToMeetingList() {
@@ -67,7 +67,7 @@ export default {
     },
     calculateStatusBarWidth() {
       // return integer percentage value for suggestions (processed / all %)
-      return 30
+      return 30;
     }
   }
 };

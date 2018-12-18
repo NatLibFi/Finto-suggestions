@@ -5,7 +5,8 @@
         <p class="title-row">
           <span class="item-name">{{ suggestion.preferred_label.fi }}</span>
           <span
-            :class="[suggestionTypeToStyleClass[suggestion.suggestion_type], 'tag']">{{ suggestionTypeToString[suggestion.suggestion_type] }}
+          :class="[suggestionTypeToStyleClass[suggestion.suggestion_type], 'tag']">
+            {{ suggestionTypeToString[suggestion.suggestion_type] }}
           </span>
           <span v-if="suggestion.tags.length > 0">
             <span class="tags tag" v-for="tag in suggestion.tags" :key="tag.label">
@@ -31,7 +32,10 @@
 <script>
 import SvgIcon from '../icons/SvgIcon';
 import IconComments from '../icons/IconComments';
-import { suggestionTypeToStyleClass, suggestionTypeToString } from '../../utils/suggestionMappings.js';
+import {
+  suggestionTypeToStyleClass,
+  suggestionTypeToString
+} from '../../utils/suggestionMappings.js';
 import { dateDiffLabel } from '../../utils/dateTimeStampHelper.js';
 
 export default {
@@ -46,8 +50,8 @@ export default {
     },
     meetingId: [String, Number]
   },
-  data:() => ({
-    //not the best way but seems that you cannot use imported module straight inside class binding clause
+  data: () => ({
+    // TODO: not the best way but seems that you cannot use imported module straight inside class binding clause
     suggestionTypeToStyleClass,
     suggestionTypeToString
   }),
@@ -72,7 +76,7 @@ export default {
             suggestion: this.suggestion,
             meetingId: this.meetingId
           }
-        })
+        });
       }
     }
   }

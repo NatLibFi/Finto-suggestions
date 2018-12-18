@@ -49,13 +49,29 @@ export default {
           created: '2018-11-20T17:19:31.114000Z',
           modified: '2018-11-20T17:19:31.114000Z',
           meeting_date: '2019-02-13T10:00:31.114000Z'
-        },
+        }
       ]
-    }
+    };
   },
   methods: {
     calculatePageCountForPagination: function() {
       return 10;
+    },
+    sortMeetingList(sort) {
+      let meetings = this.meetings;
+      if(sort === sortingKeys.NEWEST_FIRST) {
+        meetings.sort(comparerDesc('meeting_date'));
+      }
+
+      if(sort === sortingKeys.OLDEST_FIRST) {
+        meetings.sort(comparerAsc('meeting_date'));
+      }
+      this.paginated_items = meetings;
+    },
+  },
+  watch: {
+    meetings() {
+      this.paginated_items = this.meetings;
     }
   }
 };

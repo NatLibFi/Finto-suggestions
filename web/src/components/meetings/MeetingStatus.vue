@@ -10,8 +10,8 @@
       </div>
       <div class="status-summary">
         <p>0/28 ehdotusta käsitelty (0%)</p>
-        <p 
-          v-if="['meeting-suggestion-list'].includes($route.name)" 
+        <p
+          v-if="['meeting-suggestion-list'].includes($route.name)"
           class="next-suggestion-link">
           <!-- @click="goToNextSuggestion()" -->
           Jatka käsittelyä
@@ -35,7 +35,7 @@ export default {
       backgroundWidth: {
         width: 100 - this.calculateStatusBarWidth() + '%'
       }
-    }
+    };
   },
   methods: {
     goToMeetingList() {
@@ -55,14 +55,14 @@ export default {
           // TODO: create a method to calculate the next unprocessed suggestion in the meeting
           suggestionId: 1
         }
-      })
+      });
     },
     calculateStatusBarWidth() {
       // return integer percentage value for suggestions (processed / all %)
-      return 30
+      return 30;
     }
   }
-}
+};
 </script>
 
 <style scoped>
@@ -83,7 +83,7 @@ export default {
 }
 .meeting-status .status-bar .progress-bar,
 .meeting-status .status-bar .progress-background
- {
+{
   display: inline-block;
   height: 6px;
   background-color: #eeeeee;
