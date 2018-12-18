@@ -30,10 +30,10 @@ export default {
   },
   methods: {
     goToHome: function() {
-      this.$router.push('/')
+      this.$router.push('/');
     }
   }
-}
+};
 </script>
 
 <style scoped>

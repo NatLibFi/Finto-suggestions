@@ -44,7 +44,6 @@ export default {
   }),
   created() {
     this.getUserData(event.user_id);
-    console.log(this.event);
   },
   computed: {
     ...mapUserGetters({
@@ -53,7 +52,7 @@ export default {
   },
   methods: {
     ...mapUserActions({
-      getUserData: userActions.GET_USER_DATA,
+      getUserData: userActions.GET_USER_DATA
     }),
     buildLabel() {
       return dateDiffLabel(this.event.created);

@@ -14,7 +14,6 @@
       :selectedIndex="selectedSortOptionIndex"
       :isOpened="isDropDownOpened"
       :dropDownOptions="dropDownOptions"
-      :selectedOptionsMapper="selectedOptionsMapper"
       @sortSuggestionListBy="sortSuggestionList"
       @refreshSelectedIndex="selectedSortOptionIndex = $event"
       @closeDropDown="closeDropDown"/>
@@ -27,6 +26,15 @@ import { suggestionSortingKeys } from '../../utils/suggestionMappings.js';
 import SortingDropDown from '../common/SortingDropDown';
 import SvgIcon from '../icons/SvgIcon';
 import IconTriangle from '../icons/IconTriangle';
+
+import {
+  mapSuggestionGetters,
+  mapSuggestionActions
+} from '../../store/modules/suggestion/suggestionModule.js';
+import {
+  suggestionGetters,
+  suggestionActions
+} from '../../store/modules/suggestion/suggestionConsts.js';
 
 export default {
   components: {
@@ -43,25 +51,33 @@ export default {
     selectedSortOptionIndex: 1,
     isDropDownOpened: false,
     dropDownOptions: [
-      { label: 'Uusin ensin', value: 'NEWEST_FIRST' },
-      { label: 'Vanhin ensin', value: 'OLDEST_FIRST' },
-      { label: 'Eniten kommentoitu', value: 'MOST_COMMENTS' },
-      { label: 'Vähiten kommentoitu', value: 'LEAST_COMMENTS' },
-      { label: 'Viimeksi päivitetty', value: 'LAST_UPDATED' },
-      { label: 'Eniten reaktiota', value: 'MOST_REACTIONS' }
-    ],
-    selectedOptionsMapper: {
-      NEWEST_FIRST: suggestionSortingKeys.NEWEST_FIRST,
-      OLDEST_FIRST: suggestionSortingKeys.OLDEST_FIRST,
-      MOST_COMMENTS: suggestionSortingKeys.MOST_COMMENTS,
-      LEAST_COMMENTS: suggestionSortingKeys.LEAST_COMMENTS,
-      LAST_UPDATED: suggestionSortingKeys.LAST_UPDATED,
-      MOST_REACTIONS: suggestionSortingKeys.MOST_REACTIONS
-    }
+      { label: 'Uusin ensin', value: suggestionSortingKeys.NEWEST_FIRST },
+      { label: 'Vanhin ensin', value: suggestionSortingKeys.OLDEST_FIRST },
+      { label: 'Eniten kommentoitu', value: suggestionSortingKeys.MOST_COMMENTS },
+      { label: 'Vähiten kommentoitu', value: suggestionSortingKeys.LEAST_COMMENTS },
+      { label: 'Viimeksi päivitetty', value: suggestionSortingKeys.LAST_UPDATED },
+      { label: 'Eniten reaktiota', value: suggestionSortingKeys.MOST_REACTIONS }
+    ]
   }),
+  computed: {
+    ...mapSuggestionGetters({
+      selectedSort: suggestionGetters.GET_SELECTED_SORT
+    })
+  },
+  created() {
+    const selectedSortOptionIndex = this.selectedSort
+      ? this.dropDownOptions.indexOf(this.dropDownOptions.find(e => e.value === this.selectedSort))
+      : 1;
+    this.selectedSortOptionIndex = selectedSortOptionIndex;
+  },
   methods: {
-    sortSuggestionList: function(selectedSorting) {
-      this.$emit('sortSuggestionListBy', selectedSorting);
+    ...mapSuggestionActions({
+      setSelectedSortKey: suggestionActions.SET_SELECTED_SORT_KEY,
+      getSelectedSortKey: suggestionActions.GET_SELECTED_SORT_KEY
+    }),
+    sortSuggestionList(selectedSorting) {
+      this.setSelectedSortKey(selectedSorting);
+      this.getSelectedSortKey();
     },
     closeDropDown: function() {
       this.isDropDownOpened = false;
