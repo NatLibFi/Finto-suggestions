@@ -51,12 +51,12 @@ export default {
     selectedSortOptionIndex: 1,
     isDropDownOpened: false,
     dropDownOptions: [
-      { label: 'Uusin ensin', value: suggestionSortingKeys.NEWEST_FIRST },
-      { label: 'Vanhin ensin', value: suggestionSortingKeys.OLDEST_FIRST },
-      { label: 'Eniten kommentoitu', value: suggestionSortingKeys.MOST_COMMENTS },
-      { label: 'Vähiten kommentoitu', value: suggestionSortingKeys.LEAST_COMMENTS },
-      { label: 'Viimeksi päivitetty', value: suggestionSortingKeys.LAST_UPDATED },
-      { label: 'Eniten reaktiota', value: suggestionSortingKeys.MOST_REACTIONS }
+      { label: 'Uusin ensin', value: sortingKeys.NEWEST_FIRST },
+      { label: 'Vanhin ensin', value: sortingKeys.OLDEST_FIRST },
+      { label: 'Eniten kommentoitu', value: sortingKeys.MOST_COMMENTS },
+      { label: 'Vähiten kommentoitu', value: sortingKeys.LEAST_COMMENTS },
+      { label: 'Viimeksi päivitetty', value: sortingKeys.LAST_UPDATED },
+      { label: 'Eniten reaktiota', value: sortingKeys.MOST_REACTIONS }
     ]
   }),
   computed: {
