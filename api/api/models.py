@@ -148,7 +148,6 @@ class Meeting(db.Model, SerializableMixin):
             e.id for e in self.suggestions]  # only ids
 
         serialized['processed'] = Counter(
-            #[s.status.name.upper() for s in self.suggestions])
             [s.status.name.upper() for s in self.suggestions if s is not None and s.status is not None])
 
         return serialized
@@ -199,7 +198,7 @@ class Suggestion(db.Model, SerializableMixin):
     def as_dict(self, strip=True):
         # relationships (joins) should be expanded carefully
         serialized = super(Suggestion, self).as_dict()
-        serialized['events'] = [e.id for e in self.events]  # only ids
+        serialized['events'] = [e.as_dict() for e in self.events]  # only ids
         serialized['reactions'] = [
             e.as_dict(strip=strip) for e in self.reactions]
         serialized['tags'] = [e.as_dict(strip=strip) for e in self.tags]

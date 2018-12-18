@@ -4,6 +4,7 @@ import api from '../../../api';
 import {
   namespace,
   storeStateNames,
+  sessionStorageKeyNames,
   suggestionMutations,
   suggestionGetters,
   suggestionActions
@@ -30,7 +31,8 @@ export default {
       state[storeStateNames.RESOLVED_COUNT],
     [suggestionGetters.GET_SEARCH_QUERY]: state => state[storeStateNames.SEARCH_QUERY],
     [suggestionGetters.GET_FILTERS]: state => state[storeStateNames.FILTERS],
-    [suggestionGetters.GET_PAGINATION_SUGGESTIONS]: state => state[storeStateNames.PAGINATED_ITEMS]
+    [suggestionGetters.GET_PAGINATION_SUGGESTIONS]: state => state[storeStateNames.PAGINATED_ITEMS],
+    [suggestionGetters.GET_SELECTED_SORT]: state => state[storeStateNames.SELECTED_SORT]
   },
   mutations: {
     [suggestionMutations.SET_SUGGESTIONS](state, suggestions) {
@@ -53,6 +55,9 @@ export default {
     },
     [suggestionMutations.SET_SUGGESTION](state, suggestion) {
       Vue.set(state, storeStateNames.ITEM, suggestion);
+    },
+    [suggestionMutations.SET_SELECTED_SORT](state, sortkey) {
+      Vue.set(state, storeStateNames.SELECTED_SORT, sortkey);
     }
   },
   actions: {
@@ -97,6 +102,14 @@ export default {
       if (result && result.code == 200) {
         commit(suggestionMutations.SET_SUGGESTION, result.data);
       }
+    },
+    [suggestionActions.GET_SELECTED_SORT_KEY]({ commit }) {
+      const sortKey = sessionStorage[sessionStorageKeyNames.SELECTED_SORT];
+      commit(suggestionMutations.SET_SELECTED_SORT, sortKey);
+    },
+    [suggestionActions.SET_SELECTED_SORT_KEY]({ commit }, sortKey) {
+      Vue.set(sessionStorage, sessionStorageKeyNames.SELECTED_SORT, sortKey);
+      commit(suggestionMutations.SET_SELECTED_SORT, sortKey);
     }
   }
 };

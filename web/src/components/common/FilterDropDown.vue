@@ -43,7 +43,6 @@ export default {
     selectedIndex: Number,
     isOpened: Boolean,
     dropDownOptions: Array,
-    selectedOptionsMapper: Object,
     noOptionsMessage: String
   },
   methods: {
@@ -53,7 +52,7 @@ export default {
       if (option && option.value !== '') {
         // do filtering by filter key
         const selectedValue = findValueFromDropDownOptions(option.value, this.dropDownOptions);
-        this.applyFilter(this.selectedOptionsMapper[selectedValue]);
+        this.applyFilter(selectedValue);
       } else {
         this.applyFilter();
       }

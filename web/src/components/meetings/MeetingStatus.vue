@@ -9,9 +9,9 @@
         <div :style="backgroundWidth" class="progress-background"></div>
       </div>
       <div class="status-summary">
-        <p>0/28 ehdotusta käsitelty (0%)</p>
-        <p 
-          v-if="['meeting-suggestion-list'].includes($route.name)" 
+        <p>{{ processed }}/{{ suggestions }} ehdotusta käsitelty ({{ progression }}%)</p>
+        <p
+          v-if="['meeting-suggestion-list'].includes($route.name)"
           class="next-suggestion-link">
           <!-- @click="goToNextSuggestion()" -->
           Jatka käsittelyä
@@ -22,27 +22,49 @@
 </template>
 
 <script>
+import { mapMeetingGetters, mapMeetingActions } from '../../store/modules/meeting/meetingModule.js';
+import { meetingGetters, meetingActions } from '../../store/modules/meeting/meetingConst.js';
+
+import { getMeetingProgressionCounts, getMeetingProgressionWidths } from '../../utils/meetingHelper.js';
+
 export default {
   props: {
-    meetingId: [String, Number],
-    meeting: Object
+    meetingId: {
+      type: [String, Number],
+      required: true
+    },
   },
   data: function() {
     return {
+      statusBarWidth: 0,
       progressWidth: {
-        width: this.calculateStatusBarWidth() + '%'
+        width: `${0}%`
       },
       backgroundWidth: {
-        width: 100 - this.calculateStatusBarWidth() + '%'
-      }
+        width: `${100}%`
+      },
+      processed: 0,
+      suggestions: 0,
+      progression: 0
     }
   },
+  computed: {
+    ...mapMeetingGetters({ meeting: meetingGetters.GET_MEETING })
+  },
+  async created() {
+    await this.getMeeting(this.meetingId);
+    this.handleMeetingProgressionCounts(
+      getMeetingProgressionCounts(
+        this.meeting
+    ));
+  },
   methods: {
+    ...mapMeetingActions({ getMeeting: meetingActions.GET_MEETING }),
     goToMeetingList() {
       this.$router.push({
         name: 'meeting-suggestion-list',
         params: {
-          meetingId: this.meeting.id,
+          meetingId: this.meetingId,
           meeting: this.meeting
         }
       });
@@ -55,14 +77,24 @@ export default {
           // TODO: create a method to calculate the next unprocessed suggestion in the meeting
           suggestionId: 1
         }
-      })
+      });
     },
-    calculateStatusBarWidth() {
-      // return integer percentage value for suggestions (processed / all %)
-      return 30
+    handleMeetingProgressionCounts(countData) {
+      if (countData) {
+        this.processed = countData.processed;
+        this.suggestions = countData.suggestions;
+        this.progression = countData.progression;
+      }
+    }
+  },
+  watch: {
+    progression() {
+      const meetingProgressionWidths = getMeetingProgressionWidths(this.progression);
+      this.progressWidth = meetingProgressionWidths.progressWidth;
+      this.backgroundWidth = meetingProgressionWidths.backgroundWidth;
     }
   }
-}
+};
 </script>
 
 <style scoped>
@@ -83,7 +115,7 @@ export default {
 }
 .meeting-status .status-bar .progress-bar,
 .meeting-status .status-bar .progress-background
- {
+{
   display: inline-block;
   height: 6px;
   background-color: #eeeeee;

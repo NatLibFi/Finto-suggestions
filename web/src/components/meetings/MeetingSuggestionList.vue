@@ -9,14 +9,14 @@
     </div>
     <div class="meeting-header">
       <div class="content">
-        <meeting-status :meetingId="meetingId" :meeting="meeting" />
+        <meeting-status :meetingId="meetingId" />
         <suggestion-search-form />
         <filter-suggestions :isMeeting="true"/>
       </div>
     </div>
 
   </div>
-  <!-- TODO: this suggestion-list must only provide suggestions from this meetingId --> 
+  <!-- TODO: this suggestion-list must only provide suggestions from this meetingId -->
   <suggestion-list :meetingId="meetingId" />
 </div>
 </template>
@@ -44,23 +44,23 @@ export default {
       required: true
     }
   },
-  data: function() {
-    return {
-      meeting: {
-        id: 1,
-        name: 'YSA-kokous 2018/4 – Ongelmakokous',
-        created: '2018-11-20T17:19:31.114000Z',
-        modified: '2018-11-20T17:19:31.114000Z',
-        meeting_date: '2018-12-24T10:00:31.114000Z'
-      }
-    }
-  },
+  // data: function() {
+  //   return {
+  //     meeting: {
+  //       id: 1,
+  //       name: 'YSA-kokous 2018/4 – Ongelmakokous',
+  //       created: '2018-11-20T17:19:31.114000Z',
+  //       modified: '2018-11-20T17:19:31.114000Z',
+  //       meeting_date: '2018-12-24T10:00:31.114000Z'
+  //     }
+  //   }
+  // },
   methods: {
     goToMeetings: function() {
-      this.$router.push('/meetings')
+      this.$router.push('/meetings');
     }
   }
-}
+};
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->

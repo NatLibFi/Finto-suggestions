@@ -51,7 +51,6 @@ export default {
     selectedIndexes: Array,
     isOpened: Boolean,
     dropDownOptions: Array,
-    selectedOptionsMapper: Object,
     noOptionsMessage: String
   },
   methods: {

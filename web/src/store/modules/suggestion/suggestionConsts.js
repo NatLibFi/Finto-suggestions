@@ -7,7 +7,12 @@ export const storeStateNames = {
   RESOLVED_COUNT: 'resolvedCount',
   SEARCH_QUERY: 'searchQuery',
   FILTERS: 'filters',
-  PAGINATED_ITEMS: 'paginated_items'
+  PAGINATED_ITEMS: 'paginated_items',
+  SELECTED_SORT: 'selectedSort'
+};
+
+export const sessionStorageKeyNames = {
+  SELECTED_SORT: 'selectedSort'
 };
 
 export const suggestionGetters = {
@@ -17,7 +22,8 @@ export const suggestionGetters = {
   GET_RESOLVED_SUGGESTIONS_COUNT: 'getResolvedSuggestionsCount',
   GET_SEARCH_QUERY: 'getSearchQuery',
   GET_FILTERS: 'getFilters',
-  GET_PAGINATION_SUGGESTIONS: 'getPaginationSuggestions'
+  GET_PAGINATION_SUGGESTIONS: 'getPaginationSuggestions',
+  GET_SELECTED_SORT: 'getSelectedSort'
 };
 
 export const suggestionMutations = {
@@ -27,7 +33,8 @@ export const suggestionMutations = {
   SET_RESOLVED_SUGGESTIONS_COUNT: 'setResolvedSuggestionCount',
   SET_SEARCH_QUERY: 'setSearchQuery',
   SET_FILTERS: 'setFilters',
-  SET_PAGINATION_SUGGESTIONS: 'setPaginationSuggestions'
+  SET_PAGINATION_SUGGESTIONS: 'setPaginationSuggestions',
+  SET_SELECTED_SORT: 'setSelectedSort'
 };
 
 export const suggestionActions = {
@@ -37,5 +44,7 @@ export const suggestionActions = {
   GET_SORTED_SUGGESTIONS: 'getSortedSuggestions',
   GET_SUGGESTION_BY_ID: 'getSuggestionById',
   ASSIGN_SUGGESTION_TO_USER: 'assignSuggestionToUser',
-  UNASSIGN_SUGGESTION_FROM_USER: 'unassignSuggestionFromUser'
+  UNASSIGN_SUGGESTION_FROM_USER: 'unassignSuggestionFromUser',
+  GET_SELECTED_SORT_KEY: 'getSelectedSortKey',
+  SET_SELECTED_SORT_KEY: 'setSelectedSortKey'
 };

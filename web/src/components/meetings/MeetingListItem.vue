@@ -9,10 +9,10 @@
       <div class="label">
         <p>
           <strong>#{{ meeting.id }}</strong>
-          <span v-if="meeting.meeting_date.length > 0">
+          <span v-if="meeting.meeting_date">
             Järjestetään {{ meeting.meeting_date.split('T')[0] }}
           </span>
-          <span v-if="meeting.meeting_date.length == 0">
+          <span v-if="!meeting.meeting_date">
             Ei asetettua päivämäärää
           </span>
         </p>
@@ -24,7 +24,7 @@
         <div :style="backgroundWidth" class="progress-background"></div>
       </div>
       <div class="status-summary">
-        0/28 ehdotusta käsitelty (0%)
+        {{ processed }}/{{ suggestions }} ehdotusta käsitelty ({{ progression }}%)
       </div>
     </div>
   </li>
@@ -33,6 +33,8 @@
 <script>
 import SvgIcon from '../icons/SvgIcon';
 import IconComments from '../icons/IconComments';
+
+import { getMeetingProgressionCounts, getMeetingProgressionWidths } from '../../utils/meetingHelper.js';
 
 export default {
   components: {
@@ -48,12 +50,21 @@ export default {
   data: function() {
     return {
       progressWidth: {
-        width: this.calculateStatusBarWidth() + '%'
+        width:`${0}%`
       },
       backgroundWidth: {
-        width: 100 - this.calculateStatusBarWidth() + '%'
-      }
+        width: `${100}%`
+      },
+      processed: 0,
+      suggestions: 0,
+      progression: 0
     }
+  },
+  created() {
+    this.handleMeetingProgressionCounts(
+      getMeetingProgressionCounts(
+        this.meeting
+    ));
   },
   methods: {
     goToMeetingList() {
@@ -65,9 +76,19 @@ export default {
         }
       });
     },
-    calculateStatusBarWidth() {
-      // return integer percentage value for suggestions (processed / all %)
-      return 30
+    handleMeetingProgressionCounts(countData) {
+      if (countData) {
+        this.processed = countData.processed;
+        this.suggestions = countData.suggestions;
+        this.progression = countData.progression;
+      }
+    }
+  },
+  watch: {
+    progression() {
+      const meetingProgressionWidths = getMeetingProgressionWidths(this.progression);
+      this.progressWidth = meetingProgressionWidths.progressWidth;
+      this.backgroundWidth = meetingProgressionWidths.backgroundWidth;
     }
   }
 };

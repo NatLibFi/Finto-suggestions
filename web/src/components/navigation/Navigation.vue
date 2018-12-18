@@ -145,7 +145,7 @@ export default {
       this.showSignupConfirmation = false;
     },
     async login(data) {
-      if(data) {
+      if (data) {
         if (data.service !== '' && data.service !== 'local') {
           await this.oAuth2Authenticate(data.service);
         } else {
@@ -156,9 +156,9 @@ export default {
     },
     async signup(data) {
       if (data && data.service !== 'local') {
-        const x = await this.oAuth2Authenticate(data.service);
+        await this.oAuth2Authenticate(data.service);
       } else {
-        const y = await this.registerLocalUser(data.userdata);
+        await this.registerLocalUser(data.userdata);
       }
       this.showSignupDialog = false;
       this.showSignupConfirmation = true;
@@ -185,7 +185,7 @@ export default {
   },
   watch: {
     userId() {
-      if(this.userId > 0) {
+      if (this.userId > 0) {
         this.getUserData(this.userId);
       }
     },
@@ -195,7 +195,6 @@ export default {
     }
   }
 };
-
 </script>
 
 <style scoped>

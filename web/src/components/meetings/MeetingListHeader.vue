@@ -14,7 +14,6 @@
       :selectedIndex="selectedSortOptionIndex"
       :isOpened="isDropDownOpened"
       :dropDownOptions="dropDownOptions"
-      :selectedOptionsMapper="selectedOptionsMapper"
       @sortSuggestionListBy="sortSuggestionList"
       @refreshSelectedIndex="selectedSortOptionIndex = $event"
       @closeDropDown="closeDropDown"/>
@@ -22,7 +21,7 @@
 </template>
 
 <script>
-import { suggestionSortingKeys } from '../../utils/suggestionMappings.js';
+import { sortingKeys } from '../../utils/sortingHelper.js';
 
 import SortingDropDown from '../common/SortingDropDown';
 import SvgIcon from '../icons/SvgIcon';
@@ -43,20 +42,15 @@ export default {
     selectedSortOptionIndex: 1,
     isDropDownOpened: false,
     dropDownOptions: [
-      { label: 'Uusin ensin', value: 'NEWEST_FIRST' },
-      { label: 'Vanhin ensin', value: 'OLDEST_FIRST' }
-    ],
-    // TODO: create a sorting functionality for Meetings
-    selectedOptionsMapper: {
-      NEWEST_FIRST: suggestionSortingKeys.NEWEST_FIRST,
-      OLDEST_FIRST: suggestionSortingKeys.OLDEST_FIRST
-    }
+      { label: 'Uusin ensin', value: suggestionSortingKeys.NEWEST_FIRST },
+      { label: 'Vanhin ensin', value: suggestionSortingKeys.OLDEST_FIRST }
+    ]
   }),
   methods: {
-    sortSuggestionList: function(selectedSorting) {
-      this.$emit('sortSuggestionListBy', selectedSorting);
+    sortSuggestionList(selectedSorting) {
+      this.$emit('sortListBy', selectedSorting);
     },
-    closeDropDown: function() {
+    closeDropDown() {
       this.isDropDownOpened = false;
     }
   }

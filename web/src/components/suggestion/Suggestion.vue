@@ -131,7 +131,7 @@ export default {
       required: false
     }
   },
-  data () {
+  data() {
     return {
       // eslint-disable-next-line
       userId: this.$cookies.get('logged_user_id'),
@@ -174,7 +174,7 @@ export default {
           params: {
              meetingId: this.meetingId
           }
-        })
+        });
       }
     },
     async getUserName() {

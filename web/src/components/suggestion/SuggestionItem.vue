@@ -5,7 +5,8 @@
         <p class="title-row">
           <span class="item-name">{{ suggestion.preferred_label.fi }}</span>
           <span
-            :class="[suggestionTypeToStyleClass[suggestion.suggestion_type], 'tag']">{{ suggestionTypeToString[suggestion.suggestion_type] }}
+          :class="[suggestionTypeToStyleClass[suggestion.suggestion_type], 'tag']">
+            {{ suggestionTypeToString[suggestion.suggestion_type] }}
           </span>
           <span v-if="suggestion.tags.length > 0">
             <span class="tags tag" v-for="tag in suggestion.tags" :key="tag.label">
@@ -21,9 +22,9 @@
         </p>
       </div>
     </div>
-    <div class="item-comments">
+    <div class="item-comments" v-if="suggestion.events.filter((event) => event.event_type === eventTypes.COMMENT).length > 0">
       <svg-icon icon-name="comments"><icon-comments /></svg-icon>
-      <span>2</span>
+      <span>{{ suggestion.events.filter((event) => event.event_type === eventTypes.COMMENT).length }}</span>
     </div>
   </li>
 </template>
@@ -31,8 +32,9 @@
 <script>
 import SvgIcon from '../icons/SvgIcon';
 import IconComments from '../icons/IconComments';
-import { suggestionTypeToStyleClass, suggestionTypeToString } from '../../utils/suggestionMappings.js';
-import { dateDiffLabel } from '../../utils/dateTimeStampHelper.js';
+import { suggestionTypeToStyleClass, suggestionTypeToString } from '../../utils/suggestionMappings';
+import { dateDiffLabel } from '../../utils/dateTimeStampHelper';
+import { eventTypes } from '../../utils/eventMappings';
 
 export default {
   components: {
@@ -46,10 +48,11 @@ export default {
     },
     meetingId: [String, Number]
   },
-  data:() => ({
-    //not the best way but seems that you cannot use imported module straight inside class binding clause
+  data: () => ({
+    // TODO: not the best way but seems that you cannot use imported module straight inside class binding clause
     suggestionTypeToStyleClass,
-    suggestionTypeToString
+    suggestionTypeToString,
+    eventTypes
   }),
   methods: {
     buildLabel() {
@@ -72,7 +75,7 @@ export default {
             suggestion: this.suggestion,
             meetingId: this.meetingId
           }
-        })
+        });
       }
     }
   }
