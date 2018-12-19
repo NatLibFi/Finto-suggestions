@@ -32,7 +32,8 @@ const vueAuth = VueAuthenticate.factory(Vue.prototype.$http, {
       clientId: `${process.env.VUE_APP_GITHUB_CLIENT_ID}`,
       redirectUri: `${process.env.VUE_APP_BASE_DOMAIN}/api/auth/github`,
       state: '0',
-      optionalUrlParams: ['scope', 'state']
+      optionalUrlParams: ['scope', 'state'],
+      popupOptions: null
     },
     google: {
       clientId: '',
@@ -49,12 +50,12 @@ export default {
   state: {
     [storeStateNames.IS_AUTHENTICATED]: false,
     [storeStateNames.USER_ID]: 0,
-    [storeStateNames.USER_DATA]: ''
+    [storeStateNames.NAME]: ''
   },
   getters: {
     [userGetters.GET_AUTHENTICATE]: state => state[storeStateNames.IS_AUTHENTICATED],
     [userGetters.GET_USER_ID]: state => state[storeStateNames.USER_ID],
-    [userGetters.GET_USER_DATA]: state => state[storeStateNames.USER_DATA]
+    [userGetters.GET_USER_NAME]: state => state[storeStateNames.NAME]
   },
   mutations: {
     [userMutations.SET_AUTHENTICATE](state, authenticate) {
@@ -66,8 +67,9 @@ export default {
     [userMutations.SET_STORAGE_USER_ID](user) {
       sessionStorage.setItem(storeKeyNames.USER_ID, user.userId);
     },
-    [userMutations.SET_USER_DATA](state, user) {
-      Vue.set(state, storeStateNames.USER_DATA, user);
+    [userMutations.SET_USER_NAME](state, name) {
+      console.log(name);
+      Vue.set(state, storeStateNames.NAME, name);
     }
   },
   actions: {
@@ -118,10 +120,11 @@ export default {
       commit(userMutations.SET_USER_ID, 0);
       commit(userMutations.SET_STORAGE_USER_ID, 0);
     },
-    async [userActions.GET_USER_DATA]({ commit }, userId) {
+    async [userActions.GET_USER_NAME]({ commit }, userId) {
       const response = await api.user.getUserData(userId);
       if (response && response.code === 200) {
-        commit(userMutations.SET_USER_DATA, response.data);
+        console.log(response.data);
+        commit(userMutations.SET_USER_NAME, response.data.name);
       }
     },
     async [userActions.AUTHENTICATE_LOCAL_USER]({ commit }, authenticateData) {

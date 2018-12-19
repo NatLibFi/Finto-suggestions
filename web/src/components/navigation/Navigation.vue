@@ -11,7 +11,7 @@
           <span unselectable="on">{{ userInitials }}</span>
         </div>
         <div class="nav-menu-user">
-          <p v-if="userData && userData.name.length > 0">{{ userData.name }}</p>
+          <p v-if="name && name.length > 0">{{ name }}</p>
         </div>
         <svg-icon icon-name="triangle"><icon-triangle /></svg-icon>
       </div>
@@ -111,17 +111,21 @@ export default {
     showSignupDialog: false,
     showSignupConfirmation: false
   }),
-  async created() {
-    await this.validateAuthentication();
+  created() {
+    this.validateAuthentication();
     this.getUserIdFromStorage();
-    await this.getUserData(parseInt(this.userId));
+
+    if(parseInt(this.userId) > 0){
+      this.getUserName(parseInt(this.userId));
+    }
+
     this.handleInitialsFetch();
   },
   computed: {
     ...mapUserGetters({
       isAuthenticated: userGetters.GET_AUTHENTICATE,
       userId: userGetters.GET_USER_ID,
-      userData: userGetters.GET_USER_DATA
+      name: userGetters.GET_USER_NAME
     })
   },
   methods: {
@@ -129,7 +133,7 @@ export default {
       authenticateGithubUser: userActions.AUTHENTICATE,
       validateAuthentication: userActions.VALIDATE_AUTHENTICATION,
       revokeAuthentication: userActions.REVOKE_AUTHENTICATION,
-      getUserData: userActions.GET_USER_DATA,
+      getUserName: userActions.GET_USER_NAME,
       authenticateLocalUser: userActions.AUTHENTICATE_LOCAL_USER,
       getUserIdFromStorage: userActions.GET_USER_ID_FROM_STORAGE
     }),
@@ -178,7 +182,14 @@ export default {
       await api.user.registerLocalUser(userdata);
     },
     handleInitialsFetch() {
-      this.userInitials = userNameInitials(this.userData.name);
+      console.log(this.name);
+      this.userInitials = userNameInitials(this.name);
+    }
+  },
+  watch: {
+    name() {
+      console.log(this.name);
+      this.handleInitialsFetch();
     }
   },
   mounted: function() {

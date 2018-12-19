@@ -7,7 +7,7 @@
       <div class="event-user-initials"></div>
       <div class="event-info">
         <p class="event-user">
-          <span class="user-name">{{ userData ? userData.name : '' }} </span>
+          <!-- <span class="user-name">{{ name && name.length > 0 ? name : '' }} </span> -->
           <span v-if="type == 'ACTION'">{{ action }}</span>
         </p>
         <p class="date-sent">{{ buildLabel() }}</p>
@@ -43,17 +43,17 @@ export default {
     action: 'vaihtoi tyypiksi '
   }),
   created() {
-    this.getUserData(this.event.user_id);
+    // this.getUserName(this.event.user_id);
   },
-  computed: {
-    ...mapUserGetters({
-      userData: userGetters.GET_USER_DATA
-    })
-  },
+  // computed: {
+  //   ...mapUserGetters({
+  //     name: userGetters.GET_USER_NAME
+  //   })
+  // },
   methods: {
-    ...mapUserActions({
-      getUserData: userActions.GET_USER_DATA
-    }),
+    // ...mapUserActions({
+    //   getUserName: userActions.GET_USER_NAME
+    // }),
     buildLabel() {
       return dateDiffLabel(this.event.created);
     }
