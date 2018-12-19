@@ -197,14 +197,14 @@ def handle_github_request(code, state) -> (str, str):
               'client_secret': github_client_secret,
               'code': code,
               'redirect_uri': redirect_uri
-              }
+            }
 
             token_response = requests.post(
                 'https://github.com/login/oauth/access_token', data=payload)
 
-            if len(token_response.text) > 0:
-                github_access_token = token_response.text.split('&')[
-                                                                0].split('=')[1]
+            if token_response is not None and len(token_response.text) > 0:
+                print(token_response.text)
+                github_access_token = token_response.text.split('&')[0].split('=')[1]
 
             if github_access_token is not None and len(github_access_token) > 0:
 
