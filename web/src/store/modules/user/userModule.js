@@ -50,13 +50,13 @@ export default {
   state: {
     [storeStateNames.IS_AUTHENTICATED]: false,
     [storeStateNames.USER_ID]: 0,
-    [storeStateNames.NAME]: ''
+    [storeStateNames.NAME]: '',
     [storeStateNames.USER]: ''
   },
   getters: {
     [userGetters.GET_AUTHENTICATE]: state => state[storeStateNames.IS_AUTHENTICATED],
     [userGetters.GET_USER_ID]: state => state[storeStateNames.USER_ID],
-    [userGetters.GET_USER_NAME]: state => state[storeStateNames.NAME]
+    [userGetters.GET_USER_NAME]: state => state[storeStateNames.NAME],
     [userGetters.GET_USER]: state => state[storeStateNames.USER],
     [userGetters.GET_USERS]: state => state[storeStateNames.USERS],
   },
@@ -73,7 +73,7 @@ export default {
     [userMutations.SET_USER_NAME](state, name) {
       console.log(name);
       Vue.set(state, storeStateNames.NAME, name);
-    }
+    },
     [userMutations.SET_USER](state, user) {
       Vue.set(state, storeStateNames.USER, user);
     },
