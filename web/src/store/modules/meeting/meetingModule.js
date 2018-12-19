@@ -34,7 +34,9 @@ export default {
   },
   mutations: {
     [meetingMutations.SET_MEETINGS](state, meetings) {
-      meetings.sort(comparerAsc('meeting_date'));
+      if (meetings.length > 0) {
+        meetings.sort(comparerAsc('meeting_date'));
+      }
       Vue.set(state, storeStateNames.ITEMS, meetings);
     },
     [meetingMutations.SET_MEETING](state, meeting) {

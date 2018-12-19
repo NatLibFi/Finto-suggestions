@@ -203,6 +203,7 @@ def handle_github_request(code, state) -> (str, str):
                 'https://github.com/login/oauth/access_token', data=payload)
 
             if token_response is not None and len(token_response.text) > 0:
+                print(token_response.text)
                 github_access_token = token_response.text.split('&')[0].split('=')[1]
                 print(github_access_token)
 
