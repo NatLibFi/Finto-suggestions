@@ -94,25 +94,38 @@
       <p>{{ suggestion.organization }}</p>
     </div>
 
+    <div v-if="userName">
+      <p><strong>Käsittelijä</strong></p>
+      <p>{{ userName }} <a href="#" v-on:click="unassignUserFromSuggestion(suggestion.id, suggestion.user_id)">Poista käsittelijä ehdotuksesta</a></p>
+    </div>
+
   </div>
 </template>
 
 <script>
 import { suggestionType } from '../../utils/suggestionMappings.js';
+import { suggestionActions } from '../../store/modules/suggestion/suggestionConsts';
+import { mapSuggestionActions } from '../../store/modules/suggestion/suggestionModule';
 
 export default {
   props: {
     suggestion: {
       type: Object,
       required: true
+    },
+    userName: { type: String, default: '' }
+  },
+  data() {
+    return {
+      suggestionTypes: {
+        NEW: suggestionType.NEW,
+        MODIFY: suggestionType.MODIFY
+      }
     }
   },
-  data: () => ({
-    suggestionTypes: {
-      NEW: suggestionType.NEW,
-      MODIFY: suggestionType.MODIFY
-    }
-  })
+  methods: {
+    ...mapSuggestionActions({ unassignUserFromSuggestion: suggestionActions.UNASSIGN_SUGGESTION_FROM_USER })
+  }
 };
 </script>
 

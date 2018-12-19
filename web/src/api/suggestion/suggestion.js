@@ -1,4 +1,4 @@
-import { get } from '../utils';
+import { get, put } from '../utils';
 import { suggestionStateStatus } from '../../utils/suggestionMappings';
 import { asciiUriEncoding } from '../helper';
 
@@ -13,5 +13,7 @@ export default {
     }),
   getSortedSuggestions: sortValue => get({ resource: `/suggestions?sort=${sortValue}` }),
   filterSuggestions: filters => get({ resource: `/suggestions?filters=${filters}` }),
-  getSuggestionById: suggestionId => get({ resource: `/suggestions/${suggestionId}` })
+  getSuggestionById: suggestionId => get({ resource: `/suggestions/${suggestionId}` }),
+  assignUserToSuggestion: (suggestionId, userId) => put({resource: `/suggestions/${suggestionId}/assign/${userId}`}),
+  unassignUserFromSuggestion: suggestionId => put({resource: `/suggestions/${suggestionId}/unassign`})
 };
