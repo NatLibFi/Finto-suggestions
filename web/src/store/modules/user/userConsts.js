@@ -3,7 +3,7 @@ export const namespace = 'user';
 export const storeStateNames = {
   IS_AUTHENTICATED: 'isAuthenticated',
   USER_ID: 'userId',
-  NAME: 'name'
+  NAME: 'name',
   USER: 'user',
   USERS: 'users'
 };
