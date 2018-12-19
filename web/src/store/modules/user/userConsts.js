@@ -17,7 +17,7 @@ export const storeKeyNames = {
 export const userGetters = {
   GET_AUTHENTICATE: 'getAuthenticate',
   GET_USER_ID: 'getUserId',
-  GET_USER_NAME: 'getUserName'
+  GET_USER_NAME: 'getUserName',
   GET_USER: 'getUser',
   GET_USERS: 'getUsers'
 };
@@ -26,7 +26,7 @@ export const userMutations = {
   SET_AUTHENTICATE: 'setAuthenticate',
   SET_USER_ID: 'setUserId',
   SET_STORAGE_USER_ID: 'setStorageUserId',
-  SET_USER_NAME: 'setUserName'
+  SET_USER_NAME: 'setUserName',
   SET_USER: 'setUser',
   SET_USERS: 'setUsers'
 };
