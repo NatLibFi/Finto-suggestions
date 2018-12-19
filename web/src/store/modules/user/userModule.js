@@ -139,6 +139,12 @@ export default {
       } else {
         commit(userMutations.SET_AUTHENTICATE, false);
       }
+    },
+    [userActions.GET_USER_ID_FROM_STORAGE]({ commit }) {
+      const userId = sessionStorage.getItem(storeKeyNames.USER_ID);
+      if (userId && userId > 0) {
+        commit(userMutations.SET_USER_ID, userId);
+      }
     }
   }
 };

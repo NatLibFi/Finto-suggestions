@@ -11,7 +11,7 @@
           <span unselectable="on">{{ userInitials }}</span>
         </div>
         <div class="nav-menu-user">
-          <p>{{ userName }}</p>
+          <p v-if="userData && userData.name.length > 0">{{ userData.name }}</p>
         </div>
         <svg-icon icon-name="triangle"><icon-triangle /></svg-icon>
       </div>
@@ -103,7 +103,6 @@ export default {
   },
   data: () => ({
     userInitials: '',
-    userName: '',
     loginProvider: '',
     registerData: null,
     showDropdown: false,
@@ -112,8 +111,11 @@ export default {
     showSignupDialog: false,
     showSignupConfirmation: false
   }),
-  created() {
-    this.validateAuthentication();
+  async created() {
+    await this.validateAuthentication();
+    this.getUserIdFromStorage();
+    await this.getUserData(parseInt(this.userId));
+    this.handleInitialsFetch();
   },
   computed: {
     ...mapUserGetters({
@@ -128,7 +130,8 @@ export default {
       validateAuthentication: userActions.VALIDATE_AUTHENTICATION,
       revokeAuthentication: userActions.REVOKE_AUTHENTICATION,
       getUserData: userActions.GET_USER_DATA,
-      authenticateLocalUser: userActions.AUTHENTICATE_LOCAL_USER
+      authenticateLocalUser: userActions.AUTHENTICATE_LOCAL_USER,
+      getUserIdFromStorage: userActions.GET_USER_ID_FROM_STORAGE
     }),
     returnToHome() {
       this.$router.push('/');
@@ -173,6 +176,9 @@ export default {
     },
     async registerLocalUser(userdata) {
       await api.user.registerLocalUser(userdata);
+    },
+    handleInitialsFetch() {
+      this.userInitials = userNameInitials(this.userData.name);
     }
   },
   mounted: function() {
@@ -182,17 +188,6 @@ export default {
         this.closeMobileDropdown();
       }
     });
-  },
-  watch: {
-    userId() {
-      if (this.userId > 0) {
-        this.getUserData(this.userId);
-      }
-    },
-    userData() {
-      this.userName = this.userData.name;
-      this.userInitials = userNameInitials(this.userName);
-    }
   }
 };
 </script>

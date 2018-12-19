@@ -29,6 +29,7 @@ export const userActions = {
   AUTHENTICATE: 'authenticate',
   VALIDATE_AUTHENTICATION: 'validateAuthentication',
   REVOKE_AUTHENTICATION: 'revokeAuthentication',
+  GET_USER_ID_FROM_STORAGE: 'getUserIdFromStorage',
   GET_USER_DATA: 'getUserData',
   AUTHENTICATE_LOCAL_USER: 'authenticateLocalUser'
 };
