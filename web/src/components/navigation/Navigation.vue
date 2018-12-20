@@ -82,8 +82,8 @@ import IconMore from '../icons/IconMore';
 import IconTriangle from '../icons/IconTriangle';
 import { directive as onClickaway } from 'vue-clickaway';
 
-import { mapUserGetters, mapUserActions } from '../../store/modules/user/userModule.js';
-import { userGetters, userActions } from '../../store/modules/user/userConsts.js';
+import { mapAuthenticatedUserGetters, mapAuthenticatedUserActions } from '../../store/modules/authenticatedUser/authenticatedUserModule.js';
+import { authenticatedUserGetters, authenticatedUserActions } from '../../store/modules/authenticatedUser/authenticatedUserConsts.js';
 
 import api from '../../api/index.js';
 import { userNameInitials } from '../../utils/nameHelpers.js';
@@ -122,20 +122,20 @@ export default {
     this.handleInitialsFetch();
   },
   computed: {
-    ...mapUserGetters({
-      isAuthenticated: userGetters.GET_AUTHENTICATE,
-      userId: userGetters.GET_USER_ID,
-      name: userGetters.GET_USER_NAME
+    ...mapAuthenticatedUserGetters({
+      isAuthenticated: authenticatedUserGetters.GET_AUTHENTICATE,
+      userId: authenticatedUserGetters.GET_USER_ID,
+      name: authenticatedUserGetters.GET_USER_NAME
     })
   },
   methods: {
-    ...mapUserActions({
-      authenticateGithubUser: userActions.AUTHENTICATE,
-      validateAuthentication: userActions.VALIDATE_AUTHENTICATION,
-      revokeAuthentication: userActions.REVOKE_AUTHENTICATION,
-      getUserName: userActions.GET_USER_NAME,
-      authenticateLocalUser: userActions.AUTHENTICATE_LOCAL_USER,
-      getUserIdFromStorage: userActions.GET_USER_ID_FROM_STORAGE
+    ...mapAuthenticatedUserActions({
+      authenticateGithubUser: authenticatedUserActions.AUTHENTICATE,
+      validateAuthentication: authenticatedUserActions.VALIDATE_AUTHENTICATION,
+      revokeAuthentication: authenticatedUserActions.REVOKE_AUTHENTICATION,
+      getUserName: authenticatedUserActions.GET_USER_NAME,
+      authenticateLocalUser: authenticatedUserActions.AUTHENTICATE_LOCAL_USER,
+      getUserIdFromStorage: authenticatedUserActions.GET_USER_ID_FROM_STORAGE
     }),
     returnToHome() {
       this.$router.push('/');
@@ -182,13 +182,11 @@ export default {
       await api.user.registerLocalUser(userdata);
     },
     handleInitialsFetch() {
-      console.log(this.name);
       this.userInitials = userNameInitials(this.name);
     }
   },
   watch: {
     name() {
-      console.log(this.name);
       this.handleInitialsFetch();
     }
   },

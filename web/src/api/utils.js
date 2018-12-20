@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { storeKeyNames } from '../store/modules/user/userConsts';
+import { storeKeyNames } from '../store/modules/authenticatedUser/authenticatedUserConsts';
 
 const client = axios.create({
   baseURL: '/api',
@@ -9,6 +9,7 @@ const client = axios.create({
 const execute = async (method, resource, data) => {
   // eslint-disable-next-line no-undef
   const access_token = $cookies.get(storeKeyNames.ACCESS_TOKEN);
+  // console.log(access_token);
   return client({
     method,
     url: resource,

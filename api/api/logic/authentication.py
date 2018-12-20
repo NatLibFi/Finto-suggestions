@@ -278,9 +278,9 @@ def handle_user_creation(code, oauth_data) -> str:
 
     serialized_user = super(User, user).as_dict()
     local_access_token = create_access_token(identity=serialized_user)
-    refresh_token = create_refresh_token(identity=serialized_user)
+    local_refresh_token = create_refresh_token(identity=serialized_user)
 
-    token = AccessToken(user_id=user.id, provider='local', access_token=local_access_token, refresh_token=refresh_token)
+    token = AccessToken(user_id=user.id, provider='local', access_token=local_access_token, refresh_token=local_refresh_token)
 
     try:
         db.session.add(token)
@@ -290,7 +290,7 @@ def handle_user_creation(code, oauth_data) -> str:
         raise ex
 
     print(local_access_token)
-    return {'access_token' : local_access_token, 'user_id': user.id}, 200
+    return {'access_token' : local_access_token, 'refresh_token': local_refresh_token, 'user_id': user.id}, 200
 
 def get_github() -> str:
   return 200
