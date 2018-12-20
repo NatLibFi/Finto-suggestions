@@ -63,6 +63,9 @@ export default {
       Vue.set(state, storeStateNames.USER_ID, authenticatedData.user_id);
       Vue.set(sessionStorage, storeKeyNames.USER_ID, authenticatedData.user_id);
     },
+    [authenticatedUserMutations.SET_USER_ID](state, userId) {
+      Vue.set(state, storeStateNames.USER_ID, userId);
+    },
     [authenticatedUserMutations.SET_USER_NAME](state, name) {
       Vue.set(state, storeStateNames.NAME, name);
     }

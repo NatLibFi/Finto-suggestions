@@ -26,8 +26,8 @@ import { mapEventActions } from '../../store/modules/event/eventModule.js';
 import { eventActions } from '../../store/modules/event/eventConsts.js';
 import { eventTypes } from '../../utils/eventMappings.js';
 
-import { mapUserGetters } from '../../store/modules/user/userModule.js';
-import { userGetters } from '../../store/modules/user/userConsts.js';
+import { mapAuthenticatedUserGetters } from '../../store/modules/authenticatedUser/authenticatedUserModule.js';
+import { authenticatedUserGetters } from '../../store/modules/authenticatedUser/authenticatedUserConsts.js';
 
 export default {
   props: {
@@ -43,7 +43,7 @@ export default {
     content: ''
   }),
   computed: {
-    ...mapUserGetters({ userId: userGetters.GET_USER_ID })
+    ...mapAuthenticatedUserGetters({ userId: authenticatedUserGetters.GET_USER_ID })
   },
   methods: {
     ...mapEventActions({
