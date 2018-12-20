@@ -172,7 +172,7 @@ class Suggestion(db.Model, SerializableMixin):
     reason = db.Column(db.Text)
 
     preferred_label = db.Column(db.JSON)
-    alternative_labels = db.Column(db.JSON)
+    alternative_labels = db.Column(db.ARRAY(db.JSON))
 
     broader_labels = db.Column(db.JSON)
     narrower_labels = db.Column(db.JSON)
