@@ -50,7 +50,7 @@
     <div v-if="suggestion.related && suggestion.related.length > 0">
       <p><strong>Assosiatiiviset (RT)</strong></p>
       <p v-for="term in suggestion.related" :key="term.id">
-        <a :href="term">{{ term }}</a>
+        {{ term.vocab }}: <a :href="term.value">{{ term.value }}</a>
       </p>
     </div>
 
