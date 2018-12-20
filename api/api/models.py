@@ -155,8 +155,9 @@ class Meeting(db.Model, SerializableMixin):
 
 class Suggestion(db.Model, SerializableMixin):
     __tablename__ = 'suggestions'
-    __public__ = ["alternative_label", "broader", "created", "description", "group", "id", "created", "modified",
-                  "narrower", "organization", "preferred_label", "reason", "related", "status", "suggestion_type", "uri", "meeting_id", "user_id"]
+    __public__ = ["alternative_labels", "broader_labels", "created", "description", "groups", "id", "created", "modified",
+                  "narrower_labels", "organization", "preferred_label", "reason", "related_labels", "status", "suggestion_type",
+                  "uri", "scopeNote", "exactMatches", "neededFor", "meeting_id", "user_id"]
 
     id = db.Column(db.Integer, primary_key=True)
     created = db.Column(db.DateTime, index=True, default=datetime.utcnow)
@@ -181,8 +182,6 @@ class Suggestion(db.Model, SerializableMixin):
     scopeNote = db.Column(db.Text)
     exactMatches = db.Column(db.JSON)
     neededFor = db.Column(db.String(500))
-    #exactMatches
-    #scopeNote
 
     events = db.relationship('Event', backref='suggestion')
     reactions = db.relationship('Reaction', backref='suggestion')
