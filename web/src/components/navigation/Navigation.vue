@@ -11,7 +11,7 @@
           <span unselectable="on">{{ userInitials }}</span>
         </div>
         <div class="nav-menu-user">
-          <p>{{ userName }}</p>
+          <p v-if="name && name.length > 0">{{ name }}</p>
         </div>
         <svg-icon icon-name="triangle"><icon-triangle /></svg-icon>
       </div>
@@ -82,8 +82,8 @@ import IconMore from '../icons/IconMore';
 import IconTriangle from '../icons/IconTriangle';
 import { directive as onClickaway } from 'vue-clickaway';
 
-import { mapUserGetters, mapUserActions } from '../../store/modules/user/userModule.js';
-import { userGetters, userActions } from '../../store/modules/user/userConsts.js';
+import { mapAuthenticatedUserGetters, mapAuthenticatedUserActions } from '../../store/modules/authenticatedUser/authenticatedUserModule.js';
+import { authenticatedUserGetters, authenticatedUserActions } from '../../store/modules/authenticatedUser/authenticatedUserConsts.js';
 
 import api from '../../api/index.js';
 import { userNameInitials } from '../../utils/nameHelpers.js';
@@ -103,7 +103,6 @@ export default {
   },
   data: () => ({
     userInitials: '',
-    userName: '',
     loginProvider: '',
     registerData: null,
     showDropdown: false,
@@ -114,21 +113,29 @@ export default {
   }),
   created() {
     this.validateAuthentication();
+    this.getUserIdFromStorage();
+
+    if(parseInt(this.userId) > 0){
+      this.getUserName(parseInt(this.userId));
+    }
+
+    this.handleInitialsFetch();
   },
   computed: {
-    ...mapUserGetters({
-      isAuthenticated: userGetters.GET_AUTHENTICATE,
-      userId: userGetters.GET_USER_ID,
-      userData: userGetters.GET_USER
+    ...mapAuthenticatedUserGetters({
+      isAuthenticated: authenticatedUserGetters.GET_AUTHENTICATE,
+      userId: authenticatedUserGetters.GET_USER_ID,
+      name: authenticatedUserGetters.GET_USER_NAME
     })
   },
   methods: {
-    ...mapUserActions({
-      authenticateGithubUser: userActions.AUTHENTICATE,
-      validateAuthentication: userActions.VALIDATE_AUTHENTICATION,
-      revokeAuthentication: userActions.REVOKE_AUTHENTICATION,
-      getUserData: userActions.GET_USER_DATA,
-      authenticateLocalUser: userActions.AUTHENTICATE_LOCAL_USER
+    ...mapAuthenticatedUserActions({
+      authenticateGithubUser: authenticatedUserActions.AUTHENTICATE,
+      validateAuthentication: authenticatedUserActions.VALIDATE_AUTHENTICATION,
+      revokeAuthentication: authenticatedUserActions.REVOKE_AUTHENTICATION,
+      getUserName: authenticatedUserActions.GET_USER_NAME,
+      authenticateLocalUser: authenticatedUserActions.AUTHENTICATE_LOCAL_USER,
+      getUserIdFromStorage: authenticatedUserActions.GET_USER_ID_FROM_STORAGE
     }),
     returnToHome() {
       this.$router.push('/');
@@ -173,6 +180,14 @@ export default {
     },
     async registerLocalUser(userdata) {
       await api.user.registerLocalUser(userdata);
+    },
+    handleInitialsFetch() {
+      this.userInitials = userNameInitials(this.name);
+    }
+  },
+  watch: {
+    name() {
+      this.handleInitialsFetch();
     }
   },
   mounted: function() {
@@ -182,17 +197,6 @@ export default {
         this.closeMobileDropdown();
       }
     });
-  },
-  watch: {
-    userId() {
-      if (this.userId > 0) {
-        this.getUserData(this.userId);
-      }
-    },
-    userData() {
-      this.userName = this.userData.name;
-      this.userInitials = userNameInitials(this.userName);
-    }
   }
 };
 </script>

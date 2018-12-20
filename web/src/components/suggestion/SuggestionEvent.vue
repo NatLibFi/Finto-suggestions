@@ -7,7 +7,7 @@
       <div class="event-user-initials"></div>
       <div class="event-info">
         <p class="event-user">
-          <span class="user-name">{{ userData ? userData.name : '' }} </span>
+          <span class="user-name">{{ userName }} </span>
           <span v-if="type == 'ACTION'">{{ action }}</span>
         </p>
         <p class="date-sent">{{ buildLabel() }}</p>
@@ -27,6 +27,7 @@ import { dateDiffLabel } from '../../utils/dateTimeStampHelper.js';
 
 import { mapUserGetters, mapUserActions } from '../../store/modules/user/userModule.js';
 import { userGetters, userActions } from '../../store/modules/user/userConsts.js';
+import { userNameInitials } from '../../utils/nameHelpers.js';
 
 export default {
   props: {
@@ -40,22 +41,33 @@ export default {
     }
   },
   data: () => ({
-    action: 'vaihtoi tyypiksi '
+    action: 'vaihtoi tyypiksi ',
+    userName: '',
+    userNameInitials: ''
   }),
-  created() {
-    this.getUserData(this.event.user_id);
+  async created() {
+    await this.getUsers();
+    this.fetchUserNameAndInitials();
   },
   computed: {
     ...mapUserGetters({
-      userData: userGetters.GET_USER_DATA
+      users: userGetters.GET_USERS
     })
   },
   methods: {
     ...mapUserActions({
-      getUserData: userActions.GET_USER_DATA
+      getUsers: userActions.GET_USERS
     }),
     buildLabel() {
       return dateDiffLabel(this.event.created);
+    },
+    fetchUserNameAndInitials() {
+      if (this.users && this.users.length > 0) {
+        const userName = this.users.find(u => u.id === this.event.user_id).name;
+        this.userName = userName;
+        this.userNameInitials = userNameInitials(userName);
+      }
+
     }
   }
 };

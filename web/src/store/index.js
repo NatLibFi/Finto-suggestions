@@ -6,6 +6,7 @@ import meetingModule from './modules/meeting/meetingModule';
 import tagModule from './modules/tag/tagModule';
 import eventModule from './modules/event/eventModule';
 import userModule from './modules/user/userModule';
+import authenticatedUser from './modules/authenticatedUser/authenticatedUserModule';
 
 Vue.use(Vuex);
 
@@ -15,6 +16,7 @@ export default new Vuex.Store({
     meeting: meetingModule,
     tag: tagModule,
     event: eventModule,
-    user: userModule
+    user: userModule,
+    authenticatedUser: authenticatedUser
   }
 });

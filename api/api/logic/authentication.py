@@ -197,17 +197,17 @@ def handle_github_request(code, state) -> (str, str):
               'client_secret': github_client_secret,
               'code': code,
               'redirect_uri': redirect_uri
-              }
+            }
 
             token_response = requests.post(
                 'https://github.com/login/oauth/access_token', data=payload)
 
-            if len(token_response.text) > 0:
-                github_access_token = token_response.text.split('&')[
-                                                                0].split('=')[1]
+            if token_response is not None and len(token_response.text) > 0:
+                print(token_response.text)
+                github_access_token = token_response.text.split('&')[0].split('=')[1]
+                print(github_access_token)
 
             if github_access_token is not None and len(github_access_token) > 0:
-
               user_data_response = requests.get(
                   'https://api.github.com/user?access_token=' + github_access_token)
 
@@ -278,9 +278,9 @@ def handle_user_creation(code, oauth_data) -> str:
 
     serialized_user = super(User, user).as_dict()
     local_access_token = create_access_token(identity=serialized_user)
-    refresh_token = create_refresh_token(identity=serialized_user)
+    local_refresh_token = create_refresh_token(identity=serialized_user)
 
-    token = AccessToken(user_id=user.id, provider='local', access_token=local_access_token, refresh_token=refresh_token)
+    token = AccessToken(user_id=user.id, provider='local', access_token=local_access_token, refresh_token=local_refresh_token)
 
     try:
         db.session.add(token)
@@ -290,7 +290,7 @@ def handle_user_creation(code, oauth_data) -> str:
         raise ex
 
     print(local_access_token)
-    return {'access_token' : local_access_token, 'user_id': user.id}, 200
+    return {'access_token' : local_access_token, 'refresh_token': local_refresh_token, 'user_id': user.id}, 200
 
 def get_github() -> str:
   return 200
