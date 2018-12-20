@@ -163,7 +163,6 @@ class Suggestion(db.Model, SerializableMixin):
     modified = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     # meeting: backref
 
-    # suggestion_type = db.Column(db.Enum(SuggestionTypes), nullable=False)
     suggestion_type = db.Column(db.Enum(SuggestionTypes))
     status = db.Column(db.Enum(SuggestionStatusTypes), nullable=True)
     uri = db.Column(db.String(256))
@@ -173,12 +172,17 @@ class Suggestion(db.Model, SerializableMixin):
     reason = db.Column(db.Text)
 
     preferred_label = db.Column(db.JSON)
-    alternative_label = db.Column(db.JSON)
+    alternative_labels = db.Column(db.JSON)
 
-    broader = db.Column(db.JSON)
-    narrower = db.Column(db.JSON)
-    related = db.Column(db.JSON)
-    group = db.Column(db.JSON)
+    broader_labels = db.Column(db.JSON)
+    narrower_labels = db.Column(db.JSON)
+    related_labels = db.Column(db.JSON)
+    groups = db.Column(db.JSON)
+    scopeNote = db.Column(db.Text)
+    exactMatches = db.Column(db.JSON)
+    neededFor = db.Column(db.String(500))
+    #exactMatches
+    #scopeNote
 
     events = db.relationship('Event', backref='suggestion')
     reactions = db.relationship('Reaction', backref='suggestion')
