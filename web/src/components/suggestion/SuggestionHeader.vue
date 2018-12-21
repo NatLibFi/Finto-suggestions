@@ -14,7 +14,7 @@
       :selectedIndex="selectedSortOptionIndex"
       :isOpened="isDropDownOpened"
       :dropDownOptions="dropDownOptions"
-      @sortSuggestionListBy="sortSuggestionList"
+      @setSelectedSort="setSelectedSort"
       @refreshSelectedIndex="selectedSortOptionIndex = $event"
       @closeDropDown="closeDropDown"/>
   </div>
@@ -75,8 +75,8 @@ export default {
       setSelectedSortKey: suggestionActions.SET_SELECTED_SORT_KEY,
       getSelectedSortKey: suggestionActions.GET_SELECTED_SORT_KEY
     }),
-    sortSuggestionList(selectedSorting) {
-      this.setSelectedSortKey(selectedSorting);
+    setSelectedSort(selectedSort) {
+      this.setSelectedSortKey(selectedSort);
       this.getSelectedSortKey();
     },
     closeDropDown: function() {

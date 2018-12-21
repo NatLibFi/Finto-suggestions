@@ -1,4 +1,4 @@
-"""empty message
+"""Assigning user to suggestion needed add user_id relation to suggestion table
 
 Revision ID: 579817d6ce82
 Revises: 5b7add77d694

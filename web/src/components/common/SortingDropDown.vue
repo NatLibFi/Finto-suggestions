@@ -41,16 +41,17 @@ export default {
     sortValueSelected(option, index) {
       this.handleDropDownSelectedIndicator(index);
 
+      let selectedSort = null;
+
       if (option && option.value !== '') {
         // do sorting by sorting key
         const selectedValue = findValueFromDropDownOptions(option.value, this.dropDownOptions);
-        this.sortSuggestionList(selectedValue);
-      } else {
-        this.sortSuggestionList();
+        selectedSort = selectedValue;
       }
+      this.setSelectedSort(selectedSort);
     },
-    sortSuggestionList(selectedSorting = null) {
-      this.$emit('sortListBy', selectedSorting);
+    setSelectedSort(selectedSort = null) {
+      this.$emit('setSelectedSort', selectedSort);
     },
     handleDropDownSelectedIndicator(index) {
       // update dropdownlist selected value indicator as selected

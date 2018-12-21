@@ -18,7 +18,7 @@
       <div class="label">
         <p>
           <strong>#{{ suggestion.id }}</strong>
-          Lähetetty {{ buildLabel() }}
+          {{ dateTimeFormatLabel(suggestion.created) }}
         </p>
       </div>
     </div>
@@ -33,7 +33,7 @@
 import SvgIcon from '../icons/SvgIcon';
 import IconComments from '../icons/IconComments';
 import { suggestionTypeToStyleClass, suggestionTypeToString } from '../../utils/suggestionMappings';
-import { dateDiffLabel } from '../../utils/dateTimeStampHelper';
+import { dateTimeFormatLabel } from '../../utils/dateTimeStampHelper';
 import { eventTypes } from '../../utils/eventMappings';
 
 export default {
@@ -52,12 +52,10 @@ export default {
     // TODO: not the best way but seems that you cannot use imported module straight inside class binding clause
     suggestionTypeToStyleClass,
     suggestionTypeToString,
-    eventTypes
+    eventTypes,
+    dateTimeFormatLabel
   }),
   methods: {
-    buildLabel() {
-      return dateDiffLabel(this.suggestion.created);
-    },
     goToSuggestion() {
       if (!this.meetingId) {
         this.$router.push({

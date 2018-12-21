@@ -214,7 +214,8 @@ def handle_github_request(code, state) -> (str, str):
               if user_data_response.ok is True:
                 user_data = user_data_response.json()
                 print(user_data)
-                name = user_data['name']
+                if user_data['name'] is not None:
+                  name = user_data['name']
 
                 user_email_data_response = requests.get(
                     'https://api.github.com/user/emails?access_token=' + github_access_token)
@@ -223,13 +224,13 @@ def handle_github_request(code, state) -> (str, str):
                     user_email_data = user_email_data_response.json()
                     print(user_email_data)
                     for data in user_email_data:
-                        if data['primary'] is True:
+                        if data['primary'] is True and data['email'] is not None:
                             email = data['email']
 
-    if name is not None and email is not None:
+    if email is not None:
         return (name, email, provider_name, github_access_token)
     else:
-        raise ValueError('name and email values are not valid')
+        raise ValueError('Could not get github user email info')
 
 
 def handle_user_creation(code, oauth_data) -> str:

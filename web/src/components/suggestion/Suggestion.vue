@@ -27,7 +27,7 @@
           <h1 class="suggestion-title">{{ suggestion.preferred_label.fi }}</h1>
           <div class="suggestion-header-details">
             <span><strong>#{{ suggestion.id }} </strong></span>
-            <span>Lähetetty 3 päivää sitten</span>
+            <span>{{ dateTimeFormatLabel(suggestion.created) }}</span>
             <span class="suggestion-type">{{ suggestionTypeToString[suggestion.suggestion_type] }}</span>
             <span class="tag"
               v-if="suggestion.tags && suggestion.tags.length > 0"
@@ -109,6 +109,9 @@ import { suggestionTypeToString } from '../../utils/suggestionMappings.js';
 import { userActions, userGetters } from "../../store/modules/user/userConsts";
 import { mapUserActions, mapUserGetters } from '../../store/modules/user/userModule';
 
+import { dateTimeFormatLabel } from '../../utils/dateTimeStampHelper.js';
+import { parse } from 'date-fns';
+
 export default {
   components: {
     SuggestionContent,
@@ -136,6 +139,7 @@ export default {
       // eslint-disable-next-line
       userId: this.$cookies.get('logged_user_id'),
       suggestionTypeToString,
+      dateTimeFormatLabel,
       userName: ''
     }
   },

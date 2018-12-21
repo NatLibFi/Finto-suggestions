@@ -115,11 +115,8 @@ export default {
     this.validateAuthentication();
     this.getUserIdFromStorage();
 
-    if(parseInt(this.userId) > 0){
-      this.getUserName(parseInt(this.userId));
-    }
-
-    this.handleInitialsFetch();
+    this.handleUserFetch();
+    this.handleUserInitialsFetch();
   },
   computed: {
     ...mapAuthenticatedUserGetters({
@@ -159,6 +156,7 @@ export default {
           await this.authenticateLocalUser(data.loginData);
         }
       }
+      this.handleUserFetch();
       this.showLoginDialog = false;
     },
     async signup(data) {
@@ -181,13 +179,18 @@ export default {
     async registerLocalUser(userdata) {
       await api.user.registerLocalUser(userdata);
     },
-    handleInitialsFetch() {
+    handleUserFetch() {
+      if(parseInt(this.userId) > 0){
+        this.getUserName(parseInt(this.userId));
+      }
+    },
+    handleUserInitialsFetch() {
       this.userInitials = userNameInitials(this.name);
     }
   },
   watch: {
     name() {
-      this.handleInitialsFetch();
+      this.handleUserInitialsFetch();
     }
   },
   mounted: function() {
