@@ -26,37 +26,37 @@
       <p>{{ suggestion.preferred_label.en }}</p>
     </div>
 
-    <div v-if="suggestion.alternative_label">
+    <div v-if="suggestion.alternative_labels">
       <p><strong>Vaihtoehtoiset termit ja ilmaisut</strong></p>
-      <p v-if="suggestion.alternative_label.fi">{{ suggestion.alternative_label.fi }} [fin]</p>
-      <p v-if="suggestion.alternative_label.sv">{{ suggestion.alternative_label.sv }} [swe]</p>
-      <p v-if="suggestion.alternative_label.en">{{ suggestion.alternative_label.en }} [eng]</p>
+      <p v-if="suggestion.alternative_labels.fi">{{ suggestion.alternative_labels.fi }} [fin]</p>
+      <p v-if="suggestion.alternative_labels.sv">{{ suggestion.alternative_labels.sv }} [swe]</p>
+      <p v-if="suggestion.alternative_labels.en">{{ suggestion.alternative_labels.en }} [eng]</p>
     </div>
 
-    <div v-if="suggestion.broader && suggestion.broader.length > 0">
+    <div v-if="suggestion.broader_labels && suggestion.broader_labels.length > 0">
       <p><strong>Yläkäsite YSOssa (LT)</strong></p>
-      <p v-for="term in suggestion.broader" :key="term.id">
+      <p v-for="term in suggestion.broader_labels" :key="term.id">
         <a :href="term">{{ term }}</a>
       </p>
     </div>
 
-    <div v-if="suggestion.narrower && suggestion.narrower.length > 0">
+    <div v-if="suggestion.narrower_labels && suggestion.narrower_labels.length > 0">
       <p><strong>Alakäsitteet (ST)</strong></p>
-      <p v-for="term in suggestion.narrower" :key="term.id">
+      <p v-for="term in suggestion.narrower_labels" :key="term.id">
         <a :href="term">{{ term }}</a>
       </p>
     </div>
 
-    <div v-if="suggestion.related && suggestion.related.length > 0">
+    <div v-if="suggestion.related_labelsrelated && suggestion.related_labels.length > 0">
       <p><strong>Assosiatiiviset (RT)</strong></p>
-      <p v-for="term in suggestion.related" :key="term.id">
+      <p v-for="term in suggestion.related_labels" :key="term.id">
         {{ term.vocab }}: <a :href="term.value">{{ term.value }}</a>
       </p>
     </div>
 
-    <div v-if="suggestion.group && suggestion.group.length > 0">
+    <div v-if="suggestion.groups && suggestion.groups.length > 0">
       <p><strong>YSA/YSO temaattinen ryhmä</strong></p>
-      <p v-for="group in suggestion.group" :key="group.id">
+      <p v-for="group in suggestion.groups" :key="group.id">
         <a :href="group">{{ group }}</a>
       </p>
     </div>
