@@ -14,7 +14,7 @@
       :selectedIndex="selectedSortOptionIndex"
       :isOpened="isDropDownOpened"
       :dropDownOptions="dropDownOptions"
-      @sortSuggestionListBy="sortSuggestionList"
+      @setSelectedSort="sortSuggestionList"
       @refreshSelectedIndex="selectedSortOptionIndex = $event"
       @closeDropDown="closeDropDown"/>
   </div>
@@ -47,8 +47,9 @@ export default {
     ]
   }),
   methods: {
-    sortSuggestionList(selectedSorting) {
-      this.$emit('sortListBy', selectedSorting);
+    setSelectedSort(selectedSorting) {
+      // TODO: set sorting in state so it will be there used on sorting
+      // this.$emit('sortListBy', selectedSorting);
     },
     closeDropDown() {
       this.isDropDownOpened = false;
