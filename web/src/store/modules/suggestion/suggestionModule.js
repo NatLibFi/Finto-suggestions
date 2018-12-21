@@ -56,8 +56,9 @@ export default {
     [suggestionMutations.SET_SUGGESTION](state, suggestion) {
       Vue.set(state, storeStateNames.ITEM, suggestion);
     },
-    [suggestionMutations.SET_SELECTED_SORT](state, sortkey) {
-      Vue.set(state, storeStateNames.SELECTED_SORT, sortkey);
+    [suggestionMutations.SET_SELECTED_SORT](state, sortKey) {
+      Vue.set(state, storeStateNames.SELECTED_SORT, sortKey);
+      Vue.set(sessionStorage, sessionStorageKeyNames.SELECTED_SORT, sortKey);
     }
   },
   actions: {
@@ -108,7 +109,6 @@ export default {
       commit(suggestionMutations.SET_SELECTED_SORT, sortKey);
     },
     [suggestionActions.SET_SELECTED_SORT_KEY]({ commit }, sortKey) {
-      Vue.set(sessionStorage, sessionStorageKeyNames.SELECTED_SORT, sortKey);
       commit(suggestionMutations.SET_SELECTED_SORT, sortKey);
     }
   }

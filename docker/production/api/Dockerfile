@@ -1,7 +1,7 @@
-FROM python:3-alpine
+FROM python:3.7-alpine
 
 ENV PYTHONUNBUFFERED 1
-ENV APP_CONFIG_OBJECT=config.ProductionConfig
+ENV TZ "Europe/Helsinki"
 
 COPY ./api /app
 WORKDIR /app
