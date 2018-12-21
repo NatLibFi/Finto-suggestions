@@ -10,7 +10,7 @@
           <span class="user-name">{{ userName }} </span>
           <span v-if="type == 'ACTION'">{{ action }}</span>
         </p>
-        <p class="date-sent">{{ buildLabel() }}</p>
+        <p class="date-sent">{{ dateTimeFormatLabel(this.event.created) }}</p>
       </div>
     </div>
 
@@ -23,7 +23,7 @@
 </template>
 
 <script>
-import { dateDiffLabel } from '../../utils/dateTimeStampHelper.js';
+import { dateTimeFormatLabel } from '../../utils/dateTimeStampHelper.js';
 
 import { mapUserGetters, mapUserActions } from '../../store/modules/user/userModule.js';
 import { userGetters, userActions } from '../../store/modules/user/userConsts.js';
@@ -41,6 +41,7 @@ export default {
     }
   },
   data: () => ({
+    dateTimeFormatLabel,
     action: 'vaihtoi tyypiksi ',
     userName: '',
     userNameInitials: ''
@@ -58,9 +59,6 @@ export default {
     ...mapUserActions({
       getUsers: userActions.GET_USERS
     }),
-    buildLabel() {
-      return dateDiffLabel(this.event.created);
-    },
     fetchUserNameAndInitials() {
       if (this.users && this.users.length > 0) {
         const userName = this.users.find(u => u.id === this.event.user_id).name;
