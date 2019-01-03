@@ -208,8 +208,7 @@ def handle_github_request(code, state) -> (str, str):
                 print(github_access_token)
 
             if github_access_token is not None and len(github_access_token) > 0:
-              user_data_response = requests.get(
-                  'https://api.github.com/user?access_token=' + github_access_token)
+              user_data_response = requests.get(f'https://api.github.com/user?access_token={github_access_token}')
 
               if user_data_response.ok is True:
                 user_data = user_data_response.json()
@@ -217,8 +216,7 @@ def handle_github_request(code, state) -> (str, str):
                 if user_data['name'] is not None:
                   name = user_data['name']
 
-                user_email_data_response = requests.get(
-                    'https://api.github.com/user/emails?access_token=' + github_access_token)
+                user_email_data_response = requests.get(f'https://api.github.com/user/emails?access_token={github_access_token}')
 
                 if user_email_data_response.ok is True:
                     user_email_data = user_email_data_response.json()
@@ -293,5 +291,6 @@ def handle_user_creation(code, oauth_data) -> str:
     print(local_access_token)
     return {'access_token' : local_access_token, 'refresh_token': local_refresh_token, 'user_id': user.id}, 200
 
+
 def get_github() -> str:
-  return 200
+    return 200

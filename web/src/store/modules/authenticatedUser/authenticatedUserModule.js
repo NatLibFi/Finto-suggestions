@@ -53,12 +53,12 @@ export default {
     [storeStateNames.NAME]: ''
   },
   getters: {
-    [authenticatedUserGetters.GET_AUTHENTICATE]: state => state[storeStateNames.IS_AUTHENTICATED],
+    [authenticatedUserGetters.GET_AUTHENTICATION]: state => state[storeStateNames.IS_AUTHENTICATED],
     [authenticatedUserGetters.GET_USER_ID]: state => state[storeStateNames.USER_ID],
     [authenticatedUserGetters.GET_USER_NAME]: state => state[storeStateNames.NAME]
   },
   mutations: {
-    [authenticatedUserMutations.SET_AUTHENTICATE](state, authenticatedData) {
+    [authenticatedUserMutations.SET_AUTHENTICATION](state, authenticatedData) {
       Vue.set(state, storeStateNames.IS_AUTHENTICATED, authenticatedData.authenticated);
       Vue.set(state, storeStateNames.USER_ID, authenticatedData.user_id);
       Vue.set(sessionStorage, storeKeyNames.USER_ID, authenticatedData.user_id);
@@ -76,12 +76,12 @@ export default {
         .authenticate(payload.providerName)
         .then(response => {
           if (response && response.status === 200) {
-            commit(authenticatedUserMutations.SET_AUTHENTICATE, {
+            commit(authenticatedUserMutations.SET_AUTHENTICATION, {
               authenticated: true,
               user_id: response.data.user_id
             });
           } else {
-            commit(authenticatedUserMutations.SET_AUTHENTICATE, {
+            commit(authenticatedUserMutations.SET_AUTHENTICATION, {
               authenticated: false,
               user_id: 0
             });
@@ -89,7 +89,7 @@ export default {
         })
         .catch(err => {
           console.log(err);
-          commit(authenticatedUserMutations.SET_AUTHENTICATE, false);
+          commit(authenticatedUserMutations.SET_AUTHENTICATION, false);
         });
     },
     [authenticatedUserActions.VALIDATE_AUTHENTICATION]({ commit, dispatch }) {
@@ -100,7 +100,7 @@ export default {
         this.state.user[storeStateNames.USER_ID] || sessionStorage.getItem(storeKeyNames.USER_ID);
       //TODO: needs to validate token from backend and also check that token has correct userid
       if (token && token.length > 0 && parseInt(userId) > 0) {
-        commit(authenticatedUserMutations.SET_AUTHENTICATE, {
+        commit(authenticatedUserMutations.SET_AUTHENTICATION, {
           authenticated: true,
           user_id: userId
         });
@@ -127,7 +127,7 @@ export default {
       $cookies.remove(storeKeyNames.ACCESS_TOKEN);
       // eslint-disable-next-line no-undef
       $cookies.remove(storeKeyNames.REFRESH_TOKEN);
-      commit(authenticatedUserMutations.SET_AUTHENTICATE, {
+      commit(authenticatedUserMutations.SET_AUTHENTICATION, {
         authenticated: false,
         user_id: 0
       });
@@ -142,7 +142,7 @@ export default {
       const response = await api.user.authenticateLocalUser(authenticateData);
 
       if (response && response.code === 200) {
-        commit(authenticatedUserMutations.SET_AUTHENTICATE, {
+        commit(authenticatedUserMutations.SET_AUTHENTICATION, {
           authenticated: true,
           user_id: response.data.user_id
         });
@@ -152,7 +152,7 @@ export default {
         // eslint-disable-next-line no-undef
         $cookies.set(storeKeyNames.REFRESH_TOKEN, response.refresh_token);
       } else {
-        commit(authenticatedUserMutations.SET_AUTHENTICATE, false);
+        commit(authenticatedUserMutations.SET_AUTHENTICATION, false);
       }
     },
     [authenticatedUserActions.GET_USER_ID_FROM_STORAGE]({ commit }) {

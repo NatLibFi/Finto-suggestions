@@ -45,7 +45,7 @@ export default {
   computed: {
     ...mapAuthenticatedUserGetters({
       userId: authenticatedUserGetters.GET_USER_ID,
-      isAuthenticated: authenticatedUserGetters.GET_AUTHENTICATE
+      isAuthenticated: authenticatedUserGetters.GET_AUTHENTICATION
     })
   },
   methods: {

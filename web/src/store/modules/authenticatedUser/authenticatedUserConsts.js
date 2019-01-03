@@ -13,13 +13,13 @@ export const storeKeyNames = {
 };
 
 export const authenticatedUserGetters = {
-  GET_AUTHENTICATE: 'getAuthenticate',
+  GET_AUTHENTICATION: 'getAuthentication',
   GET_USER_ID: 'getUserId',
   GET_USER_NAME: 'getUserName'
 };
 
 export const authenticatedUserMutations = {
-  SET_AUTHENTICATE: 'setAuthenticate',
+  SET_AUTHENTICATION: 'setAuthentication',
   SET_USER_ID: 'setUserId',
   SET_STORAGE_USER_ID: 'setStorageUserId',
   SET_USER_NAME: 'setUserName'

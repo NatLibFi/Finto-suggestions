@@ -120,7 +120,7 @@ export default {
   },
   computed: {
     ...mapAuthenticatedUserGetters({
-      isAuthenticated: authenticatedUserGetters.GET_AUTHENTICATE,
+      isAuthenticated: authenticatedUserGetters.GET_AUTHENTICATION,
       userId: authenticatedUserGetters.GET_USER_ID,
       name: authenticatedUserGetters.GET_USER_NAME
     })
