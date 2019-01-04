@@ -45,8 +45,7 @@ export default {
     suggestion: {
       type: Object,
       required: true
-    },
-    meetingId: [String, Number]
+    }
   },
   data: () => ({
     // TODO: not the best way but seems that you cannot use imported module straight inside class binding clause
@@ -57,7 +56,7 @@ export default {
   }),
   methods: {
     goToSuggestion() {
-      if (!this.meetingId) {
+      if (!this.suggestion.meeting_id) {
         this.$router.push({
           name: 'suggestion',
           params: {
@@ -71,7 +70,7 @@ export default {
           params: {
             suggestionId: this.suggestion.id,
             suggestion: this.suggestion,
-            meetingId: this.meetingId
+            meetingId: this.suggestion.meeting_id
           }
         });
       }

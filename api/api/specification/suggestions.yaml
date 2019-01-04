@@ -199,3 +199,14 @@ paths:
       responses:
         "202":
           description: Removed assignment from user
+  /suggestions/meeting/{meeting_id}:
+    parameters:
+      - name: meeting_id
+        in: path
+        type: integer
+        required: true
+    get:
+      operationId: api.logic.suggestions.get_meeting_suggestions
+      responses:
+        "200":
+          description: List of meeting suggestions
