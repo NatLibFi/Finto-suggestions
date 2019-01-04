@@ -45,6 +45,10 @@ export default {
     suggestion: {
       type: Object,
       required: true
+    },
+    meetingId: {
+      type: [Number, String],
+      default: null
     }
   },
   data: () => ({
@@ -56,7 +60,7 @@ export default {
   }),
   methods: {
     goToSuggestion() {
-      if (!this.suggestion.meeting_id) {
+      if (!this.meetingId) {
         this.$router.push({
           name: 'suggestion',
           params: {
@@ -70,7 +74,7 @@ export default {
           params: {
             suggestionId: this.suggestion.id,
             suggestion: this.suggestion,
-            meetingId: this.suggestion.meeting_id
+            meetingId: this.meetingId
           }
         });
       }

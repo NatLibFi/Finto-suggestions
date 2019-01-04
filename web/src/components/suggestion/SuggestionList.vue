@@ -10,6 +10,7 @@
       v-for="item in paginated_items"
       :key="item.id"
       :suggestion="item"
+      :meetingId="meetingId"
       />
   </ul>
   <suggestion-list-pagination
