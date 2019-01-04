@@ -4,7 +4,6 @@
     :futureMeetingCount="futureMeetingCount"
     :pastMeetingCount="pastMeetingCount"
     class="header"
-    @sortListBy="sortMeetingList"
   />
   <ul :class="['list', pageCount > 1 ? 'with-pagionation' : '']">
     <meeting-list-item
@@ -17,7 +16,6 @@
   <meeting-list-pagination
     v-if="pageCount > 1"
     :pageCount="pageCount"
-    @paginationPageChanged="console.log('pagination changed')"
   />
 </div>
 </template>
@@ -31,7 +29,7 @@ import { mapMeetingGetters, mapMeetingActions } from '../../store/modules/meetin
 import { meetingGetters, meetingActions } from '../../store/modules/meeting/meetingConst.js';
 
 import { sortingKeys, comparerDesc, comparerAsc } from '../../utils/sortingHelper.js';
-import { compareDesc, compareAsc, parse } from 'date-fns';
+import { compareDesc, compareAsc, parse, isAfter, isEqual } from 'date-fns';
 
 export default {
   components: {
@@ -43,42 +41,68 @@ export default {
     return {
       pageCount: 1,
       // TODO: fix pagination
-      paginated_items: []
+      paginated_items: [],
+      futureMeetingCount: 0,
+      pastMeetingCount: 0
     }
   },
   created() {
-    this.getFutureAndPastMeetingCounts();
     this.getMeetings();
+    this.getSelectedSortKey();
   },
   computed: {
     ...mapMeetingGetters({
-      futureMeetingCount: meetingGetters.GET_FUTURE_MEETINGS_COUNT,
-      pastMeetingCount: meetingGetters.GET_PAST_MEETINGS_COUNT,
-      meetings: meetingGetters.GET_MEETINGS
+      meetings: meetingGetters.GET_MEETINGS,
+      selectedSort: meetingGetters.GET_SELECTED_SORT
     })
   },
   methods: {
     ...mapMeetingActions({
-      getFutureAndPastMeetingCounts: meetingActions.GET_FUTURE_AND_PAST_MEETINGS_COUNT,
-      getMeetings: meetingActions.GET_MEETINGS
+      getMeetings: meetingActions.GET_MEETINGS,
+      getSelectedSortKey: meetingActions.GET_SELECTED_SORT
     }),
     calculatePageCountForPagination: function() {
       return 10;
     },
-    sortMeetingList(sort) {
+    sortMeetingList() {
       let meetings = this.meetings;
-      if(sort === sortingKeys.NEWEST_FIRST) {
+      if(this.selectedSort === sortingKeys.NEWEST_FIRST) {
         meetings.sort(comparerDesc('meeting_date'));
       }
-      if(sort === sortingKeys.OLDEST_FIRST) {
+      if(this.selectedSort === sortingKeys.OLDEST_FIRST) {
         meetings.sort(comparerAsc('meeting_date'));
       }
       this.paginated_items = meetings;
+    },
+    calcultePastAndFutureMeetingCounts() {
+      let futureMeetings = [];
+      let pastMeetings = [];
+      const today = Date();
+      this.meetings.forEach(meeting => {
+        if (meeting.meeting_date) {
+          if (
+            isAfter(parse(meeting.meeting_date), today) ||
+            isEqual(parse(meeting.meeting_date), today)
+          ) {
+            futureMeetings.push(meeting);
+          } else {
+            pastMeetings.push(meeting);
+          }
+        }
+      });
+      this.futureMeetingCount = futureMeetings.length;
+      this.pastMeetingCount = pastMeetings.length;
     }
   },
   watch: {
     meetings() {
       this.paginated_items = this.meetings;
+      this.calcultePastAndFutureMeetingCounts();
+    },
+    selectedSort() {
+      if(this.selectedSort) {
+        this.sortMeetingList()
+      }
     }
   }
 };

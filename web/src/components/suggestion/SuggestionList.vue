@@ -55,13 +55,13 @@ export default {
   data: () => ({
     paginationMaxCount: 10,
     openCount: 0,
-    resolvedCount: 0
+    resolvedCount: 0,
+    paginated_items: []
   }),
   computed: {
     ...mapSuggestionGetters({
       items: suggestionGetters.GET_SUGGESTIONS,
       filters: suggestionGetters.GET_FILTERS,
-      paginated_items: suggestionGetters.GET_PAGINATION_SUGGESTIONS,
       selectedSort: suggestionGetters.GET_SELECTED_SORT
     })
   },
@@ -76,9 +76,6 @@ export default {
       getSelectedSortKey: suggestionActions.GET_SELECTED_SORT_KEY,
       getSuggestionsByMeetingId: suggestionActions.GET_SUGGESTIONS_BY_MEETING_ID,
       getSortedSuggestionsByMeetingId: suggestionActions.GET_SORTED_SUGGESTIONS_BY_MEETING_ID
-    }),
-    ...mapSuggestionMutations({
-      setPaginatedSuggestions: suggestionMutations.SET_PAGINATION_SUGGESTIONS
     }),
     async handleSuggestionFetching() {
       if(this.meetingId && this.meetingId > 0) {
@@ -113,9 +110,7 @@ export default {
       const start = this.getPaginationStaringIndex(pageNumber);
       const end = this.getPaginationEndingIndex(pageNumber);
       const paginatedItems = items ? items : this.items;
-      this.setPaginatedSuggestions(
-        paginatedItems && paginatedItems.length > 0 ? paginatedItems.slice(start, end) : []
-      );
+      this.paginated_items = paginatedItems && paginatedItems.length > 0 ? paginatedItems.slice(start, end) : []
       this.calculateOpenAndResolvedSuggestionCounts();
     },
     calculatePageCountForPagination() {

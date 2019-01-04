@@ -5,12 +5,11 @@ export const storeStateNames = {
   ITEM: 'item',
   SEARCH_QUERY: 'searchQuery',
   FILTERS: 'filters',
-  PAGINATED_ITEMS: 'paginated_items',
   SELECTED_SORT: 'selectedSort'
 };
 
 export const sessionStorageKeyNames = {
-  SELECTED_SORT: 'selectedSort'
+  SUGGESTION_LIST_SELECTED_SORT: 'suggestionListSelectedSort'
 };
 
 export const suggestionGetters = {
@@ -18,7 +17,6 @@ export const suggestionGetters = {
   GET_SUGGESTION: 'getSuggestion',
   GET_SEARCH_QUERY: 'getSearchQuery',
   GET_FILTERS: 'getFilters',
-  GET_PAGINATION_SUGGESTIONS: 'getPaginationSuggestions',
   GET_SELECTED_SORT: 'getSelectedSort'
 };
 
@@ -27,9 +25,8 @@ export const suggestionMutations = {
   SET_SUGGESTION: 'setSuggestion',
   SET_SEARCH_QUERY: 'setSearchQuery',
   SET_FILTERS: 'setFilters',
-  SET_PAGINATION_SUGGESTIONS: 'setPaginationSuggestions',
   SET_SELECTED_SORT: 'setSelectedSort',
-  SET_SELECTED_SORT_TO_STORAGE: 'setSelectedSortToStorage'
+  SET_SELECTED_STORAGE_SORT: 'setSelectedStorageSort'
 };
 
 export const suggestionActions = {
