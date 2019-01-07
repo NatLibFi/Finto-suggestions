@@ -26,7 +26,7 @@
         :selectedIndexes="selectedOptionIndex.TAGS"
         :isOpened="isDropDownOpened.TAG"
         :dropDownOptions="mapTagsToDropDown()"
-        :noOptionsMessage="'Ehdotustyyppejä ei valittavissa.'"
+        :noOptionsMessage="'Tunnisteita ei valittavissa.'"
         @applyFilter="tagChanged($event)"
         @addToSelectedIndexes="addSelectedTagIndex($event)"
         @resetTags="resetTags()"
