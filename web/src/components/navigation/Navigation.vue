@@ -4,7 +4,7 @@
     <div class="nav-content">
       <div class="nav-title">
         <img @click="returnToHome" src="./finto-logo.svg" alt="">
-        <span>Finto – Käsite-ehdotukset</span>
+        <span @click="returnToHome">Finto – Käsite-ehdotukset</span>
       </div>
       <div v-if="isAuthenticated" class="nav-menu" @click="showDropdown = true">
         <div class="user-bubble">
@@ -236,12 +236,13 @@ div.nav-title img {
   top: 51%;
   left: 0;
   transform: perspective(1px) translateY(-50%);
-  cursor: pointer;
-  cursor: hand;
 }
 
-div.nav-title img:hover {
+div.nav-title img:hover,
+div.nav-title span:hover {
   opacity: 0.9;
+  cursor: pointer;
+  cursor: hand;
 }
 
 div.nav-title span {
