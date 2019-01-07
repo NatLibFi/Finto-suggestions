@@ -163,7 +163,6 @@ export default {
     ...mapTagActions({ getTags: tagActions.GET_TAGS }),
     ...mapSuggestionMutations({ setFilters: suggestionMutations.SET_FILTERS }),
     stateChanged(selected) {
-      console.log('stateChanged', selected);
       handleDropDownSelection(
         selected === 'NONE' ? null : selected,
         filterType.STATUS,
@@ -173,7 +172,6 @@ export default {
       );
     },
     typeChanged(selected) {
-      console.log('typeChanged', selected);
       handleDropDownSelection(
         selected === 'NONE' ? null : selected,
         filterType.TYPE,

@@ -8,7 +8,7 @@
   <ul :class="['list', pageCount > 1 ? 'with-pagionation' : '']">
     <meeting-list-item
       class="item"
-      v-for="item in paginated_items"
+      v-for="item in meetings"
       :key="item.id"
       :meeting="item"
       />
@@ -30,6 +30,7 @@ import { meetingGetters, meetingActions } from '../../store/modules/meeting/meet
 
 import { sortingKeys, comparerDesc, comparerAsc } from '../../utils/sortingHelper.js';
 import { compareDesc, compareAsc, parse, isAfter, isEqual } from 'date-fns';
+import meeting from '../../api/meeting/meeting';
 
 export default {
   components: {
@@ -41,14 +42,16 @@ export default {
     return {
       pageCount: 1,
       // TODO: fix pagination
-      paginated_items: [],
+      paginated_meetings: [],
       futureMeetingCount: 0,
       pastMeetingCount: 0
     }
   },
-  created() {
-    this.getMeetings();
+  async created() {
+    await this.getMeetings();
+    this.calcultePastAndFutureMeetingCounts();
     this.getSelectedSortKey();
+    this.sortMeetingList();
   },
   computed: {
     ...mapMeetingGetters({
@@ -65,14 +68,14 @@ export default {
       return 10;
     },
     sortMeetingList() {
-      let meetings = this.meetings;
-      if(this.selectedSort === sortingKeys.NEWEST_FIRST) {
-        meetings.sort(comparerDesc('meeting_date'));
+      if(this.selectedSort) {
+        if(this.selectedSort === sortingKeys.NEWEST_FIRST) {
+          this.meetings.sort(comparerDesc('meeting_date'));
+        }
+        if(this.selectedSort === sortingKeys.OLDEST_FIRST) {
+          this.meetings.sort(comparerAsc('meeting_date'));
+        }
       }
-      if(this.selectedSort === sortingKeys.OLDEST_FIRST) {
-        meetings.sort(comparerAsc('meeting_date'));
-      }
-      this.paginated_items = meetings;
     },
     calcultePastAndFutureMeetingCounts() {
       let futureMeetings = [];
@@ -95,10 +98,6 @@ export default {
     }
   },
   watch: {
-    meetings() {
-      this.paginated_items = this.meetings;
-      this.calcultePastAndFutureMeetingCounts();
-    },
     selectedSort() {
       if(this.selectedSort) {
         this.sortMeetingList()

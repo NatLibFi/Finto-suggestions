@@ -21,7 +21,7 @@
 </template>
 
 <script>
-import { sortingKeys } from '../../utils/sortingHelper.js';
+import { sortingKeys, getSelectedSortOptionIndex } from '../../utils/sortingHelper.js';
 
 import SortingDropDown from '../common/SortingDropDown';
 import SvgIcon from '../icons/SvgIcon';
@@ -47,7 +47,6 @@ export default {
     pastMeetingCount: Number
   },
   data: () => ({
-    // TODO: change the index to 0 after changing list order to NEWEST_FIRST
     selectedSortOptionIndex: 1,
     isDropDownOpened: false,
     dropDownOptions: [
@@ -60,6 +59,10 @@ export default {
       selectedSort: meetingGetters.GET_SELECTED_SORT
     })
   },
+  created() {
+    this.getSelectedSortKey();
+    this.handleSortinDropDownIndex();
+  },
   methods: {
     ...mapMeetingActions({
       setSelectedSortKey: meetingActions.SET_SELECTED_SORT,
@@ -70,6 +73,16 @@ export default {
     },
     closeDropDown() {
       this.isDropDownOpened = false;
+    },
+    handleSortinDropDownIndex() {
+      if (this.selectedSort) {
+        this.selectedSortOptionIndex = getSelectedSortOptionIndex(this.dropDownOptions, this.selectedSort);
+      }
+    }
+  },
+  watch: {
+    selectedSort() {
+      this.handleSortinDropDownIndex();
     }
   }
 };

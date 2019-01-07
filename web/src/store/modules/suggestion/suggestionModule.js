@@ -101,7 +101,7 @@ export default {
     async [suggestionActions.GET_SORTED_SUGGESTIONS_BY_MEETING_ID]({ commit }, values) {
       const result = await api.suggestion.getSortedSuggestionByMeetingId(
         values.meetingId,
-        values.sortKey
+        values.sortValue
       );
       if (result && result.code === 200) {
         commit(suggestionMutations.SET_SUGGESTIONS, result.data);

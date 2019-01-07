@@ -21,7 +21,7 @@
 </template>
 
 <script>
-import { sortingKeys } from '../../utils/sortingHelper.js';
+import { sortingKeys, getSelectedSortOptionIndex } from '../../utils/sortingHelper.js';
 
 import SortingDropDown from '../common/SortingDropDown';
 import SvgIcon from '../icons/SvgIcon';
@@ -47,7 +47,6 @@ export default {
     resolvedSuggestionCount: Number
   },
   data: () => ({
-    // TODO: change the index to 0 after changing list order to NEWEST_FIRST
     selectedSortOptionIndex: 1,
     isDropDownOpened: false,
     dropDownOptions: [
@@ -65,10 +64,8 @@ export default {
     })
   },
   created() {
-    const selectedSortOptionIndex = this.selectedSort
-      ? this.dropDownOptions.indexOf(this.dropDownOptions.find(e => e.value === this.selectedSort))
-      : 1;
-    this.selectedSortOptionIndex = selectedSortOptionIndex;
+    this.getSelectedSortKey();
+    this.handleSortinDropDownIndex();
   },
   methods: {
     ...mapSuggestionActions({
@@ -81,6 +78,16 @@ export default {
     },
     closeDropDown: function() {
       this.isDropDownOpened = false;
+    },
+    handleSortinDropDownIndex() {
+      if (this.selectedSort) {
+        this.selectedSortOptionIndex = getSelectedSortOptionIndex(this.dropDownOptions, this.selectedSort);
+      }
+    }
+  },
+  watch: {
+    selectedSort() {
+      this.handleSortinDropDownIndex();
     }
   }
 };

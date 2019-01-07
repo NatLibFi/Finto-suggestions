@@ -49,7 +49,7 @@ export default {
   props: {
     // TODO: use meetingId to filter suggestions under this meeting for Meeting's Suggestion list
     meetingId: {
-      type: [String, Number, null],
+      type: [String, Number],
       default: null
     }
   },
@@ -79,7 +79,7 @@ export default {
       getSortedSuggestionsByMeetingId: suggestionActions.GET_SORTED_SUGGESTIONS_BY_MEETING_ID
     }),
     async handleSuggestionFetching() {
-      if(this.meetingId && this.meetingId > 0) {
+      if(this.meetingId && parseInt(this.meetingId) > 0) {
         await this.fetchAndSortMeetingSuggestions();
       } else {
         await this.fetchAndSortAllSuggestions();

@@ -19,8 +19,6 @@ export default {
     put({ resource: `/suggestions/${suggestionId}/unassign` }),
   getSuggestionByMeetingId: meetingId => get({ resource: `/suggestions/meeting/${meetingId}` }),
   getSortedSuggestionByMeetingId: (meetingId, sortValue) =>
-    get({
-      resource: `/suggestions?sort=${sortValue}
-        &filters=meeting_id${asciiUriEncoding.VALUE_OF_PARAM}${meetingId}`
-    })
+    // eslint-disable-next-line prettier/prettier
+    get({ resource: `/suggestions?sort=${sortValue}&filters=meeting_id${asciiUriEncoding.VALUE_OF_PARAM}${meetingId}` })
 };

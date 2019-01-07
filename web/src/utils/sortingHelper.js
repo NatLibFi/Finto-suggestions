@@ -24,3 +24,18 @@ export const comparerDesc = field => {
 export const comparerAsc = field => {
   return (obj1, obj2) => parse(obj1[field]) - parse(obj2[field]);
 };
+
+/*
+* Returns selected sort options index number from dropdownoptions by selectedsort
+* If dropdownoptions or selectedsort are null or empty returning default index that is 1
+* (or selectedsort not founded in dropdownoptions)
+*/
+export const getSelectedSortOptionIndex = (dropDownOptions, selectedSort) => {
+  const defaultIndex = 1;
+  if (dropDownOptions && dropDownOptions.length > 0 && selectedSort && selectedSort.length > 0) {
+    return selectedSort
+      ? dropDownOptions.indexOf(dropDownOptions.find(e => e.value === selectedSort))
+      : defaultIndex;
+  }
+  return defaultIndex;
+};
