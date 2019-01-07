@@ -46,7 +46,6 @@
         :user-name="userName"
       />
 
-
       <div v-if="suggestion && suggestion.reactions.length > 0" class="suggestion-reactions">
         <div v-for="reaction in suggestion.reactions" :key="reaction.id">
           <div class="reaction">
@@ -284,7 +283,6 @@ h1.suggestion-title {
   font-weight: 900;
   vertical-align: middle;
   text-transform: lowercase;
-  text-transform: capitalize;
 }
 
 .suggestion-header-buttons {

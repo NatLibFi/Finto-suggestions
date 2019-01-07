@@ -13,7 +13,6 @@
         <p class="date-sent">{{ dateTimeFormatLabel(this.event.created) }}</p>
       </div>
     </div>
-
     <div v-if="type == 'COMMENT'" class="event-comment">
       <p>{{ event.text }}</p>
     </div>
