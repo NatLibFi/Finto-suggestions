@@ -2,7 +2,7 @@
   <div class="search-suggestions">
     <h5>Hae ehdotusta</h5>
     <div class="search-wrapper">
-      <input type="text" v-model="searchQuery" />
+      <input v-model="searchQuery" @keyup.enter="doSearch" type="text" />
       <div @click="doSearch" class="search-button">
         <span>Hae</span>
       </div>
