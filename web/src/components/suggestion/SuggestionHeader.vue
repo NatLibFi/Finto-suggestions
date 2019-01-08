@@ -21,7 +21,7 @@
 </template>
 
 <script>
-import { sortingKeys } from '../../utils/sortingHelper.js';
+import { sortingKeys, getSelectedSortOptionIndex } from '../../utils/sortingHelper.js';
 
 import SortingDropDown from '../common/SortingDropDown';
 import SvgIcon from '../icons/SvgIcon';
@@ -44,11 +44,11 @@ export default {
   },
   props: {
     openSuggestionCount: Number,
-    resolvedSuggestionCount: Number
+    resolvedSuggestionCount: Number,
+    meetingSort: Boolean
   },
   data: () => ({
-    // TODO: change the index to 0 after changing list order to NEWEST_FIRST
-    selectedSortOptionIndex: 1,
+    selectedSortOptionIndex: 2,
     isDropDownOpened: false,
     dropDownOptions: [
       { label: 'Uusin ensin', value: sortingKeys.NEWEST_FIRST },
@@ -61,32 +61,56 @@ export default {
   }),
   computed: {
     ...mapSuggestionGetters({
-      selectedSort: suggestionGetters.GET_SELECTED_SORT
+      suggestionSelectedSort: suggestionGetters.GET_SUGGESTIONS_SELECTED_SORT,
+      meetingSuggestionSelectedSort: suggestionGetters.GET_MEETING_SUGGESTIONS_SELECTED_SORT
     })
   },
   created() {
-    const selectedSortOptionIndex = this.selectedSort
-      ? this.dropDownOptions.indexOf(this.dropDownOptions.find(e => e.value === this.selectedSort))
-      : 1;
-    this.selectedSortOptionIndex = selectedSortOptionIndex;
+    if(this.meetingSort) {
+      this.getMeetingSuggestionSelectedSort();
+    } else {
+      this.getSuggestionSelectedSort();
+    }
+    this.handleSortinDropDownIndex();
   },
   methods: {
     ...mapSuggestionActions({
-      setSelectedSortKey: suggestionActions.SET_SELECTED_SORT_KEY,
-      getSelectedSortKey: suggestionActions.GET_SELECTED_SORT_KEY
+      setSuggestionSelectedSort: suggestionActions.SET_SUGGESTIONS_SELECTED_SORT,
+      setMeetingSuggestionSelectedSort: suggestionActions.SET_MEETING_SUGGESTIONS_SELECTED_SORT,
+      getSuggestionSelectedSort: suggestionActions.GET_SUGGESTIONS_SELECTED_SORT,
+      getMeetingSuggestionSelectedSort: suggestionActions.GET_MEETING_SUGGESTIONS_SELECTED_SORT
     }),
     setSelectedSort(selectedSort) {
-      this.setSelectedSortKey(selectedSort);
-      this.getSelectedSortKey();
+      if (this.meetingSort) {
+        this.setMeetingSuggestionSelectedSort(selectedSort);
+        this.getMeetingSuggestionSelectedSort();
+      } else {
+        this.setSuggestionSelectedSort(selectedSort);
+        this.getSuggestionSelectedSort();
+      }
     },
     closeDropDown: function() {
       this.isDropDownOpened = false;
+    },
+    handleSortinDropDownIndex() {
+      if(this.meetingSort) {
+        this.selectedSortOptionIndex = getSelectedSortOptionIndex(this.dropDownOptions, this.meetingSuggestionSelectedSort, 2);
+      } else {
+        this.selectedSortOptionIndex = getSelectedSortOptionIndex(this.dropDownOptions, this.suggestionSelectedSort, 2);
+      }
+    }
+  },
+  watch: {
+    suggestionSelectedSort() {
+      this.handleSortinDropDownIndex();
+    },
+    meetingSuggestionSelectedSort() {
+      this.handleSortinDropDownIndex();
     }
   }
 };
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
 .header-container {
   position: relative;

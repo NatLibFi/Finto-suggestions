@@ -115,10 +115,12 @@ export default {
         NEW: suggestionType.NEW,
         MODIFY: suggestionType.MODIFY
       }
-    }
+    };
   },
   methods: {
-    ...mapSuggestionActions({ unassignUserFromSuggestion: suggestionActions.UNASSIGN_SUGGESTION_FROM_USER })
+    ...mapSuggestionActions({
+      unassignUserFromSuggestion: suggestionActions.UNASSIGN_SUGGESTION_FROM_USER
+    })
   }
 };
 </script>

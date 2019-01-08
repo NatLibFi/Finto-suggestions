@@ -51,7 +51,10 @@ export default {
       type: Object,
       required: true
     },
-    meetingId: [String, Number]
+    meetingId: {
+      type: [Number, String],
+      default: null
+    }
   },
   data: () => ({
     // TODO: not the best way but seems that you cannot use imported module straight inside class binding clause

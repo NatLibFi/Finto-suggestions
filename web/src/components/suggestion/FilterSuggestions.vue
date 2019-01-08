@@ -150,20 +150,31 @@ export default {
     ]
   }),
   computed: {
-    ...mapMeetingGetters({ meetings: meetingGetters.GET_MEETINGS }),
-    ...mapTagGetters({ tags: tagGetters.GET_TAGS }),
-    ...mapSuggestionGetters({ filters: suggestionGetters.GET_FILTERS })
+    ...mapMeetingGetters({
+      meetings: meetingGetters.GET_MEETINGS
+    }),
+    ...mapTagGetters({
+      tags: tagGetters.GET_TAGS
+    }),
+    ...mapSuggestionGetters({
+      filters: suggestionGetters.GET_FILTERS
+    })
   },
   created() {
     this.getMeetings();
     this.getTags();
   },
   methods: {
-    ...mapMeetingActions({ getMeetings: meetingActions.GET_MEETINGS }),
-    ...mapTagActions({ getTags: tagActions.GET_TAGS }),
-    ...mapSuggestionMutations({ setFilters: suggestionMutations.SET_FILTERS }),
+    ...mapMeetingActions({
+      getMeetings: meetingActions.GET_MEETINGS
+    }),
+    ...mapTagActions({
+      getTags: tagActions.GET_TAGS
+    }),
+    ...mapSuggestionMutations({
+      setFilters: suggestionMutations.SET_FILTERS
+    }),
     stateChanged(selected) {
-      console.log('stateChanged', selected);
       handleDropDownSelection(
         selected === 'NONE' ? null : selected,
         filterType.STATUS,
@@ -173,7 +184,6 @@ export default {
       );
     },
     typeChanged(selected) {
-      console.log('typeChanged', selected);
       handleDropDownSelection(
         selected === 'NONE' ? null : selected,
         filterType.TYPE,

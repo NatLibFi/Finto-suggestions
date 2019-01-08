@@ -12,8 +12,13 @@ export default {
       resource: `/suggestions?filters=status${asciiUriEncoding.VALUE_OF_PARAM}${suggestionStateStatus.ACCEPTED}${asciiUriEncoding.NEXT_VAL}status${asciiUriEncoding.VALUE_OF_PARAM}${suggestionStateStatus.REJECTED}`
     }),
   getSortedSuggestions: sortValue => get({ resource: `/suggestions?sort=${sortValue}` }),
-  filterSuggestions: filters => get({ resource: `/suggestions?filters=${filters}` }),
   getSuggestionById: suggestionId => get({ resource: `/suggestions/${suggestionId}` }),
-  assignUserToSuggestion: (suggestionId, userId) => put({resource: `/suggestions/${suggestionId}/assign/${userId}`}),
-  unassignUserFromSuggestion: suggestionId => put({resource: `/suggestions/${suggestionId}/unassign`})
+  assignUserToSuggestion: (suggestionId, userId) =>
+    put({ resource: `/suggestions/${suggestionId}/assign/${userId}` }),
+  unassignUserFromSuggestion: suggestionId =>
+    put({ resource: `/suggestions/${suggestionId}/unassign` }),
+  getSuggestionByMeetingId: meetingId => get({ resource: `/suggestions/meeting/${meetingId}` }),
+  getSortedSuggestionByMeetingId: (meetingId, sortValue) =>
+    // eslint-disable-next-line prettier/prettier
+    get({ resource: `/suggestions?sort=${sortValue}&filters=meeting_id${asciiUriEncoding.VALUE_OF_PARAM}${meetingId}` })
 };

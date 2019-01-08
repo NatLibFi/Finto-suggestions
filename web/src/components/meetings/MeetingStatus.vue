@@ -63,7 +63,9 @@ export default {
     ));
   },
   methods: {
-    ...mapMeetingActions({ getMeeting: meetingActions.GET_MEETING }),
+    ...mapMeetingActions({
+      getMeeting: meetingActions.GET_MEETING
+    }),
     goToMeetingList() {
       this.$router.push({
         name: 'meeting-suggestion-list',

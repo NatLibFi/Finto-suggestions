@@ -3,6 +3,7 @@
   <suggestion-header
     :openSuggestionCount="openCount || 0"
     :resolvedSuggestionCount="resolvedCount || 0"
+    :meetingSort="meetingSort"
     class="header" />
   <ul class="list">
     <transition-group name="fade">
@@ -40,7 +41,7 @@ import {
 } from '../../store/modules/suggestion/suggestionModule.js';
 
 import SuggestionListPagination from './SuggestionListPagination';
-import { filterType } from '../../utils/suggestionMappings';
+import { filterType, suggestionType, suggestionStateStatus } from '../../utils/suggestionMappings';
 
 export default {
   components: {
@@ -50,51 +51,64 @@ export default {
   },
   props: {
     // TODO: use meetingId to filter suggestions under this meeting for Meeting's Suggestion list
-    meetingId: [String, Number, null]
+    meetingId: {
+      type: [String, Number],
+      default: null
+    }
   },
   data: () => ({
-    paginationMaxCount: 10
+    paginationMaxCount: 10,
+    openCount: 0,
+    resolvedCount: 0,
+    paginated_items: [],
+    meetingSort: false
   }),
   computed: {
     ...mapSuggestionGetters({
       items: suggestionGetters.GET_SUGGESTIONS,
-      openCount: suggestionGetters.GET_OPEN_SUGGESTIONS_COUNT,
-      resolvedCount: suggestionGetters.GET_RESOLVED_SUGGESTIONS_COUNT,
       filters: suggestionGetters.GET_FILTERS,
-      paginated_items: suggestionGetters.GET_PAGINATION_SUGGESTIONS,
-      selectedSort: suggestionGetters.GET_SELECTED_SORT
+      suggestionsSelectedSort: suggestionGetters.GET_SUGGESTIONS_SELECTED_SORT,
+      meetingSuggestionsSelectedSort: suggestionGetters.GET_MEETING_SUGGESTIONS_SELECTED_SORT
     })
   },
   async created() {
-    await this.getSuggestions();
-
-    this.getSelectedSortKey();
-    if (this.selectedSort && this.selectedSort.length > 0) {
-      await this.sortSuggestionList(this.selectedSort);
-    }
-
-    await this.getOpenSuggestionCount();
-    await this.getResolvedSuggestionCount();
-    this.paginationPageChanged();
+    this.meetingSort = this.meetingId && parseInt(this.meetingId) > 0 ? true  : false;
+    await this.getSuggestionsSelectedSortKey();
+    await this.getMeetingsSuggestionsSelectedSortKey();
+    await this.handleSuggestionFetching();
   },
   methods: {
     ...mapSuggestionActions({
       getSuggestions: suggestionActions.GET_SUGGESTIONS,
-      getOpenSuggestionCount: suggestionActions.GET_OPEN_SUGGESTIONS,
-      getResolvedSuggestionCount: suggestionActions.GET_RESOLVED_SUGGESTIONS,
       getSortedSuggestions: suggestionActions.GET_SORTED_SUGGESTIONS,
-      getSelectedSortKey: suggestionActions.GET_SELECTED_SORT_KEY
+      getSuggestionsSelectedSortKey: suggestionActions.GET_SUGGESTIONS_SELECTED_SORT,
+      getSuggestionsByMeetingId: suggestionActions.GET_SUGGESTIONS_BY_MEETING_ID,
+      getSortedSuggestionsByMeetingId: suggestionActions.GET_SORTED_SUGGESTIONS_BY_MEETING_ID,
+      getMeetingsSuggestionsSelectedSortKey: suggestionActions.GET_MEETING_SUGGESTIONS_SELECTED_SORT
     }),
-    ...mapSuggestionMutations({
-      setPaginatedSuggestions: suggestionMutations.SET_PAGINATION_SUGGESTIONS
-    }),
-    async sortSuggestionList(selectedSort) {
-      if (selectedSort && selectedSort !== '') {
-        await this.getSortedSuggestions(selectedSort);
+    async handleSuggestionFetching() {
+      if(this.meetingId && parseInt(this.meetingId) > 0) {
+        await this.fetchAndSortMeetingSuggestions();
+      } else {
+        await this.fetchAndSortAllSuggestions();
+      }
+      await this.paginationPageChanged();
+    },
+    async fetchAndSortAllSuggestions() {
+      await this.getSuggestionsSelectedSortKey();
+      if (this.suggestionsSelectedSort && this.suggestionsSelectedSort !== '') {
+        await this.getSortedSuggestions(this.suggestionsSelectedSort);
       } else {
         await this.getSuggestions();
       }
-      this.paginationPageChanged();
+    },
+    async fetchAndSortMeetingSuggestions() {
+      await this.getMeetingsSuggestionsSelectedSortKey();
+      if (this.meetingSuggestionsSelectedSort && this.meetingSuggestionsSelectedSort !== '') {
+        await this.getSortedSuggestionsByMeetingId({ meetingId: this.meetingId, sortValue: this.meetingSuggestionsSelectedSort });
+      } else {
+        await this.getSuggestionsByMeetingId(parseInt(this.meetingId));
+      }
     },
     getPaginationStaringIndex(pageNumber) {
       return pageNumber > 1 ? this.paginationMaxCount * pageNumber - this.paginationMaxCount : 0;
@@ -103,16 +117,19 @@ export default {
       const endIndex = this.paginationMaxCount * pageNumber;
       return endIndex > this.items.length ? this.items.length : endIndex;
     },
-    paginationPageChanged(pageNumber = 1, items = null) {
+    async paginationPageChanged(pageNumber = 1, items = null) {
       const start = this.getPaginationStaringIndex(pageNumber);
       const end = this.getPaginationEndingIndex(pageNumber);
       const paginatedItems = items ? items : this.items;
-      this.setPaginatedSuggestions(
-        paginatedItems && paginatedItems.length > 0 ? paginatedItems.slice(start, end) : []
-      );
+      this.paginated_items = paginatedItems && paginatedItems.length > 0 ? paginatedItems.slice(start, end) : []
+      this.calculateOpenAndResolvedSuggestionCounts();
     },
     calculatePageCountForPagination() {
       return Math.ceil(this.items.length / this.paginationMaxCount);
+    },
+    calculateOpenAndResolvedSuggestionCounts() {
+      this.openCount = this.items.filter(i => i.status === null).length;
+      this.resolvedCount = this.items.filter(i => i.status !== null).length;
     }
   },
   watch: {
@@ -145,14 +162,18 @@ export default {
               break;
           }
         });
-        this.paginationPageChanged(1, items);
+        await this.paginationPageChanged(1, items);
       } else {
-        await this.getSuggestions();
-        this.paginationPageChanged();
+        await this.handleSuggestionFetching();
       }
     },
-    async selectedSort() {
-      await this.sortSuggestionList(this.selectedSort);
+    async suggestionsSelectedSort() {
+      console.log('1');
+      await this.handleSuggestionFetching();
+    },
+    async meetingSuggestionsSelectedSort() {
+      console.log('2');
+      await this.handleSuggestionFetching();
     }
   }
 };
