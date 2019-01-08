@@ -94,9 +94,9 @@ export default {
     },
     handleSortinDropDownIndex() {
       if(this.meetingSort) {
-        this.selectedSortOptionIndex = getSelectedSortOptionIndex(this.dropDownOptions, this.meetingSuggestionSelectedSort);
+        this.selectedSortOptionIndex = getSelectedSortOptionIndex(this.dropDownOptions, this.meetingSuggestionSelectedSort, 2);
       } else {
-        this.selectedSortOptionIndex = getSelectedSortOptionIndex(this.dropDownOptions, this.suggestionSelectedSort);
+        this.selectedSortOptionIndex = getSelectedSortOptionIndex(this.dropDownOptions, this.suggestionSelectedSort, 2);
       }
     }
   },
