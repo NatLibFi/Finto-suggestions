@@ -5,13 +5,15 @@
     :resolvedSuggestionCount="resolvedCount || 0"
     class="header" />
   <ul class="list">
-    <suggestion-item
-      class="item"
-      v-for="item in paginated_items"
-      :key="item.id"
-      :suggestion="item"
-      :meetingId="meetingId"
-      />
+    <transition-group name="fade">
+      <suggestion-item
+        class="item"
+        v-for="item in paginated_items"
+        :key="item.id"
+        :suggestion="item"
+        :meetingId="meetingId"
+        />
+    </transition-group>
   </ul>
   <suggestion-list-pagination
     v-if="calculatePageCountForPagination() > 1"
@@ -186,5 +188,12 @@ ul {
     width: 80vw;
     margin: 0 10vw 20px;
   }
+}
+
+.fade-enter-active, .fade-leave-active {
+  transition: opacity 3s;
+}
+.fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
+  opacity: 0.75;
 }
 </style>

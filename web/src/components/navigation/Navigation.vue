@@ -6,27 +6,37 @@
         <img @click="returnToHome" src="./finto-logo.svg" alt="">
         <span @click="returnToHome">Finto – Käsite-ehdotukset</span>
       </div>
-      <div v-if="isAuthenticated" class="nav-menu" @click="showDropdown = true">
-        <div class="user-bubble">
-          <span unselectable="on">{{ userInitials }}</span>
+
+      <transition name="fade">
+        <div v-if="isAuthenticated" class="nav-menu" @click="showDropdown = true">
+          <div class="user-bubble">
+            <span unselectable="on">{{ userInitials }}</span>
+          </div>
+          <div class="nav-menu-user">
+            <p v-if="name && name.length > 0">{{ name }}</p>
+          </div>
+          <svg-icon icon-name="triangle"><icon-triangle /></svg-icon>
         </div>
-        <div class="nav-menu-user">
-          <p v-if="name && name.length > 0">{{ name }}</p>
+      </transition>
+      <transition name="fade">
+        <div v-if="!isAuthenticated" class="nav-login-buttons">
+          <div @click="showLoginDialog = !showLoginDialog">Kirjaudu sisään</div>
+          <div @click="showSignupDialog = !showSignupDialog">Luo tunnus</div>
         </div>
-        <svg-icon icon-name="triangle"><icon-triangle /></svg-icon>
-      </div>
-      <div v-if="!isAuthenticated" class="nav-login-buttons">
-        <div @click="showLoginDialog = !showLoginDialog">Kirjaudu sisään</div>
-        <div @click="showSignupDialog = !showSignupDialog">Luo tunnus</div>
-      </div>
-      <!-- Mobile menu shown below screen width of 700px -->
-      <div v-if="isAuthenticated" class="nav-menu-mobile" @click="showMobileDropdown = true">
-        <svg-icon icon-name="more"><icon-more/></svg-icon>
-      </div>
-      <div v-if="!isAuthenticated" class="nav-login-buttons-mobile">
-        <div @click="showLoginDialog = !showLoginDialog">Kirjaudu sisään</div>
-        <div @click="showSignupDialog = !showSignupDialog">Luo tunnus</div>
-      </div>
+      </transition>
+      <transition name="fade">
+        <!-- Mobile menu shown below screen width of 700px -->
+        <div v-if="isAuthenticated" class="nav-menu-mobile" @click="showMobileDropdown = true">
+          <svg-icon icon-name="more"><icon-more/></svg-icon>
+        </div>
+      </transition>
+      <transition name="fade">
+        <div v-if="!isAuthenticated" class="nav-login-buttons-mobile">
+          <div @click="showLoginDialog = !showLoginDialog">Kirjaudu sisään</div>
+          <div @click="showSignupDialog = !showSignupDialog">Luo tunnus</div>
+        </div>
+      </transition>
+
     </div>
 
     <div v-if="showDropdown" v-on-clickaway="closeDropdown" class="nav-menu-dropdown dropdown">
@@ -479,5 +489,12 @@ export default {
 
 .disabled {
   color: #ccc;
+}
+
+.fade-enter-active, .fade-leave-active {
+  transition: opacity 0.4s;
+}
+.fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
+  opacity: 0;
 }
 </style>
