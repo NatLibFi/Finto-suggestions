@@ -279,7 +279,7 @@ h5 {
   position: absolute;
   top: 53.5%;
   left: 14px;
-  transform: perspective(1px) translateY(-50%);
+  transform: perspective(1px) translateY(-56%);
   overflow: hidden;
   font-size: 13px;
   font-weight: 600;
