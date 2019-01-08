@@ -166,14 +166,17 @@ li.item:hover {
   background-color: #66bea9;
 }
 
-@media (max-width: 700px) {
+@media (max-width: 1100px) {
   .item-summary {
-    padding: 10px 20px 10px;
+    padding: 6px 20px 6px;
   }
   .item-name {
     display: block;
   }
-  .item-status {
+  .item-status .status-bar {
+    width: 80px;
+  },
+  .status-summary {
     display: none;
   }
 }
