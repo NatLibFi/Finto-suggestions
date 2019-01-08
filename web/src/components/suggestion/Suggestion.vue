@@ -27,7 +27,8 @@
           <h1 class="suggestion-title">{{ suggestion.preferred_label.fi }}</h1>
           <div class="suggestion-header-details">
             <span><strong>#{{ suggestion.id }} </strong></span>
-            <span>{{ dateTimeFormatLabel(suggestion.created) }}</span>
+            <span>{{ dateTimeFormatLabel(suggestion.created) }} </span>
+            <span>– Kokous {{ suggestion.meeting_id }}</span>
           </div>
           <div class="tags">
             <span
