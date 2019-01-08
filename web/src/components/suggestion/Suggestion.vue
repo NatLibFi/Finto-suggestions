@@ -34,10 +34,10 @@
           </div>
           <div class="tags">
             <span
-              v-if="suggestion.suggestion_type == 'NEW'"
+              v-if="suggestion.suggestion_type === suggestionTypes.NEW"
               class="tag type-new">{{ suggestionTypeToString[suggestion.suggestion_type] }}</span>
             <span
-              v-if="suggestion.suggestion_type == 'MODIFY'"
+              v-if="suggestion.suggestion_type === suggestionTypes.MODIFY"
               class="tag type-modify">{{ suggestionTypeToString[suggestion.suggestion_type] }}</span>
             <span class="tag"
               v-if="suggestion.tags && suggestion.tags.length > 0"
@@ -102,6 +102,7 @@ import SvgIcon from '../icons/SvgIcon';
 import AddComment from './AddComment';
 import AssignUser from './AssignUser';
 
+import { suggestionType } from '../../utils/suggestionMappings.js';
 import {
   suggestionGetters,
   suggestionActions
@@ -153,7 +154,11 @@ export default {
       userId: this.$cookies.get('logged_user_id'),
       suggestionTypeToString,
       dateTimeFormatLabel,
-      userName: ''
+      userName: '',
+      suggestionTypes: {
+        NEW: suggestionType.NEW,
+        MODIFY: suggestionType.MODIFY
+      }
     }
   },
   computed: {
