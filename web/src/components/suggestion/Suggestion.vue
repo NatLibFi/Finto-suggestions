@@ -28,7 +28,14 @@
           <div class="suggestion-header-details">
             <span><strong>#{{ suggestion.id }} </strong></span>
             <span>{{ dateTimeFormatLabel(suggestion.created) }}</span>
-            <span class="suggestion-type">{{ suggestionTypeToString[suggestion.suggestion_type] }}</span>
+          </div>
+          <div class="tags">
+            <span
+              v-if="suggestion.suggestion_type == 'NEW'"
+              class="tag type-new">{{ suggestionTypeToString[suggestion.suggestion_type] }}</span>
+            <span
+              v-if="suggestion.suggestion_type == 'MODIFY'"
+              class="tag type-modify">{{ suggestionTypeToString[suggestion.suggestion_type] }}</span>
             <span class="tag"
               v-if="suggestion.tags && suggestion.tags.length > 0"
               v-for="tag in suggestion.tags"
@@ -175,7 +182,7 @@ export default {
         this.$router.push({
           name: 'meeting-suggestion-list',
           params: {
-             meetingId: this.meetingId
+            meetingId: this.meetingId
           }
         });
       }
@@ -296,27 +303,29 @@ h1.suggestion-title {
   text-align: right;
 }
 
-.suggestion-type {
-  font-size: 14px;
-  font-weight: 600;
-  background-color: #f2994a;
-  color: #ffffff;
-  padding: 3px 10px;
-  margin-left: 10px;
-  border-radius: 2px;
+.tags {
+  line-height: 20px;
+  font-size: 12px;
+  font-weight: 900;
   text-transform: lowercase;
+  color: #ffffff;
 }
 
 .tag {
-  font-size: 14px;
-  font-weight: 600;
-  background-color: #ffffff;
-  color: #ac63ef;
-  border: 1px solid #ac63ef;
-  padding: 3px 10px;
-  margin-left: 10px;
+  background-color: #4794a2;
+  border: 2px solid #4794a2;
+  padding: 0 6px;
+  margin: 4px 4px 0 0;
   border-radius: 2px;
-  text-transform: lowercase;
+  display: inline-block;
+}
+.type-new {
+  background-color: #1137ff;
+  border: 2px solid #1137ff;
+}
+.type-modify {
+  background-color: #ff8111;
+  border: 2px solid #ff8111;
 }
 
 .comment-container {
@@ -345,6 +354,7 @@ h1.suggestion-title {
 
   .suggestion-header-details {
     line-height: 24px;
+    font-size: 13px;
   }
 }
 </style>
