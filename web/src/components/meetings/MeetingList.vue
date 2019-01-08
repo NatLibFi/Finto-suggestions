@@ -7,12 +7,14 @@
     @sortListBy="sortMeetingList"
   />
   <ul :class="['list', pageCount > 1 ? 'with-pagionation' : '']">
-    <meeting-list-item
-      class="item"
-      v-for="item in paginated_items"
-      :key="item.id"
-      :meeting="item"
-      />
+    <transition-group name="fade">
+      <meeting-list-item
+        class="item"
+        v-for="item in paginated_items"
+        :key="item.id"
+        :meeting="item"
+        />
+    </transition-group>
   </ul>
   <meeting-list-pagination
     v-if="pageCount > 1"
@@ -118,5 +120,12 @@ ul {
     width: 80vw;
     margin: 0 10vw 20px;
   }
+}
+
+.fade-enter-active, .fade-leave-active {
+  transition: opacity 3s;
+}
+.fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
+  opacity: 0.75;
 }
 </style>
