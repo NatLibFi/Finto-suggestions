@@ -47,7 +47,7 @@ export default {
     pastMeetingCount: Number
   },
   data: () => ({
-    selectedSortOptionIndex: 1,
+    selectedSortOptionIndex: 2,
     isDropDownOpened: false,
     dropDownOptions: [
       { label: 'Uusin ensin', value: sortingKeys.NEWEST_FIRST },
