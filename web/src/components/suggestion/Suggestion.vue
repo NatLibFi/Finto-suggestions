@@ -71,7 +71,8 @@
       <meeting-actions
         :userId="userId"
         :suggestionId="suggestionId"
-        :meetingId="meetingId"/>
+        :meetingId="meetingId"
+        :events="events"/>
     </div>
 
     <div v-if="events && events.length > 0">
