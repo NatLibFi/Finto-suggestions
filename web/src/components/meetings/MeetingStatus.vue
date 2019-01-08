@@ -11,8 +11,7 @@
         <p>{{ processed }}/{{ suggestions }} ehdotusta käsitelty ({{ progression }}%)</p>
         <p
           v-if="['meeting-suggestion-list'].includes($route.name) && isAuthenticated"
-          class="next-suggestion-link">
-          <!-- @click="goToNextSuggestion()" -->
+          class="next-suggestion-link" @click="goToNextSuggestion()">
           Jatka käsittelyä
         </p>
       </div>
@@ -27,13 +26,16 @@ import { meetingGetters, meetingActions } from '../../store/modules/meeting/meet
 import { getMeetingProgressionCounts, getMeetingProgressionWidths } from '../../utils/meetingHelper.js';
 import { mapAuthenticatedUserGetters } from '../../store/modules/authenticatedUser/authenticatedUserModule.js';
 import { authenticatedUserGetters } from '../../store/modules/authenticatedUser/authenticatedUserConsts.js';
+import { mapSuggestionGetters } from '../../store/modules/suggestion/suggestionModule.js';
+import { suggestionGetters } from '../../store/modules/suggestion/suggestionConsts.js';
+import { comparerDesc } from '../../utils/sortingHelper.js';
 
 export default {
   props: {
     meetingId: {
-      type: [String, Number],
+      type: [Number, String],
       required: true
-    },
+    }
   },
   data: function() {
     return {
@@ -50,9 +52,14 @@ export default {
     }
   },
   computed: {
-    ...mapMeetingGetters({ meeting: meetingGetters.GET_MEETING }),
+    ...mapMeetingGetters({
+      meeting: meetingGetters.GET_MEETING
+    }),
     ...mapAuthenticatedUserGetters({
       isAuthenticated: authenticatedUserGetters.GET_AUTHENTICATION
+    }),
+    ...mapSuggestionGetters({
+      suggestion_items: suggestionGetters.GET_SUGGESTIONS
     })
   },
   async created() {
@@ -80,10 +87,19 @@ export default {
         name: 'meeting-suggestion',
         params: {
           meetingId: this.meetingId,
-          // TODO: create a method to calculate the next unprocessed suggestion in the meeting
-          suggestionId: 1
+          suggestionId: this.getNextSuggestionIdToHandle()
         }
       });
+    },
+    getNextSuggestionIdToHandle() {
+      let nextSuggestionId = null;
+      if (this.suggestion_items && this.suggestion_items.length > 0) {
+        const orderedSuggestionList = this.suggestion_items.filter(s => s.status === null).sort(comparerDesc('created'));
+        if(orderedSuggestionList && orderedSuggestionList.length > 0) {
+          nextSuggestionId = orderedSuggestionList[0].id
+        }
+      }
+      return nextSuggestionId;
     },
     handleMeetingProgressionCounts(countData) {
       if (countData) {
