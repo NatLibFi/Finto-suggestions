@@ -30,8 +30,8 @@
     </div>
 
     <div v-if="showDropdown" v-on-clickaway="closeDropdown" class="nav-menu-dropdown dropdown">
-      <div>Profiili</div>
-      <div>Asetukset</div>
+      <div class="disabled">Profiili</div>
+      <div class="disabled">Asetukset</div>
       <div @click="logOut">Kirjaudu ulos</div>
     </div>
 
@@ -48,8 +48,8 @@
         </div>
       </div>
       <div class="nav-mobile-dropdown-content">
-        <div>Profiili</div>
-        <div>Asetukset</div>
+        <div class="disabled">Profiili</div>
+        <div class="disabled">Asetukset</div>
         <div @click="logOut">Kirjaudu ulos</div>
       </div>
     </div>
@@ -205,7 +205,7 @@ export default {
 </script>
 
 <style scoped>
-div.navigation {
+.navigation {
   width: 100%;
   overflow: hidden;
   border-bottom: 2px solid #f5f5f5;
@@ -216,12 +216,12 @@ div.navigation {
   user-select: none; /* Standard */
 }
 
-div.nav-content {
+.nav-content {
   position: relative;
   height: 60px;
 }
 
-div.nav-title {
+.nav-title {
   position: absolute;
   top: 50%;
   left: 40px;
@@ -231,21 +231,21 @@ div.nav-title {
   width: 45%;
 }
 
-div.nav-title img {
+.nav-title img {
   position: absolute;
   top: 51%;
   left: 0;
   transform: perspective(1px) translateY(-50%);
 }
 
-div.nav-title img:hover,
-div.nav-title span:hover {
+.nav-title img:hover,
+.nav-title span:hover {
   opacity: 0.9;
   cursor: pointer;
   cursor: hand;
 }
 
-div.nav-title span {
+.nav-title span {
   display: inline-block;
   position: absolute;
   top: 56%;
@@ -254,8 +254,8 @@ div.nav-title span {
   font-weight: 600;
 }
 
-div.nav-login-buttons,
-div.nav-login-buttons-mobile {
+.nav-login-buttons,
+.nav-login-buttons-mobile {
   position: absolute;
   top: 50%;
   right: 40px;
@@ -271,21 +271,21 @@ div.nav-login-buttons-mobile {
   cursor: hand;
 }
 
-div.nav-login-buttons-mobile {
+.nav-login-buttons-mobile {
   display: none;
 }
 
-div.nav-login-buttons div,
-div.nav-login-buttons-mobile div {
+.nav-login-buttons div,
+.nav-login-buttons-mobile div {
   display: inline-block;
 }
 
-div.nav-login-buttons div:last-of-type,
-div.nav-login-buttons-mobile div:last-of-type {
+.nav-login-buttons div:last-of-type,
+.nav-login-buttons-mobile div:last-of-type {
   margin-left: 20px;
 }
 
-div.nav-menu {
+.nav-menu {
   position: absolute;
   right: 0;
   padding: 0 40px 0 20px;
@@ -299,28 +299,28 @@ div.nav-menu {
   cursor: hand;
 }
 
-div.nav-menu .user-bubble {
+.nav-menu .user-bubble {
   position: relative;
   top: 50%;
   transform: perspective(1px) translateY(-50%);
   overflow: hidden;
 }
 
-div.nav-menu .nav-menu-user {
+.nav-menu .nav-menu-user {
   display: inline;
   vertical-align: middle;
 }
 
-div.nav-menu .nav-menu-user p {
+.nav-menu .nav-menu-user p {
   display: inline;
   margin: 0 0 0 14px;
 }
 
-div.nav-menu svg {
+.nav-menu svg {
   margin: 0 0 -13px 10px;
 }
 
-div.nav-menu-mobile {
+.nav-menu-mobile {
   display: none;
   position: absolute;
   right: 0;
@@ -330,7 +330,7 @@ div.nav-menu-mobile {
   height: 100%;
 }
 
-div.nav-menu-mobile svg {
+.nav-menu-mobile svg {
   position: relative;
   top: 55%;
   transform: perspective(1px) translateY(-50%);
@@ -339,7 +339,7 @@ div.nav-menu-mobile svg {
   background-size: 24px 24px;
 }
 
-div.nav-menu-dropdown {
+.nav-menu-dropdown {
   position: absolute;
   z-index: 2;
   top: 55px;
@@ -347,22 +347,22 @@ div.nav-menu-dropdown {
   width: 200px;
 }
 
-div.nav-menu-dropdown div {
+.nav-menu-dropdown div {
   padding: 16px 20px;
   border-bottom: 1px solid #f5f5f5;
 }
 
-div.nav-menu-dropdown div:last-of-type {
+.nav-menu-dropdown div:last-of-type {
   border-bottom: none;
 }
 
-div.nav-menu-dropdown div:hover {
+.nav-menu-dropdown div:hover {
   background-color: #f3fbfa;
   cursor: pointer;
   cursor: hand;
 }
 
-div.nav-mobile-dropdown {
+.nav-mobile-dropdown {
   display: none;
   position: absolute;
   z-index: 2;
@@ -371,82 +371,82 @@ div.nav-mobile-dropdown {
   width: 300px;
 }
 
-div.nav-mobile-dropdown-header {
+.nav-mobile-dropdown-header {
   padding: 20px;
   padding-top: 24px;
   border-bottom: 1px solid #f5f5f5;
 }
 
-div.nav-mobile-dropdown-header .user-bubble {
+.nav-mobile-dropdown-header .user-bubble {
   height: 50px;
   width: 50px;
   line-height: 50px;
   font-size: 16px;
 }
 
-div.nav-mobile-dropdown-header .nav-dropdown-user {
+.nav-mobile-dropdown-header .nav-dropdown-user {
   display: inline-block;
   margin-left: 30px;
   font-size: 16px;
   line-height: 16px;
 }
 
-div.nav-mobile-dropdown-content div {
+.nav-mobile-dropdown-content div {
   padding: 16px 20px;
   border-bottom: 1px solid #f5f5f5;
 }
 
-div.nav-mobile-dropdown-content div:last-of-type {
+.nav-mobile-dropdown-content div:last-of-type {
   padding: 16px 20px;
   border-bottom: 1px solid #f5f5f5;
 }
 
-div.nav-mobile-dropdown-content div:hover {
+.nav-mobile-dropdown-content div:hover {
   background-color: #f3fbfa;
   cursor: pointer;
   cursor: hand;
 }
 
 @media (max-width: 700px) {
-  div.nav-title {
+  .nav-title {
     left: 20px;
   }
 
-  div.nav-title span {
+  .nav-title span {
     display: none;
   }
 
-  div.nav-login-buttons {
+  .nav-login-buttons {
     display: none;
   }
 
-  div.nav-login-buttons-mobile {
+  .nav-login-buttons-mobile {
     display: initial;
   }
 
-  div.nav-login-buttons-mobile div {
+  .nav-login-buttons-mobile div {
     font-size: 11px;
   }
 
-  div.nav-login-buttons div:last-of-type,
-  div.nav-login-buttons-mobile div:last-of-type {
+  .nav-login-buttons div:last-of-type,
+  .nav-login-buttons-mobile div:last-of-type {
     margin-left: 8px;
   }
 
-  div.nav-menu {
+  .nav-menu {
     display: none;
   }
 
-  div.nav-menu-mobile {
+  .nav-menu-mobile {
     display: initial;
     padding-right: 20px;
   }
 
-  div.nav-menu-dropdown {
+  .nav-menu-dropdown {
     display: none;
   }
 
-  div.nav-mobile-dropdown {
+  .nav-mobile-dropdown {
     display: initial;
   }
 }
@@ -475,5 +475,9 @@ div.nav-mobile-dropdown-content div:hover {
   color: #ffffff;
   font-size: 14px;
   font-weight: 800;
+}
+
+.disabled {
+  color: #ccc;
 }
 </style>

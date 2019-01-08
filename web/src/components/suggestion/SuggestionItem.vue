@@ -19,6 +19,7 @@
         <p>
           <strong>#{{ suggestion.id }}</strong>
           {{ dateTimeFormatLabel(suggestion.created) }}
+          – Kokous {{ suggestion.meeting_id }}
         </p>
       </div>
     </div>
