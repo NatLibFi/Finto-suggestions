@@ -45,6 +45,7 @@ div.paginate-container {
   background-color: #ffffff;
   border: 2px solid #f5f5f5;
   border-top: none;
+  overflow: none;
 }
 
 ul.paginate {
@@ -54,6 +55,7 @@ ul.paginate {
   transform: translate(-50%, -50%);
   padding: 0;
   margin: 0;
+  width: 100%;
 }
 
 ul.paginate .paginate-item {

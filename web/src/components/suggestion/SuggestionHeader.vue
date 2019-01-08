@@ -126,7 +126,7 @@ export default {
   overflow: hidden;
   text-align: left;
   padding: 12px 20px 10px;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 600;
   vertical-align: middle;
 }

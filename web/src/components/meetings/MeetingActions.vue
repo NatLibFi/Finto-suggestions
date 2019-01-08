@@ -1,6 +1,6 @@
 <template>
-  <div class="actions-container">
-    <add-comment :userId="userId" :suggestionId="suggestionId" />
+  <div v-if="isAuthenticated" class="actions-container">
+    <add-comment v-if="events && events.length < 2" :userId="userId" :suggestionId="suggestionId" />
     <div class="action-buttons">
       <span class="button move-to-next-meeting">
         Siirrä seuraavaan<span class="hidden-in-mobile"> kokoukseen</span>
@@ -18,6 +18,9 @@
 <script>
 import AddComment from '../suggestion/AddComment';
 
+import { mapAuthenticatedUserGetters } from '../../store/modules/authenticatedUser/authenticatedUserModule.js';
+import { authenticatedUserGetters } from '../../store/modules/authenticatedUser/authenticatedUserConsts.js';
+
 export default {
   components: {
     AddComment
@@ -31,7 +34,16 @@ export default {
     meetingId: {
       type: [String, Number],
       required: false
+    },
+    events: {
+      type: [Array, Object],
+      required: false
     }
+  },
+  computed: {
+    ...mapAuthenticatedUserGetters({
+      isAuthenticated: authenticatedUserGetters.GET_AUTHENTICATION
+    })
   }
 };
 </script>
@@ -52,11 +64,11 @@ export default {
 
 .action-buttons .button {
   display: inline-block;
-  padding: 8px 15px;
+  padding: 6px 12px;
   margin: 0;
   font-weight: 600;
-  font-size: 16px;
-  border-radius: 1px;
+  font-size: 13px;
+  border-radius: 2px;
   cursor: pointer;
   cursor: hand;
 }
@@ -118,7 +130,7 @@ export default {
   }
 
   .action-buttons .dismiss,
-  .actions-buttons .move-to-next-meeting {
+  .action-buttons .move-to-next-meeting {
     margin-left: 0;
     margin-right: 0;
   }

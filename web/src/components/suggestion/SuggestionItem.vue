@@ -5,7 +5,7 @@
         <p class="title-row">
           <span class="item-name">{{ suggestion.preferred_label.fi }}</span>
           <span
-          :class="[suggestionTypeToStyleClass[suggestion.suggestion_type], 'tag']">
+            :class="[suggestionTypeToStyleClass[suggestion.suggestion_type], 'tag']">
             {{ suggestionTypeToString[suggestion.suggestion_type] }}
           </span>
           <span v-if="suggestion.tags.length > 0">
@@ -18,7 +18,12 @@
       <div class="label">
         <p>
           <strong>#{{ suggestion.id }}</strong>
-          {{ dateTimeFormatLabel(suggestion.created) }}
+          {{ dateTimeFormatLabel(suggestion.created) }} –
+          <span>
+            <a @click.stop="goToMeeting(suggestion.meeting_id)">
+              Kokous {{ suggestion.meeting_id }}
+            </a>
+          </span>
         </p>
       </div>
     </div>
@@ -33,7 +38,7 @@
 import SvgIcon from '../icons/SvgIcon';
 import IconComments from '../icons/IconComments';
 import { suggestionTypeToStyleClass, suggestionTypeToString } from '../../utils/suggestionMappings';
-import { dateTimeFormatLabel } from '../../utils/dateTimeStampHelper';
+import { dateTimeFormatLabel } from '../../utils/dateHelper';
 import { eventTypes } from '../../utils/eventMappings';
 
 export default {
@@ -78,6 +83,14 @@ export default {
           }
         });
       }
+    },
+    goToMeeting(id) {
+      this.$router.push({
+        name: 'meeting-suggestion-list',
+        params: {
+          meetingId: id
+        }
+      })
     }
   }
 };
@@ -110,25 +123,30 @@ li.item:hover {
   margin: 5px;
 }
 .title-row {
-  line-height: 26px;
+  line-height: 20px;
 }
 .item-name {
-  font-size: 17px;
+  font-size: 16px;
   margin-right: 8px;
   vertical-align: middle;
 }
 .tag {
-  font-weight: 600;
   text-transform: lowercase;
-  font-size: 14px;
+  font-size: 12px;
+  font-weight: 900;
   padding: 0 6px;
   border-radius: 3px;
-  color: #ffffff;
   margin-right: 10px;
+  margin: 4px 4px 0 0;
+  display: inline-block;
+  color: #ffffff;
 }
-
 .tag:last-of-type {
   margin-right: 0;
+}
+.tags {
+  background-color: #4794a2;
+  border: 2px solid #4794a2;
 }
 .type-new {
   background-color: #1137ff;
@@ -137,11 +155,6 @@ li.item:hover {
 .type-modify {
   background-color: #ff8111;
   border: 2px solid #ff8111;
-}
-.tags {
-  color: #ac63ef;
-  background-color: white;
-  border: 2px solid #ac63ef;
 }
 .label {
   font-size: smaller;
