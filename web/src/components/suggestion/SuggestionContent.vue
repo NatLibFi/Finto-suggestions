@@ -126,8 +126,9 @@ export default {
 <style scoped>
 div.suggestion-content {
   border-top: 1px solid #f5f5f5;
-  padding: 30px 40px 10px;
+  padding: 20px 40px 10px;
   font-size: 16px;
+  margin-bottom: 0;
 }
 
 div > div {

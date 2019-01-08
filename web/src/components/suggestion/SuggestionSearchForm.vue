@@ -1,6 +1,6 @@
 <template>
   <div class="search-suggestions">
-    <h4>Hae ehdotusta</h4>
+    <h5>Hae ehdotusta</h5>
     <div class="search-wrapper">
       <input type="text" v-model="searchQuery" />
       <div @click="doSearch" class="search-button">
@@ -48,9 +48,9 @@ export default {
   padding-bottom: 20px;
 }
 
-h4 {
-  font-size: 16px;
+h5 {
   text-align: left;
+  margin-bottom: 6px;
 }
 
 .search-wrapper {

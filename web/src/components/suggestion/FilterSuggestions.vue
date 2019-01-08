@@ -1,6 +1,6 @@
 <template>
   <div class="filter-suggestions">
-    <h4>Suodata hakutuloksia</h4>
+    <h5>Suodata hakutuloksia</h5>
     <div @click="isDropDownOpened.STATUS = !isDropDownOpened.STATUS" class="filter-item">
       <div :class="[isDropDownOpened.STATUS ? 'selected' : '', 'drop-down-button']">
         <span>Käsittelyn tila</span>
@@ -249,6 +249,10 @@ export default {
 </script>
 
 <style scoped>
+h5 {
+  margin: 0 auto 2px;
+}
+
 .filter-suggestions {
   width: 100%;
   padding-right: 10px;

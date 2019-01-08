@@ -43,8 +43,8 @@
           </div>
         </div>
         <div class="suggestion-header-buttons">
-          <assign-user :suggestion="suggestion"/>
-          <svg-icon icon-name="more"><icon-more /></svg-icon>
+          <assign-user :suggestion="suggestion" class="icon-button" />
+          <svg-icon icon-name="more" class="icon-button"><icon-more /></svg-icon>
         </div>
       </div>
 
@@ -303,6 +303,10 @@ h1.suggestion-title {
   text-align: right;
 }
 
+.icon-button {
+  margin-left: 20px;
+}
+
 .tags {
   line-height: 20px;
   font-size: 12px;
@@ -350,6 +354,15 @@ h1.suggestion-title {
     height: initial;
     position: initial;
     text-align: left;
+  }
+
+  .suggestion-header-buttons {
+    margin-top: 20px;
+  }
+
+  .icon-button {
+    margin-left: 0;
+    margin-right: 20px;
   }
 
   .suggestion-header-details {
