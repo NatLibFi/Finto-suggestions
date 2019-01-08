@@ -168,11 +168,9 @@ export default {
       }
     },
     async suggestionsSelectedSort() {
-      console.log('1');
       await this.handleSuggestionFetching();
     },
     async meetingSuggestionsSelectedSort() {
-      console.log('2');
       await this.handleSuggestionFetching();
     }
   }

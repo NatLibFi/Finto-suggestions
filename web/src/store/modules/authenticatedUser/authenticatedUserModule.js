@@ -144,7 +144,7 @@ export default {
       if (response && response.code === 200) {
         commit(authenticatedUserMutations.SET_AUTHENTICATION, {
           authenticated: true,
-          user_id: response.data.user_id
+          user_id: response.user_id
         });
 
         // eslint-disable-next-line no-undef

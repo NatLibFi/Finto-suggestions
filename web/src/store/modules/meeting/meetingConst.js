@@ -7,7 +7,7 @@ export const storeStateNames = {
 };
 
 export const sessionStorageKeyNames = {
-  MEETING_LIST_SELECTED_SORT: 'meetingListSelectedSort'
+  MEETING_LIST_SELECTED_SORT: 'meetingsSelectedSort'
 };
 
 export const meetingGetters = {
