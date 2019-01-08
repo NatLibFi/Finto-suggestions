@@ -28,7 +28,9 @@
           <div class="suggestion-header-details">
             <span><strong>#{{ suggestion.id }} </strong></span>
             <span>{{ dateTimeFormatLabel(suggestion.created) }} </span>
-            <span>– Kokous {{ suggestion.meeting_id }}</span>
+            <span @click="goToMeeting(suggestion.meeting_id)">
+              – <a>Kokous {{ suggestion.meeting_id }}</a>
+            </span>
           </div>
           <div class="tags">
             <span
@@ -195,6 +197,14 @@ export default {
         });
       }
     },
+    goToMeeting(id) {
+      this.$router.push({
+        name: 'meeting-suggestion-list',
+        params: {
+          meetingId: id
+        }
+      })
+    },
     async getUserName() {
       if (this.suggestion.user_id) {
         await this.getUserData(this.suggestion.user_id);
@@ -319,6 +329,11 @@ h1.suggestion-title {
 .suggestion-header-details {
   line-height: 24px;
   font-size: 13px;
+}
+
+.suggestion-header-details span a:hover {
+  cursor: pointer;
+  cursor: hand;
 }
 
 .tags {
