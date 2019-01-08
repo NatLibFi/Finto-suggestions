@@ -1,6 +1,6 @@
 <template>
   <div class="filter-suggestions">
-    <h4>Suodata hakutuloksia</h4>
+    <h5>Suodata hakutuloksia</h5>
     <div @click="isDropDownOpened.STATUS = !isDropDownOpened.STATUS" class="filter-item">
       <div :class="[isDropDownOpened.STATUS ? 'selected' : '', 'drop-down-button']">
         <span>Käsittelyn tila</span>
@@ -26,7 +26,7 @@
         :selectedIndexes="selectedOptionIndex.TAGS"
         :isOpened="isDropDownOpened.TAG"
         :dropDownOptions="mapTagsToDropDown()"
-        :noOptionsMessage="'Ehdotustyyppejä ei valittavissa.'"
+        :noOptionsMessage="'Tunnisteita ei valittavissa.'"
         @applyFilter="tagChanged($event)"
         @addToSelectedIndexes="addSelectedTagIndex($event)"
         @resetTags="resetTags()"
@@ -259,6 +259,10 @@ export default {
 </script>
 
 <style scoped>
+h5 {
+  margin: 0 auto 2px;
+}
+
 .filter-suggestions {
   width: 100%;
   padding-right: 10px;
@@ -285,7 +289,7 @@ export default {
   position: absolute;
   top: 53.5%;
   left: 14px;
-  transform: perspective(1px) translateY(-50%);
+  transform: perspective(1px) translateY(-56%);
   overflow: hidden;
   font-size: 13px;
   font-weight: 600;

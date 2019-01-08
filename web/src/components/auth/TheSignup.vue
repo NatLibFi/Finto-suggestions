@@ -5,11 +5,11 @@
   <p>Voit luoda tilin Github- ja Google-tunnuksilla</p>
   <div class="login-services">
     <div @click="signup('github')" class="login-service-button">
-      <div class="login-service-image"></div>
+      <svg-icon icon-name="github"><icon-github /></svg-icon>
       <span>Luo tili GitHub-tunnuksilla</span>
     </div>
     <div @click="signup('google')" class="login-service-button">
-      <div class="login-service-image"></div>
+      <svg-icon icon-name="google"><icon-google /></svg-icon>
       <span>Luo tili Google-tunnuksilla</span>
     </div>
   </div>
@@ -39,7 +39,16 @@
 </template>
 
 <script>
+import SvgIcon from '../icons/SvgIcon';
+import IconGithub from '../icons/IconGithub';
+import IconGoogle from '../icons/IconGoogle';
+
 export default {
+  components: {
+    SvgIcon,
+    IconGithub,
+    IconGoogle
+  },
   data: () => ({
     showOwnCredentialSignup: false,
     name: '',
@@ -90,15 +99,12 @@ export default {
   cursor: hand;
 }
 
-.login-service-image {
+.login-service-button svg {
   position: absolute;
   left: 20px;
   top: 50%;
   transform: perspective(1px) translateY(-50%);
   display: inline-block;
-  height: 20px;
-  width: 20px;
-  background-color: #eeeeee;
 }
 
 .login-service-button span {

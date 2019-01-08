@@ -1,8 +1,7 @@
 <template>
   <div class="status-container">
     <!-- TODO: get meeting from store and show meeting.name only-->
-    <h2 v-if="meeting">{{ meeting.name }}</h2>
-    <h2 v-if="!meeting">YSA-kokous 2018-3</h2>
+    <h2 v-if="meeting">Kokous {{ meeting.id }} – {{ meeting.name }}</h2>
     <div class="meeting-status">
       <div class="status-bar">
         <div :style="progressWidth" class="progress-bar"></div>
@@ -11,7 +10,7 @@
       <div class="status-summary">
         <p>{{ processed }}/{{ suggestions }} ehdotusta käsitelty ({{ progression }}%)</p>
         <p
-          v-if="['meeting-suggestion-list'].includes($route.name)"
+          v-if="['meeting-suggestion-list'].includes($route.name) && isAuthenticated"
           class="next-suggestion-link">
           <!-- @click="goToNextSuggestion()" -->
           Jatka käsittelyä
@@ -26,6 +25,8 @@ import { mapMeetingGetters, mapMeetingActions } from '../../store/modules/meetin
 import { meetingGetters, meetingActions } from '../../store/modules/meeting/meetingConst.js';
 
 import { getMeetingProgressionCounts, getMeetingProgressionWidths } from '../../utils/meetingHelper.js';
+import { mapAuthenticatedUserGetters } from '../../store/modules/authenticatedUser/authenticatedUserModule.js';
+import { authenticatedUserGetters } from '../../store/modules/authenticatedUser/authenticatedUserConsts.js';
 
 export default {
   props: {
@@ -49,8 +50,9 @@ export default {
     }
   },
   computed: {
-    ...mapMeetingGetters({
-      meeting: meetingGetters.GET_MEETING
+    ...mapMeetingGetters({ meeting: meetingGetters.GET_MEETING }),
+    ...mapAuthenticatedUserGetters({
+      isAuthenticated: authenticatedUserGetters.GET_AUTHENTICATION
     })
   },
   async created() {

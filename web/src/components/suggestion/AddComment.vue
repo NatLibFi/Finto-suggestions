@@ -1,18 +1,30 @@
 <template>
 <div class="comment">
-  <div class="comment-container">
+  <div v-if="isAuthenticated" class="comment-container">
     <div class="comment-header">
       <div class="comment-info">
-        <p>Kommentoi ehdotusta</p>
+        <p><strong>Kommentoi ehdotusta</strong></p>
       </div>
     </div>
     <div class="comment-box">
-      <markdown-editor v-model="content" ref="markdownEditor" :class="[!isAuthenticated ? 'disabled' : '']"></markdown-editor>
+      <markdown-editor
+        v-model="content"
+        ref="markdownEditor"
+        :configs="mdeConfigs"
+        :class="[!isAuthenticated ? 'disabled' : '']">
+      </markdown-editor>
     </div>
-    <div class="comment-submit" v-if="isAuthenticated">
+    <div class="comment-submit">
       <span @click="saveNewComment" class="submit-button">
         Lähetä kommentti
       </span>
+    </div>
+  </div>
+  <div v-if="!isAuthenticated" class="comment-container">
+    <div class="comment-header">
+      <div class="comment-info">
+        <p>Kirjaudu sisään kommentoidaksesi ehdotusta</p>
+      </div>
     </div>
   </div>
 </div>
@@ -39,9 +51,19 @@ export default {
   components: {
     markdownEditor
   },
-  data: () => ({
-    content: ''
-  }),
+  data () {
+    return {
+      content: '',
+      mdeConfigs: {
+        autofocus: false,
+        hideIcons: ['preview', 'fullscreen', 'side-by-side', 'guide'],
+        indentWithTabs: false,
+        spellChecker: false,
+        status: false,
+        toolbarTips: true
+      }
+    }
+  },
   computed: {
     ...mapAuthenticatedUserGetters({
       userId: authenticatedUserGetters.GET_USER_ID,
@@ -78,34 +100,35 @@ export default {
 <style scoped>
 @import '~simplemde/dist/simplemde.min.css';
 
-div.comment-container {
-  width: 100%;
+.comment-container {
   text-align: left;
   overflow: hidden;
+  background-color: #ffffff;
+  border: 2px solid #f5f5f5;
+  margin-top: 10px;
 }
 
-div.comment-header {
-  padding: 20px 40px 0;
+.comment-header {
+  padding: 25px 40px;
 }
 
-div.comment-header .comment-info {
+.comment-header .comment-info {
   display: inline-block;
   vertical-align: middle;
 }
 
-div.comment-header .comment-info p {
+.comment-header .comment-info p {
   vertical-align: middle;
   margin: 0;
-  font-weight: bold;
 }
 
-div.comment-box {
+.comment-box {
   width: calc(100% - 80px);
-  padding: 20px 40px 10px;
+  padding: 0 40px 10px;
   margin: 0;
 }
 
-div.comment-submit {
+.comment-submit {
   width: calc(100% - 80px);
   padding: 0 40px 15px;
   margin: 4px 0 10px;
@@ -115,24 +138,25 @@ div.comment-submit {
 .submit-button {
   background-color: #06a798;
   border: none;
-  border-radius: 1px;
+  border-radius: 2px;
   color: white;
-  padding: 10px 18px;
+  padding: 8px 16px;
   text-align: center;
   text-decoration: none;
   display: inline-block;
-  font-size: 16px;
+  font-size: 13px;
   font-weight: 600;
   cursor: pointer;
   cursor: hand;
   transition: background-color 0.1s;
+  margin: 0;
 }
 
 .submit-button:hover {
   background-color: #44bdb2;
 }
 
-div.disabled
+.disabled
 {
   pointer-events: none;
   /* for "disabled" effect */
@@ -141,17 +165,17 @@ div.disabled
 }
 
 @media (max-width: 750px) {
-  div.comment-header {
+  .comment-header {
     padding: 20px;
   }
 
-  div.comment-box {
+  .comment-box {
     width: calc(100% - 40px);
     padding-left: 20px;
     padding-right: 20px;
   }
 
-  div.comment-submit {
+  .comment-submit {
     width: calc(100% - 40px);
     padding: 10px 20px;
   }
