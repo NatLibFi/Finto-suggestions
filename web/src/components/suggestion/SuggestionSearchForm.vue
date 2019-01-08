@@ -1,8 +1,8 @@
 <template>
   <div class="search-suggestions">
-    <h4>Hae ehdotusta</h4>
+    <h5>Hae ehdotusta</h5>
     <div class="search-wrapper">
-      <input type="text" v-model="searchQuery" />
+      <input v-model="searchQuery" @keyup.enter="doSearch" type="text" />
       <div @click="doSearch" class="search-button">
         <span>Hae</span>
       </div>
@@ -48,9 +48,9 @@ export default {
   padding-bottom: 20px;
 }
 
-h4 {
-  font-size: 16px;
+h5 {
   text-align: left;
+  margin-bottom: 6px;
 }
 
 .search-wrapper {
@@ -63,13 +63,14 @@ h4 {
 .search-wrapper input {
   display: inline-block;
   width: 58%;
-  height: 36px;
+  height: 42px;
   margin-right: 30px;
   padding-left: 8px;
   text-align: left;
   border: 2px solid #eeeeee;
   font-size: 14px;
   font-weight: 500;
+  box-sizing: border-box;
 }
 
 .search-button {
@@ -103,7 +104,7 @@ h4 {
   transform: perspective(1px) translate(-50%, -50%);
 }
 
-@media (max-width: 700px) {
+@media (max-width: 900px) {
   .search-wrapper input, .search-button {
     display: block;
     position: relative;

@@ -27,17 +27,32 @@
           <h1 class="suggestion-title">{{ suggestion.preferred_label.fi }}</h1>
           <div class="suggestion-header-details">
             <span><strong>#{{ suggestion.id }} </strong></span>
-            <span>{{ dateTimeFormatLabel(suggestion.created) }}</span>
-            <span class="suggestion-type">{{ suggestionTypeToString[suggestion.suggestion_type] }}</span>
-            <span class="tag"
-              v-if="suggestion.tags && suggestion.tags.length > 0"
-              v-for="tag in suggestion.tags"
-              :key="tag.label">{{ tag.label }}</span>
+            <span>{{ dateTimeFormatLabel(suggestion.created) }} </span>
+            <span @click="goToMeeting(suggestion.meeting_id)">
+              – <a>Kokous {{ suggestion.meeting_id }}</a>
+            </span>
+          </div>
+          <div class="tags">
+            <span
+              v-if="suggestion.suggestion_type === suggestionTypes.NEW"
+              class="tag type-new">{{ suggestionTypeToString[suggestion.suggestion_type] }}</span>
+            <span
+              v-if="suggestion.suggestion_type === suggestionTypes.MODIFY"
+              class="tag type-modify">{{ suggestionTypeToString[suggestion.suggestion_type] }}</span>
+            <span
+              v-if="suggestion.tags && suggestion.tags.length > 0">
+              <span
+                v-for="tag in suggestion.tags"
+                :key="tag.label"
+                class="tag">
+                {{ tag.label }}
+              </span>
+            </span>
           </div>
         </div>
-        <div class="suggestion-header-buttons">
-          <assign-user :suggestion="suggestion"/>
-          <svg-icon icon-name="more"><icon-more /></svg-icon>
+        <div v-if="isAuthenticated" class="suggestion-header-buttons">
+          <assign-user :suggestion="suggestion" class="icon-button" />
+          <svg-icon icon-name="more" class="icon-button"><icon-more /></svg-icon>
         </div>
       </div>
 
@@ -45,7 +60,6 @@
         :suggestion="suggestion"
         :user-name="userName"
       />
-
 
       <div v-if="suggestion && suggestion.reactions.length > 0" class="suggestion-reactions">
         <div v-for="reaction in suggestion.reactions" :key="reaction.id">
@@ -64,7 +78,8 @@
       <meeting-actions
         :userId="userId"
         :suggestionId="suggestionId"
-        :meetingId="meetingId"/>
+        :meetingId="meetingId"
+        :events="events"/>
     </div>
 
     <div v-if="events && events.length > 0">
@@ -92,6 +107,7 @@ import SvgIcon from '../icons/SvgIcon';
 import AddComment from './AddComment';
 import AssignUser from './AssignUser';
 
+import { suggestionType } from '../../utils/suggestionMappings.js';
 import {
   suggestionGetters,
   suggestionActions
@@ -109,8 +125,11 @@ import { suggestionTypeToString } from '../../utils/suggestionMappings.js';
 import { userActions, userGetters } from "../../store/modules/user/userConsts";
 import { mapUserActions, mapUserGetters } from '../../store/modules/user/userModule';
 
-import { dateTimeFormatLabel } from '../../utils/dateTimeStampHelper.js';
+import { dateTimeFormatLabel } from '../../utils/dateHelper.js';
 import { parse } from 'date-fns';
+
+import { mapAuthenticatedUserGetters } from '../../store/modules/authenticatedUser/authenticatedUserModule.js';
+import { authenticatedUserGetters } from '../../store/modules/authenticatedUser/authenticatedUserConsts.js';
 
 export default {
   components: {
@@ -140,7 +159,11 @@ export default {
       userId: this.$cookies.get('logged_user_id'),
       suggestionTypeToString,
       dateTimeFormatLabel,
-      userName: ''
+      userName: '',
+      suggestionTypes: {
+        NEW: suggestionType.NEW,
+        MODIFY: suggestionType.MODIFY
+      }
     }
   },
   computed: {
@@ -152,6 +175,9 @@ export default {
     }),
     ...mapUserGetters({
       user: userGetters.GET_USER
+    }),
+    ...mapAuthenticatedUserGetters({
+      isAuthenticated: authenticatedUserGetters.GET_AUTHENTICATION
     })
   },
   async created() {
@@ -176,10 +202,18 @@ export default {
         this.$router.push({
           name: 'meeting-suggestion-list',
           params: {
-             meetingId: this.meetingId
+            meetingId: this.meetingId
           }
         });
       }
+    },
+    goToMeeting(id) {
+      this.$router.push({
+        name: 'meeting-suggestion-list',
+        params: {
+          meetingId: id
+        }
+      })
     },
     async getUserName() {
       if (this.suggestion.user_id) {
@@ -282,9 +316,9 @@ export default {
 h1.suggestion-title {
   display: inline;
   font-weight: 900;
+  font-size: 24px;
   vertical-align: middle;
   text-transform: lowercase;
-  text-transform: capitalize;
 }
 
 .suggestion-header-buttons {
@@ -298,27 +332,43 @@ h1.suggestion-title {
   text-align: right;
 }
 
-.suggestion-type {
-  font-size: 14px;
-  font-weight: 600;
-  background-color: #f2994a;
-  color: #ffffff;
-  padding: 3px 10px;
-  margin-left: 10px;
-  border-radius: 2px;
+.icon-button {
+  margin-left: 20px;
+}
+
+.suggestion-header-details {
+  line-height: 24px;
+  font-size: 13px;
+}
+
+.suggestion-header-details span a:hover {
+  cursor: pointer;
+  cursor: hand;
+}
+
+.tags {
+  line-height: 20px;
+  font-size: 12px;
+  font-weight: 900;
   text-transform: lowercase;
+  color: #ffffff;
 }
 
 .tag {
-  font-size: 14px;
-  font-weight: 600;
-  background-color: #ffffff;
-  color: #ac63ef;
-  border: 1px solid #ac63ef;
-  padding: 3px 10px;
-  margin-left: 10px;
+  background-color: #4794a2;
+  border: 2px solid #4794a2;
+  padding: 0 6px;
+  margin: 4px 4px 0 0;
   border-radius: 2px;
-  text-transform: lowercase;
+  display: inline-block;
+}
+.type-new {
+  background-color: #1137ff;
+  border: 2px solid #1137ff;
+}
+.type-modify {
+  background-color: #ff8111;
+  border: 2px solid #ff8111;
 }
 
 .comment-container {
@@ -345,8 +395,13 @@ h1.suggestion-title {
     text-align: left;
   }
 
-  .suggestion-header-details {
-    line-height: 24px;
+  .suggestion-header-buttons {
+    margin-top: 20px;
+  }
+
+  .icon-button {
+    margin-left: 0;
+    margin-right: 20px;
   }
 }
 </style>

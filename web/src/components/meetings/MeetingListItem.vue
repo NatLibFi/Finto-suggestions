@@ -3,14 +3,16 @@
     <div class="item-summary">
       <div class="title">
         <p class="title-row">
-          <span class="item-name">{{ meeting.name }}</span>
+          <span class="item-name">Kokous {{ meeting.id }} – {{ meeting.name }}</span>
         </p>
       </div>
       <div class="label">
         <p>
-          <strong>#{{ meeting.id }}</strong>
+          <strong>#{{ meeting.id }} </strong>
           <span v-if="meeting.meeting_date">
-            Järjestetään {{ meeting.meeting_date.split('T')[0] }}
+            <span v-if="!hasDatePassed(formatDate(meeting.meeting_date.split('T')[0], 'DD.MM.YYYY'))">Järjestetään </span>
+            <span v-if="hasDatePassed(formatDate(meeting.meeting_date.split('T')[0], 'DD.MM.YYYY'))">Järjestettiin </span>
+            {{ formatDate(meeting.meeting_date.split('T')[0], 'DD.MM.YYYY') }}
           </span>
           <span v-if="!meeting.meeting_date">
             Ei asetettua päivämäärää
@@ -33,6 +35,7 @@
 <script>
 import SvgIcon from '../icons/SvgIcon';
 import IconComments from '../icons/IconComments';
+import { formatDate, hasDatePassed } from '../../utils/dateHelper.js';
 
 import { getMeetingProgressionCounts, getMeetingProgressionWidths } from '../../utils/meetingHelper.js';
 
@@ -47,7 +50,7 @@ export default {
       required: true
     }
   },
-  data: function() {
+  data () {
     return {
       progressWidth: {
         width:`${0}%`
@@ -57,7 +60,9 @@ export default {
       },
       processed: 0,
       suggestions: 0,
-      progression: 0
+      progression: 0,
+      formatDate,
+      hasDatePassed
     }
   },
   created() {
@@ -161,14 +166,17 @@ li.item:hover {
   background-color: #66bea9;
 }
 
-@media (max-width: 700px) {
+@media (max-width: 1100px) {
   .item-summary {
-    padding: 10px 20px 10px;
+    padding: 6px 20px 6px;
   }
   .item-name {
     display: block;
   }
-  .item-status {
+  .item-status .status-bar {
+    width: 80px;
+  }
+  .status-summary {
     display: none;
   }
 }
