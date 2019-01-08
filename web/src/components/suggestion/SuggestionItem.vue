@@ -18,8 +18,12 @@
       <div class="label">
         <p>
           <strong>#{{ suggestion.id }}</strong>
-          {{ dateTimeFormatLabel(suggestion.created) }}
-          – Kokous {{ suggestion.meeting_id }}
+          {{ dateTimeFormatLabel(suggestion.created) }} –
+          <span>
+            <a @click.stop="goToMeeting(suggestion.meeting_id)">
+              Kokous {{ suggestion.meeting_id }}
+            </a>
+          </span>
         </p>
       </div>
     </div>
@@ -76,6 +80,14 @@ export default {
           }
         });
       }
+    },
+    goToMeeting(id) {
+      this.$router.push({
+        name: 'meeting-suggestion-list',
+        params: {
+          meetingId: id
+        }
+      })
     }
   }
 };
