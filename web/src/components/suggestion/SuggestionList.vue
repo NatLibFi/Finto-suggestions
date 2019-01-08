@@ -42,6 +42,8 @@ import {
 
 import SuggestionListPagination from './SuggestionListPagination';
 import { filterType, suggestionType, suggestionStateStatus } from '../../utils/suggestionMappings';
+import { sortingKeys } from '../../utils/sortingHelper.js';
+
 
 export default {
   components: {
@@ -99,7 +101,7 @@ export default {
       if (this.suggestionsSelectedSort && this.suggestionsSelectedSort !== '') {
         await this.getSortedSuggestions(this.suggestionsSelectedSort);
       } else {
-        await this.getSuggestions();
+        await this.getSortedSuggestions(sortingKeys.NEWEST_FIRST);
       }
     },
     async fetchAndSortMeetingSuggestions() {

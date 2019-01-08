@@ -48,7 +48,7 @@ export default {
     meetingSort: Boolean
   },
   data: () => ({
-    selectedSortOptionIndex: 1,
+    selectedSortOptionIndex: 0,
     isDropDownOpened: false,
     dropDownOptions: [
       { label: 'Uusin ensin', value: sortingKeys.NEWEST_FIRST },
@@ -94,9 +94,9 @@ export default {
     },
     handleSortinDropDownIndex() {
       if(this.meetingSort) {
-        this.selectedSortOptionIndex = getSelectedSortOptionIndex(this.dropDownOptions, this.meetingSuggestionSelectedSort);
+        this.selectedSortOptionIndex = getSelectedSortOptionIndex(this.dropDownOptions, this.meetingSuggestionSelectedSort, 0);
       } else {
-        this.selectedSortOptionIndex = getSelectedSortOptionIndex(this.dropDownOptions, this.suggestionSelectedSort);
+        this.selectedSortOptionIndex = getSelectedSortOptionIndex(this.dropDownOptions, this.suggestionSelectedSort, 0);
       }
     }
   },
