@@ -63,13 +63,14 @@ h5 {
 .search-wrapper input {
   display: inline-block;
   width: 58%;
-  height: 36px;
+  height: 42px;
   margin-right: 30px;
   padding-left: 8px;
   text-align: left;
   border: 2px solid #eeeeee;
   font-size: 14px;
   font-weight: 500;
+  box-sizing: border-box;
 }
 
 .search-button {
@@ -103,7 +104,7 @@ h5 {
   transform: perspective(1px) translate(-50%, -50%);
 }
 
-@media (max-width: 700px) {
+@media (max-width: 900px) {
   .search-wrapper input, .search-button {
     display: block;
     position: relative;
