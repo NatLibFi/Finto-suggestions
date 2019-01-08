@@ -39,10 +39,15 @@
             <span
               v-if="suggestion.suggestion_type === suggestionTypes.MODIFY"
               class="tag type-modify">{{ suggestionTypeToString[suggestion.suggestion_type] }}</span>
-            <span class="tag"
-              v-if="suggestion.tags && suggestion.tags.length > 0"
-              v-for="tag in suggestion.tags"
-              :key="tag.label">{{ tag.label }}</span>
+            <span
+              v-if="suggestion.tags && suggestion.tags.length > 0">
+              <span
+                v-for="tag in suggestion.tags"
+                :key="tag.label"
+                class="tag">
+                {{ tag.label }}
+              </span>
+            </span>
           </div>
         </div>
         <div v-if="isAuthenticated" class="suggestion-header-buttons">
