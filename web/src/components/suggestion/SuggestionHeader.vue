@@ -47,7 +47,7 @@ export default {
     resolvedSuggestionCount: Number
   },
   data: () => ({
-    selectedSortOptionIndex: 1,
+    selectedSortOptionIndex: 2,
     isDropDownOpened: false,
     dropDownOptions: [
       { label: 'Uusin ensin', value: sortingKeys.NEWEST_FIRST },
@@ -93,7 +93,6 @@ export default {
 };
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
 .header-container {
   position: relative;
