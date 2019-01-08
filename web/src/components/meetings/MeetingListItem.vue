@@ -175,7 +175,7 @@ li.item:hover {
   }
   .item-status .status-bar {
     width: 80px;
-  },
+  }
   .status-summary {
     display: none;
   }
