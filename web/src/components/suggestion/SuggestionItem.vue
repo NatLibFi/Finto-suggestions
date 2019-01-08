@@ -110,7 +110,7 @@ li.item:hover {
   line-height: 20px;
 }
 .item-name {
-  font-size: 17px;
+  font-size: 16px;
   margin-right: 8px;
   vertical-align: middle;
 }

@@ -142,4 +142,10 @@ p {
 .content-title {
   font-size: 13px;
 }
+
+@media (max-width: 700px) {
+  div.suggestion-content {
+    padding-top: 30px;
+  }
+}
 </style>

@@ -42,7 +42,7 @@
               :key="tag.label">{{ tag.label }}</span>
           </div>
         </div>
-        <div class="suggestion-header-buttons">
+        <div v-if="isAuthenticated" class="suggestion-header-buttons">
           <assign-user :suggestion="suggestion" class="icon-button" />
           <svg-icon icon-name="more" class="icon-button"><icon-more /></svg-icon>
         </div>
@@ -118,6 +118,9 @@ import { mapUserActions, mapUserGetters } from '../../store/modules/user/userMod
 import { dateTimeFormatLabel } from '../../utils/dateTimeStampHelper.js';
 import { parse } from 'date-fns';
 
+import { mapAuthenticatedUserGetters } from '../../store/modules/authenticatedUser/authenticatedUserModule.js';
+import { authenticatedUserGetters } from '../../store/modules/authenticatedUser/authenticatedUserConsts.js';
+
 export default {
   components: {
     SuggestionContent,
@@ -158,6 +161,9 @@ export default {
     }),
     ...mapUserGetters({
       user: userGetters.GET_USER
+    }),
+    ...mapAuthenticatedUserGetters({
+      isAuthenticated: authenticatedUserGetters.GET_AUTHENTICATION
     })
   },
   async created() {
@@ -288,6 +294,7 @@ export default {
 h1.suggestion-title {
   display: inline;
   font-weight: 900;
+  font-size: 24px;
   vertical-align: middle;
   text-transform: lowercase;
 }
@@ -305,6 +312,11 @@ h1.suggestion-title {
 
 .icon-button {
   margin-left: 20px;
+}
+
+.suggestion-header-details {
+  line-height: 24px;
+  font-size: 13px;
 }
 
 .tags {
@@ -363,11 +375,6 @@ h1.suggestion-title {
   .icon-button {
     margin-left: 0;
     margin-right: 20px;
-  }
-
-  .suggestion-header-details {
-    line-height: 24px;
-    font-size: 13px;
   }
 }
 </style>
