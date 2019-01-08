@@ -8,9 +8,11 @@
       </div>
       <div class="label">
         <p>
-          <strong>#{{ meeting.id }}</strong>
+          <strong>#{{ meeting.id }} </strong>
           <span v-if="meeting.meeting_date">
-            Järjestetään {{ meeting.meeting_date.split('T')[0] }}
+            <span v-if="!dateHasPassed(formatDate(meeting.meeting_date.split('T')[0], 'DD.MM.YYYY'))">Järjestetään </span>
+            <span v-if="dateHasPassed(formatDate(meeting.meeting_date.split('T')[0], 'DD.MM.YYYY'))">Järjestettiin </span>
+            {{ formatDate(meeting.meeting_date.split('T')[0], 'DD.MM.YYYY') }}
           </span>
           <span v-if="!meeting.meeting_date">
             Ei asetettua päivämäärää
@@ -33,6 +35,7 @@
 <script>
 import SvgIcon from '../icons/SvgIcon';
 import IconComments from '../icons/IconComments';
+import { parse, format, isAfter } from 'date-fns';
 
 import { getMeetingProgressionCounts, getMeetingProgressionWidths } from '../../utils/meetingHelper.js';
 
@@ -82,6 +85,12 @@ export default {
         this.suggestions = countData.suggestions;
         this.progression = countData.progression;
       }
+    },
+    formatDate(date, formatting) {
+      return format(parse(date), formatting);
+    },
+    dateHasPassed(date) {
+      return isAfter(new Date(), format(date, 'DD.MM.YYYY'));
     }
   },
   watch: {
