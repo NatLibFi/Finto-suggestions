@@ -4,11 +4,11 @@
   <p>Voit kirjautua sisään Github- ja Google-tunnuksilla</p>
   <div class="login-services">
     <div @click="login('github')" class="login-service-button">
-      <div class="login-service-image"></div>
+      <svg-icon icon-name="github"><icon-github /></svg-icon>
       <span>Kirjaudu GitHub-tunnuksilla</span>
     </div>
     <div @click="login('google')" class="login-service-button">
-      <div class="login-service-image"></div>
+      <svg-icon icon-name="google"><icon-google /></svg-icon>
       <span>Kirjaudu Google-tunnuksilla</span>
     </div>
   </div>
@@ -37,12 +37,24 @@
 </template>
 
 <script>
+import SvgIcon from '../icons/SvgIcon';
+import IconGithub from '../icons/IconGithub';
+import IconGoogle from '../icons/IconGoogle';
+
 export default {
-  data: () => ({
-    showOwnCredentialLogin: false,
-    email: '',
-    password: ''
-  }),
+  components: {
+    SvgIcon,
+    IconGithub,
+    IconGoogle
+  },
+  data () {
+    return {
+      baseUrl: process.env.BASE_URL,
+      showOwnCredentialLogin: false,
+      email: '',
+      password: ''
+    }
+  },
   methods: {
     login(service) {
       const loginData = this.gatherLoginData();
@@ -87,15 +99,12 @@ export default {
   cursor: hand;
 }
 
-.login-service-image {
+.login-service-button svg {
   position: absolute;
   left: 20px;
   top: 50%;
   transform: perspective(1px) translateY(-50%);
   display: inline-block;
-  height: 20px;
-  width: 20px;
-  background-color: #eeeeee;
 }
 
 .login-service-button span {
