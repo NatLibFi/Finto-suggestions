@@ -38,7 +38,7 @@
 import SvgIcon from '../icons/SvgIcon';
 import IconComments from '../icons/IconComments';
 import { suggestionTypeToStyleClass, suggestionTypeToString } from '../../utils/suggestionMappings';
-import { dateTimeFormatLabel } from '../../utils/dateTimeStampHelper';
+import { dateTimeFormatLabel } from '../../utils/dateHelper';
 import { eventTypes } from '../../utils/eventMappings';
 
 export default {

@@ -21,7 +21,7 @@
 </template>
 
 <script>
-import { dateTimeFormatLabel } from '../../utils/dateTimeStampHelper.js';
+import { dateTimeFormatLabel } from '../../utils/dateHelper.js';
 
 import { mapUserGetters, mapUserActions } from '../../store/modules/user/userModule.js';
 import { userGetters, userActions } from '../../store/modules/user/userConsts.js';
@@ -38,12 +38,14 @@ export default {
       required: true
     }
   },
-  data: () => ({
-    dateTimeFormatLabel,
-    action: 'vaihtoi tyypiksi ',
-    userName: '',
-    userNameInitials: ''
-  }),
+  data () {
+    return {
+      dateTimeFormatLabel,
+      action: 'vaihtoi tyypiksi ',
+      userName: '',
+      userNameInitials: ''
+    }
+  },
   async created() {
     await this.getUsers();
     this.fetchUserNameAndInitials();

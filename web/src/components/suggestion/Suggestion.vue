@@ -120,7 +120,7 @@ import { suggestionTypeToString } from '../../utils/suggestionMappings.js';
 import { userActions, userGetters } from "../../store/modules/user/userConsts";
 import { mapUserActions, mapUserGetters } from '../../store/modules/user/userModule';
 
-import { dateTimeFormatLabel } from '../../utils/dateTimeStampHelper.js';
+import { dateTimeFormatLabel } from '../../utils/dateHelper.js';
 import { parse } from 'date-fns';
 
 import { mapAuthenticatedUserGetters } from '../../store/modules/authenticatedUser/authenticatedUserModule.js';

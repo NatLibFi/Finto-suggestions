@@ -10,8 +10,8 @@
         <p>
           <strong>#{{ meeting.id }} </strong>
           <span v-if="meeting.meeting_date">
-            <span v-if="!dateHasPassed(formatDate(meeting.meeting_date.split('T')[0], 'DD.MM.YYYY'))">Järjestetään </span>
-            <span v-if="dateHasPassed(formatDate(meeting.meeting_date.split('T')[0], 'DD.MM.YYYY'))">Järjestettiin </span>
+            <span v-if="!hasDatePassed(formatDate(meeting.meeting_date.split('T')[0], 'DD.MM.YYYY'))">Järjestetään </span>
+            <span v-if="hasDatePassed(formatDate(meeting.meeting_date.split('T')[0], 'DD.MM.YYYY'))">Järjestettiin </span>
             {{ formatDate(meeting.meeting_date.split('T')[0], 'DD.MM.YYYY') }}
           </span>
           <span v-if="!meeting.meeting_date">
@@ -35,7 +35,7 @@
 <script>
 import SvgIcon from '../icons/SvgIcon';
 import IconComments from '../icons/IconComments';
-import { parse, format, isAfter } from 'date-fns';
+import { formatDate, hasDatePassed } from '../../utils/dateHelper.js';
 
 import { getMeetingProgressionCounts, getMeetingProgressionWidths } from '../../utils/meetingHelper.js';
 
@@ -50,7 +50,7 @@ export default {
       required: true
     }
   },
-  data: function() {
+  data () {
     return {
       progressWidth: {
         width:`${0}%`
@@ -60,7 +60,9 @@ export default {
       },
       processed: 0,
       suggestions: 0,
-      progression: 0
+      progression: 0,
+      formatDate,
+      hasDatePassed
     }
   },
   created() {
@@ -85,12 +87,6 @@ export default {
         this.suggestions = countData.suggestions;
         this.progression = countData.progression;
       }
-    },
-    formatDate(date, formatting) {
-      return format(parse(date), formatting);
-    },
-    dateHasPassed(date) {
-      return isAfter(new Date(), format(date, 'DD.MM.YYYY'));
     }
   },
   watch: {
