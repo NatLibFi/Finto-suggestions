@@ -56,13 +56,13 @@ export default {
   computed: {
     ...mapMeetingGetters({
       meetings: meetingGetters.GET_MEETINGS,
-      selectedSort: meetingGetters.GET_SELECTED_SORT
+      selectedSort: meetingGetters.GET_MEETINGS_SELECTED_SORT
     })
   },
   methods: {
     ...mapMeetingActions({
       getMeetings: meetingActions.GET_MEETINGS,
-      getSelectedSortKey: meetingActions.GET_SELECTED_SORT
+      getSelectedSortKey: meetingActions.GET_MEETINGS_SELECTED_SORT
     }),
     calculatePageCountForPagination: function() {
       return 10;

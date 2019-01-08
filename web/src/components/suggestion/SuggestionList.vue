@@ -3,6 +3,7 @@
   <suggestion-header
     :openSuggestionCount="openCount || 0"
     :resolvedSuggestionCount="resolvedCount || 0"
+    :meetingSort="meetingSort"
     class="header" />
   <ul class="list">
     <suggestion-item
@@ -57,26 +58,31 @@ export default {
     paginationMaxCount: 10,
     openCount: 0,
     resolvedCount: 0,
-    paginated_items: []
+    paginated_items: [],
+    meetingSort: false
   }),
   computed: {
     ...mapSuggestionGetters({
       items: suggestionGetters.GET_SUGGESTIONS,
       filters: suggestionGetters.GET_FILTERS,
-      selectedSort: suggestionGetters.GET_SELECTED_SORT
+      suggestionsSelectedSort: suggestionGetters.GET_SUGGESTIONS_SELECTED_SORT,
+      meetingSuggestionsSelectedSort: suggestionGetters.GET_MEETING_SUGGESTIONS_SELECTED_SORT
     })
   },
   async created() {
-    await this.getSelectedSortKey();
+    this.meetingSort = this.meetingId && parseInt(this.meetingId) > 0 ? true  : false;
+    await this.getSuggestionsSelectedSortKey();
+    await this.getMeetingsSuggestionsSelectedSortKey();
     await this.handleSuggestionFetching();
   },
   methods: {
     ...mapSuggestionActions({
       getSuggestions: suggestionActions.GET_SUGGESTIONS,
       getSortedSuggestions: suggestionActions.GET_SORTED_SUGGESTIONS,
-      getSelectedSortKey: suggestionActions.GET_SELECTED_SORT_KEY,
+      getSuggestionsSelectedSortKey: suggestionActions.GET_SUGGESTIONS_SELECTED_SORT,
       getSuggestionsByMeetingId: suggestionActions.GET_SUGGESTIONS_BY_MEETING_ID,
-      getSortedSuggestionsByMeetingId: suggestionActions.GET_SORTED_SUGGESTIONS_BY_MEETING_ID
+      getSortedSuggestionsByMeetingId: suggestionActions.GET_SORTED_SUGGESTIONS_BY_MEETING_ID,
+      getMeetingsSuggestionsSelectedSortKey: suggestionActions.GET_MEETING_SUGGESTIONS_SELECTED_SORT
     }),
     async handleSuggestionFetching() {
       if(this.meetingId && parseInt(this.meetingId) > 0) {
@@ -87,15 +93,17 @@ export default {
       await this.paginationPageChanged();
     },
     async fetchAndSortAllSuggestions() {
-      if (this.selectedSort && this.selectedSort !== '') {
-        await this.getSortedSuggestions(this.selectedSort);
+      await this.getSuggestionsSelectedSortKey();
+      if (this.suggestionsSelectedSort && this.suggestionsSelectedSort !== '') {
+        await this.getSortedSuggestions(this.suggestionsSelectedSort);
       } else {
         await this.getSuggestions();
       }
     },
     async fetchAndSortMeetingSuggestions() {
-      if (this.selectedSort && this.selectedSort !== '') {
-        await this.getSortedSuggestionsByMeetingId({ meetingId: this.meetingId, sortValue: this.selectedSort });
+      await this.getMeetingsSuggestionsSelectedSortKey();
+      if (this.meetingSuggestionsSelectedSort && this.meetingSuggestionsSelectedSort !== '') {
+        await this.getSortedSuggestionsByMeetingId({ meetingId: this.meetingId, sortValue: this.meetingSuggestionsSelectedSort });
       } else {
         await this.getSuggestionsByMeetingId(parseInt(this.meetingId));
       }
@@ -157,7 +165,12 @@ export default {
         await this.handleSuggestionFetching();
       }
     },
-    async selectedSort() {
+    async suggestionsSelectedSort() {
+      console.log('1');
+      await this.handleSuggestionFetching();
+    },
+    async meetingSuggestionsSelectedSort() {
+      console.log('2');
       await this.handleSuggestionFetching();
     }
   }

@@ -20,12 +20,13 @@ export default {
   state: {
     [storeStateNames.ITEMS]: [],
     [storeStateNames.ITEM]: null,
-    [storeStateNames.SELECTED_SORT]: null
+    [storeStateNames.MEETINGS_SELECTED_SORT]: null
   },
   getters: {
     [meetingGetters.GET_MEETINGS]: state => state[storeStateNames.ITEMS],
     [meetingGetters.GET_MEETING]: state => state[storeStateNames.ITEM],
-    [meetingGetters.GET_SELECTED_SORT]: state => state[storeStateNames.SELECTED_SORT]
+    [meetingGetters.GET_MEETINGS_SELECTED_SORT]: state =>
+      state[storeStateNames.MEETINGS_SELECTED_SORT]
   },
   mutations: {
     [meetingMutations.SET_MEETINGS](state, meetings) {
@@ -37,10 +38,10 @@ export default {
     [meetingMutations.SET_MEETING](state, meeting) {
       Vue.set(state, storeStateNames.ITEM, meeting);
     },
-    [meetingMutations.SET_SELECTED_SORT](state, sortKey) {
-      Vue.set(state, storeStateNames.SELECTED_SORT, sortKey);
+    [meetingMutations.SET_MEETINGS_SELECTED_SORT](state, sortKey) {
+      Vue.set(state, storeStateNames.MEETINGS_SELECTED_SORT, sortKey);
     },
-    [meetingMutations.SET_SELECTED_STORE_SORT](state, sortKey) {
+    [meetingMutations.SET_MEETINGS_SELECTED_STORE_SORT](state, sortKey) {
       Vue.set(sessionStorage, sessionStorageKeyNames.MEETING_LIST_SELECTED_SORT, sortKey);
     }
   },
@@ -57,16 +58,16 @@ export default {
         commit(meetingMutations.SET_MEETING, result.data);
       }
     },
-    [meetingActions.GET_SELECTED_SORT]({ commit }) {
+    [meetingActions.GET_MEETINGS_SELECTED_SORT]({ commit }) {
       const sortKey = sessionStorage[sessionStorageKeyNames.MEETING_LIST_SELECTED_SORT];
       if (sortKey) {
-        commit(meetingMutations.SET_SELECTED_SORT, sortKey);
+        commit(meetingMutations.SET_MEETINGS_SELECTED_SORT, sortKey);
       }
     },
-    [meetingActions.SET_SELECTED_SORT]({ commit }, sortKey) {
+    [meetingActions.SET_MEETINGS_SELECTED_SORT]({ commit }, sortKey) {
       if (sortKey) {
-        commit(meetingMutations.SET_SELECTED_SORT, sortKey);
-        commit(meetingMutations.SET_SELECTED_STORE_SORT, sortKey);
+        commit(meetingMutations.SET_MEETINGS_SELECTED_SORT, sortKey);
+        commit(meetingMutations.SET_MEETINGS_SELECTED_STORE_SORT, sortKey);
       }
     }
   }

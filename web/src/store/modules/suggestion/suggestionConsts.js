@@ -5,11 +5,13 @@ export const storeStateNames = {
   ITEM: 'item',
   SEARCH_QUERY: 'searchQuery',
   FILTERS: 'filters',
-  SELECTED_SORT: 'selectedSort'
+  SUGGESTIONS_SELECTED_SORT: 'suggestionsSelectedSort',
+  MEETING_SUGGESTIONS_SELECTED_SORT: 'meetingSuggestionsSelectedSort'
 };
 
 export const sessionStorageKeyNames = {
-  SUGGESTION_LIST_SELECTED_SORT: 'suggestionListSelectedSort'
+  SUGGESTIONS_SELECTED_SORT: 'suggestionsSelectedSort',
+  MEETING_SUGGESTIONS_SELECTED_SORT: 'meetingSuggestionsSelectedSort'
 };
 
 export const suggestionGetters = {
@@ -17,7 +19,8 @@ export const suggestionGetters = {
   GET_SUGGESTION: 'getSuggestion',
   GET_SEARCH_QUERY: 'getSearchQuery',
   GET_FILTERS: 'getFilters',
-  GET_SELECTED_SORT: 'getSelectedSort'
+  GET_SUGGESTIONS_SELECTED_SORT: 'getSuggestionsSelectedSort',
+  GET_MEETING_SUGGESTIONS_SELECTED_SORT: 'getMeetingSuggestionsSelectedSort'
 };
 
 export const suggestionMutations = {
@@ -25,8 +28,10 @@ export const suggestionMutations = {
   SET_SUGGESTION: 'setSuggestion',
   SET_SEARCH_QUERY: 'setSearchQuery',
   SET_FILTERS: 'setFilters',
-  SET_SELECTED_SORT: 'setSelectedSort',
-  SET_SELECTED_STORAGE_SORT: 'setSelectedStorageSort'
+  SET_SUGGESTIONS_SELECTED_SORT: 'setSuggestionsSelectedSort',
+  SET_SUGGESTIONS_SELECTED_STORAGE_SORT: 'setSuggestionsSelectedStorageSort',
+  SET_MEETING_SUGGESTIONS_SELECTED_SORT: 'setMeetingSuggestionsSelectedSort',
+  SET_MEETING_SUGGESTIONS_SELECTED_STORAGE_SORT: 'setMeetingSuggestionsSelectedStorageSort'
 };
 
 export const suggestionActions = {
@@ -35,8 +40,10 @@ export const suggestionActions = {
   GET_SUGGESTION_BY_ID: 'getSuggestionById',
   ASSIGN_SUGGESTION_TO_USER: 'assignSuggestionToUser',
   UNASSIGN_SUGGESTION_FROM_USER: 'unassignSuggestionFromUser',
-  GET_SELECTED_SORT_KEY: 'getSelectedSortKey',
-  SET_SELECTED_SORT_KEY: 'setSelectedSortKey',
+  GET_SUGGESTIONS_SELECTED_SORT: 'getSuggestionsSelectedSort',
+  SET_SUGGESTIONS_SELECTED_SORT: 'setSuggestionsSelectedSort',
   GET_SUGGESTIONS_BY_MEETING_ID: 'getSuggestionsByMeetingId',
-  GET_SORTED_SUGGESTIONS_BY_MEETING_ID: 'getSortedSuggestionsByMeetingId'
+  GET_SORTED_SUGGESTIONS_BY_MEETING_ID: 'getSortedSuggestionsByMeetingId',
+  GET_MEETING_SUGGESTIONS_SELECTED_SORT: 'getMeetingSuggestionsSelectedSort',
+  SET_MEETING_SUGGESTIONS_SELECTED_SORT: 'setMeetingSuggestionsSelectedSort'
 };

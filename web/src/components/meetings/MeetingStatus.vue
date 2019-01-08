@@ -49,7 +49,9 @@ export default {
     }
   },
   computed: {
-    ...mapMeetingGetters({ meeting: meetingGetters.GET_MEETING })
+    ...mapMeetingGetters({
+      meeting: meetingGetters.GET_MEETING
+    })
   },
   async created() {
     await this.getMeeting(this.meetingId);
@@ -59,7 +61,9 @@ export default {
     ));
   },
   methods: {
-    ...mapMeetingActions({ getMeeting: meetingActions.GET_MEETING }),
+    ...mapMeetingActions({
+      getMeeting: meetingActions.GET_MEETING
+    }),
     goToMeetingList() {
       this.$router.push({
         name: 'meeting-suggestion-list',

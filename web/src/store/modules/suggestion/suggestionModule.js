@@ -20,14 +20,18 @@ export default {
     [storeStateNames.ITEMS]: [],
     [storeStateNames.FILTERS]: [],
     [storeStateNames.ITEM]: null,
-    [storeStateNames.SELECTED_SORT]: null
+    [storeStateNames.SUGGESTIONS_SELECTED_SORT]: null,
+    [storeStateNames.MEETING_SUGGESTIONS_SELECTED_SORT]: null
   },
   getters: {
     [suggestionGetters.GET_SUGGESTIONS]: state => state[storeStateNames.ITEMS],
     [suggestionGetters.GET_SUGGESTION]: state => state[storeStateNames.ITEM],
     [suggestionGetters.GET_SEARCH_QUERY]: state => state[storeStateNames.SEARCH_QUERY],
     [suggestionGetters.GET_FILTERS]: state => state[storeStateNames.FILTERS],
-    [suggestionGetters.GET_SELECTED_SORT]: state => state[storeStateNames.SELECTED_SORT]
+    [suggestionGetters.GET_SUGGESTIONS_SELECTED_SORT]: state =>
+      state[storeStateNames.SUGGESTIONS_SELECTED_SORT],
+    [suggestionGetters.GET_MEETING_SUGGESTIONS_SELECTED_SORT]: state =>
+      state[storeStateNames.MEETING_SUGGESTIONS_SELECTED_SORT]
   },
   mutations: {
     [suggestionMutations.SET_SUGGESTIONS](state, suggestions) {
@@ -42,11 +46,17 @@ export default {
     [suggestionMutations.SET_SUGGESTION](state, suggestion) {
       Vue.set(state, storeStateNames.ITEM, suggestion);
     },
-    [suggestionMutations.SET_SELECTED_SORT](state, sortKey) {
-      Vue.set(state, storeStateNames.SELECTED_SORT, sortKey);
+    [suggestionMutations.SET_SUGGESTIONS_SELECTED_SORT](state, sortKey) {
+      Vue.set(state, storeStateNames.SUGGESTIONS_SELECTED_SORT, sortKey);
     },
-    [suggestionMutations.SET_SELECTED_STORAGE_SORT](state, sortKey) {
-      Vue.set(sessionStorage, sessionStorageKeyNames.SUGGESTION_LIST_SELECTED_SORT, sortKey);
+    [suggestionMutations.SET_SUGGESTIONS_SELECTED_STORAGE_SORT](state, sortKey) {
+      Vue.set(sessionStorage, sessionStorageKeyNames.SUGGESTIONS_SELECTED_SORT, sortKey);
+    },
+    [suggestionMutations.SET_MEETING_SUGGESTIONS_SELECTED_SORT](state, sortKey) {
+      Vue.set(state, storeStateNames.MEETING_SUGGESTIONS_SELECTED_SORT, sortKey);
+    },
+    [suggestionMutations.SET_MEETING_SUGGESTIONS_SELECTED_STORAGE_SORT](state, sortKey) {
+      Vue.set(sessionStorage, sessionStorageKeyNames.MEETING_SUGGESTIONS_SELECTED_SORT, sortKey);
     }
   },
   actions: {
@@ -80,16 +90,16 @@ export default {
         commit(suggestionMutations.SET_SUGGESTION, result.data);
       }
     },
-    [suggestionActions.GET_SELECTED_SORT_KEY]({ commit }) {
-      const sortKey = sessionStorage[sessionStorageKeyNames.SUGGESTION_LIST_SELECTED_SORT];
+    [suggestionActions.GET_SUGGESTIONS_SELECTED_SORT]({ commit }) {
+      const sortKey = sessionStorage[sessionStorageKeyNames.SUGGESTIONS_SELECTED_SORT];
       if (sortKey) {
-        commit(suggestionMutations.SET_SELECTED_SORT, sortKey);
+        commit(suggestionMutations.SET_SUGGESTIONS_SELECTED_SORT, sortKey);
       }
     },
-    [suggestionActions.SET_SELECTED_SORT_KEY]({ commit }, sortKey) {
+    [suggestionActions.SET_SUGGESTIONS_SELECTED_SORT]({ commit }, sortKey) {
       if (sortKey) {
-        commit(suggestionMutations.SET_SELECTED_SORT, sortKey);
-        commit(suggestionMutations.SET_SELECTED_STORAGE_SORT, sortKey);
+        commit(suggestionMutations.SET_SUGGESTIONS_SELECTED_SORT, sortKey);
+        commit(suggestionMutations.SET_SUGGESTIONS_SELECTED_STORAGE_SORT, sortKey);
       }
     },
     async [suggestionActions.GET_SUGGESTIONS_BY_MEETING_ID]({ commit }, meetingId) {
@@ -105,6 +115,18 @@ export default {
       );
       if (result && result.code === 200) {
         commit(suggestionMutations.SET_SUGGESTIONS, result.data);
+      }
+    },
+    [suggestionActions.GET_MEETING_SUGGESTIONS_SELECTED_SORT]({ commit }) {
+      const sortKey = sessionStorage[sessionStorage.MEETING_SUGGESTIONS_SELECTED_SORT];
+      if (sortKey) {
+        commit(suggestionMutations.SET_MEETING_SUGGESTIONS_SELECTED_SORT, sortKey);
+      }
+    },
+    [suggestionActions.SET_MEETING_SUGGESTIONS_SELECTED_SORT]({ commit }, sortKey) {
+      if (sortKey) {
+        commit(suggestionMutations.SET_MEETING_SUGGESTIONS_SELECTED_SORT, sortKey);
+        commit(suggestionMutations.SET_MEETING_SUGGESTIONS_SELECTED_STORAGE_SORT, sortKey);
       }
     }
   }

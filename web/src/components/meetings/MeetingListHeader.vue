@@ -56,7 +56,7 @@ export default {
   }),
   computed: {
     ...mapMeetingGetters({
-      selectedSort: meetingGetters.GET_SELECTED_SORT
+      selectedSort: meetingGetters.GET_MEETINGS_SELECTED_SORT
     })
   },
   created() {
@@ -65,8 +65,8 @@ export default {
   },
   methods: {
     ...mapMeetingActions({
-      setSelectedSortKey: meetingActions.SET_SELECTED_SORT,
-      getSelectedSortKey: meetingActions.GET_SELECTED_SORT
+      setSelectedSortKey: meetingActions.SET_MEETINGS_SELECTED_SORT,
+      getSelectedSortKey: meetingActions.GET_MEETINGS_SELECTED_SORT
     }),
     setSelectedSort(selectedSort) {
       this.setSelectedSortKey(selectedSort);
