@@ -5,6 +5,7 @@ import Suggestion from '../views/Suggestion.vue';
 import Meetings from '../views/Meetings.vue';
 import MeetingSuggestionList from '../views/MeetingSuggestionList.vue';
 import MeetingSuggestion from '../views/MeetingSuggestion.vue';
+import OAuthRedirection from '../views/OAuthRedirection';
 
 Vue.use(Router);
 
@@ -37,14 +38,20 @@ export default new Router({
       name: 'meeting-suggestion',
       component: MeetingSuggestion,
       props: true
+    },
+    {
+      path: '/auth/redirect/',
+      name: 'oauth-redirect',
+      component: OAuthRedirection,
+      props: true
     }
   ],
   mode: 'history',
-  scrollBehavior (to, from, savedPosition) {
+  scrollBehavior(to, from, savedPosition) {
     if (savedPosition) {
-      return savedPosition
+      return savedPosition;
     } else {
-      return { x: 0, y: 0 }
+      return { x: 0, y: 0 };
     }
   }
 });

@@ -1,9 +1,9 @@
 import Vue from 'vue';
 import { mapGetters, mapActions } from 'vuex';
-import VueAxios from 'vue-axios';
-import VueAuthenticate from 'vue-authenticate';
-import axios from 'axios';
-import addDays from 'date-fns/add_days';
+// import VueAxios from 'vue-axios';
+// import VueAuthenticate from 'vue-authenticate';
+// import axios from 'axios';
+// import addDays from 'date-fns/add_days';
 import VueCookies from 'vue-cookies';
 
 import {
@@ -17,30 +17,30 @@ import {
 
 import api from '../../../api';
 
-Vue.use(VueAxios, axios);
+// Vue.use(VueAxios, axios);
 Vue.use(VueCookies);
 
-const vueAuth = VueAuthenticate.factory(Vue.prototype.$http, {
-  baseUrl: `${process.env.VUE_APP_BASE_DOMAIN}/api`,
-  storageType: 'cookieStorage',
-  cookieStorage: {
-    expires: addDays(new Date(), 14),
-    secure: process.env.NODE_ENV === 'production' ? true : false
-  },
-  providers: {
-    github: {
-      clientId: `${process.env.VUE_APP_GITHUB_CLIENT_ID}`,
-      redirectUri: `${process.env.VUE_APP_BASE_DOMAIN}/api/auth/github`,
-      state: '0',
-      optionalUrlParams: ['scope', 'state'],
-      popupOptions: null
-    },
-    google: {
-      clientId: '',
-      redirectUri: `${process.env.VUE_APP_BASE_DOMAIN}/api/auth/google`
-    }
-  }
-});
+// const vueAuth = VueAuthenticate.factory(Vue.prototype.$http, {
+//   baseUrl: `${process.env.VUE_APP_BASE_DOMAIN}/api`,
+//   storageType: 'cookieStorage',
+//   cookieStorage: {
+//     expires: addDays(new Date(), 14),
+//     secure: process.env.NODE_ENV === 'production' ? true : false
+//   },
+//   providers: {
+//     github: {
+//       clientId: `${process.env.VUE_APP_GITHUB_CLIENT_ID}`,
+//       redirectUri: `${process.env.VUE_APP_BASE_DOMAIN}/api/auth/github`,
+//       state: '0',
+//       optionalUrlParams: ['scope', 'state'],
+//       popupOptions: null
+//     },
+//     google: {
+//       clientId: '',
+//       redirectUri: `${process.env.VUE_APP_BASE_DOMAIN}/api/auth/google`
+//     }
+//   }
+// });
 
 export const mapAuthenticatedUserGetters = getters => mapGetters(namespace, getters);
 export const mapAuthenticatedUserActions = actions => mapActions(namespace, actions);
@@ -72,25 +72,26 @@ export default {
   },
   actions: {
     async [authenticatedUserActions.AUTHENTICATE]({ commit }, payload) {
-      await vueAuth
-        .authenticate(payload.providerName)
-        .then(response => {
-          if (response && response.status === 200) {
-            commit(authenticatedUserMutations.SET_AUTHENTICATION, {
-              authenticated: true,
-              user_id: response.data.user_id
-            });
-          } else {
-            commit(authenticatedUserMutations.SET_AUTHENTICATION, {
-              authenticated: false,
-              user_id: 0
-            });
-          }
-        })
-        .catch(err => {
-          console.log(err);
-          commit(authenticatedUserMutations.SET_AUTHENTICATION, false);
-        });
+      
+      // await vueAuth
+      //   .authenticate(payload.providerName)
+      //   .then(response => {
+      //     if (response && response.status === 200) {
+      //       commit(authenticatedUserMutations.SET_AUTHENTICATION, {
+      //         authenticated: true,
+      //         user_id: response.data.user_id
+      //       });
+      //     } else {
+      //       commit(authenticatedUserMutations.SET_AUTHENTICATION, {
+      //         authenticated: false,
+      //         user_id: 0
+      //       });
+      //     }
+      //   })
+      //   .catch(err => {
+      //     console.log(err);
+      //     commit(authenticatedUserMutations.SET_AUTHENTICATION, false);
+      //   });
     },
     [authenticatedUserActions.VALIDATE_AUTHENTICATION]({ commit, dispatch }) {
       // eslint-disable-next-line no-undef

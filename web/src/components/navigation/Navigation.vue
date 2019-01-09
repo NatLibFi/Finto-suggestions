@@ -184,7 +184,8 @@ export default {
       this.closeMobileDropdown();
     },
     async oAuth2Authenticate(provider) {
-      await this.authenticateGithubUser({ providerName: provider });
+      this.$router.push('/auth/redirect');
+      // await this.authenticateGithubUser({ providerName: provider });
     },
     async registerLocalUser(userdata) {
       await api.user.registerLocalUser(userdata);
