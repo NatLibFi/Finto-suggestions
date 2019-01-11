@@ -203,16 +203,36 @@ def unassign(suggestion_id: int) -> str:
 
 
 def get_meeting_suggestions(meeting_id: int) -> str:
-  """
-  Gets suggestions by meeting id
-  :params meeting_id
-  :returns suggestions or error
-  """
+    """
+    Gets suggestions by meeting id
+    :params meeting_id
+    :returns suggestions or error
+    """
+
+    if meeting_id > 0:
+        meeting_suggestions = Suggestion.query.filter_by(meeting_id=meeting_id).all()
+        serialized_objects = [o.as_dict() for o in meeting_suggestions]
+        return { 'data': serialized_objects, 'code': 200 }, 200
+
+    return { 'error': 'meeting_id was not valid', 'code': 400}, 400
 
 
-  if meeting_id > 0:
-    meeting_suggestions = Suggestion.query.filter_by(meeting_id=meeting_id).all()
-    serialized_objects = [o.as_dict() for o in meeting_suggestions]
-    return { 'data': serialized_objects, 'code': 200 }, 200
+@admin_only
+@suggestion_id_validator
+def put_update_suggestion_status(suggestion_id: int, status: str) -> str:
+    """
+    Updates suggestion status info (mainly to ACCEPTED or REJECTED)
+    """
 
-  return { 'error': 'meeting_id was not valid', 'code': 400}, 400
+    print('I AM HERE!')
+    if suggestion_id > 0 and len(status) > 0:
+        try:
+            suggestion = Suggestion.query.get(suggestion_id)
+            suggestion.status = status
+            db.session.add(suggestion)
+            db.session.commit()
+            return { 'code': 202 }, 202
+        except Exception as ex:
+            db.session.rollback()
+            print(str(ex))
+            return { 'error': str(ex) }, 400

@@ -10,7 +10,7 @@
       <div class="status-summary">
         <p>{{ processed }}/{{ suggestions }} ehdotusta käsitelty ({{ progression }}%)</p>
         <p
-          v-if="['meeting-suggestion-list'].includes($route.name) && isAuthenticated"
+          v-if="['meeting-suggestion-list'].includes($route.name) && isAuthenticated && continueSuggestionHandle"
           class="next-suggestion-link" @click="goToNextSuggestion()">
           Jatka käsittelyä
         </p>
@@ -48,7 +48,8 @@ export default {
       },
       processed: 0,
       suggestions: 0,
-      progression: 0
+      progression: 0,
+      continueSuggestionHandle: true
     }
   },
   computed: {
@@ -68,6 +69,7 @@ export default {
       getMeetingProgressionCounts(
         this.meeting
     ));
+    this.checkSuggestionNeededToContinueToHandle();
   },
   methods: {
     ...mapMeetingActions({
@@ -83,13 +85,16 @@ export default {
       });
     },
     goToNextSuggestion() {
-      this.$router.push({
-        name: 'meeting-suggestion',
-        params: {
-          meetingId: this.meetingId,
-          suggestionId: this.getNextSuggestionIdToHandle()
-        }
-      });
+      const nextSuggestionId = this.getNextSuggestionIdToHandle();
+      if(nextSuggestionId && nextSuggestionId > 0) {
+        this.$router.push({
+          name: 'meeting-suggestion',
+          params: {
+            meetingId: this.meetingId,
+            suggestionId: nextSuggestionId
+          }
+        });
+      }
     },
     getNextSuggestionIdToHandle() {
       let nextSuggestionId = null;
@@ -99,6 +104,7 @@ export default {
           nextSuggestionId = orderedSuggestionList[0].id
         }
       }
+      console.log(nextSuggestionId);
       return nextSuggestionId;
     },
     handleMeetingProgressionCounts(countData) {
@@ -107,6 +113,10 @@ export default {
         this.suggestions = countData.suggestions;
         this.progression = countData.progression;
       }
+    },
+    checkSuggestionNeededToContinueToHandle() {
+      const nextSuggestionId = this.getNextSuggestionIdToHandle();
+      this.continueSuggestionHandle = nextSuggestionId != null ? true : false;
     }
   },
   watch: {
@@ -114,6 +124,9 @@ export default {
       const meetingProgressionWidths = getMeetingProgressionWidths(this.progression);
       this.progressWidth = meetingProgressionWidths.progressWidth;
       this.backgroundWidth = meetingProgressionWidths.backgroundWidth;
+    },
+    suggestion_items() {
+      this.checkSuggestionNeededToContinueToHandle();
     }
   }
 };

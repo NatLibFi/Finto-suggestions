@@ -83,7 +83,9 @@
         :userId="userId"
         :suggestionId="suggestionId"
         :meetingId="meetingId"
-        :events="events"/>
+        :events="events"
+        @moveToNextSuggestion="goToNextSuggestion"
+      />
     </div>
 
     <div v-if="events && events.length > 0">
@@ -157,19 +159,19 @@ export default {
       required: false
     }
   },
-  data() {
-    return {
-      // eslint-disable-next-line
-      userId: this.$cookies.get('logged_user_id'),
-      suggestionTypeToString,
-      dateTimeFormatLabel,
-      userName: '',
-      suggestionType,
-      requestedSuggestionId: null,
-      noNextSuggestions: false,
-      noPreviousSuggestions: false,
+  data: () => ({
+    suggestionTypeToString,
+    dateTimeFormatLabel,
+    userName: '',
+    suggestionType,
+    requestedSuggestionId: null,
+    noNextSuggestions: false,
+    noPreviousSuggestions: false,
+    movingAction: {
+      NEXT: 'next',
+      PREVIOUS: 'previous'
     }
-  },
+  }),
   computed: {
     ...mapSuggestionGetters({
       suggestion: suggestionGetters.GET_SUGGESTION,
@@ -182,7 +184,8 @@ export default {
       user: userGetters.GET_USER
     }),
     ...mapAuthenticatedUserGetters({
-      isAuthenticated: authenticatedUserGetters.GET_AUTHENTICATION
+      isAuthenticated: authenticatedUserGetters.GET_AUTHENTICATION,
+      userId: authenticatedUserGetters.GET_USER_ID
     })
   },
   async created() {
@@ -232,7 +235,7 @@ export default {
       }
     },
     goToPreviousSuggestion() {
-      this.getNexUsableSuggestionId('previous');
+      this.getNexUsableSuggestionId(this.movingAction.PREVIOUS);
       if(this.requestedSuggestionId) {
         this.$router.push({
           name: 'meeting-suggestion',
@@ -245,7 +248,7 @@ export default {
       }
     },
     goToNextSuggestion() {
-      this.getNexUsableSuggestionId('next');
+      this.getNexUsableSuggestionId(this.movingAction.NEXT);
       if(this.requestedSuggestionId) {
         this.$router.push({
           name: 'meeting-suggestion',
@@ -258,37 +261,37 @@ export default {
       }
     },
     getNexUsableSuggestionId(action) {
-      for(let i = 0; this.suggestions.length > i; i++) {
-        if(this.suggestions[i].id === parseInt(this.suggestionId)) {
-          if (action === 'previous') {
-            if(this.suggestions.length > 1 && i > 0) {
-              this.requestedSuggestionId = this.suggestions[i-1].id;
-              break;
+      if(this.suggestions && this.suggestions.length > 0) {
+        for(let i = 0; this.suggestions.length > i; i++) {
+          if(this.suggestions[i].id === parseInt(this.suggestionId)) {
+            if (action === this.movingAction.PREVIOUS) {
+              if(this.suggestions.length > 1 && i > 0) {
+                this.requestedSuggestionId = this.suggestions[i-1].id;
+                break;
+              }
             }
-          }
-          if(action === 'next') {
-            if((this.suggestions.length-1) > i) {
-              this.requestedSuggestionId = this.suggestions[i+1].id
-              break;
+            if(action === this.movingAction.NEXT) {
+              if((this.suggestions.length-1) > i) {
+                this.requestedSuggestionId = this.suggestions[i+1].id
+                break;
+              }
             }
           }
         }
       }
     },
     checkVisibilityOfGoingNextOrPrevious() {
-      if(this.suggestionId && this.suggestions && this.suggestions.length > 0) {
+      if (this.suggestionId && this.suggestions && this.suggestions.length > 0) {
         const element = this.suggestions.find(suggestion => suggestion.id === parseInt(this.suggestionId));
         const index = this.suggestions.indexOf(element);
 
-        if(index === 0) {
-          console.log('noPreviousSuggestions = true')
+        if (index === 0) {
           this.noPreviousSuggestions = true;
         }
         else {
           this.noPreviousSuggestions = false;
         }
-        if(this.suggestions.length-1 === index) {
-          console.log('this.noNextSuggestions = true')
+        if (this.suggestions.length-1 === index) {
           this.noNextSuggestions = true;
         } else {
           this.noNextSuggestions = false;

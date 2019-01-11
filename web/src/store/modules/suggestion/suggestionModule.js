@@ -128,6 +128,33 @@ export default {
         commit(suggestionMutations.SET_MEETING_SUGGESTIONS_SELECTED_SORT, sortKey);
         commit(suggestionMutations.SET_MEETING_SUGGESTIONS_SELECTED_STORAGE_SORT, sortKey);
       }
+    },
+    async [suggestionActions.SET_SUGGESTION_ACCEPTED]({ dispatch }, params) {
+      try {
+        const response = await api.suggestion.updateSuggestionStatus(
+          params.suggestionId,
+          params.status,
+          params.userId
+        );
+        if (response && response.code == 202) {
+          dispatch(suggestionActions.GET_SUGGESTION_BY_ID, params.suggestionId);
+        }
+      } catch (error) {
+        console.log(`Could not set suggestion state to accepted ${params.suggestionId} , ${error}`);
+      }
+    },
+    async [suggestionActions.SET_SUGGESTION_REJECTED]({ dispatch }, params) {
+      try {
+        const response = await api.suggestion.updateSuggestionStatus(
+          params.suggestionId,
+          params.status
+        );
+        if (response && response.code == 202) {
+          dispatch(suggestionActions.GET_SUGGESTION_BY_ID, params.suggestionId);
+        }
+      } catch (error) {
+        console.log(`Could not set suggestion state to rejected ${params.suggestionId}, ${error}`);
+      }
     }
   }
 };
