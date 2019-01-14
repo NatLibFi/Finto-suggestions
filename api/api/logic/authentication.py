@@ -162,18 +162,17 @@ def post_github() -> str:
     """
 
     code = connexion.request.json.get('code')
-    state = connexion.request.json.get('state')
 
     oauth_data = ()
     try:
-      oauth_data = handle_github_request(code, state)
+      oauth_data = handle_github_request(code)
       return handle_user_creation(code, oauth_data)
     except ValueError as ex:
       print(ex)
       return { 'error': str(ex) }, 400
 
 
-def handle_github_request(code, state) -> (str, str):
+def handle_github_request(code) -> (str, str):
     """
     Handles github request
     :returns tuple(name, email, provider=github, github_access_token) or valueerror exception
@@ -185,45 +184,43 @@ def handle_github_request(code, state) -> (str, str):
     provider_name = 'github'
     github_access_token = ''
 
-    if code is not None and state is not None:
-        if state is '0':
+    if code is not None:
+        github_client_id = os.environ.get('GITHUB_CLIENT_ID')
+        github_client_secret = os.environ.get('GITHUB_CLIENT_SECRET')
+        redirect_uri = os.environ.get('GITHUB_REDIRECT_URI')
 
-            github_client_id = os.environ.get('GITHUB_CLIENT_ID')
-            github_client_secret = os.environ.get('GITHUB_CLIENT_SECRET')
-            redirect_uri = os.environ.get('GITHUB_REDIRECT_URI')
+        payload = {
+          'client_id': github_client_id,
+          'client_secret': github_client_secret,
+          'code': code,
+          'redirect_uri': redirect_uri
+        }
 
-            payload = {
-              'client_id': github_client_id,
-              'client_secret': github_client_secret,
-              'code': code,
-              'redirect_uri': redirect_uri
-            }
+        token_response = requests.post(
+        'https://github.com/login/oauth/access_token', data=payload)
 
-            token_response = requests.post(
-                'https://github.com/login/oauth/access_token', data=payload)
-
-            if token_response is not None and len(token_response.text) > 0:
-                print(token_response.text)
-                github_access_token = token_response.text.split('&')[0].split('=')[1]
-                print(github_access_token)
+        if token_response is not None and len(token_response.text) > 0:
+            print(token_response.text)
+            github_access_token = token_response.text.split('&')[0].split('=')[1]
+            print(github_access_token)
 
             if github_access_token is not None and len(github_access_token) > 0:
-              user_data_response = requests.get(f'https://api.github.com/user?access_token={github_access_token}')
+                user_data_response = requests.get(f'https://api.github.com/user?access_token={github_access_token}')
 
-              if user_data_response.ok is True:
-                user_data = user_data_response.json()
-                print(user_data)
-                if user_data['name'] is not None:
-                  name = user_data['name']
+                if user_data_response.ok is True:
+                    user_data = user_data_response.json()
+                    print(user_data)
+                    if user_data['name'] is not None:
+                      name = user_data['name']
 
-                user_email_data_response = requests.get(f'https://api.github.com/user/emails?access_token={github_access_token}')
+            user_email_data_response = requests.get(f'https://api.github.com/user/emails?access_token={github_access_token}')
 
-                if user_email_data_response.ok is True:
-                    user_email_data = user_email_data_response.json()
-                    print(user_email_data)
-                    for data in user_email_data:
-                        if data['primary'] is True and data['email'] is not None:
-                            email = data['email']
+            if user_email_data_response.ok is True:
+                user_email_data = user_email_data_response.json()
+                print(user_email_data)
+                for data in user_email_data:
+                    if data['primary'] is True and data['email'] is not None:
+                        email = data['email']
 
     if email is not None:
         return (name, email, provider_name, github_access_token)
@@ -289,8 +286,4 @@ def handle_user_creation(code, oauth_data) -> str:
         raise ex
 
     print(local_access_token)
-    return {'access_token' : local_access_token, 'refresh_token': local_refresh_token, 'user_id': user.id}, 200
-
-
-def get_github() -> str:
-    return 200
+    return {'access_token' : local_access_token, 'refresh_token': local_refresh_token, 'user_id': user.id, 'code': 200}, 200

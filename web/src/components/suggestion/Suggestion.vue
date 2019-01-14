@@ -177,7 +177,7 @@ export default {
       user: userGetters.GET_USER
     }),
     ...mapAuthenticatedUserGetters({
-      isAuthenticated: authenticatedUserGetters.GET_AUTHENTICATION
+      isAuthenticated: authenticatedUserGetters.GET_IS_AUTHENTICATED
     })
   },
   async created() {

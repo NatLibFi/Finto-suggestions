@@ -64,9 +64,3 @@ paths:
       responses:
         "200":
           description: Response was the authorization success or not
-    get:
-      description: Callback method to handle Github oAuth2 authorization
-      operationId: api.logic.authentication.get_github
-      responses:
-        "200":
-          description: Response was the authorization success or not

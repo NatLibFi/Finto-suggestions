@@ -52,7 +52,7 @@ export default {
   computed: {
     ...mapMeetingGetters({ meeting: meetingGetters.GET_MEETING }),
     ...mapAuthenticatedUserGetters({
-      isAuthenticated: authenticatedUserGetters.GET_AUTHENTICATION
+      isAuthenticated: authenticatedUserGetters.GET_IS_AUTHENTICATED
     })
   },
   async created() {
