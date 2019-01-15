@@ -224,7 +224,6 @@ def put_update_suggestion_status(suggestion_id: int, status: str) -> str:
     Updates suggestion status info (mainly to ACCEPTED or REJECTED)
     """
 
-    print('I AM HERE!')
     if suggestion_id > 0 and len(status) > 0:
         try:
             suggestion = Suggestion.query.get(suggestion_id)
