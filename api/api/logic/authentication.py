@@ -173,7 +173,10 @@ def handle_github_request(code) -> (str, str):
 
     name = ''
     email = ''
-    github_access_token = ''
+
+    # for debug if error occurred
+    user_data = ''
+    user_email_data = ''
 
     if code is not None:
         github_client_id = os.environ.get('GITHUB_CLIENT_ID')
@@ -191,24 +194,19 @@ def handle_github_request(code) -> (str, str):
         'https://github.com/login/oauth/access_token', data=payload)
 
         if token_response is not None and len(token_response.text) > 0:
-            print(token_response.text)
             github_access_token = token_response.text.split('&')[0].split('=')[1]
-            print(github_access_token)
 
             if github_access_token is not None and len(github_access_token) > 0:
                 user_data_response = requests.get(f'https://api.github.com/user?access_token={github_access_token}')
 
-                if user_data_response.ok is True:
+                if user_data_response is not None and user_data_response.ok is True:
                     user_data = user_data_response.json()
-                    print(user_data)
                     if user_data['name'] is not None:
                       name = user_data['name']
 
             user_email_data_response = requests.get(f'https://api.github.com/user/emails?access_token={github_access_token}')
-
-            if user_email_data_response.ok is True:
+            if user_email_data_response is not None and user_email_data_response.ok is True:
                 user_email_data = user_email_data_response.json()
-                print(user_email_data)
                 for data in user_email_data:
                     if data['primary'] is True and data['email'] is not None:
                         email = data['email']
@@ -216,7 +214,7 @@ def handle_github_request(code) -> (str, str):
     if email is not None:
         return (name, email)
     else:
-        raise ValueError('Could not get github user email info')
+        raise ValueError(f'Could not get github user email info {user_data} {user_email_data}')
 
 
 def handle_user_creation(code, oauth_data) -> str:

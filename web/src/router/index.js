@@ -45,7 +45,7 @@ export default new Router({
       beforeEnter() {
         const github_url = process.env.VUE_APP_GITHUB_LOGIN_URL;
         const client_id = process.env.VUE_APP_GITHUB_CLIENT_ID;
-        window.location.href = `${github_url}?client_id=${client_id}`;
+        window.location.href = `${github_url}&client_id=${client_id}`;
       }
     },
     {
