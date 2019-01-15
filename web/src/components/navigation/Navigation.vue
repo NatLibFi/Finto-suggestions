@@ -93,7 +93,7 @@ import IconTriangle from '../icons/IconTriangle';
 import { directive as onClickaway } from 'vue-clickaway';
 
 import { mapAuthenticatedUserGetters, mapAuthenticatedUserActions } from '../../store/modules/authenticatedUser/authenticatedUserModule.js';
-import { authenticatedUserGetters, authenticatedUserActions } from '../../store/modules/authenticatedUser/authenticatedUserConsts.js';
+import { authenticatedUserGetters, authenticatedUserActions, storeKeyNames } from '../../store/modules/authenticatedUser/authenticatedUserConsts.js';
 
 import api from '../../api/index.js';
 import { userNameInitials } from '../../utils/nameHelpers.js';
@@ -121,10 +121,13 @@ export default {
     showSignupDialog: false,
     showSignupConfirmation: false
   }),
-  created() {
-    this.validateAuthentication();
-    this.getUserIdFromStorage();
+  async created() {
+    await this.validateAuthentication();
+    if (this.isAuthenticated) {
+      await this.handleTokenRefesh();
+    }
 
+    this.getUserIdFromStorage();
     this.handleUserFetch();
     this.handleUserInitialsFetch();
   },
@@ -138,12 +141,12 @@ export default {
   },
   methods: {
     ...mapAuthenticatedUserActions({
-      authenticateGithubUser: authenticatedUserActions.AUTHENTICATE,
       validateAuthentication: authenticatedUserActions.VALIDATE_AUTHENTICATION,
       revokeAuthentication: authenticatedUserActions.REVOKE_AUTHENTICATION,
       getUserName: authenticatedUserActions.GET_USER_NAME,
       authenticateLocalUser: authenticatedUserActions.AUTHENTICATE_LOCAL_USER,
-      getUserIdFromStorage: authenticatedUserActions.GET_USER_ID_FROM_STORAGE
+      getUserIdFromStorage: authenticatedUserActions.GET_USER_ID_FROM_STORAGE,
+      refreshToken: authenticatedUserActions.REFRESH_AUTHORIZATION_TOKEN
     }),
     returnToHome() {
       this.$router.push('/');
@@ -186,7 +189,6 @@ export default {
     },
     async oAuth2Authenticate(provider) {
       this.$router.push('/github');
-      // await this.authenticateGithubUser({ providerName: provider }); 
     },
     async registerLocalUser(userdata) {
       await api.user.registerLocalUser(userdata);
@@ -198,6 +200,11 @@ export default {
     },
     handleUserInitialsFetch() {
       this.userInitials = userNameInitials(this.name);
+    },
+    async handleTokenRefesh() {
+      const access_token = $cookies.get(storeKeyNames.ACCESS_TOKEN);
+      const refreshToken = $cookies.get(storeKeyNames.REFRESH_TOKEN);
+      await this.refreshToken({ access_token: access_token, refresh_token: refreshToken });
     }
   },
   watch: {

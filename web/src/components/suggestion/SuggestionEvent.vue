@@ -4,7 +4,7 @@
 
   <div class="event-container">
     <div class="event-header">
-      <div class="event-user-initials"></div>
+      <div class="event-user-initials">{{ userNameInitials }}</div>
       <div class="event-info">
         <p class="event-user">
           <span class="user-name">{{ userName }} </span>
@@ -47,25 +47,26 @@ export default {
     }
   },
   async created() {
-    await this.getUsers();
+    await this.getUser(this.event.user_id);
     this.fetchUserNameAndInitials();
   },
   computed: {
     ...mapUserGetters({
-      users: userGetters.GET_USERS
+      user: userGetters.GET_USER
     })
   },
   methods: {
     ...mapUserActions({
-      getUsers: userActions.GET_USERS
+      getUser: userActions.GET_USER
     }),
     fetchUserNameAndInitials() {
-      if (this.users && this.users.length > 0) {
-        const userName = this.users.find(u => u.id === this.event.user_id).name;
-        this.userName = userName;
-        this.userNameInitials = userNameInitials(userName);
+      console.log('qweqwe');
+      if (this.user) {
+        this.userName = this.user.name;
+        const initials = userNameInitials(this.user.name);
+        console.log(initials);
+        this.userNameInitials = initials;
       }
-
     }
   }
 };
@@ -119,6 +120,19 @@ div.event-header .event-info .user-name {
 
 div.event-header .event-info .date-sent {
   font-size: 14px;
+}
+
+.event-user-initials {
+  display: inline-block;
+  height: 35px;
+  width: 35px;
+  border-radius: 35px;
+  line-height: 46px;
+  text-align: center;
+  background-color: #804af2;
+  color: #727272;
+  font-size: 20px;
+  font-weight: 800;
 }
 
 div.event-comment {

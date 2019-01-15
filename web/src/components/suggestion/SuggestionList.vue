@@ -130,8 +130,10 @@ export default {
       return Math.ceil(this.items.length / this.paginationMaxCount);
     },
     calculateOpenAndResolvedSuggestionCounts() {
-      this.openCount = this.items.filter(i => i.status === null).length;
-      this.resolvedCount = this.items.filter(i => i.status !== null).length;
+      if(this.item && items.length > 0) {
+        this.openCount = this.items.filter(i => i.status === null).length;
+        this.resolvedCount = this.items.filter(i => i.status !== null).length;
+      }
     }
   },
   watch: {

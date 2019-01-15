@@ -50,7 +50,7 @@
             </span>
           </div>
         </div>
-        <div v-if="isAuthenticated" class="suggestion-header-buttons">
+        <div v-if="isAuthenticated && role === userRoles.ADMIN" class="suggestion-header-buttons">
           <assign-user :suggestion="suggestion" class="icon-button" />
           <svg-icon icon-name="more" class="icon-button"><icon-more /></svg-icon>
         </div>
@@ -131,6 +131,8 @@ import { parse } from 'date-fns';
 import { mapAuthenticatedUserGetters } from '../../store/modules/authenticatedUser/authenticatedUserModule.js';
 import { authenticatedUserGetters } from '../../store/modules/authenticatedUser/authenticatedUserConsts.js';
 
+import { userRoles } from '../../utils/userHelpers';
+
 export default {
   components: {
     SuggestionContent,
@@ -163,7 +165,8 @@ export default {
       suggestionTypes: {
         NEW: suggestionType.NEW,
         MODIFY: suggestionType.MODIFY
-      }
+      },
+      userRoles
     }
   },
   computed: {
@@ -177,7 +180,8 @@ export default {
       user: userGetters.GET_USER
     }),
     ...mapAuthenticatedUserGetters({
-      isAuthenticated: authenticatedUserGetters.GET_IS_AUTHENTICATED
+      isAuthenticated: authenticatedUserGetters.GET_IS_AUTHENTICATED,
+      role: authenticatedUserGetters.GET_USER_ROLE
     })
   },
   async created() {
@@ -193,7 +197,7 @@ export default {
       getEventsBySuggestionId: eventActions.GET_EVENTS_BY_SUGGESTION_ID
     }),
     ...mapUserActions({
-      getUserData: userActions.GET_USER_DATA
+      getUser: userActions.GET_USER
     }),
     goToSuggestionList() {
       if (!this.meetingId) {
@@ -217,7 +221,7 @@ export default {
     },
     async getUserName() {
       if (this.suggestion.user_id) {
-        await this.getUserData(this.suggestion.user_id);
+        await this.getUser(this.suggestion.user_id);
         this.userName = this.user.name;
       } else {
         this.userName = '';

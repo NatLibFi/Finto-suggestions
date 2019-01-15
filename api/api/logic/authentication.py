@@ -35,7 +35,7 @@ from flask_jwt_extended import (
 )
 
 from .common import create_response
-from ..models import db, User, UserRoles, AccessToken
+from ..models import db, User, UserRoles
 from ..authentication import blacklist_token
 
 import requests
@@ -134,22 +134,15 @@ def revokeAuthentication() -> str:
     """
 
     user_id = connexion.request.json.get('user_id', None)
+    access_token = connexion.request.json.get('access_token', None)
+    refresh_token = connexion.request.json.get('refresh_token', None)
 
     try:
-        if user_id is not None and user_id > 0:
-            tokens = AccessToken.query.filter_by(user_id=user_id).all()
-            if tokens is not None and len(tokens) > 0:
-                for token in tokens:
-                    if token.provider is 'local':
-                        blacklist_token(token.access_token)
-                        blacklist_token(token.refresh_token)
-                    AccessToken.query.filter_by(id=token.id).delete()
-
-            return create_response({}, 200, 'Successfully revoked user authentication tokens.')
-
+        blacklist_token(access_token)
+        blacklist_token(refresh_token)
     except Exception as ex:
-        print(ex)
-        db.session.rollback()
+      print(ex)
+      return { 'error': str(ex) }, 400
 
     return create_response({}, 200, 'There was errors while trying to blacklist and remove tokens ')
 
@@ -181,7 +174,7 @@ def handle_github_request(code) -> (str, str):
 
     name = ''
     email = ''
-    provider_name = 'github'
+    # provider_name = 'github'
     github_access_token = ''
 
     if code is not None:
@@ -223,7 +216,7 @@ def handle_github_request(code) -> (str, str):
                         email = data['email']
 
     if email is not None:
-        return (name, email, provider_name, github_access_token)
+        return (name, email)
     else:
         raise ValueError('Could not get github user email info')
 
@@ -231,14 +224,14 @@ def handle_github_request(code) -> (str, str):
 def handle_user_creation(code, oauth_data) -> str:
     """
     Handles user creation
-    :parameters oauth application code and oauthdata(name, email, provider, oauht_access_token)
+    :parameters oauth application code and oauthdata(name, email)
     :returns success response or exception that is upper method catched
     """
 
     name = oauth_data[0]
     email = oauth_data[1]
-    provider = oauth_data[2]
-    oauth_access_token = oauth_data[3]
+    # provider = oauth_data[2]
+    # oauth_access_token = oauth_data[3]
     local_access_token = ''
 
     user = User.query.filter_by(email=email).first()
@@ -258,32 +251,32 @@ def handle_user_creation(code, oauth_data) -> str:
             db.session.rollback()
             raise ex
 
-    existing_ext_token = AccessToken.query.filter_by(user_id=user.id).first()
+    # existing_ext_token = AccessToken.query.filter_by(user_id=user.id).first()
 
-    if existing_ext_token is not None:
-        db.session.delete(existing_ext_token)
+    # if existing_ext_token is not None:
+    #     db.session.delete(existing_ext_token)
 
-    ext_token = AccessToken(user_id=user.id, provider=provider, code=code, access_token=oauth_access_token)
+    # ext_token = AccessToken(user_id=user.id, provider=provider, access_token=oauth_access_token)
 
-    try:
-        db.session.add(ext_token)
-        db.session.commit()
-    except Exception as ex:
-        db.session.rollback()
-        raise ex
+    # try:
+    #     db.session.add(ext_token)
+    #     db.session.commit()
+    # except Exception as ex:
+    #     db.session.rollback()
+    #     raise ex
 
     serialized_user = super(User, user).as_dict()
     local_access_token = create_access_token(identity=serialized_user)
     local_refresh_token = create_refresh_token(identity=serialized_user)
 
-    token = AccessToken(user_id=user.id, provider='local', access_token=local_access_token, refresh_token=local_refresh_token)
+    # token = AccessToken(user_id=user.id, provider='local', access_token=local_access_token, refresh_token=local_refresh_token)
 
-    try:
-        db.session.add(token)
-        db.session.commit()
-    except Exception as ex:
-        db.session.rollback()
-        raise ex
+    # try:
+    #     db.session.add(token)
+    #     db.session.commit()
+    # except Exception as ex:
+    #     db.session.rollback()
+    #     raise ex
 
     print(local_access_token)
     return {'access_token' : local_access_token, 'refresh_token': local_refresh_token, 'user_id': user.id, 'code': 200}, 200
