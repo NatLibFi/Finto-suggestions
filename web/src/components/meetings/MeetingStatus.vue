@@ -10,9 +10,8 @@
       <div class="status-summary">
         <p>{{ processed }}/{{ suggestions }} ehdotusta käsitelty ({{ progression }}%)</p>
         <p
-          v-if="['meeting-suggestion-list'].includes($route.name) && isAuthenticated"
-          class="next-suggestion-link">
-          <!-- @click="goToNextSuggestion()" -->
+          v-if="['meeting-suggestion-list'].includes($route.name) && isAuthenticated && continueSuggestionHandle"
+          class="next-suggestion-link" @click="goToNextSuggestion()">
           Jatka käsittelyä
         </p>
       </div>
@@ -27,13 +26,16 @@ import { meetingGetters, meetingActions } from '../../store/modules/meeting/meet
 import { getMeetingProgressionCounts, getMeetingProgressionWidths } from '../../utils/meetingHelper.js';
 import { mapAuthenticatedUserGetters } from '../../store/modules/authenticatedUser/authenticatedUserModule.js';
 import { authenticatedUserGetters } from '../../store/modules/authenticatedUser/authenticatedUserConsts.js';
+import { mapSuggestionGetters } from '../../store/modules/suggestion/suggestionModule.js';
+import { suggestionGetters } from '../../store/modules/suggestion/suggestionConsts.js';
+import { comparerDesc } from '../../utils/sortingHelper.js';
 
 export default {
   props: {
     meetingId: {
-      type: [String, Number],
+      type: [Number, String],
       required: true
-    },
+    }
   },
   data: function() {
     return {
@@ -46,13 +48,19 @@ export default {
       },
       processed: 0,
       suggestions: 0,
-      progression: 0
+      progression: 0,
+      continueSuggestionHandle: true
     }
   },
   computed: {
-    ...mapMeetingGetters({ meeting: meetingGetters.GET_MEETING }),
+    ...mapMeetingGetters({
+      meeting: meetingGetters.GET_MEETING
+    }),
     ...mapAuthenticatedUserGetters({
       isAuthenticated: authenticatedUserGetters.GET_IS_AUTHENTICATED
+    }),
+    ...mapSuggestionGetters({
+      suggestion_items: suggestionGetters.GET_SUGGESTIONS
     })
   },
   async created() {
@@ -61,6 +69,7 @@ export default {
       getMeetingProgressionCounts(
         this.meeting
     ));
+    this.checkSuggestionNeededToContinueToHandle();
   },
   methods: {
     ...mapMeetingActions({
@@ -76,14 +85,27 @@ export default {
       });
     },
     goToNextSuggestion() {
-      this.$router.push({
-        name: 'meeting-suggestion',
-        params: {
-          meetingId: this.meetingId,
-          // TODO: create a method to calculate the next unprocessed suggestion in the meeting
-          suggestionId: 1
+      const nextSuggestionId = this.getNextSuggestionIdToHandle();
+      if(nextSuggestionId && nextSuggestionId > 0) {
+        this.$router.push({
+          name: 'meeting-suggestion',
+          params: {
+            meetingId: this.meetingId,
+            suggestionId: nextSuggestionId
+          }
+        });
+      }
+    },
+    getNextSuggestionIdToHandle() {
+      let nextSuggestionId = null;
+      if (this.suggestion_items && this.suggestion_items.length > 0) {
+        const orderedSuggestionList = this.suggestion_items.filter(s => s.status === null).sort(comparerDesc('created'));
+        if(orderedSuggestionList && orderedSuggestionList.length > 0) {
+          nextSuggestionId = orderedSuggestionList[0].id
         }
-      });
+      }
+      console.log(nextSuggestionId);
+      return nextSuggestionId;
     },
     handleMeetingProgressionCounts(countData) {
       if (countData) {
@@ -91,6 +113,10 @@ export default {
         this.suggestions = countData.suggestions;
         this.progression = countData.progression;
       }
+    },
+    checkSuggestionNeededToContinueToHandle() {
+      const nextSuggestionId = this.getNextSuggestionIdToHandle();
+      this.continueSuggestionHandle = nextSuggestionId != null ? true : false;
     }
   },
   watch: {
@@ -98,6 +124,9 @@ export default {
       const meetingProgressionWidths = getMeetingProgressionWidths(this.progression);
       this.progressWidth = meetingProgressionWidths.progressWidth;
       this.backgroundWidth = meetingProgressionWidths.backgroundWidth;
+    },
+    suggestion_items() {
+      this.checkSuggestionNeededToContinueToHandle();
     }
   }
 };

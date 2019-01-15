@@ -5,10 +5,10 @@
       <span class="button move-to-next-meeting">
         Siirrä seuraavaan<span class="hidden-in-mobile"> kokoukseen</span>
       </span>
-      <span class="button dismiss">
+      <span class="button dismiss" @click="dismissSuggestion()">
         Jätä ehdotukseksi
       </span>
-      <span class="button approve">
+      <span class="button approve" @click="approveSuggestion()">
         Hyväksy ehdotus
       </span>
     </div>
@@ -18,8 +18,11 @@
 <script>
 import AddComment from '../suggestion/AddComment';
 
-import { mapAuthenticatedUserGetters } from '../../store/modules/authenticatedUser/authenticatedUserModule.js';
-import { authenticatedUserGetters } from '../../store/modules/authenticatedUser/authenticatedUserConsts.js';
+import { mapAuthenticatedUserGetters, mapAuthenticatedUserActions } from '../../store/modules/authenticatedUser/authenticatedUserModule.js';
+import { authenticatedUserGetters, authenticatedUserActions } from '../../store/modules/authenticatedUser/authenticatedUserConsts.js';
+import { mapSuggestionActions } from '../../store/modules/suggestion/suggestionModule';
+import { suggestionActions } from '../../store/modules/suggestion/suggestionConsts';
+import { suggestionStateStatus } from '../../utils//suggestionMappings';
 
 export default {
   components: {
@@ -44,6 +47,26 @@ export default {
     ...mapAuthenticatedUserGetters({
       isAuthenticated: authenticatedUserGetters.GET_IS_AUTHENTICATED
     })
+  },
+  created() {
+    this.validateAuthentication();
+  },
+  methods: {
+    ...mapSuggestionActions({
+      setSuggestionAccepted: suggestionActions.SET_SUGGESTION_ACCEPTED,
+      setSuggestionRejected: suggestionActions.SET_SUGGESTION_REJECTED
+    }),
+    ...mapAuthenticatedUserActions({
+      validateAuthentication: authenticatedUserActions.VALIDATE_AUTHENTICATION,
+    }),
+    async dismissSuggestion() {
+      await this.setSuggestionRejected({ suggestionId: this.suggestionId, status: suggestionStateStatus.REJECTED });
+      this.$emit('moveToNextSuggestion');
+    },
+    async approveSuggestion() {
+      await this.setSuggestionAccepted({ suggestionId: this.suggestionId, status: suggestionStateStatus.ACCEPTED });
+      this.$emit('moveToNextSuggestion');
+    }
   }
 };
 </script>
