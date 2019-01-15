@@ -401,14 +401,6 @@ definitions:
     description: "User role, NORMAL or ADMIN. "
     example: NORMAL
 
-  UserIdRequest:
-    type: object
-    properties:
-      user_id:
-        type: number
-      access_token:
-        type: string
-
   # EVENT
 
   EventResponse:

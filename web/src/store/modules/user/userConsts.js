@@ -16,6 +16,6 @@ export const userMutations = {
 };
 
 export const userActions = {
-  GET_USER_DATA: 'getUserData',
-  GET_USERS: 'getUsers'
+  GET_USERS: 'getUsers',
+  GET_USER: 'getUser'
 };

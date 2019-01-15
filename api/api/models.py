@@ -243,8 +243,6 @@ class User(db.Model, SerializableMixin):
 
     events = db.relationship('Event', backref='user')
 
-    access_tokens = db.relationship('AccessToken', backref='user')
-
     @hybrid_property
     def password(self):
         return self.password_hash
@@ -281,18 +279,3 @@ class TokenBlacklist(db.Model, SerializableMixin):
     token_type = db.Column(db.String(10), nullable=False)
     revoked = db.Column(db.Boolean, nullable=False)
     expires = db.Column(db.DateTime, nullable=False)
-
-class AccessToken(db.Model, SerializableMixin):
-    """
-    For local JWT tokens and OAuth2 access tokens from external providers (Github and Google)
-    """
-
-    ___tablename___ = 'access_tokens'
-    ___public___ = ['id', 'user_id', 'provider']
-
-    id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
-    provider = db.Column(db.String(36), nullable=False)
-    code = db.Column(db.String(50), nullable=True)
-    access_token = db.Column(db.String(400), nullable=False)
-    refresh_token = db.Column(db.String(400), nullable=True)

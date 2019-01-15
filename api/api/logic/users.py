@@ -1,9 +1,7 @@
 import connexion
 from ..authentication import admin_only
 from ..models import User
-from .common import (get_all_or_404, get_one_or_404,
-                     create_or_404, delete_or_404,
-                     update_or_404, patch_or_404)
+from .common import (get_all_or_404, get_one_or_404, create_or_404, delete_or_404, update_or_404, patch_or_404)
 
 
 @admin_only

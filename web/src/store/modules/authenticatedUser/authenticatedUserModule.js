@@ -24,18 +24,21 @@ export default {
     [storeStateNames.IS_AUTHENTICATED]: false,
     [storeStateNames.USER_ID]: 0,
     [storeStateNames.NAME]: '',
-    [storeStateNames.ERROR]: ''
+    [storeStateNames.ERROR]: '',
+    [storeStateNames.ROLE]: ''
   },
   getters: {
     [authenticatedUserGetters.GET_IS_AUTHENTICATED]: state =>
       state[storeStateNames.IS_AUTHENTICATED],
     [authenticatedUserGetters.GET_USER_ID]: state => state[storeStateNames.USER_ID],
     [authenticatedUserGetters.GET_USER_NAME]: state => state[storeStateNames.NAME],
-    [authenticatedUserGetters.GET_AUTHENTICATE_ERROR]: state => state[storeStateNames.ERROR]
+    [authenticatedUserGetters.GET_AUTHENTICATE_ERROR]: state => state[storeStateNames.ERROR],
+    [authenticatedUserGetters.GET_USER_ROLE]: state => state[storeStateNames.ROLE]
   },
   mutations: {
     [authenticatedUserMutations.SET_AUTHENTICATION](state, authenticatedData) {
       Vue.set(state, storeStateNames.IS_AUTHENTICATED, authenticatedData.authenticated);
+      Vue.set(state, storeStateNames.ROLE, authenticatedData.role);
       Vue.set(state, storeStateNames.USER_ID, authenticatedData.user_id);
       Vue.set(sessionStorage, storeKeyNames.USER_ID, authenticatedData.user_id);
     },
@@ -62,37 +65,29 @@ export default {
         commit(authenticatedUserMutations.SET_AUTHENTICATE_ERROR, response.error);
       }
     },
-    [authenticatedUserActions.VALIDATE_AUTHENTICATION]({ commit, dispatch }) {
+    async [authenticatedUserActions.VALIDATE_AUTHENTICATION]({ commit, dispatch }) {
       // eslint-disable-next-line no-undef
-      const token = $cookies.get(storeKeyNames.ACCESS_TOKEN);
+      const access_token = $cookies.get(storeKeyNames.ACCESS_TOKEN);
       // eslint-disable-next-line no-unused-vars
       const userId =
         this.state.user[storeStateNames.USER_ID] || sessionStorage.getItem(storeKeyNames.USER_ID);
       //TODO: needs to validate token from backend and also check that token has correct userid
-      if (token && token.length > 0 && parseInt(userId) > 0) {
-        commit(authenticatedUserMutations.SET_AUTHENTICATION, {
-          authenticated: true,
-          user_id: userId
-        });
+      if (access_token && access_token.length > 0 && parseInt(userId) > 0) {
+        const response = await api.user.getUser(userId);
+        if (response && response.code === 200) {
+          commit(authenticatedUserMutations.SET_AUTHENTICATION, {
+            authenticated: true,
+            user_id: userId,
+            role: response.data.role
+          });
+        } else {
+          dispatch(authenticatedUserActions.REVOKE_AUTHENTICATION);
+        }
       } else {
         dispatch(authenticatedUserActions.REVOKE_AUTHENTICATION);
       }
     },
     async [authenticatedUserActions.REVOKE_AUTHENTICATION]({ commit }) {
-      // eslint-disable-next-line no-undef
-      const token = $cookies.get(storeKeyNames.ACCESS_TOKEN);
-      const userId =
-        this.state.user[storeStateNames.USER_ID] || sessionStorage.getItem(storeKeyNames.USER_ID);
-
-      if (token && token.length > 0 && parseInt(userId) > 0) {
-        const payload = { user_id: userId };
-        try {
-          await api.user.revokeAuthentication(payload);
-        } catch (err) {
-          console.log(err);
-        }
-      }
-
       // eslint-disable-next-line no-undef
       $cookies.remove(storeKeyNames.ACCESS_TOKEN);
       // eslint-disable-next-line no-undef
@@ -129,6 +124,15 @@ export default {
       const userId = sessionStorage.getItem(storeKeyNames.USER_ID);
       if (userId && userId > 0) {
         commit(authenticatedUserMutations.SET_USER_ID, userId);
+      }
+    },
+    async [authenticatedUserActions.REFRESH_AUTHORIZATION_TOKEN]({ dispatch }, payload) {
+      const response = await api.authenticate.refreshAuthenticationToken(payload);
+      if (response && response.code === 200) {
+        // eslint-disable-next-line no-undef
+        $cookies.set(storeKeyNames.ACCESS_TOKEN, response.access_token);
+      } else {
+        dispatch(authenticatedUserActions.REVOKE_AUTHENTICATION);
       }
     }
   }

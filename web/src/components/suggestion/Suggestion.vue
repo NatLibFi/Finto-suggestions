@@ -54,7 +54,7 @@
             </span>
           </div>
         </div>
-        <div v-if="isAuthenticated" class="suggestion-header-buttons">
+        <div v-if="isAuthenticated && role === userRoles.ADMIN" class="suggestion-header-buttons">
           <assign-user :suggestion="suggestion" class="icon-button" />
           <svg-icon icon-name="more" class="icon-button"><icon-more /></svg-icon>
         </div>
@@ -137,6 +137,8 @@ import { mapAuthenticatedUserGetters } from '../../store/modules/authenticatedUs
 import { authenticatedUserGetters } from '../../store/modules/authenticatedUser/authenticatedUserConsts.js';
 import { comparerDesc } from '../../utils/sortingHelper';
 
+import { userRoles } from '../../utils/userHelpers';
+
 export default {
   components: {
     SuggestionContent,
@@ -170,7 +172,8 @@ export default {
     movingAction: {
       NEXT: 'next',
       PREVIOUS: 'previous'
-    }
+	  },
+	  userRoles
   }),
   computed: {
     ...mapSuggestionGetters({
@@ -183,8 +186,10 @@ export default {
     ...mapUserGetters({
       user: userGetters.GET_USER
     }),
+    ...mapAuthenticatedUserGetters({
       isAuthenticated: authenticatedUserGetters.GET_IS_AUTHENTICATED
-      userId: authenticatedUserGetters.GET_USER_ID
+      userId: authenticatedUserGetters.GET_USER_ID,
+      role: authenticatedUserGetters.GET_USER_ROLE
     })
   },
   async created() {
@@ -203,7 +208,7 @@ export default {
       getEventsBySuggestionId: eventActions.GET_EVENTS_BY_SUGGESTION_ID
     }),
     ...mapUserActions({
-      getUserData: userActions.GET_USER_DATA
+      getUser: userActions.GET_USER
     }),
     goToSuggestionList() {
       if (!this.meetingId) {
@@ -227,7 +232,7 @@ export default {
     },
     async getUserName() {
       if (this.suggestion.user_id) {
-        await this.getUserData(this.suggestion.user_id);
+        await this.getUser(this.suggestion.user_id);
         this.userName = this.user.name;
       } else {
         this.userName = '';

@@ -6,12 +6,20 @@ const client = axios.create({
   json: true
 });
 
-const execute = async (method, resource, data) => {
+const execute = async (method, resource, data, useRefreshToken) => {
   // eslint-disable-next-line no-undef
   const access_token = $cookies.get(storeKeyNames.ACCESS_TOKEN);
-  const AuthHeaderValue = access_token && access_token.length > 0 ? `Bearer ${access_token}` : '';
+  // eslint-disable-next-line no-undef
+  const refreshToken = $cookies.get(storeKeyNames.REFRESH_TOKEN);
 
-  // console.log(access_token);
+  let AuthHeaderValue;
+
+  if (useRefreshToken) {
+    AuthHeaderValue = refreshToken && refreshToken.length > 0 ? `Bearer ${refreshToken}` : '';
+  } else {
+    AuthHeaderValue = access_token && access_token.length > 0 ? `Bearer ${access_token}` : '';
+  }
+
   return client({
     method,
     url: resource,
@@ -31,5 +39,6 @@ const execute = async (method, resource, data) => {
 };
 
 export const get = async options => execute('get', options.resource, null);
-export const post = async options => execute('post', options.resource, options.data);
+export const post = async options =>
+  execute('post', options.resource, options.data, options.useRefreshToken);
 export const put = async options => execute('put', options.resource, options.data);

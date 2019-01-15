@@ -50,7 +50,7 @@ paths:
           description: "Log out user by user_id"
           required: true
           schema:
-            $ref: "#/definitions/UserIdRequest"
+            $ref: "#/definitions/Token"
       responses:
         "200":
           description:  JWT Token
