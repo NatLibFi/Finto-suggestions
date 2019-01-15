@@ -1,9 +1,5 @@
 import Vue from 'vue';
 import { mapGetters, mapActions } from 'vuex';
-import VueAxios from 'vue-axios';
-import VueAuthenticate from 'vue-authenticate';
-import axios from 'axios';
-import addDays from 'date-fns/add_days';
 import VueCookies from 'vue-cookies';
 
 import {
@@ -17,30 +13,7 @@ import {
 
 import api from '../../../api';
 
-Vue.use(VueAxios, axios);
 Vue.use(VueCookies);
-
-const vueAuth = VueAuthenticate.factory(Vue.prototype.$http, {
-  baseUrl: `${process.env.VUE_APP_BASE_DOMAIN}/api`,
-  storageType: 'cookieStorage',
-  cookieStorage: {
-    expires: addDays(new Date(), 14),
-    secure: process.env.NODE_ENV === 'production' ? true : false
-  },
-  providers: {
-    github: {
-      clientId: `${process.env.VUE_APP_GITHUB_CLIENT_ID}`,
-      redirectUri: `${process.env.VUE_APP_BASE_DOMAIN}/api/auth/github`,
-      state: '0',
-      optionalUrlParams: ['scope', 'state'],
-      popupOptions: null
-    },
-    google: {
-      clientId: '',
-      redirectUri: `${process.env.VUE_APP_BASE_DOMAIN}/api/auth/google`
-    }
-  }
-});
 
 export const mapAuthenticatedUserGetters = getters => mapGetters(namespace, getters);
 export const mapAuthenticatedUserActions = actions => mapActions(namespace, actions);
@@ -50,12 +23,15 @@ export default {
   state: {
     [storeStateNames.IS_AUTHENTICATED]: false,
     [storeStateNames.USER_ID]: 0,
-    [storeStateNames.NAME]: ''
+    [storeStateNames.NAME]: '',
+    [storeStateNames.ERROR]: ''
   },
   getters: {
-    [authenticatedUserGetters.GET_AUTHENTICATION]: state => state[storeStateNames.IS_AUTHENTICATED],
+    [authenticatedUserGetters.GET_IS_AUTHENTICATED]: state =>
+      state[storeStateNames.IS_AUTHENTICATED],
     [authenticatedUserGetters.GET_USER_ID]: state => state[storeStateNames.USER_ID],
-    [authenticatedUserGetters.GET_USER_NAME]: state => state[storeStateNames.NAME]
+    [authenticatedUserGetters.GET_USER_NAME]: state => state[storeStateNames.NAME],
+    [authenticatedUserGetters.GET_AUTHENTICATE_ERROR]: state => state[storeStateNames.ERROR]
   },
   mutations: {
     [authenticatedUserMutations.SET_AUTHENTICATION](state, authenticatedData) {
@@ -72,25 +48,19 @@ export default {
   },
   actions: {
     async [authenticatedUserActions.AUTHENTICATE]({ commit }, payload) {
-      await vueAuth
-        .authenticate(payload.providerName)
-        .then(response => {
-          if (response && response.status === 200) {
-            commit(authenticatedUserMutations.SET_AUTHENTICATION, {
-              authenticated: true,
-              user_id: response.data.user_id
-            });
-          } else {
-            commit(authenticatedUserMutations.SET_AUTHENTICATION, {
-              authenticated: false,
-              user_id: 0
-            });
-          }
-        })
-        .catch(err => {
-          console.log(err);
-          commit(authenticatedUserMutations.SET_AUTHENTICATION, false);
+      const response = await api.authenticate.authenticateGitHubUser(payload.code);
+      if (response && response.code === 200) {
+        commit(authenticatedUserMutations.SET_AUTHENTICATION, {
+          authenticated: true,
+          user_id: response.user_id
         });
+        // eslint-disable-next-line no-undef
+        $cookies.set(storeKeyNames.ACCESS_TOKEN, response.access_token);
+        // eslint-disable-next-line no-undef
+        $cookies.set(storeKeyNames.REFRESH_TOKEN, response.refresh_token);
+      } else {
+        commit(authenticatedUserMutations.SET_AUTHENTICATE_ERROR, response.error);
+      }
     },
     [authenticatedUserActions.VALIDATE_AUTHENTICATION]({ commit, dispatch }) {
       // eslint-disable-next-line no-undef

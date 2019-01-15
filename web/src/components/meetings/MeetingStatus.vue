@@ -57,7 +57,7 @@ export default {
       meeting: meetingGetters.GET_MEETING
     }),
     ...mapAuthenticatedUserGetters({
-      isAuthenticated: authenticatedUserGetters.GET_AUTHENTICATION
+      isAuthenticated: authenticatedUserGetters.GET_IS_AUTHENTICATED
     }),
     ...mapSuggestionGetters({
       suggestion_items: suggestionGetters.GET_SUGGESTIONS

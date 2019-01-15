@@ -57,9 +57,8 @@ export default {
   },
   methods: {
     login(service) {
-      const loginData = this.gatherLoginData();
+      const loginData = service === 'local' ? this.gatherLoginData() : null;
       const data = { service, loginData };
-
       this.$emit('login', data);
     },
     gatherLoginData() {

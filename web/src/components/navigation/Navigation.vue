@@ -130,9 +130,10 @@ export default {
   },
   computed: {
     ...mapAuthenticatedUserGetters({
-      isAuthenticated: authenticatedUserGetters.GET_AUTHENTICATION,
+      isAuthenticated: authenticatedUserGetters.GET_IS_AUTHENTICATED,
       userId: authenticatedUserGetters.GET_USER_ID,
-      name: authenticatedUserGetters.GET_USER_NAME
+      name: authenticatedUserGetters.GET_USER_NAME,
+      error: authenticatedUserGetters.GET_AUTHENTICATE_ERROR //can be showed if login did not succeed
     })
   },
   methods: {
@@ -184,7 +185,8 @@ export default {
       this.closeMobileDropdown();
     },
     async oAuth2Authenticate(provider) {
-      await this.authenticateGithubUser({ providerName: provider });
+      this.$router.push('/github');
+      // await this.authenticateGithubUser({ providerName: provider }); 
     },
     async registerLocalUser(userdata) {
       await api.user.registerLocalUser(userdata);

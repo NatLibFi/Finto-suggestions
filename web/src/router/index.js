@@ -6,6 +6,8 @@ import Meetings from '../views/Meetings.vue';
 import MeetingSuggestionList from '../views/MeetingSuggestionList.vue';
 import MeetingSuggestion from '../views/MeetingSuggestion.vue';
 
+import GithubAuthentication from '../components/auth/GithubAuthentication';
+
 Vue.use(Router);
 
 export default new Router({
@@ -36,6 +38,20 @@ export default new Router({
       path: '/meetings/:meetingId/:suggestionId',
       name: 'meeting-suggestion',
       component: MeetingSuggestion,
+      props: true
+    },
+    {
+      path: '/github',
+      beforeEnter() {
+        const github_url = process.env.VUE_APP_GITHUB_LOGIN_URL;
+        const client_id = process.env.VUE_APP_GITHUB_CLIENT_ID;
+        window.location.href = `${github_url}?client_id=${client_id}`;
+      }
+    },
+    {
+      path: '/auth/redirect/github',
+      name: 'oauth-redirect',
+      component: GithubAuthentication,
       props: true
     }
   ],

@@ -183,8 +183,7 @@ export default {
     ...mapUserGetters({
       user: userGetters.GET_USER
     }),
-    ...mapAuthenticatedUserGetters({
-      isAuthenticated: authenticatedUserGetters.GET_AUTHENTICATION,
+      isAuthenticated: authenticatedUserGetters.GET_IS_AUTHENTICATED
       userId: authenticatedUserGetters.GET_USER_ID
     })
   },

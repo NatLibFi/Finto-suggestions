@@ -3,7 +3,8 @@ export const namespace = 'authenticatedUser';
 export const storeStateNames = {
   IS_AUTHENTICATED: 'isAuthenticated',
   USER_ID: 'userId',
-  NAME: 'name'
+  NAME: 'name',
+  ERROR: 'error'
 };
 
 export const storeKeyNames = {
@@ -13,16 +14,18 @@ export const storeKeyNames = {
 };
 
 export const authenticatedUserGetters = {
-  GET_AUTHENTICATION: 'getAuthentication',
+  GET_IS_AUTHENTICATED: 'getAuthentication',
   GET_USER_ID: 'getUserId',
-  GET_USER_NAME: 'getUserName'
+  GET_USER_NAME: 'getUserName',
+  GET_AUTHENTICATE_ERROR: 'getAuthenticateError'
 };
 
 export const authenticatedUserMutations = {
   SET_AUTHENTICATION: 'setAuthentication',
   SET_USER_ID: 'setUserId',
   SET_STORAGE_USER_ID: 'setStorageUserId',
-  SET_USER_NAME: 'setUserName'
+  SET_USER_NAME: 'setUserName',
+  SET_AUTHENTICATE_ERROR: 'setAuthenticateError'
 };
 
 export const authenticatedUserActions = {
