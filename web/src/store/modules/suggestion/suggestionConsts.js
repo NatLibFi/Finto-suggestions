@@ -45,5 +45,7 @@ export const suggestionActions = {
   GET_SUGGESTIONS_BY_MEETING_ID: 'getSuggestionsByMeetingId',
   GET_SORTED_SUGGESTIONS_BY_MEETING_ID: 'getSortedSuggestionsByMeetingId',
   GET_MEETING_SUGGESTIONS_SELECTED_SORT: 'getMeetingSuggestionsSelectedSort',
-  SET_MEETING_SUGGESTIONS_SELECTED_SORT: 'setMeetingSuggestionsSelectedSort'
+  SET_MEETING_SUGGESTIONS_SELECTED_SORT: 'setMeetingSuggestionsSelectedSort',
+  SET_SUGGESTION_ACCEPTED: 'setSuggestionAccpeted',
+  SET_SUGGESTION_REJECTED: 'setSuggestionRejected'
 };

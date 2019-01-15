@@ -9,7 +9,7 @@ const client = axios.create({
 const execute = async (method, resource, data) => {
   // eslint-disable-next-line no-undef
   const access_token = $cookies.get(storeKeyNames.ACCESS_TOKEN);
-  const AuthHeaderValue = access_token && access_token.lenght > 0 ? `Bearer ${access_token}` : '';
+  const AuthHeaderValue = access_token && access_token.length > 0 ? `Bearer ${access_token}` : '';
 
   // console.log(access_token);
   return client({
