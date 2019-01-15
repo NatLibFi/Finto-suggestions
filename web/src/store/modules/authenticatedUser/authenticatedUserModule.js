@@ -52,7 +52,6 @@ export default {
   actions: {
     async [authenticatedUserActions.AUTHENTICATE]({ commit }, payload) {
       const response = await api.authenticate.authenticateGitHubUser(payload.code);
-      console.log(response);
       if (response && response.code === 200) {
         commit(authenticatedUserMutations.SET_AUTHENTICATION, {
           authenticated: true,
@@ -130,11 +129,10 @@ export default {
     async [authenticatedUserActions.REFRESH_AUTHORIZATION_TOKEN]({ dispatch }, payload) {
       const response = await api.authenticate.refreshAuthenticationToken(payload);
       if (response && response.code === 200) {
-        console.log(response);
         // eslint-disable-next-line no-undef
         $cookies.set(storeKeyNames.ACCESS_TOKEN, response.access_token);
       } else {
-        // dispatch(authenticatedUserActions.REVOKE_AUTHENTICATION);
+        dispatch(authenticatedUserActions.REVOKE_AUTHENTICATION);
       }
     }
   }

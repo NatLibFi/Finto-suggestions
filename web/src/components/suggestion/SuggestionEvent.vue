@@ -60,12 +60,8 @@ export default {
       getUser: userActions.GET_USER
     }),
     fetchUserNameAndInitials() {
-      console.log('qweqwe');
       if (this.user) {
-        this.userName = this.user.name;
-        const initials = userNameInitials(this.user.name);
-        console.log(initials);
-        this.userNameInitials = initials;
+        this.userNameInitials = userNameInitials(this.user.name);
       }
     }
   }

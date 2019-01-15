@@ -133,7 +133,6 @@ def revokeAuthentication() -> str:
     :returns: A JWT access token wrapped in a response object or an error message
     """
 
-    user_id = connexion.request.json.get('user_id', None)
     access_token = connexion.request.json.get('access_token', None)
     refresh_token = connexion.request.json.get('refresh_token', None)
 
@@ -168,13 +167,12 @@ def post_github() -> str:
 def handle_github_request(code) -> (str, str):
     """
     Handles github request
-    :returns tuple(name, email, provider=github, github_access_token) or valueerror exception
+    :returns tuple(name, email, github_access_token) or value error exception
 
     """
 
     name = ''
     email = ''
-    # provider_name = 'github'
     github_access_token = ''
 
     if code is not None:
@@ -230,8 +228,7 @@ def handle_user_creation(code, oauth_data) -> str:
 
     name = oauth_data[0]
     email = oauth_data[1]
-    # provider = oauth_data[2]
-    # oauth_access_token = oauth_data[3]
+
     local_access_token = ''
 
     user = User.query.filter_by(email=email).first()
@@ -251,32 +248,8 @@ def handle_user_creation(code, oauth_data) -> str:
             db.session.rollback()
             raise ex
 
-    # existing_ext_token = AccessToken.query.filter_by(user_id=user.id).first()
-
-    # if existing_ext_token is not None:
-    #     db.session.delete(existing_ext_token)
-
-    # ext_token = AccessToken(user_id=user.id, provider=provider, access_token=oauth_access_token)
-
-    # try:
-    #     db.session.add(ext_token)
-    #     db.session.commit()
-    # except Exception as ex:
-    #     db.session.rollback()
-    #     raise ex
-
     serialized_user = super(User, user).as_dict()
     local_access_token = create_access_token(identity=serialized_user)
     local_refresh_token = create_refresh_token(identity=serialized_user)
 
-    # token = AccessToken(user_id=user.id, provider='local', access_token=local_access_token, refresh_token=local_refresh_token)
-
-    # try:
-    #     db.session.add(token)
-    #     db.session.commit()
-    # except Exception as ex:
-    #     db.session.rollback()
-    #     raise ex
-
-    print(local_access_token)
     return {'access_token' : local_access_token, 'refresh_token': local_refresh_token, 'user_id': user.id, 'code': 200}, 200
