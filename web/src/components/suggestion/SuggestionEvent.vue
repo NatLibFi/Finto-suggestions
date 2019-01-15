@@ -38,7 +38,7 @@ export default {
       required: true
     }
   },
-  data () {
+  data() {
     return {
       dateTimeFormatLabel,
       action: 'vaihtoi tyypiksi ',

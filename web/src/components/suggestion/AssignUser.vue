@@ -40,7 +40,7 @@ export default {
   },
   methods: {
     toggleSearch() {
-      this.searchOpen = !this.searchOpen
+      this.searchOpen = !this.searchOpen;
     },
     filterResults() {
       this.users = this.userCache;
@@ -56,7 +56,7 @@ export default {
     await this.getUsers();
     this.userCache = this.users;
   },
-  data () {
+  data() {
     return {
       userCache: [],
       searchOpen: false,
@@ -64,7 +64,7 @@ export default {
       userNameInitials
     }
   }
-}
+  };
 </script>
 
 <style scoped>

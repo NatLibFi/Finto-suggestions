@@ -51,7 +51,7 @@ export default {
   components: {
     markdownEditor
   },
-  data () {
+  data() {
     return {
       content: '',
       mdeConfigs: {
@@ -62,7 +62,7 @@ export default {
         status: false,
         toolbarTips: true
       }
-    }
+    };
   },
   computed: {
     ...mapAuthenticatedUserGetters({

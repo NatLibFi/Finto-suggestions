@@ -127,15 +127,13 @@ import {
 import { eventGetters, eventActions } from '../../store/modules/event/eventConsts.js';
 import { mapEventGetters, mapEventActions } from '../../store/modules/event/eventModule.js';
 
-import { userActions, userGetters } from "../../store/modules/user/userConsts";
+import { userActions, userGetters } from '../../store/modules/user/userConsts';
 import { mapUserActions, mapUserGetters } from '../../store/modules/user/userModule';
 
 import { dateTimeFormatLabel } from '../../utils/dateHelper.js';
-import { parse } from 'date-fns';
 
 import { mapAuthenticatedUserGetters } from '../../store/modules/authenticatedUser/authenticatedUserModule.js';
 import { authenticatedUserGetters } from '../../store/modules/authenticatedUser/authenticatedUserConsts.js';
-import { comparerDesc } from '../../utils/sortingHelper';
 
 import { userRoles } from '../../utils/userHelpers';
 
@@ -172,8 +170,8 @@ export default {
     movingAction: {
       NEXT: 'next',
       PREVIOUS: 'previous'
-	  },
-	  userRoles
+    },
+    userRoles
   }),
   computed: {
     ...mapSuggestionGetters({
@@ -187,7 +185,7 @@ export default {
       user: userGetters.GET_USER
     }),
     ...mapAuthenticatedUserGetters({
-      isAuthenticated: authenticatedUserGetters.GET_IS_AUTHENTICATED
+      isAuthenticated: authenticatedUserGetters.GET_IS_AUTHENTICATED,
       userId: authenticatedUserGetters.GET_USER_ID,
       role: authenticatedUserGetters.GET_USER_ROLE
     })
@@ -228,7 +226,7 @@ export default {
         params: {
           meetingId: id
         }
-      })
+      });
     },
     async getUserName() {
       if (this.suggestion.user_id) {
@@ -240,7 +238,7 @@ export default {
     },
     goToPreviousSuggestion() {
       this.getNexUsableSuggestionId(this.movingAction.PREVIOUS);
-      if(this.requestedSuggestionId) {
+      if (this.requestedSuggestionId) {
         this.$router.push({
           name: 'meeting-suggestion',
           params: {
@@ -253,7 +251,7 @@ export default {
     },
     goToNextSuggestion() {
       this.getNexUsableSuggestionId(this.movingAction.NEXT);
-      if(this.requestedSuggestionId) {
+      if (this.requestedSuggestionId) {
         this.$router.push({
           name: 'meeting-suggestion',
           params: {
@@ -265,18 +263,18 @@ export default {
       }
     },
     getNexUsableSuggestionId(action) {
-      if(this.suggestions && this.suggestions.length > 0) {
-        for(let i = 0; this.suggestions.length > i; i++) {
-          if(this.suggestions[i].id === parseInt(this.suggestionId)) {
+      if (this.suggestions && this.suggestions.length > 0) {
+        for (let i = 0; this.suggestions.length > i; i++) {
+          if (this.suggestions[i].id === parseInt(this.suggestionId)) {
             if (action === this.movingAction.PREVIOUS) {
-              if(this.suggestions.length > 1 && i > 0) {
-                this.requestedSuggestionId = this.suggestions[i-1].id;
+              if (this.suggestions.length > 1 && i > 0) {
+                this.requestedSuggestionId = this.suggestions[i - 1].id;
                 break;
               }
             }
-            if(action === this.movingAction.NEXT) {
-              if((this.suggestions.length-1) > i) {
-                this.requestedSuggestionId = this.suggestions[i+1].id
+            if (action === this.movingAction.NEXT) {
+              if (this.suggestions.length - 1 > i) {
+                this.requestedSuggestionId = this.suggestions[i + 1].id;
                 break;
               }
             }
@@ -286,16 +284,18 @@ export default {
     },
     checkVisibilityOfGoingNextOrPrevious() {
       if (this.suggestionId && this.suggestions && this.suggestions.length > 0) {
-        const element = this.suggestions.find(suggestion => suggestion.id === parseInt(this.suggestionId));
+        const element = this.suggestions.find(
+          suggestion => suggestion.id === parseInt(this.suggestionId)
+        );
         const index = this.suggestions.indexOf(element);
 
         if (index === 0) {
           this.noPreviousSuggestions = true;
-        }
-        else {
+        } else {
           this.noPreviousSuggestions = false;
         }
-        if (this.suggestions.length-1 === index) {
+
+        if (this.suggestions.length - 1 === index) {
           this.noNextSuggestions = true;
         } else {
           this.noNextSuggestions = false;

@@ -47,7 +47,7 @@ export default {
     IconGithub,
     IconGoogle
   },
-  data () {
+  data() {
     return {
       baseUrl: process.env.BASE_URL,
       showOwnCredentialLogin: false,
