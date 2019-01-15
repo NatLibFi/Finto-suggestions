@@ -13,10 +13,14 @@
       </div>
       <div class="meeting-arrow-controls">
         <div class="control">
-          « Edellinen<span> käsite</span>
+          <div v-if="!noPreviousSuggestions" @click="goToPreviousSuggestion()">
+            « Edellinen<span> käsite</span>
+          </div>
         </div>
         <div class="control">
-          Seuraava <span>käsite</span> »
+          <div v-if="!noNextSuggestions" @click="goToNextSuggestion()">
+            Seuraava <span>käsite</span> »
+          </div>
         </div>
       </div>
     </div>
@@ -34,10 +38,10 @@
           </div>
           <div class="tags">
             <span
-              v-if="suggestion.suggestion_type === suggestionTypes.NEW"
+              v-if="suggestion.suggestion_type === suggestionType.NEW"
               class="tag type-new">{{ suggestionTypeToString[suggestion.suggestion_type] }}</span>
             <span
-              v-if="suggestion.suggestion_type === suggestionTypes.MODIFY"
+              v-if="suggestion.suggestion_type === suggestionType.MODIFY"
               class="tag type-modify">{{ suggestionTypeToString[suggestion.suggestion_type] }}</span>
             <span
               v-if="suggestion.tags && suggestion.tags.length > 0">
@@ -79,7 +83,9 @@
         :userId="userId"
         :suggestionId="suggestionId"
         :meetingId="meetingId"
-        :events="events"/>
+        :events="events"
+        @moveToNextSuggestion="goToNextSuggestion"
+      />
     </div>
 
     <div v-if="events && events.length > 0">
@@ -107,7 +113,7 @@ import SvgIcon from '../icons/SvgIcon';
 import AddComment from './AddComment';
 import AssignUser from './AssignUser';
 
-import { suggestionType } from '../../utils/suggestionMappings.js';
+import { suggestionType, suggestionTypeToString } from '../../utils/suggestionMappings.js';
 import {
   suggestionGetters,
   suggestionActions
@@ -121,7 +127,6 @@ import {
 import { eventGetters, eventActions } from '../../store/modules/event/eventConsts.js';
 import { mapEventGetters, mapEventActions } from '../../store/modules/event/eventModule.js';
 
-import { suggestionTypeToString } from '../../utils/suggestionMappings.js';
 import { userActions, userGetters } from "../../store/modules/user/userConsts";
 import { mapUserActions, mapUserGetters } from '../../store/modules/user/userModule';
 
@@ -130,6 +135,7 @@ import { parse } from 'date-fns';
 
 import { mapAuthenticatedUserGetters } from '../../store/modules/authenticatedUser/authenticatedUserModule.js';
 import { authenticatedUserGetters } from '../../store/modules/authenticatedUser/authenticatedUserConsts.js';
+import { comparerDesc } from '../../utils/sortingHelper';
 
 import { userRoles } from '../../utils/userHelpers';
 
@@ -155,23 +161,24 @@ export default {
       required: false
     }
   },
-  data() {
-    return {
-      // eslint-disable-next-line
-      userId: this.$cookies.get('logged_user_id'),
-      suggestionTypeToString,
-      dateTimeFormatLabel,
-      userName: '',
-      suggestionTypes: {
-        NEW: suggestionType.NEW,
-        MODIFY: suggestionType.MODIFY
-      },
-      userRoles
-    }
-  },
+  data: () => ({
+    suggestionTypeToString,
+    dateTimeFormatLabel,
+    userName: '',
+    suggestionType,
+    requestedSuggestionId: null,
+    noNextSuggestions: false,
+    noPreviousSuggestions: false,
+    movingAction: {
+      NEXT: 'next',
+      PREVIOUS: 'previous'
+	  },
+	  userRoles
+  }),
   computed: {
     ...mapSuggestionGetters({
-      suggestion: suggestionGetters.GET_SUGGESTION
+      suggestion: suggestionGetters.GET_SUGGESTION,
+      suggestions: suggestionGetters.GET_SUGGESTIONS
     }),
     ...mapEventGetters({
       events: eventGetters.GET_EVENTS
@@ -180,7 +187,8 @@ export default {
       user: userGetters.GET_USER
     }),
     ...mapAuthenticatedUserGetters({
-      isAuthenticated: authenticatedUserGetters.GET_IS_AUTHENTICATED,
+      isAuthenticated: authenticatedUserGetters.GET_IS_AUTHENTICATED
+      userId: authenticatedUserGetters.GET_USER_ID,
       role: authenticatedUserGetters.GET_USER_ROLE
     })
   },
@@ -188,10 +196,13 @@ export default {
     await this.getSuggestionById(parseInt(this.suggestionId));
     await this.getEventsBySuggestionId(parseInt(this.suggestionId));
     await this.getUserName();
+    await this.getSuggestionsByMeetingId(this.meetingId);
+    this.checkVisibilityOfGoingNextOrPrevious();
   },
   methods: {
     ...mapSuggestionActions({
-      getSuggestionById: suggestionActions.GET_SUGGESTION_BY_ID
+      getSuggestionById: suggestionActions.GET_SUGGESTION_BY_ID,
+      getSuggestionsByMeetingId: suggestionActions.GET_SUGGESTIONS_BY_MEETING_ID
     }),
     ...mapEventActions({
       getEventsBySuggestionId: eventActions.GET_EVENTS_BY_SUGGESTION_ID
@@ -226,11 +237,79 @@ export default {
       } else {
         this.userName = '';
       }
+    },
+    goToPreviousSuggestion() {
+      this.getNexUsableSuggestionId(this.movingAction.PREVIOUS);
+      if(this.requestedSuggestionId) {
+        this.$router.push({
+          name: 'meeting-suggestion',
+          params: {
+            suggestionId: this.requestedSuggestionId,
+            suggestion: this.suggestion,
+            meetingId: this.meetingId
+          }
+        });
+      }
+    },
+    goToNextSuggestion() {
+      this.getNexUsableSuggestionId(this.movingAction.NEXT);
+      if(this.requestedSuggestionId) {
+        this.$router.push({
+          name: 'meeting-suggestion',
+          params: {
+            suggestionId: this.requestedSuggestionId,
+            suggestion: this.suggestion,
+            meetingId: this.meetingId
+          }
+        });
+      }
+    },
+    getNexUsableSuggestionId(action) {
+      if(this.suggestions && this.suggestions.length > 0) {
+        for(let i = 0; this.suggestions.length > i; i++) {
+          if(this.suggestions[i].id === parseInt(this.suggestionId)) {
+            if (action === this.movingAction.PREVIOUS) {
+              if(this.suggestions.length > 1 && i > 0) {
+                this.requestedSuggestionId = this.suggestions[i-1].id;
+                break;
+              }
+            }
+            if(action === this.movingAction.NEXT) {
+              if((this.suggestions.length-1) > i) {
+                this.requestedSuggestionId = this.suggestions[i+1].id
+                break;
+              }
+            }
+          }
+        }
+      }
+    },
+    checkVisibilityOfGoingNextOrPrevious() {
+      if (this.suggestionId && this.suggestions && this.suggestions.length > 0) {
+        const element = this.suggestions.find(suggestion => suggestion.id === parseInt(this.suggestionId));
+        const index = this.suggestions.indexOf(element);
+
+        if (index === 0) {
+          this.noPreviousSuggestions = true;
+        }
+        else {
+          this.noPreviousSuggestions = false;
+        }
+        if (this.suggestions.length-1 === index) {
+          this.noNextSuggestions = true;
+        } else {
+          this.noNextSuggestions = false;
+        }
+      }
     }
   },
   watch: {
     async suggestion() {
       await this.getUserName();
+    },
+    async suggestionId() {
+      await this.getSuggestionById(this.suggestionId);
+      this.checkVisibilityOfGoingNextOrPrevious();
     }
   }
 };
