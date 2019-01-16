@@ -13,5 +13,7 @@ export const tagMutations = {
 };
 
 export const tagActions = {
-  GET_TAGS: 'getTags'
+  GET_TAGS: 'getTags',
+  ADD_TAG_TO_SUGGESTION: 'addTagToSuggestion',
+  REMOVE_TAG_FROM_SUGGESTION: 'removeTagFromSuggestion'
 };

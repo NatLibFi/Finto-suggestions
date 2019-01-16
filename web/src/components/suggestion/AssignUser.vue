@@ -1,6 +1,6 @@
 <template>
   <div class="assign-user">
-    <button v-on:click="toggleSearch">
+    <button @click="toggleSearch">
         <svg-icon icon-name='add-person'><icon-add-person /></svg-icon>
     </button>
     <div class="dropdown-content" id="users-list" v-show="searchOpen" v-on:mouseleave="searchOpen = false">
@@ -35,6 +35,14 @@ export default {
       required: true
     }
   },
+  data() {
+    return {
+      userCache: [],
+      searchOpen: false,
+      searchQuery: '',
+      userNameInitials
+    }
+  },
   computed: {
     ...mapUserGetters({ users: userGetters.GET_USERS })
   },
@@ -55,14 +63,6 @@ export default {
     // If "admin" in user.roles:
     await this.getUsers();
     this.userCache = this.users;
-  },
-  data() {
-    return {
-      userCache: [],
-      searchOpen: false,
-      searchQuery: '',
-      userNameInitials
-    }
   }
   };
 </script>

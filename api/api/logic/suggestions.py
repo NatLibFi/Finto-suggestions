@@ -145,13 +145,15 @@ def add_tags_to_suggestion(suggestion_id: int) -> str:
     payload = connexion.request.json
 
     suggestion = Suggestion.query.get(suggestion_id)
+    # Example:
+    # { tags: [ 'Tag_1', 'Tag_2', 'Tag_3' ] }
     for label in [label.upper() for label in payload.get('tags')]:
         tag = _get_or_create_tag(label)
         suggestion.tags.append(tag)
 
     db.session.commit()
 
-    return create_response(suggestion.as_dict(), 200)
+    return create_response(suggestion.as_dict(), 201)
 
 
 @admin_only
@@ -170,13 +172,15 @@ def remove_tags_from_suggestion(suggestion_id: int) -> str:
     tag_labels_upper = [label.upper() for label in payload.get('tags')]
     tags = db.session.query(Tag).filter(Tag.label.in_(tag_labels_upper)).all()
 
+    # Example:
+    # { tags: [ 'Tag_1', 'Tag_2', 'Tag_3' ] }
     for tag in tags:
         if tag in suggestion.tags:
             suggestion.tags.remove(tag)
 
     db.session.commit()
 
-    return create_response({}, 204)
+    return { 'code': 202 }, 202
 
 
 @admin_only

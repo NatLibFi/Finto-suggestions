@@ -54,18 +54,10 @@
             </span>
           </div>
         </div>
-        <div v-if="isAuthenticated && role === userRoles.ADMIN" class="suggestion-header-buttons">
+        <div class="suggestion-header-buttons" v-if="isAuthenticated && role === userRoles.ADMIN">
           <assign-user :suggestion="suggestion" class="icon-button" />
+          <tag-selector :suggestion="suggestion" />
           <svg-icon icon-name="more" class="icon-button"><icon-more /></svg-icon>
-        </div>
-        <div class="suggestion-header-buttons">
-          <tag-selector :showTagSelector="openTagSelector" />
-           <span @click="handleOpenTagSelector">
-            <svg-icon icon-name="tag">
-            <icon-tag />
-          </svg-icon>
-          </span>
-          <svg-icon icon-name="more"><icon-more /></svg-icon>
         </div>
       </div>
 
@@ -146,7 +138,6 @@ import { authenticatedUserGetters } from '../../store/modules/authenticatedUser/
 
 import { userRoles } from '../../utils/userHelpers';
 
-import IconTag from '../icons/IconTag';
 import TagSelector from '../tag/TagSelector';
 
 export default {
@@ -159,7 +150,8 @@ export default {
     IconMore,
     SvgIcon,
     AddComment,
-    AssignUser
+    AssignUser,
+    TagSelector
   },
   props: {
     suggestionId: {
@@ -210,7 +202,6 @@ export default {
     if (this.meetingId) {
       await this.getSuggestionsByMeetingId(this.meetingId);
     }
-    
     this.checkVisibilityOfGoingNextOrPrevious();
   },
   methods: {
@@ -323,6 +314,7 @@ export default {
       this.openTagSelector
         ? this.openTagSelector = false
         : this.openTagSelector = true;
+    }
   },
   watch: {
     async suggestion() {
@@ -431,7 +423,7 @@ h1.suggestion-title {
   right: 0px;
   bottom: 0px;
   display: inline-block;
-  width: 20%;
+  width: 30%;
   height: 100px;
   text-align: right;
 }

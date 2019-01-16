@@ -1,4 +1,4 @@
-import { get, put } from '../utils';
+import { get, put, post, del } from '../utils';
 import { suggestionStateStatus } from '../../utils/suggestionMappings';
 import { asciiUriEncoding } from '../helper';
 
@@ -22,5 +22,9 @@ export default {
     // eslint-disable-next-line prettier/prettier
     get({ resource: `/suggestions?sort=${sortValue}&filters=meeting_id${asciiUriEncoding.VALUE_OF_PARAM}${meetingId}` }),
   updateSuggestionStatus: (suggestionId, status) =>
-    put({ resource: `/suggestions/${suggestionId}/status/${status}` })
+    put({ resource: `/suggestions/${suggestionId}/status/${status}` }),
+  addTagToSuggestion: (suggestionId, tag) =>
+    post({ resource: `/suggestions/${suggestionId}/tags`, data: { tags: [tag] } }),
+  removeTagFromSuggestion: (suggestionId, tag) =>
+    del({ resource: `/suggestions/${suggestionId}/tags`, data: { tags: [tag] } })
 };

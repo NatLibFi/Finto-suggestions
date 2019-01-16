@@ -171,7 +171,7 @@ paths:
           schema:
             $ref: '#/definitions/TagListParameterObject'
       responses:
-        '204':
+        "202":
           description: List of deleted tags
   /suggestions/{suggestion_id}/assign/{user_id}:
     put:
