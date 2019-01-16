@@ -1,24 +1,24 @@
 <template>
-<div class="container">
+<div class="list-container">
   <suggestion-header
-    :openSuggestionCount="openCount ? openCount : 0"
-    :resolvedSuggestionCount="resolvedCount ? resolvedCount : 0"
-    @sortSuggestionListBy="sortSuggestionList"
+    :openSuggestionCount="openCount || 0"
+    :resolvedSuggestionCount="resolvedCount || 0"
+    :meetingSort="meetingSort"
     class="header" />
   <ul class="list">
-    <suggestion-item
-      class="item"
-      v-for="item in paginated_items"
-      :key="item.id"
-      :orderNumber="item.id"
-      :title="item.preferred_label.fi"
-      :created="item.created"
-      :status="item.status"
-      :suggestionType="item.suggestion_type"
-      :tags="item.tags" />
+    <transition-group name="fade">
+      <suggestion-item
+        class="item"
+        v-for="item in paginated_items"
+        :key="item.id"
+        :suggestion="item"
+        :meetingId="meetingId"
+        />
+    </transition-group>
   </ul>
   <suggestion-list-pagination
-    :pageCount="calcultePageCountForPagination()"
+    v-if="calculatePageCountForPagination() > 1"
+    :pageCount="calculatePageCountForPagination()"
     @paginationPageChanged="paginationPageChanged"
   />
 </div>
@@ -41,7 +41,9 @@ import {
 } from '../../store/modules/suggestion/suggestionModule.js';
 
 import SuggestionListPagination from './SuggestionListPagination';
-import { filterType, suggestionType } from '../../utils/suggestionMappings';
+import { filterType, suggestionType, suggestionStateStatus } from '../../utils/suggestionMappings';
+import { sortingKeys } from '../../utils/sortingHelper.js';
+
 
 export default {
   components: {
@@ -49,60 +51,90 @@ export default {
     SuggestionItem,
     SuggestionListPagination
   },
+  props: {
+    // TODO: use meetingId to filter suggestions under this meeting for Meeting's Suggestion list
+    meetingId: {
+      type: [String, Number],
+      default: null
+    }
+  },
   data: () => ({
-    paginationMaxCount: 10
+    paginationMaxCount: 10,
+    openCount: 0,
+    resolvedCount: 0,
+    paginated_items: [],
+    meetingSort: false
   }),
   computed: {
     ...mapSuggestionGetters({
       items: suggestionGetters.GET_SUGGESTIONS,
-      openCount: suggestionGetters.GET_OPEN_SUGGESTIONS_COUNT,
-      resolvedCount: suggestionGetters.GET_RESOLVED_SUGGESTIONS_COUNT,
-      searchQuery: suggestionGetters.GET_SEARCH_QUERY,
       filters: suggestionGetters.GET_FILTERS,
-      paginated_items: suggestionGetters.GET_PAGINATION_SUGGESTIONS
+      suggestionsSelectedSort: suggestionGetters.GET_SUGGESTIONS_SELECTED_SORT,
+      meetingSuggestionsSelectedSort: suggestionGetters.GET_MEETING_SUGGESTIONS_SELECTED_SORT
     })
   },
   async created() {
-    await this.getSuggestions();
-    await this.getOpenSuggestionCount();
-    await this.getResolvedSuggestionCount();
-    this.paginationPageChanged();
+    this.meetingSort = this.meetingId && parseInt(this.meetingId) > 0 ? true  : false;
+    await this.getSuggestionsSelectedSortKey();
+    await this.getMeetingsSuggestionsSelectedSortKey();
+    await this.handleSuggestionFetching();
   },
   methods: {
     ...mapSuggestionActions({
       getSuggestions: suggestionActions.GET_SUGGESTIONS,
-      getOpenSuggestionCount: suggestionActions.GET_OPEN_SUGGESTIONS,
-      getResolvedSuggestionCount: suggestionActions.GET_RESOLVED_SUGGESTIONS,
-      getSortedSuggestions: suggestionActions.GET_SORTED_SUGGESTIONS
+      getSortedSuggestions: suggestionActions.GET_SORTED_SUGGESTIONS,
+      getSuggestionsSelectedSortKey: suggestionActions.GET_SUGGESTIONS_SELECTED_SORT,
+      getSuggestionsByMeetingId: suggestionActions.GET_SUGGESTIONS_BY_MEETING_ID,
+      getSortedSuggestionsByMeetingId: suggestionActions.GET_SORTED_SUGGESTIONS_BY_MEETING_ID,
+      getMeetingsSuggestionsSelectedSortKey: suggestionActions.GET_MEETING_SUGGESTIONS_SELECTED_SORT
     }),
-    ...mapSuggestionMutations({
-      setPaginatedSuggestions: suggestionMutations.SET_PAGINATION_SUGGESTIONS,
-      setFilteredSuggestions: suggestionMutations.SET_SUGGESTIONS
-    }),
-    async sortSuggestionList(selectedSorting) {
-      if (selectedSorting && selectedSorting !== '') {
-        await this.getSortedSuggestions(selectedSorting);
+    async handleSuggestionFetching() {
+      if(this.meetingId && parseInt(this.meetingId) > 0) {
+        await this.fetchAndSortMeetingSuggestions();
       } else {
-        await this.getSuggestions();
+        await this.fetchAndSortAllSuggestions();
+      }
+      await this.paginationPageChanged();
+    },
+    async fetchAndSortAllSuggestions() {
+      await this.getSuggestionsSelectedSortKey();
+      if (this.suggestionsSelectedSort && this.suggestionsSelectedSort !== '') {
+        await this.getSortedSuggestions(this.suggestionsSelectedSort);
+      } else {
+        await this.getSortedSuggestions(sortingKeys.NEWEST_FIRST);
+      }
+    },
+    async fetchAndSortMeetingSuggestions() {
+      await this.getMeetingsSuggestionsSelectedSortKey();
+      if (this.meetingSuggestionsSelectedSort && this.meetingSuggestionsSelectedSort !== '') {
+        await this.getSortedSuggestionsByMeetingId({ meetingId: this.meetingId, sortValue: this.meetingSuggestionsSelectedSort });
+      } else {
+        await this.getSuggestionsByMeetingId(parseInt(this.meetingId));
       }
       this.paginationPageChanged();
     },
     getPaginationStaringIndex(pageNumber) {
-      return pageNumber > 1 ? (this.paginationMaxCount * pageNumber) - this.paginationMaxCount : 0;
+      return pageNumber > 1 ? this.paginationMaxCount * pageNumber - this.paginationMaxCount : 0;
     },
     getPaginationEndingIndex(pageNumber) {
-      const endIndex = (this.paginationMaxCount * pageNumber)
+      const endIndex = this.paginationMaxCount * pageNumber;
       return endIndex > this.items.length ? this.items.length : endIndex;
     },
-    paginationPageChanged(pageNumber = 1) {
-      const index = this.getPaginationStaringIndex(pageNumber);
-      const endindex = this.getPaginationEndingIndex(pageNumber);
-      const items = this.items;
-      this.setPaginatedSuggestions(items.slice(index, endindex));
+    async paginationPageChanged(pageNumber = 1, items = null) {
+      const start = this.getPaginationStaringIndex(pageNumber);
+      const end = this.getPaginationEndingIndex(pageNumber);
+      const paginatedItems = items ? items : this.items;
+      this.paginated_items = paginatedItems && paginatedItems.length > 0 ? paginatedItems.slice(start, end) : []
+      this.calculateOpenAndResolvedSuggestionCounts();
     },
-    calcultePageCountForPagination() {
-      const pageCount = Math.ceil(this.items.length / this.paginationMaxCount);
-      return pageCount;
+    calculatePageCountForPagination() {
+      return Math.ceil(this.items.length / this.paginationMaxCount);
+    },
+    calculateOpenAndResolvedSuggestionCounts() {
+      if (this.items && this.items.length > 0) {
+        this.openCount = this.items.filter(i => i.status === null).length;
+        this.resolvedCount = this.items.filter(i => i.status !== null).length;
+      }
     }
   },
   watch: {
@@ -110,11 +142,17 @@ export default {
       if (this.filters.length > 0) {
         let items = this.items;
         this.filters.forEach(filter => {
-          switch(filter.type) {
+          switch (filter.type) {
             case filterType.STATUS:
               items = items.filter(i => i.status === filter.value);
               break;
             case filterType.TAG:
+              items = items.filter(i => {
+                let hasFilterTag = i.tags.findIndex(tag => {
+                  return tag.label == filter.value;
+                });
+                return hasFilterTag != -1;
+              });
               break;
             case filterType.TYPE:
               items = items.filter(i => i.suggestion_type === filter.value);
@@ -123,15 +161,22 @@ export default {
               items = items.filter(i => i.meeting_id === filter.value);
               break;
             case filterType.SEARCH:
-              items = items.filter(i => i.preferred_label && i.preferred_label.fi.startsWith(filter.value));
+              items = items.filter(
+                i => i.preferred_label && i.preferred_label.fi.startsWith(filter.value)
+              );
               break;
           }
         });
-        this.setFilteredSuggestions(items);
+        await this.paginationPageChanged(1, items);
       } else {
-        await this.getSuggestions();
+        await this.handleSuggestionFetching();
       }
-      this.paginationPageChanged();
+    },
+    async suggestionsSelectedSort() {
+      await this.handleSuggestionFetching();
+    },
+    async meetingSuggestionsSelectedSort() {
+      await this.handleSuggestionFetching();
     }
   }
 };
@@ -139,7 +184,7 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-.container {
+.list-container {
   margin-bottom: 40px;
 }
 
@@ -151,9 +196,9 @@ ul {
   text-align: left;
   background-color: #ffffff;
   border: 2px solid #f5f5f5;
-  border-bottom: none;
+  border-top: none;
   width: 60vw;
-  margin: 20px 20vw 0;
+  margin: 0 20vw 20px;
   padding-left: 0; /* reset inital padding for ul tags */
 }
 
@@ -167,5 +212,12 @@ ul {
     width: 80vw;
     margin: 0 10vw 20px;
   }
+}
+
+.fade-enter-active, .fade-leave-active {
+  transition: opacity 3s;
+}
+.fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
+  opacity: 0.75;
 }
 </style>

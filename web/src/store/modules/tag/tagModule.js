@@ -9,7 +9,7 @@ export const mapTagActions = actions => mapActions(namespace, actions);
 export default {
   namespaced: true,
   state: {
-    items: []
+    [storeStateNames.ITEMS]: []
   },
   getters: {
     [tagGetters.GET_TAGS]: state => state[storeStateNames.ITEMS]
@@ -21,8 +21,10 @@ export default {
   },
   actions: {
     async [tagActions.GET_TAGS]({ commit }) {
-      const result = await api.tags.getTags();
-      commit(tagMutations.SET_TAGS, result.data);
+      const result = await api.tag.getTags();
+      if (result && result.code == 200) {
+        commit(tagMutations.SET_TAGS, result.data);
+      }
     }
   }
 };

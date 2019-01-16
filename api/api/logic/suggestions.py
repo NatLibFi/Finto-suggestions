@@ -2,11 +2,12 @@ import connexion
 from sqlalchemy import or_
 from sqlalchemy.types import Unicode
 from ..authentication import admin_only
-from .validators import suggestion_parameter_validator, suggestion_id_validator
+from .validators import suggestion_parameter_validator, suggestion_id_validator, _error_messagify
 from .common import (create_response, get_one_or_404, get_all_or_404_custom,
                      create_or_404, delete_or_404, patch_or_404, update_or_404)
 from .utils import SUGGESTION_FILTER_FUNCTIONS, SUGGESTION_SORT_FUNCTIONS
-from ..models import db, Suggestion, Tag
+from ..models import db, Suggestion, Tag, User
+
 
 
 def get_suggestions(limit: int = None, offset: int = None, filters: str = None, search: str = None, sort: str = 'DEFAULT') -> str:
@@ -94,7 +95,6 @@ def put_suggestion(suggestion_id: int) -> str:
 
     :returns: the created suggestion as json
     """
-
     return update_or_404(Suggestion, suggestion_id, connexion.request.json)
 
 
@@ -177,3 +177,61 @@ def remove_tags_from_suggestion(suggestion_id: int) -> str:
     db.session.commit()
 
     return create_response({}, 204)
+
+
+@admin_only
+@suggestion_id_validator
+def assign_to_user(suggestion_id: int, user_id: int) -> str:
+    user = User.query.get(user_id)
+    if not user:
+        return create_response({}, 404, _error_messagify(User))
+    suggestion = Suggestion.query.get(suggestion_id)
+    suggestion.user_id = user_id
+    db.session.add(suggestion)
+    db.session.commit()
+    return create_response(suggestion.as_dict(), 202)
+
+
+@admin_only
+@suggestion_id_validator
+def unassign(suggestion_id: int) -> str:
+    suggestion = Suggestion.query.get(suggestion_id)
+    suggestion.user_id = None
+    db.session.add(suggestion)
+    db.session.commit()
+    return create_response(suggestion.as_dict(), 202)
+
+
+def get_meeting_suggestions(meeting_id: int) -> str:
+    """
+    Gets suggestions by meeting id
+    :params meeting_id
+    :returns suggestions or error
+    """
+
+    if meeting_id > 0:
+        meeting_suggestions = Suggestion.query.filter_by(meeting_id=meeting_id).all()
+        serialized_objects = [o.as_dict() for o in meeting_suggestions]
+        return { 'data': serialized_objects, 'code': 200 }, 200
+
+    return { 'error': 'meeting_id was not valid', 'code': 400}, 400
+
+
+@admin_only
+@suggestion_id_validator
+def put_update_suggestion_status(suggestion_id: int, status: str) -> str:
+    """
+    Updates suggestion status info (mainly to ACCEPTED or REJECTED)
+    """
+
+    if suggestion_id > 0 and len(status) > 0:
+        try:
+            suggestion = Suggestion.query.get(suggestion_id)
+            suggestion.status = status
+            db.session.add(suggestion)
+            db.session.commit()
+            return { 'code': 202 }, 202
+        except Exception as ex:
+            db.session.rollback()
+            print(str(ex))
+            return { 'error': str(ex) }, 400

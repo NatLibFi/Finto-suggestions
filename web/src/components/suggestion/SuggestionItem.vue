@@ -1,41 +1,45 @@
 <template>
-  <li @click="goToSuggestion" class="item">
+  <li @click="goToSuggestion()" class="item">
     <div class="item-summary">
       <div class="title">
         <p class="title-row">
-          <span class="item-name">{{title}}</span>
-          <span class="status tag" v-if="status !== 'DEFAULT'">{{ status }}</span>
+          <span class="item-name">{{ suggestion.preferred_label.fi }}</span>
           <span
-            :class="[suggestionType == 'MODIFY'
-              ? 'type-modify'
-              : 'type-new',
-            'tag']">{{ suggestionType }}
+            :class="[suggestionTypeToStyleClass[suggestion.suggestion_type], 'tag']">
+            {{ suggestionTypeToString[suggestion.suggestion_type] }}
           </span>
-          <span v-if="tags.length > 0">
-            <span class="tags tag" v-for="tag in tags" :key="tag.label">{{tag.label}}</span>
+          <span v-if="suggestion.tags.length > 0">
+            <span class="tags tag" v-for="tag in suggestion.tags" :key="tag.label">
+              {{ tag.label}}
+            </span>
           </span>
         </p>
       </div>
       <div class="label">
         <p>
-          <strong>#{{ orderNumber }}</strong>
-          Lähetetty {{ buildLabel() }}
+          <strong>#{{ suggestion.id }}</strong>
+          {{ dateTimeFormatLabel(suggestion.created) }} –
+          <span>
+            <a @click.stop="goToMeeting(suggestion.meeting_id)">
+              Kokous {{ suggestion.meeting_id }}
+            </a>
+          </span>
         </p>
       </div>
     </div>
-    <div class="item-comments">
+    <div class="item-comments" v-if="suggestion.events.filter((event) => event.event_type === eventTypes.COMMENT).length > 0">
       <svg-icon icon-name="comments"><icon-comments /></svg-icon>
-      <span>2</span>
+      <span>{{ suggestion.events.filter((event) => event.event_type === eventTypes.COMMENT).length }}</span>
     </div>
   </li>
 </template>
 
 <script>
-import { differenceInDays, parse } from 'date-fns';
-
 import SvgIcon from '../icons/SvgIcon';
 import IconComments from '../icons/IconComments';
-import { suggestionStateStatus, suggestionType } from '../../utils/suggestionMappings.js';
+import { suggestionTypeToStyleClass, suggestionTypeToString } from '../../utils/suggestionMappings';
+import { dateTimeFormatLabel } from '../../utils/dateHelper';
+import { eventTypes } from '../../utils/eventMappings';
 
 export default {
   components: {
@@ -43,26 +47,51 @@ export default {
     IconComments
   },
   props: {
-    orderNumber: Number,
-    title: String,
-    created: String,
-    status: String,
-    suggestionType: String,
-    tags: Array
+    suggestion: {
+      type: Object,
+      required: true
+    },
+    meetingId: {
+      type: [Number, String],
+      default: null
+    }
   },
+  data: () => ({
+    suggestionTypeToStyleClass,
+    suggestionTypeToString,
+    eventTypes,
+    dateTimeFormatLabel
+  }),
   methods: {
-    getDayDifference() {
-      return differenceInDays(parse(new Date()), parse(this.created));
+    goToSuggestion() {
+      if (!this.meetingId) {
+        console.log('asdasd', this.meetingId);
+        this.$router.push({
+          name: 'suggestion',
+          params: {
+            suggestionId: this.suggestion.id,
+            suggestion: this.suggestion
+          }
+        });
+      } else {
+        this.$router.push({
+          name: 'meeting-suggestion',
+          params: {
+            suggestionId: this.suggestion.id,
+            suggestion: this.suggestion,
+            meetingId: this.meetingId
+          }
+        });
+      }
     },
-    buildLabel() {
-      const whenSended = this.getDayDifference();
-      return whenSended > 0 ? `${whenSended} päivää sitten` : 'tänään';
-    },
-    goToSuggestion: function() {
+    goToMeeting(id) {
+      console.log(id);
       this.$router.push({
-        name: 'suggestion',
-        params: { suggestionID: this.orderNumber }
-      });
+        name: 'meeting-suggestion-list',
+        params: {
+          meetingId: id
+        }
+      })
     }
   }
 };
@@ -80,6 +109,10 @@ li.item {
   cursor: pointer;
   cursor: hand;
   overflow: hidden;
+  transition: background-color, 0.1s;
+}
+li.item:hover {
+  background-color: #f3fbfa;
 }
 .item-summary {
   padding: 10px 30px 10px;
@@ -91,31 +124,30 @@ li.item {
   margin: 5px;
 }
 .title-row {
-  line-height: 26px;
+  line-height: 20px;
 }
 .item-name {
-  font-size: 19px;
+  font-size: 16px;
   margin-right: 8px;
   vertical-align: middle;
 }
 .tag {
-  font-weight: 600;
   text-transform: lowercase;
-  font-size: 14px;
+  font-size: 12px;
+  font-weight: 900;
   padding: 0 6px;
   border-radius: 3px;
-  color: #ffffff;
   margin-right: 10px;
+  margin: 4px 4px 0 0;
+  display: inline-block;
+  color: #ffffff;
 }
-
 .tag:last-of-type {
   margin-right: 0;
 }
-
-.status {
-  background-color: #58ba81;
-  color: white;
-  border: 2px solid #58ba81;
+.tags {
+  background-color: #4794a2;
+  border: 2px solid #4794a2;
 }
 .type-new {
   background-color: #1137ff;
@@ -124,11 +156,6 @@ li.item {
 .type-modify {
   background-color: #ff8111;
   border: 2px solid #ff8111;
-}
-.tags {
-  color: #ac63ef;
-  background-color: white;
-  border: 2px solid #ac63ef;
 }
 .label {
   font-size: smaller;

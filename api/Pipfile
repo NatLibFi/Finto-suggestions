@@ -1,12 +1,9 @@
 [[source]]
-
 url = "https://pypi.python.org/simple"
 verify_ssl = true
 name = "pypi"
 
-
 [packages]
-
 gunicorn = "*"
 connexion = "*"
 flask-sqlalchemy = "*"
@@ -16,25 +13,22 @@ spec-synthase = "*"
 passlib = "*"
 flask-jwt-extended = "*"
 flask-cors = "*"
-
+pgcli = "*"
 
 [dev-packages]
-
 pytest = "*"
-
+pylint = "*"
 
 [requires]
-
-python_version = "3.6"
-
+python_version = "3."
 
 [scripts]
-
 start = "docker-compose up"
 psql = "docker-compose exec db psql devdb -Udevuser"
 shell = "docker-compose exec api flask shell"
 prune = "docker-compose exec api flask prune"
 test = "docker-compose exec api pytest -s tests/"
+testdata-import = "docker-compose exec api python -m scripts.test_data"
 create-admin = "docker-compose exec api flask create_admin"
 start-db = "docker-compose up db"
 migrate-db = "docker-compose exec api flask db migrate"

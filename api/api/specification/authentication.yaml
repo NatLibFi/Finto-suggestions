@@ -1,5 +1,4 @@
 paths:
-
   /login:
     post:
       operationId: api.logic.authentication.login
@@ -9,12 +8,12 @@ paths:
           description: Authentication object (email/password)
           required: true
           schema:
-            $ref: '#/definitions/LoginRequest'
+            $ref: "#/definitions/LoginRequest"
       responses:
         "200":
           description:  JWT Token
           schema:
-            $ref: '#/definitions/Token'
+            $ref: '#/definitions/LoginResponse'
 
   /refresh:
     post:
@@ -24,7 +23,7 @@ paths:
         "200":
           description:  JWT Token
           schema:
-            $ref: '#/definitions/Token'
+            $ref: "#/definitions/Token"
 
   /logout:
     post:
@@ -32,12 +31,36 @@ paths:
       parameters:
         - name: body
           in: body
-          description: "Authentication tokens: access_token, refresh_token"
+          description: "Log out user by authentication tokens: access_token, refresh_token"
           required: true
           schema:
-            $ref: '#/definitions/Token'
+            $ref: "#/definitions/Token"
+      responses:
+        "200":
+          description: JWT Token
+          schema:
+            $ref: "#/definitions/LogoutResponse"
+
+  /revokeAuthentication:
+    post:
+      operationId: api.logic.authentication.revokeAuthentication
+      parameters:
+        - name: body
+          in: body
+          description: "Log out user by user_id"
+          required: true
+          schema:
+            $ref: "#/definitions/Token"
       responses:
         "200":
           description:  JWT Token
           schema:
-            $ref: '#/definitions/LogoutResponse'
+            $ref: "#/definitions/LogoutResponse"
+
+  /auth/github:
+    post:
+      description: Callback method to handle Github oAuth2 authorization
+      operationId: api.logic.authentication.post_github
+      responses:
+        "200":
+          description: Response was the authorization success or not

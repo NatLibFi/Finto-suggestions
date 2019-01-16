@@ -14,6 +14,16 @@ definitions:
       - email
       - password
 
+  LoginResponse:
+    type: object
+    properties:
+      access_token:
+        type: string
+      refresh_token:
+        type: string
+      user_id:
+        type: number
+
   LogoutResponse:
     type: object
     properties:
@@ -86,6 +96,8 @@ definitions:
         $ref: "#/definitions/tags"
       id:
         type: number
+      user_id:
+        type: number
     required:
       - uri
       - preferred_label
@@ -121,6 +133,8 @@ definitions:
         $ref: "#/definitions/organization"
       meeting_id:
         type: number
+      user_id:
+        type: number
       tags:
         type: array
         items:
@@ -155,6 +169,8 @@ definitions:
       organization:
         $ref: "#/definitions/organization"
       meeting_id:
+        type: number
+      user_id:
         type: number
       tags:
         type: array

@@ -1,20 +1,31 @@
 import axios from 'axios';
+import { storeKeyNames } from '../store/modules/authenticatedUser/authenticatedUserConsts';
 
 const client = axios.create({
   baseURL: '/api',
   json: true
 });
 
-const execute = async (method, resource, data) => {
-  // inject the accessToken for each request
-  //   let accessToken = await Vue.prototype.$auth.getAccessToken();
-  let accessToken = process.env.ACCESS_TOKEN;
+const execute = async (method, resource, data, useRefreshToken) => {
+  // eslint-disable-next-line no-undef
+  const access_token = $cookies.get(storeKeyNames.ACCESS_TOKEN);
+  // eslint-disable-next-line no-undef
+  const refreshToken = $cookies.get(storeKeyNames.REFRESH_TOKEN);
+
+  let AuthHeaderValue;
+
+  if (useRefreshToken) {
+    AuthHeaderValue = refreshToken && refreshToken.length > 0 ? `Bearer ${refreshToken}` : '';
+  } else {
+    AuthHeaderValue = access_token && access_token.length > 0 ? `Bearer ${access_token}` : '';
+  }
+
   return client({
     method,
     url: resource,
     data: data,
     headers: {
-      Authorization: `Bearer ${accessToken}`
+      Authorization: AuthHeaderValue
     }
   })
     .then(req => {
@@ -28,3 +39,6 @@ const execute = async (method, resource, data) => {
 };
 
 export const get = async options => execute('get', options.resource, null);
+export const post = async options =>
+  execute('post', options.resource, options.data, options.useRefreshToken);
+export const put = async options => execute('put', options.resource, options.data);

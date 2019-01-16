@@ -2,35 +2,50 @@ export const namespace = 'suggestion';
 
 export const storeStateNames = {
   ITEMS: 'items',
-  OPEN_COUNT: 'openCount',
-  RESOLVED_COUNT: 'resolvedCount',
+  ITEM: 'item',
   SEARCH_QUERY: 'searchQuery',
   FILTERS: 'filters',
-  PAGINATED_ITEMS: 'paginated_items'
+  SUGGESTIONS_SELECTED_SORT: 'suggestionsSelectedSort',
+  MEETING_SUGGESTIONS_SELECTED_SORT: 'meetingSuggestionsSelectedSort'
+};
+
+export const sessionStorageKeyNames = {
+  SUGGESTIONS_SELECTED_SORT: 'suggestionsSelectedSort',
+  MEETING_SUGGESTIONS_SELECTED_SORT: 'meetingSuggestionsSelectedSort'
 };
 
 export const suggestionGetters = {
   GET_SUGGESTIONS: 'getSuggestions',
-  GET_OPEN_SUGGESTIONS_COUNT: 'getOpenSuggestionsCount',
-  GET_RESOLVED_SUGGESTIONS_COUNT: 'getResolvedSuggestionsCount',
+  GET_SUGGESTION: 'getSuggestion',
   GET_SEARCH_QUERY: 'getSearchQuery',
   GET_FILTERS: 'getFilters',
-  GET_PAGINATION_SUGGESTIONS: 'getPaginationSuggestions'
+  GET_SUGGESTIONS_SELECTED_SORT: 'getSuggestionsSelectedSort',
+  GET_MEETING_SUGGESTIONS_SELECTED_SORT: 'getMeetingSuggestionsSelectedSort'
 };
 
 export const suggestionMutations = {
   SET_SUGGESTIONS: 'setSuggestions',
-  SET_OPEN_SUGGESTIONS_COUNT: 'setOpenSuggestionCount',
-  SET_RESOLVED_SUGGESTIONS_COUNT: 'setResolvedSuggestionCount',
+  SET_SUGGESTION: 'setSuggestion',
   SET_SEARCH_QUERY: 'setSearchQuery',
   SET_FILTERS: 'setFilters',
-  SET_PAGINATION_SUGGESTIONS: 'setPaginationSuggestions'
+  SET_SUGGESTIONS_SELECTED_SORT: 'setSuggestionsSelectedSort',
+  SET_SUGGESTIONS_SELECTED_STORAGE_SORT: 'setSuggestionsSelectedStorageSort',
+  SET_MEETING_SUGGESTIONS_SELECTED_SORT: 'setMeetingSuggestionsSelectedSort',
+  SET_MEETING_SUGGESTIONS_SELECTED_STORAGE_SORT: 'setMeetingSuggestionsSelectedStorageSort'
 };
 
 export const suggestionActions = {
   GET_SUGGESTIONS: 'getSuggestions',
-  GET_OPEN_SUGGESTIONS: 'getOpenSuggestionCount',
-  GET_RESOLVED_SUGGESTIONS: 'getResolvedSuggestionCount',
   GET_SORTED_SUGGESTIONS: 'getSortedSuggestions',
-  SET_SEARCH_QUERY: 'setSearchQuery'
+  GET_SUGGESTION_BY_ID: 'getSuggestionById',
+  ASSIGN_SUGGESTION_TO_USER: 'assignSuggestionToUser',
+  UNASSIGN_SUGGESTION_FROM_USER: 'unassignSuggestionFromUser',
+  GET_SUGGESTIONS_SELECTED_SORT: 'getSuggestionsSelectedSort',
+  SET_SUGGESTIONS_SELECTED_SORT: 'setSuggestionsSelectedSort',
+  GET_SUGGESTIONS_BY_MEETING_ID: 'getSuggestionsByMeetingId',
+  GET_SORTED_SUGGESTIONS_BY_MEETING_ID: 'getSortedSuggestionsByMeetingId',
+  GET_MEETING_SUGGESTIONS_SELECTED_SORT: 'getMeetingSuggestionsSelectedSort',
+  SET_MEETING_SUGGESTIONS_SELECTED_SORT: 'setMeetingSuggestionsSelectedSort',
+  SET_SUGGESTION_ACCEPTED: 'setSuggestionAccpeted',
+  SET_SUGGESTION_REJECTED: 'setSuggestionRejected'
 };

@@ -1,0 +1,165 @@
+<template>
+  <div v-if="isAuthenticated" class="actions-container">
+    <add-comment v-if="events && events.length < 2" :userId="userId" :suggestionId="suggestionId" />
+    <div class="action-buttons">
+      <span class="button move-to-next-meeting">
+        Siirrä seuraavaan<span class="hidden-in-mobile"> kokoukseen</span>
+      </span>
+      <span class="button dismiss" @click="dismissSuggestion()">
+        Jätä ehdotukseksi
+      </span>
+      <span class="button approve" @click="approveSuggestion()">
+        Hyväksy ehdotus
+      </span>
+    </div>
+  </div>
+</template>
+
+<script>
+import AddComment from '../suggestion/AddComment';
+
+import { mapAuthenticatedUserGetters, mapAuthenticatedUserActions } from '../../store/modules/authenticatedUser/authenticatedUserModule.js';
+import { authenticatedUserGetters, authenticatedUserActions } from '../../store/modules/authenticatedUser/authenticatedUserConsts.js';
+import { mapSuggestionActions } from '../../store/modules/suggestion/suggestionModule';
+import { suggestionActions } from '../../store/modules/suggestion/suggestionConsts';
+import { suggestionStateStatus } from '../../utils//suggestionMappings';
+
+export default {
+  components: {
+    AddComment
+  },
+  props: {
+    userId: [String, Number],
+    suggestionId: {
+      type: [String, Number],
+      required: true
+    },
+    meetingId: {
+      type: [String, Number],
+      required: false
+    },
+    events: {
+      type: [Array, Object],
+      required: false
+    }
+  },
+  computed: {
+    ...mapAuthenticatedUserGetters({
+      isAuthenticated: authenticatedUserGetters.GET_IS_AUTHENTICATED
+    })
+  },
+  created() {
+    this.validateAuthentication();
+  },
+  methods: {
+    ...mapSuggestionActions({
+      setSuggestionAccepted: suggestionActions.SET_SUGGESTION_ACCEPTED,
+      setSuggestionRejected: suggestionActions.SET_SUGGESTION_REJECTED
+    }),
+    ...mapAuthenticatedUserActions({
+      validateAuthentication: authenticatedUserActions.VALIDATE_AUTHENTICATION,
+    }),
+    async dismissSuggestion() {
+      await this.setSuggestionRejected({ suggestionId: this.suggestionId, status: suggestionStateStatus.REJECTED });
+      this.$emit('moveToNextSuggestion');
+    },
+    async approveSuggestion() {
+      await this.setSuggestionAccepted({ suggestionId: this.suggestionId, status: suggestionStateStatus.ACCEPTED });
+      this.$emit('moveToNextSuggestion');
+    }
+  }
+};
+</script>
+
+<style scoped>
+.actions-container {
+  border: 2px solid #f5f5f5;
+  background-color: #ffffff;
+  border-top: none;
+}
+
+.action-buttons {
+  padding: 20px 40px 25px;
+  border-top: 1px solid #eeeeee;
+  display: flex;
+  justify-content: space-between;
+}
+
+.action-buttons .button {
+  display: inline-block;
+  padding: 6px 12px;
+  margin: 0;
+  font-weight: 600;
+  font-size: 13px;
+  border-radius: 2px;
+  cursor: pointer;
+  cursor: hand;
+}
+
+.action-buttons .move-to-next-meeting {
+  color: #06a798;
+  border: 3px solid #44bdb2;
+  margin-right: 12px;
+  transition: color, 0.1s;
+  transition: border, 0.1s;
+}
+
+.action-buttons .move-to-next-meeting:hover {
+  color: #44bdb2;
+  border: 3px solid #5bcdc3;
+}
+
+.action-buttons .dismiss {
+  color: #ffffff;
+  background-color: #394554;
+  border: 3px solid #394554;
+  transition: background-color, 0.1s;
+  transition: border, 0.1s;
+  margin: 0 12px;
+  margin-left: auto;
+}
+
+.action-buttons .dismiss:hover {
+  background-color: #525d6c;
+  border: 3px solid #525d6c;
+}
+
+.action-buttons .approve {
+  color: #ffffff;
+  background-color: #237bba;
+  border: 3px solid #237bba;
+  transition: background-color, 0.1s;
+  transition: border, 0.1s;
+}
+
+.action-buttons .approve:hover {
+  background-color: #3c90cd;
+  border: 3px solid #3c90cd;
+}
+
+@media (max-width: 700px) {
+  .action-buttons {
+    padding: 20px 20px 25px;
+    display: inline-block;
+  }
+  .hidden-in-mobile {
+    display: none;
+  }
+
+  .action-buttons .button {
+    text-align: center;
+    width: calc(100% - 40px);
+    margin-bottom: 8px;
+  }
+
+  .action-buttons .dismiss,
+  .action-buttons .move-to-next-meeting {
+    margin-left: 0;
+    margin-right: 0;
+  }
+
+  .button:last-of-type {
+    margin-bottom: 0;
+  }
+}
+</style>

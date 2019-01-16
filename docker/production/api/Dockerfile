@@ -1,6 +1,7 @@
-FROM python:3-alpine
+FROM python:3.7-alpine
 
 ENV PYTHONUNBUFFERED 1
+ENV TZ "Europe/Helsinki"
 
 COPY ./api /app
 WORKDIR /app
@@ -17,4 +18,4 @@ RUN pip install pipenv \
 
 EXPOSE 8050
 
-ENTRYPOINT ["gunicorn", "-w", "2", "-b", ":8050", "--reload", "--access-logfile", "-", "--error-logfile", "-", "wsgi:connexion_app"]
+ENTRYPOINT ["gunicorn", "--bind", ":8050", "--access-logfile", "-", "--error-logfile", "-", "wsgi:connexion_app"]

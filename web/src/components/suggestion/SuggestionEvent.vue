@@ -4,25 +4,29 @@
 
   <div class="event-container">
     <div class="event-header">
-      <div class="event-user-initials"></div>
+      <div class="event-user-initials">{{ userNameInitials }}</div>
       <div class="event-info">
         <p class="event-user">
           <span class="user-name">{{ userName }} </span>
           <span v-if="type == 'ACTION'">{{ action }}</span>
         </p>
-        <p class="date-sent">5 päivää sitten</p>
+        <p class="date-sent">{{ dateTimeFormatLabel(this.event.created) }}</p>
       </div>
     </div>
-
     <div v-if="type == 'COMMENT'" class="event-comment">
       <p>{{ event.text }}</p>
     </div>
   </div>
 </div>
-
 </template>
 
 <script>
+import { dateTimeFormatLabel } from '../../utils/dateHelper.js';
+
+import { mapUserGetters, mapUserActions } from '../../store/modules/user/userModule.js';
+import { userGetters, userActions } from '../../store/modules/user/userConsts.js';
+import { userNameInitials } from '../../utils/nameHelpers.js';
+
 export default {
   props: {
     event: {
@@ -34,11 +38,33 @@ export default {
       required: true
     }
   },
-  data: () => ({
-    userInitials: 'MP',
-    userName: 'Miki Pernu',
-    action: 'vaihtoi tyypiksi '
-  })
+  data() {
+    return {
+      dateTimeFormatLabel,
+      action: 'vaihtoi tyypiksi ',
+      userName: '',
+      userNameInitials: ''
+    }
+  },
+  async created() {
+    await this.getUser(this.event.user_id);
+    this.fetchUserNameAndInitials();
+  },
+  computed: {
+    ...mapUserGetters({
+      user: userGetters.GET_USER
+    })
+  },
+  methods: {
+    ...mapUserActions({
+      getUser: userActions.GET_USER
+    }),
+    fetchUserNameAndInitials() {
+      if (this.user) {
+        this.userNameInitials = userNameInitials(this.user.name);
+      }
+    }
+  }
 };
 </script>
 
@@ -90,6 +116,19 @@ div.event-header .event-info .user-name {
 
 div.event-header .event-info .date-sent {
   font-size: 14px;
+}
+
+.event-user-initials {
+  display: inline-block;
+  height: 35px;
+  width: 35px;
+  border-radius: 35px;
+  line-height: 46px;
+  text-align: center;
+  background-color: #804af2;
+  color: #727272;
+  font-size: 20px;
+  font-weight: 800;
 }
 
 div.event-comment {

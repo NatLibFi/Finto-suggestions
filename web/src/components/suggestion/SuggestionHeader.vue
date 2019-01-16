@@ -14,19 +14,27 @@
       :selectedIndex="selectedSortOptionIndex"
       :isOpened="isDropDownOpened"
       :dropDownOptions="dropDownOptions"
-      :selectedOptionsMapper="selectedOptionsMapper"
-      @sortSuggestionListBy="sortSuggestionList"
+      @setSelectedSort="setSelectedSort"
       @refreshSelectedIndex="selectedSortOptionIndex = $event"
       @closeDropDown="closeDropDown"/>
   </div>
 </template>
 
 <script>
-import { suggestionSortingKeys } from '../../utils/suggestionMappings.js';
+import { sortingKeys, getSelectedSortOptionIndex } from '../../utils/sortingHelper.js';
 
 import SortingDropDown from '../common/SortingDropDown';
 import SvgIcon from '../icons/SvgIcon';
 import IconTriangle from '../icons/IconTriangle';
+
+import {
+  mapSuggestionGetters,
+  mapSuggestionActions
+} from '../../store/modules/suggestion/suggestionModule.js';
+import {
+  suggestionGetters,
+  suggestionActions
+} from '../../store/modules/suggestion/suggestionConsts.js';
 
 export default {
   components: {
@@ -36,41 +44,73 @@ export default {
   },
   props: {
     openSuggestionCount: Number,
-    resolvedSuggestionCount: Number
+    resolvedSuggestionCount: Number,
+    meetingSort: Boolean
   },
   data: () => ({
-    // TODO: change the index to 0 after changing list order to NEWEST_FIRST
-    selectedSortOptionIndex: 1,
+    selectedSortOptionIndex: 0,
     isDropDownOpened: false,
     dropDownOptions: [
-      { label: 'Uusin ensin', value: 'NEWEST_FIRST' },
-      { label: 'Vanhin ensin', value: 'OLDEST_FIRST' },
-      { label: 'Eniten kommentoitu', value: 'MOST_COMMENTS' },
-      { label: 'Vähiten kommentoitu', value: 'LEAST_COMMENTS' },
-      { label: 'Viimeksi päivitetty', value: 'LAST_UPDATED' },
-      { label: 'Eniten reaktiota', value: 'MOST_REACTIONS' }
-    ],
-    selectedOptionsMapper: {
-      NEWEST_FIRST: suggestionSortingKeys.NEWEST_FIRST,
-      OLDEST_FIRST: suggestionSortingKeys.OLDEST_FIRST,
-      MOST_COMMENTS: suggestionSortingKeys.MOST_COMMENTS,
-      LEAST_COMMENTS: suggestionSortingKeys.LEAST_COMMENTS,
-      LAST_UPDATED: suggestionSortingKeys.LAST_UPDATED,
-      MOST_REACTIONS: suggestionSortingKeys.MOST_REACTIONS
-    }
+      { label: 'Uusin ensin', value: sortingKeys.NEWEST_FIRST },
+      { label: 'Vanhin ensin', value: sortingKeys.OLDEST_FIRST },
+      { label: 'Eniten kommentoitu', value: sortingKeys.MOST_COMMENTS },
+      { label: 'Vähiten kommentoitu', value: sortingKeys.LEAST_COMMENTS },
+      { label: 'Viimeksi päivitetty', value: sortingKeys.LAST_UPDATED },
+      { label: 'Eniten reaktiota', value: sortingKeys.MOST_REACTIONS }
+    ]
   }),
+  computed: {
+    ...mapSuggestionGetters({
+      suggestionSelectedSort: suggestionGetters.GET_SUGGESTIONS_SELECTED_SORT,
+      meetingSuggestionSelectedSort: suggestionGetters.GET_MEETING_SUGGESTIONS_SELECTED_SORT
+    })
+  },
+  created() {
+    if(this.meetingSort) {
+      this.getMeetingSuggestionSelectedSort();
+    } else {
+      this.getSuggestionSelectedSort();
+    }
+    this.handleSortinDropDownIndex();
+  },
   methods: {
-    sortSuggestionList: function(selectedSorting) {
-      this.$emit('sortSuggestionListBy', selectedSorting);
+    ...mapSuggestionActions({
+      setSuggestionSelectedSort: suggestionActions.SET_SUGGESTIONS_SELECTED_SORT,
+      setMeetingSuggestionSelectedSort: suggestionActions.SET_MEETING_SUGGESTIONS_SELECTED_SORT,
+      getSuggestionSelectedSort: suggestionActions.GET_SUGGESTIONS_SELECTED_SORT,
+      getMeetingSuggestionSelectedSort: suggestionActions.GET_MEETING_SUGGESTIONS_SELECTED_SORT
+    }),
+    setSelectedSort(selectedSort) {
+      if (this.meetingSort) {
+        this.setMeetingSuggestionSelectedSort(selectedSort);
+        this.getMeetingSuggestionSelectedSort();
+      } else {
+        this.setSuggestionSelectedSort(selectedSort);
+        this.getSuggestionSelectedSort();
+      }
     },
     closeDropDown: function() {
       this.isDropDownOpened = false;
+    },
+    handleSortinDropDownIndex() {
+      if(this.meetingSort) {
+        this.selectedSortOptionIndex = getSelectedSortOptionIndex(this.dropDownOptions, this.meetingSuggestionSelectedSort, 0);
+      } else {
+        this.selectedSortOptionIndex = getSelectedSortOptionIndex(this.dropDownOptions, this.suggestionSelectedSort, 0);
+      }
+    }
+  },
+  watch: {
+    suggestionSelectedSort() {
+      this.handleSortinDropDownIndex();
+    },
+    meetingSuggestionSelectedSort() {
+      this.handleSortinDropDownIndex();
     }
   }
 };
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
 .header-container {
   position: relative;
@@ -86,7 +126,7 @@ export default {
   overflow: hidden;
   text-align: left;
   padding: 12px 20px 10px;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 600;
   vertical-align: middle;
 }

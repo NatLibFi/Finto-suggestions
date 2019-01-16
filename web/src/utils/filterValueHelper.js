@@ -14,12 +14,14 @@ const handleSearchFilter = (value, filters) => {
 };
 
 export const handleSetFilters = (value, filters, setFilters) => {
-  if (value && value.type !== filterType.SEARCH) {
-    filters = removeOldFilterParamFromFilterList(filters, value.type);
-    filters.push(value);
-  }
-  if (value && value.type === filterType.SEARCH) {
-    filters = handleSearchFilter(value, filters);
+  if (value) {
+    if (value.type !== filterType.SEARCH) {
+      filters = removeOldFilterParamFromFilterList(filters, value.type);
+      filters.push(value);
+    }
+    if (value.type === filterType.SEARCH) {
+      filters = handleSearchFilter(value, filters);
+    }
   }
   setFilters(filters);
 };
@@ -31,11 +33,8 @@ export const handleDropDownSelection = (
   filters,
   setFilters
 ) => {
-  if (dropDownOptions && selectedFilter && selectedFilter.target.value !== '') {
-    const selectedValue = findValueFromDropDownOptions(
-      selectedFilter.target.value,
-      dropDownOptions
-    );
+  if (dropDownOptions && selectedFilter && selectedFilter !== '') {
+    const selectedValue = findValueFromDropDownOptions(selectedFilter, dropDownOptions);
     const value = { type: filterType, value: selectedValue };
     handleSetFilters(value, filters, setFilters);
   } else {

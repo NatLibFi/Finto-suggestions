@@ -173,3 +173,55 @@ paths:
       responses:
         '204':
           description: List of deleted tags
+  /suggestions/{suggestion_id}/assign/{user_id}:
+    put:
+      operationId: api.logic.suggestions.assign_to_user
+      parameters:
+        - name: suggestion_id
+          in: path
+          type: integer
+          required: true
+        - name: user_id
+          in: path
+          type: integer
+          required: true
+      responses:
+        "202":
+          description: Assigned suggestion to user
+  /suggestions/{suggestion_id}/unassign:
+    put:
+      operationId: api.logic.suggestions.unassign
+      parameters:
+        - name: suggestion_id
+          in: path
+          type: integer
+          required: true
+      responses:
+        "202":
+          description: Removed assignment from user
+  /suggestions/meeting/{meeting_id}:
+    get:
+      operationId: api.logic.suggestions.get_meeting_suggestions
+      parameters:
+        - name: meeting_id
+          in: path
+          type: integer
+          required: true
+      responses:
+        "200":
+          description: List of meeting suggestions
+  /suggestions/{suggestion_id}/status/{status}:
+    put:
+      operationId: api.logic.suggestions.put_update_suggestion_status
+      parameters:
+        - name: suggestion_id
+          in: path
+          type: integer
+          required: true
+        - name: status
+          in: path
+          type: string
+          required: true
+      responses:
+        "202":
+          description: Updates suggestion status

@@ -16,7 +16,7 @@ paths:
           type: integer
       responses:
         "200":
-          description:  An array of all users in the database
+          description:  An array of all tags in the database
           schema:
             $ref: '#/definitions/TagResponseArray'
     post:

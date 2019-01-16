@@ -5,14 +5,7 @@
 </template>
 
 <script>
-export default {
-  created() {
-    // eslint-disable-next-line
-    $cookies.config('10d');
-    // eslint-disable-next-line
-    $cookies.set('access_token', process.env.ACCESS_TOKEN);
-  }
-};
+export default {};
 </script>
 
 
@@ -27,7 +20,7 @@ a {
 }
 
 #app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
+  font-family: 'Fira Sans', 'Avenir', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;

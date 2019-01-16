@@ -15,9 +15,8 @@ class EventTypes(enum.IntEnum):
 
 
 class SuggestionStatusTypes(enum.IntEnum):
-    DEFAULT = 0
-    REJECTED = 1
-    ACCEPTED = 2
+    REJECTED = 0
+    ACCEPTED = 1
 
 
 class SuggestionTypes(enum.IntEnum):
@@ -57,15 +56,16 @@ class SerializableMixin():
         return d
 
 
-class SuggestionTags(db.Model, SerializableMixin):
+class SuggestionTag(db.Model, SerializableMixin):
   __tablename__ = 'suggestion_tags_association'
-  __public__ = ['tag_label', 'suggestion_id']
+  __public__ = ['tag_label', 'suggestion_id', 'event_id']
 
   tag_label = db.Column(db.String, db.ForeignKey('tags.label'), primary_key=True)
   suggestion_id = db.Column(db.Integer, db.ForeignKey('suggestions.id'), primary_key=True)
+  event_id = db.Column(db.Integer, db.ForeignKey('events.id'))
 
   def __repr__(self):
-    return '<SuggestionTags {}>'.format(self.code)
+    return '<SuggestionTag {}>'.format(self.code)
 
 
 class Event(db.Model, SerializableMixin):
@@ -76,7 +76,7 @@ class Event(db.Model, SerializableMixin):
 
     __tablename__ = 'events'
     __public__ = ['id', 'event_type', 'text',
-                  'reactions', 'user_id', 'suggestion_id', 'created', 'modified', 'tag_label']
+                  'reactions', 'user_id', 'suggestion_id', 'created', 'modified', 'tags']
 
     id = db.Column(db.Integer, primary_key=True)
     created = db.Column(db.DateTime, index=True, default=datetime.utcnow)
@@ -89,16 +89,11 @@ class Event(db.Model, SerializableMixin):
     # user: backref
     # suggestion: backref
 
+
     suggestion_id = db.Column(db.Integer, db.ForeignKey('suggestions.id'))
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
 
-    # act as fake column to get mapping work in as_dict()
-    _tag_label = db.Column('tag_label', db.String(50))
-
-    tag_label = column_property(
-      select([column('tag_label')])
-      .select_from(SuggestionTags)
-      .where(SuggestionTags.suggestion_id==suggestion_id))
+    tags = db.relationship('Tag', secondary='suggestion_tags_association', backref=db.backref('events'))
 
     def __repr__(self):
         msg = self.text if len(self.text) <= 16 else (self.text[:16] + '...')
@@ -107,6 +102,7 @@ class Event(db.Model, SerializableMixin):
     def as_dict(self, strip=True):
         serialized = super(Event, self).as_dict()
         serialized['reactions'] = [e.as_dict() for e in self.reactions]
+        serialized['tags'] = [e.as_dict(strip=strip) for e in self.tags]
         return serialized
 
 
@@ -152,25 +148,24 @@ class Meeting(db.Model, SerializableMixin):
             e.id for e in self.suggestions]  # only ids
 
         serialized['processed'] = Counter(
-            [s.status.name.upper() for s in self.suggestions])
+            [s.status.name.upper() for s in self.suggestions if s is not None and s.status is not None])
 
         return serialized
 
 
 class Suggestion(db.Model, SerializableMixin):
     __tablename__ = 'suggestions'
-    __public__ = ["alternative_label", "broader", "created", "description", "group", "id", "created", "modified",
-                  "narrower", "organization", "preferred_label", "reason", "related", "status", "suggestion_type", "uri", "meeting_id"]
+    __public__ = ["alternative_labels", "broader_labels", "created", "description", "groups", "id", "created", "modified",
+                  "narrower_labels", "organization", "preferred_label", "reason", "related_labels", "status", "suggestion_type",
+                  "uri", "scopeNote", "exactMatches", "neededFor", "meeting_id", "user_id"]
 
     id = db.Column(db.Integer, primary_key=True)
     created = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     modified = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     # meeting: backref
 
-    # suggestion_type = db.Column(db.Enum(SuggestionTypes), nullable=False)
     suggestion_type = db.Column(db.Enum(SuggestionTypes))
-    status = db.Column(db.Enum(SuggestionStatusTypes),
-                       default=SuggestionStatusTypes.DEFAULT)
+    status = db.Column(db.Enum(SuggestionStatusTypes), nullable=True)
     uri = db.Column(db.String(256))
 
     organization = db.Column(db.String(256))
@@ -178,19 +173,26 @@ class Suggestion(db.Model, SerializableMixin):
     reason = db.Column(db.Text)
 
     preferred_label = db.Column(db.JSON)
-    alternative_label = db.Column(db.JSON)
+    alternative_labels = db.Column(db.ARRAY(db.JSON))
 
-    broader = db.Column(db.JSON)
-    narrower = db.Column(db.JSON)
-    related = db.Column(db.JSON)
-    group = db.Column(db.JSON)
+    broader_labels = db.Column(db.JSON)
+    narrower_labels = db.Column(db.JSON)
+    related_labels = db.Column(db.JSON)
+    groups = db.Column(db.JSON)
+    scopeNote = db.Column(db.Text)
+    exactMatches = db.Column(db.JSON)
+    neededFor = db.Column(db.String(500))
 
     events = db.relationship('Event', backref='suggestion')
     reactions = db.relationship('Reaction', backref='suggestion')
 
-    tags = db.relationship('Tag', secondary='suggestion_tags_association', backref=db.backref('suggestions'))
+    tags = db.relationship('Tag',
+                           secondary='suggestion_tags_association',
+                           backref=db.backref('suggestions'),
+                           cascade_backrefs=False)
 
     meeting_id = db.Column(db.Integer, db.ForeignKey('meetings.id'))
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
 
     def __repr__(self):
         label = self.preferred_label.get('fi')
@@ -199,7 +201,7 @@ class Suggestion(db.Model, SerializableMixin):
     def as_dict(self, strip=True):
         # relationships (joins) should be expanded carefully
         serialized = super(Suggestion, self).as_dict()
-        serialized['events'] = [e.id for e in self.events]  # only ids
+        serialized['events'] = [e.as_dict() for e in self.events]  # only ids
         serialized['reactions'] = [
             e.as_dict(strip=strip) for e in self.reactions]
         serialized['tags'] = [e.as_dict(strip=strip) for e in self.tags]
@@ -237,7 +239,7 @@ class User(db.Model, SerializableMixin):
     name = db.Column(db.String(64), index=True, nullable=False)
     email = db.Column(db.String(128), index=True, unique=True, nullable=False)
     role = db.Column(db.Enum(UserRoles), default=UserRoles.NORMAL)
-    password_hash = db.Column(db.String(128))
+    password_hash = db.Column(db.String(128), nullable=True)
 
     events = db.relationship('Event', backref='user')
 
@@ -247,10 +249,12 @@ class User(db.Model, SerializableMixin):
 
     @password.setter
     def password(self, value):
-        self.password_hash = hash_algorithm.hash(value)
+        if value is not None:
+            self.password_hash = hash_algorithm.hash(value)
 
     def validate_password(self, password):
-        return hash_algorithm.verify(password, self.password_hash)
+        if password is not None:
+            return hash_algorithm.verify(password, self.password_hash)
 
     def __repr__(self):
         return '<User {}>'.format(self.name)
@@ -261,7 +265,6 @@ class User(db.Model, SerializableMixin):
         # serialized['events'] = [e.as_dict(strip=strip) for e in self.events]  # whole events
         serialized['events'] = [e.id for e in self.events]  # only ids
         return serialized
-
 
 class TokenBlacklist(db.Model, SerializableMixin):
     """

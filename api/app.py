@@ -27,7 +27,8 @@ def create_app(config_object='config.DevelopmentConfig'):
     # In case you don't want to show the swagger_ui for private endpoints
     # You might want to split this into two apis
     enable_swagger = flask_app.config['ENABLE_SWAGGER_UI']
-    app.add_api(api_spec, swagger_ui=enable_swagger)
+    # TODO: disabled for now, needs fix later on
+    app.add_api(api_spec, options={"swagger_ui": False})
 
     db.init_app(flask_app)
     jwt.init_app(flask_app)
@@ -71,7 +72,7 @@ def create_app(config_object='config.DevelopmentConfig'):
         Creates an admin user
 
         Run this from command line
-        >> flask create_admin 
+        >> flask create_admin
         """
 
         user = User(name=name,
