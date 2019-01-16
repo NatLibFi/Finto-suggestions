@@ -57,7 +57,6 @@ export default {
     }
   },
   data: () => ({
-    // TODO: not the best way but seems that you cannot use imported module straight inside class binding clause
     suggestionTypeToStyleClass,
     suggestionTypeToString,
     eventTypes,
@@ -66,6 +65,7 @@ export default {
   methods: {
     goToSuggestion() {
       if (!this.meetingId) {
+        console.log('asdasd', this.meetingId);
         this.$router.push({
           name: 'suggestion',
           params: {
@@ -85,6 +85,7 @@ export default {
       }
     },
     goToMeeting(id) {
+      console.log(id);
       this.$router.push({
         name: 'meeting-suggestion-list',
         params: {

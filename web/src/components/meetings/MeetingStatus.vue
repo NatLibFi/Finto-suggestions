@@ -1,6 +1,5 @@
 <template>
   <div class="status-container">
-    <!-- TODO: get meeting from store and show meeting.name only-->
     <h2 v-if="meeting">Kokous {{ meeting.id }} – {{ meeting.name }}</h2>
     <div class="meeting-status">
       <div class="status-bar">
@@ -50,7 +49,7 @@ export default {
       suggestions: 0,
       progression: 0,
       continueSuggestionHandle: true
-    }
+    };
   },
   computed: {
     ...mapMeetingGetters({
@@ -86,7 +85,7 @@ export default {
     },
     goToNextSuggestion() {
       const nextSuggestionId = this.getNextSuggestionIdToHandle();
-      if(nextSuggestionId && nextSuggestionId > 0) {
+      if (nextSuggestionId && nextSuggestionId > 0) {
         this.$router.push({
           name: 'meeting-suggestion',
           params: {
@@ -100,11 +99,10 @@ export default {
       let nextSuggestionId = null;
       if (this.suggestion_items && this.suggestion_items.length > 0) {
         const orderedSuggestionList = this.suggestion_items.filter(s => s.status === null).sort(comparerDesc('created'));
-        if(orderedSuggestionList && orderedSuggestionList.length > 0) {
+        if (orderedSuggestionList && orderedSuggestionList.length > 0) {
           nextSuggestionId = orderedSuggestionList[0].id
         }
       }
-      console.log(nextSuggestionId);
       return nextSuggestionId;
     },
     handleMeetingProgressionCounts(countData) {

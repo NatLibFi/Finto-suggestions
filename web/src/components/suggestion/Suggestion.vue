@@ -156,7 +156,7 @@ export default {
     },
     meetingId: {
       type: [String, Number],
-      required: false
+      default: null
     }
   },
   data: () => ({
@@ -194,7 +194,11 @@ export default {
     await this.getSuggestionById(parseInt(this.suggestionId));
     await this.getEventsBySuggestionId(parseInt(this.suggestionId));
     await this.getUserName();
-    await this.getSuggestionsByMeetingId(this.meetingId);
+
+    if (this.meetingId) {
+      await this.getSuggestionsByMeetingId(this.meetingId);
+    }
+    
     this.checkVisibilityOfGoingNextOrPrevious();
   },
   methods: {
@@ -221,6 +225,7 @@ export default {
       }
     },
     goToMeeting(id) {
+      console.log(id);
       this.$router.push({
         name: 'meeting-suggestion-list',
         params: {
