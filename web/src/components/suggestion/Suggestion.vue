@@ -55,7 +55,6 @@
           </div>
         </div>
         <div v-if="isAuthenticated && role === userRoles.ADMIN" class="suggestion-header-buttons">
-          <assign-user :suggestion="suggestion" class="icon-button" />
           <svg-icon icon-name="more" class="icon-button"><icon-more /></svg-icon>
         </div>
       </div>
@@ -63,6 +62,8 @@
       <suggestion-content
         :suggestion="suggestion"
         :user-name="userName"
+        :isAuthenticated="isAuthenticated"
+        :isAdmin="role === userRoles.ADMIN"
       />
 
       <div v-if="suggestion && suggestion.reactions.length > 0" class="suggestion-reactions">
@@ -111,7 +112,6 @@ import IconArrow from '../icons/IconArrow';
 import IconMore from '../icons/IconMore';
 import SvgIcon from '../icons/SvgIcon';
 import AddComment from './AddComment';
-import AssignUser from './AssignUser';
 
 import { suggestionType, suggestionTypeToString } from '../../utils/suggestionMappings.js';
 import {
@@ -146,8 +146,7 @@ export default {
     IconArrow,
     IconMore,
     SvgIcon,
-    AddComment,
-    AssignUser
+    AddComment
   },
   props: {
     suggestionId: {

@@ -88,26 +88,45 @@
       <p>{{ suggestion.organization }}</p>
     </div>
 
-    <div v-if="userName">
-      <p class="content-title"><strong>Käsittelijä</strong></p>
-      <p>{{ userName }} <a href="#" v-on:click="unassignUserFromSuggestion(suggestion.id, suggestion.user_id)">Poista käsittelijä ehdotuksesta</a></p>
-    </div>
+    <transition name="fade">
+      <div v-if="!suggestion.user_id">
+        <assign-user :suggestion="suggestion" class="icon-button" />
+      </div>
+
+      <div v-if="userName && suggestion.user_id">
+        <p class="content-title"><strong>Käsittelijä</strong></p>
+        <p>{{ userName }}
+          <a
+            v-if="isAuthenticated && isAdmin"
+            @click="unassignUserFromSuggestion(suggestion.id, suggestion.user_id)"
+            class="remove-button">
+            Poista käsittelijä ehdotuksesta
+          </a>
+        </p>
+      </div>
+    </transition>
 
   </div>
 </template>
 
 <script>
+import AssignUser from './AssignUser';
 import { suggestionType } from '../../utils/suggestionMappings.js';
 import { suggestionActions } from '../../store/modules/suggestion/suggestionConsts';
 import { mapSuggestionActions } from '../../store/modules/suggestion/suggestionModule';
 
 export default {
+  components: {
+    AssignUser
+  },
   props: {
     suggestion: {
       type: Object,
       required: true
     },
-    userName: { type: String, default: '' }
+    userName: { type: String, default: '' },
+    isAuthenticated: Boolean,
+    isAdmin: Boolean
   },
   data() {
     return {
@@ -137,17 +156,39 @@ div > div {
   margin-bottom: 20px;
 }
 
+div > div:last-of-type {
+  margin-bottom: 6px;
+}
+
 p {
   margin: 0;
 }
 
+a.remove-button {
+  margin-left: 4px;
+  font-size: 14px;
+}
+
+a.remove-button:hover {
+  cursor: pointer;
+  cursor: hand;
+}
+
 .content-title {
   font-size: 13px;
+  margin-bottom: 3px;
 }
 
 @media (max-width: 700px) {
   div.suggestion-content {
     padding-top: 30px;
   }
+}
+
+.fade-enter-active, .fade-leave-active {
+  transition: opacity .5s;
+}
+.fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
+  opacity: 0;
 }
 </style>
