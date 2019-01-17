@@ -9,7 +9,7 @@
       <input type="text" class="dropdown-filter" v-model="searchQuery" v-on:keydown="filterResults"/>
       <hr class="line"/>
       <div class="dropdown-users">
-        <div class="user-item" v-for="user in users" :key="user.id" v-on:click="assignUserToSuggestion({ suggestionId: suggestion.id, userId: user.id })">
+        <div class="user-item" v-for="user in users" :key="user.id" @click="assignUserToSuggestion({ suggestionId: suggestion.id, userId: user.id })">
           <div class="user-image">{{ userNameInitials(user.name) }}</div>
           <div class="user-name">{{ user.name }}</div>
         </div>
@@ -21,11 +21,11 @@
 <script>
 import SvgIcon from '../icons/SvgIcon';
 import IconAddPerson from '../icons/IconAddPerson';
-import { userNameInitials } from '../../utils/nameHelpers';
+import { userNameInitials } from '../../utils/userHelpers';
 import { suggestionActions } from '../../store/modules/suggestion/suggestionConsts';
 import { mapSuggestionActions } from '../../store/modules/suggestion/suggestionModule';
-import { mapUserActions, mapUserGetters } from '../../store/modules/user/userModule';
-import { userActions, userGetters } from '../../store/modules/user/userConsts';
+import { mapUserActions, mapUserGetters, mapUserMutations } from '../../store/modules/user/userModule';
+import { userActions, userGetters, userMutations } from '../../store/modules/user/userConsts';
 
 export default {
   components: {SvgIcon, IconAddPerson},
@@ -37,7 +37,6 @@ export default {
   },
   data() {
     return {
-      userCache: [],
       searchOpen: false,
       searchQuery: '',
       userNameInitials
@@ -46,23 +45,25 @@ export default {
   computed: {
     ...mapUserGetters({ users: userGetters.GET_USERS })
   },
+  async created() {
+    // If "admin" in user.roles:
+    await this.getUsers();
+  },
   methods: {
+    ...mapSuggestionActions({ assignUserToSuggestion: suggestionActions.ASSIGN_SUGGESTION_TO_USER }),
+    ...mapUserActions({ getUsers: userActions.GET_USERS }),
+    ...mapUserMutations({ setUsers: userMutations.SET_USERS }),
     toggleSearch() {
       this.searchOpen = !this.searchOpen;
     },
     filterResults() {
-      this.users = this.userCache;
-      if (this.searchQuery.length === 1) return this.users = this.userCache;
-      this.users = this.userCache.filter(item => item.name.toLowerCase().match(this.searchQuery.toLowerCase()));
-    },
-    ...mapSuggestionActions({ assignUserToSuggestion: suggestionActions.ASSIGN_SUGGESTION_TO_USER }),
-    ...mapUserActions({ getUsers: userActions.GET_USERS }),
-
-  },
-  async created() {
-    // If "admin" in user.roles:
-    await this.getUsers();
-    this.userCache = this.users;
+      if (this.searchQuery.length >= 1) {
+        const filteredUsers = this.users.filter(user => user.name.toLowerCase().match(this.searchQuery.toLowerCase()));
+        this.setUsers(filteredUsers);
+      } else {
+        this.getUsers();
+      }
+    }
   }
   };
 </script>
