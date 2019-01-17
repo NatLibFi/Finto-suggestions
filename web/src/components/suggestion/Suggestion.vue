@@ -197,7 +197,7 @@ export default {
     if (this.meetingId) {
       await this.getSuggestionsByMeetingId(this.meetingId);
     }
-    
+
     this.checkVisibilityOfGoingNextOrPrevious();
   },
   methods: {
@@ -329,9 +329,10 @@ export default {
 .arrow-button {
   color: #1ea195;
   font-weight: 800;
-  font-size: 16px;
+  font-size: 14px;
   text-align: left;
   margin-left: 6px;
+  margin-bottom: 2px;
   -webkit-user-select: none; /* Safari */
   -moz-user-select: none; /* Firefox */
   -ms-user-select: none; /* IE10+/Edge */
@@ -344,7 +345,7 @@ export default {
 }
 
 .arrow-button svg {
-  margin: 0 -15px -27px 0;
+  margin: 0 -15px -28px 0;
   width: 37px;
   height: 37px;
 }
