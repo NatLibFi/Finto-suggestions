@@ -25,8 +25,6 @@
 </template>
 
 <script>
-import SvgIcon from '../icons/SvgIcon';
-import IconAddPerson from '../icons/IconAddPerson';
 import { userNameInitials } from '../../utils/nameHelpers';
 import { suggestionActions } from '../../store/modules/suggestion/suggestionConsts';
 import { mapSuggestionActions } from '../../store/modules/suggestion/suggestionModule';
@@ -35,7 +33,6 @@ import { userActions, userGetters, userMutations } from '../../store/modules/use
 import { directive as onClickaway } from 'vue-clickaway';
 
 export default {
-  components: {SvgIcon, IconAddPerson},
   directives: {onClickaway: onClickaway},
   props: {
     suggestion: {
