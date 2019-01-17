@@ -8,7 +8,7 @@
       <div class="dropdown-filter">
         <input type="text" class="dropdown-filter-input" v-model="searchQuery" @keydown="filterResults"/>
       </div>
-      <div>
+      <div class="dropdown-options">
         <div class="user-item" v-for="user in users" :key="user.id" v-on:click="assignUserToSuggestion({ suggestionId: suggestion.id, userId: user.id })">
           <div v-if="user.name && user.name.length > 0">
             <div  class="user-image">{{ userNameInitials(user.name) }}</div>
@@ -126,7 +126,10 @@ export default {
       border: 1px solid #E1E1E1;
       box-sizing: border-box;
       border-radius: 1px;
-
+    }
+    .dropdown-options {
+      max-height: 180px;
+      overflow-x: scroll;
     }
     .user-item {
       text-align: left;
