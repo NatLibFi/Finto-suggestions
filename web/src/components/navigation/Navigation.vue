@@ -54,7 +54,7 @@
           <span unselectable="on">{{ userInitials }}</span>
         </div>
         <div class="nav-dropdown-user">
-          <p>{{ userName }}</p>
+          <p v-if="name && name.length > 0">{{ name }}</p>
         </div>
       </div>
       <div class="nav-mobile-dropdown-content">
