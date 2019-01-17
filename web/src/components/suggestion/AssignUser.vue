@@ -44,8 +44,21 @@ export default {
       required: true
     }
   },
+  data() {
+    return {
+      userCache: [],
+      searchOpen: false,
+      searchQuery: '',
+      userNameInitials
+    }
+  },
   computed: {
     ...mapUserGetters({ users: userGetters.GET_USERS })
+  },
+  async created() {
+    // If "admin" in user.roles:
+    await this.getUsers();
+    this.userCache = this.users;
   },
   methods: {
     openSearch() {
@@ -63,20 +76,6 @@ export default {
     },
     ...mapSuggestionActions({ assignUserToSuggestion: suggestionActions.ASSIGN_SUGGESTION_TO_USER }),
     ...mapUserActions({ getUsers: userActions.GET_USERS }),
-
-  },
-  async created() {
-    // If "admin" in user.roles:
-    await this.getUsers();
-    this.userCache = this.users;
-  },
-  data() {
-    return {
-      userCache: [],
-      searchOpen: false,
-      searchQuery: '',
-      userNameInitials
-    }
   }
   };
 </script>
