@@ -57,8 +57,8 @@ export default {
     filterResults() {
       this.users = this.userCache;
       if (this.searchQuery.length === 1) {
-        return this.users = this.userCache
-      };
+        return this.users = this.userCache;
+      }
       this.users = this.userCache.filter(item => item.name.toLowerCase().match(this.searchQuery.toLowerCase()));
     },
     ...mapSuggestionActions({ assignUserToSuggestion: suggestionActions.ASSIGN_SUGGESTION_TO_USER }),
