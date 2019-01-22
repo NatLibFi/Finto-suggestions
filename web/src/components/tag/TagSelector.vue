@@ -5,7 +5,7 @@
     </button>
     <div v-if="showTagSelector" class="tag-selector">
       <div class="tag-selector-header">
-        <h4>Hallitse käsitteen tyyppejä</h4>
+        <h4>Hallitse käsitteen tunnisteita</h4>
       </div>
       <!-- TODO: build later search ability for tags in tag selection -->
       <!-- <div class="tag-selector-search">
@@ -19,7 +19,7 @@
           </li>
         </ul>
         <ul v-else>
-          <li>Ei yhtään käsitetyyppiä</li>
+          <li>Ei yhtään tunnistetta</li>
         </ul>
       </div>
       <div class="tag-selector-new-tag">
@@ -45,6 +45,8 @@ import IconTag from '../icons/IconTag';
 import { mapTagActions, mapTagGetters } from '../../store/modules/tag/tagModule';
 import { tagActions, tagGetters } from '../../store/modules/tag/tagConst';
 
+import { newActionEvent } from '../../utils/tagHelpers';
+
 export default {
   components: {
     SvgIcon,
@@ -53,6 +55,10 @@ export default {
   props: {
     suggestion: {
       type: Object,
+      required: true
+    },
+    userId: {
+      type: [Number, String],
       required: true
     }
   },
@@ -85,9 +91,13 @@ export default {
     },
     async handleTagUpdateToSuggestion(tagLabel) {
       if(this.isTagSetToSuggestion(tagLabel)) {
-        await this.removeTagFromSuggestion({suggestionId: this.suggestion.id, tagLabel: tagLabel});
+        const event = newActionEvent(`lisäsi ehdotukseen uuden ehdotustyypin ${tagLabel}`, this.userId, this.suggestionId);
+        const params = { suggestionId: this.suggestion.id, tagLabel: tagLabel, event: event};
+        await this.removeTagFromSuggestion(params);
       } else {
-        await this.addTagToSuggestion({suggestionId: this.suggestion.id, tagLabel: tagLabel});
+        const event = newActionEvent(`poisti ehdotuksesta ehdotustyypin ${tagLabel}`, this.userId, this.suggestionId);
+        const params = { suggestionId: this.suggestion.id, tagLabel: tagLabel, event: event};
+        await this.addTagToSuggestion(params);
       }
     },
     isTagSetToSuggestion(tagLabel) {

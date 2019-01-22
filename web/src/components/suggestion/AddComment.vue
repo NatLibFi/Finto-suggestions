@@ -41,6 +41,8 @@ import { eventTypes } from '../../utils/eventMappings.js';
 import { mapAuthenticatedUserGetters } from '../../store/modules/authenticatedUser/authenticatedUserModule.js';
 import { authenticatedUserGetters } from '../../store/modules/authenticatedUser/authenticatedUserConsts.js';
 
+import { newCommentEvent } from '../../utils/tagHelpers';
+
 export default {
   props: {
     suggestionId: {
@@ -74,24 +76,14 @@ export default {
     ...mapEventActions({
       addNewEvent: eventActions.ADD_NEW_EVENT
     }),
-    constructEventJsonObject() {
-      if (this.isAuthenticated && this.userId > 0 && this.suggestionId > 0) {
-        return {
-          event_type: eventTypes.COMMENT,
-          text: this.content,
-          user_id: parseInt(this.userId),
-          suggestion_id: parseInt(this.suggestionId)
-        };
-      }
-      return null;
-    },
     saveNewComment() {
-      this.addNewEvent({
-        // TODO: needs to give user some error message because if not logged in cannot add comments
-        event: this.constructEventJsonObject(),
-        suggestionId: parseInt(this.suggestionId)
-      });
-      this.content = '';
+      if(this.isAuthenticated && this.userId > 0 && this.suggestionId > 0) {
+        this.addNewEvent({
+          event: newCommentEvent(this.content, this.userId, this.suggestionId),
+          suggestionId: parseInt(this.suggestionId)
+        });
+        this.content = '';
+      }
     }
   }
 };

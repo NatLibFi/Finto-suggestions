@@ -25,7 +25,7 @@ import { dateTimeFormatLabel } from '../../utils/dateHelper.js';
 
 import { mapUserGetters, mapUserActions } from '../../store/modules/user/userModule.js';
 import { userGetters, userActions } from '../../store/modules/user/userConsts.js';
-import { userNameInitials } from '../../utils/nameHelpers.js';
+import { userNameInitials } from '../../utils/userHelpers';
 
 export default {
   props: {

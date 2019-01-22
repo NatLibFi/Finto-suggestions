@@ -56,7 +56,7 @@
         </div>
         <div class="suggestion-header-buttons" v-if="isAuthenticated && role === userRoles.ADMIN">
           <assign-user :suggestion="suggestion" class="icon-button" />
-          <tag-selector :suggestion="suggestion" />
+          <tag-selector :suggestion="suggestion" :userId="userId" />
           <svg-icon icon-name="more" class="icon-button"><icon-more /></svg-icon>
         </div>
       </div>
@@ -133,8 +133,8 @@ import { mapUserActions, mapUserGetters } from '../../store/modules/user/userMod
 
 import { dateTimeFormatLabel } from '../../utils/dateHelper.js';
 
-import { mapAuthenticatedUserGetters } from '../../store/modules/authenticatedUser/authenticatedUserModule.js';
-import { authenticatedUserGetters } from '../../store/modules/authenticatedUser/authenticatedUserConsts.js';
+import { mapAuthenticatedUserGetters, mapAuthenticatedUserActions } from '../../store/modules/authenticatedUser/authenticatedUserModule.js';
+import { authenticatedUserGetters, authenticatedUserActions } from '../../store/modules/authenticatedUser/authenticatedUserConsts.js';
 
 import { userRoles } from '../../utils/userHelpers';
 

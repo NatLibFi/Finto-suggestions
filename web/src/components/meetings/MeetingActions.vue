@@ -23,6 +23,9 @@ import { authenticatedUserGetters, authenticatedUserActions } from '../../store/
 import { mapSuggestionActions } from '../../store/modules/suggestion/suggestionModule';
 import { suggestionActions } from '../../store/modules/suggestion/suggestionConsts';
 import { suggestionStateStatus } from '../../utils//suggestionMappings';
+import { newActionEvent } from '../../utils/tagHelpers';
+import { mapEventActions } from '../../store/modules/event/eventModule';
+import { eventActions } from '../../store/modules/event/eventConsts';
 
 export default {
   components: {
@@ -59,12 +62,21 @@ export default {
     ...mapAuthenticatedUserActions({
       validateAuthentication: authenticatedUserActions.VALIDATE_AUTHENTICATION,
     }),
+    ...mapEventActions({
+      addEvent: eventActions.ADD_NEW_EVENT
+    }),
+    async createEvent(status) {
+      const event = newActionEvent(`käsitteli ehdotuksen. ${status}`, this.userId, this.suggestionId);
+      await addEvent(event);
+    },
     async dismissSuggestion() {
       await this.setSuggestionRejected({ suggestionId: this.suggestionId, status: suggestionStateStatus.REJECTED });
+      await this.createEvent(suggestionStateStatus.REJECTED);
       this.$emit('moveToNextSuggestion');
     },
     async approveSuggestion() {
       await this.setSuggestionAccepted({ suggestionId: this.suggestionId, status: suggestionStateStatus.ACCEPTED });
+      await this.createEvent(suggestionStateStatus.ACCEPTED);
       this.$emit('moveToNextSuggestion');
     }
   }

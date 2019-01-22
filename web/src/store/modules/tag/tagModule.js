@@ -6,6 +6,7 @@ import {
   namespace as suggestionNamespace,
   suggestionActions
 } from '../suggestion/suggestionConsts';
+import { namespace as eventNamespace, eventActions } from '../event/eventConsts';
 
 export const mapTagGetters = getters => mapGetters(namespace, getters);
 export const mapTagActions = actions => mapActions(namespace, actions);
@@ -37,9 +38,21 @@ export default {
       );
       if (response && response.code === 201) {
         dispatch(
+          `${eventNamespace}/${eventActions.ADD_NEW_EVENT}`,
+          {
+            event: params.event,
+            suggestionId: params.suggestionId
+          },
+          {
+            root: true
+          }
+        );
+        dispatch(
           `${suggestionNamespace}/${suggestionActions.GET_SUGGESTION_BY_ID}`,
           params.suggestionId,
-          { root: true }
+          {
+            root: true
+          }
         );
       }
     },
@@ -50,9 +63,21 @@ export default {
       );
       if (response && response.code === 202) {
         dispatch(
+          `${eventNamespace}/${eventActions.ADD_NEW_EVENT}`,
+          {
+            event: params.event,
+            suggestionId: params.suggestionId
+          },
+          {
+            root: true
+          }
+        );
+        dispatch(
           `${suggestionNamespace}/${suggestionActions.GET_SUGGESTION_BY_ID}`,
           params.suggestionId,
-          { root: true }
+          {
+            root: true
+          }
         );
       }
     }
