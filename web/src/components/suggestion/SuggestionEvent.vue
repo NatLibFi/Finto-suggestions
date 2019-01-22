@@ -7,8 +7,11 @@
       <div class="event-user-initials">{{ userNameInitials }}</div>
       <div class="event-info">
         <p class="event-user">
-          <span class="user-name">{{ userName }} </span>
-          <span v-if="type == 'ACTION'">{{ action }}</span>
+          <span class="user-name">{{ user.name }} </span>
+          <span v-if="type == 'ACTION'">
+            {{ event.text }}
+            <span class="tag">{{ event.value }}</span>
+          </span>
         </p>
         <p class="date-sent">{{ dateTimeFormatLabel(this.event.created) }}</p>
       </div>
@@ -21,11 +24,12 @@
 </template>
 
 <script>
-import { dateTimeFormatLabel } from '../../utils/dateHelper.js';
+import { dateTimeFormatLabel } from '../../utils/dateHelper';
 
-import { mapUserGetters, mapUserActions } from '../../store/modules/user/userModule.js';
-import { userGetters, userActions } from '../../store/modules/user/userConsts.js';
+import { mapUserGetters, mapUserActions } from '../../store/modules/user/userModule';
+import { userGetters, userActions } from '../../store/modules/user/userConsts';
 import { userNameInitials } from '../../utils/userHelpers';
+import { compineEventTextContent } from '../../utils/eventHelper';
 
 export default {
   props: {
@@ -41,8 +45,7 @@ export default {
   data() {
     return {
       dateTimeFormatLabel,
-      action: 'vaihtoi tyypiksi ',
-      userName: '',
+      compineEventTextContent,
       userNameInitials: ''
     }
   },
@@ -136,6 +139,26 @@ div.event-comment {
   border-top: 1px solid #f5f5f5;
   padding: 10px 40px;
   margin: 0;
+}
+
+.tag {
+  color: #ffffff;
+  text-transform: lowercase;
+  font-weight: bold;
+  background-color: #4794a2;
+  border: 2px solid #4794a2;
+  padding: 0 6px;
+  margin: 4px 4px 0 0;
+  border-radius: 2px;
+  display: inline-block;
+}
+.type-new {
+  background-color: #1137ff;
+  border: 2px solid #1137ff;
+}
+.type-modify {
+  background-color: #ff8111;
+  border: 2px solid #ff8111;
 }
 
 @media (max-width: 700px) {

@@ -22,7 +22,7 @@ import { mapAuthenticatedUserGetters, mapAuthenticatedUserActions } from '../../
 import { authenticatedUserGetters, authenticatedUserActions } from '../../store/modules/authenticatedUser/authenticatedUserConsts.js';
 import { mapSuggestionActions } from '../../store/modules/suggestion/suggestionModule';
 import { suggestionActions } from '../../store/modules/suggestion/suggestionConsts';
-import { suggestionStateStatus } from '../../utils//suggestionMappings';
+import { suggestionStateStatus } from '../../utils/suggestionHelpers';
 import { newActionEvent } from '../../utils/tagHelpers';
 import { mapEventActions } from '../../store/modules/event/eventModule';
 import { eventActions } from '../../store/modules/event/eventConsts';
@@ -66,8 +66,8 @@ export default {
       addEvent: eventActions.ADD_NEW_EVENT
     }),
     async createEvent(status) {
-      const event = newActionEvent(`käsitteli ehdotuksen. ${status}`, this.userId, this.suggestionId);
-      await addEvent(event);
+      const event = newActionEvent('käsitteli ehdotuksen.', status, this.userId, this.suggestionId);
+      await this.addEvent(event);
     },
     async dismissSuggestion() {
       await this.setSuggestionRejected({ suggestionId: this.suggestionId, status: suggestionStateStatus.REJECTED });

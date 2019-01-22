@@ -114,7 +114,7 @@ import SvgIcon from '../icons/SvgIcon';
 import AddComment from './AddComment';
 import AssignUser from './AssignUser';
 
-import { suggestionType, suggestionTypeToString } from '../../utils/suggestionMappings.js';
+import { suggestionType, suggestionTypeToString } from '../../utils/suggestionHelpers';
 import {
   suggestionGetters,
   suggestionActions

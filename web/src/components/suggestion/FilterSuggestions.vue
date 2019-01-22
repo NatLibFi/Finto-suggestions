@@ -76,7 +76,7 @@ import {
   suggestionStateStatus,
   suggestionType,
   filterType
-} from '../../utils/suggestionMappings.js';
+} from '../../utils/suggestionHelpers.js';
 
 import {
   suggestionGetters,

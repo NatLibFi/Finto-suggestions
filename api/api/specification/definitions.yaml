@@ -448,10 +448,13 @@ definitions:
         $ref: "#/definitions/event_type"
       text:
         $ref: "#/definitions/text"
+      value:
+        $ref: "#/definitions/text"
     required:
       - event_type
       - text
       - suggestion_id
+      - user_id
 
   EventPatchObject:
     type: object

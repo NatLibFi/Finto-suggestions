@@ -37,9 +37,9 @@
 <script>
 import SvgIcon from '../icons/SvgIcon';
 import IconComments from '../icons/IconComments';
-import { suggestionTypeToStyleClass, suggestionTypeToString } from '../../utils/suggestionMappings';
+import { suggestionTypeToStyleClass, suggestionTypeToString } from '../../utils/suggestionHelpers';
 import { dateTimeFormatLabel } from '../../utils/dateHelper';
-import { eventTypes } from '../../utils/eventMappings';
+import { eventTypes } from '../../utils/eventHelper';
 
 export default {
   components: {
@@ -65,7 +65,6 @@ export default {
   methods: {
     goToSuggestion() {
       if (!this.meetingId) {
-        console.log('asdasd', this.meetingId);
         this.$router.push({
           name: 'suggestion',
           params: {

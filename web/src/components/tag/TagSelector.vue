@@ -91,11 +91,11 @@ export default {
     },
     async handleTagUpdateToSuggestion(tagLabel) {
       if(this.isTagSetToSuggestion(tagLabel)) {
-        const event = newActionEvent(`lisäsi ehdotukseen uuden ehdotustyypin ${tagLabel}`, this.userId, this.suggestionId);
+        const event = newActionEvent('poisti ehdotuksesta tunnisteen', tagLabel, this.userId, this.suggestion.id);
         const params = { suggestionId: this.suggestion.id, tagLabel: tagLabel, event: event};
         await this.removeTagFromSuggestion(params);
       } else {
-        const event = newActionEvent(`poisti ehdotuksesta ehdotustyypin ${tagLabel}`, this.userId, this.suggestionId);
+        const event = newActionEvent('lisäsi ehdotukseen tunnisteen', tagLabel, this.userId, this.suggestion.id);
         const params = { suggestionId: this.suggestion.id, tagLabel: tagLabel, event: event};
         await this.addTagToSuggestion(params);
       }
@@ -115,8 +115,9 @@ export default {
       this.showCreateTagInputs = !this.showCreateTagInputs;
     },
     async addNewTag() {
-      console.log(this.newTag);
-      await this.addTagToSuggestion({suggestionId: this.suggestion.id, tagLabel: this.newTag})
+      const event = newActionEvent('lisäsi ehdotukseen tunnisteen', this.newTag, this.userId, this.suggestion.id);
+      const params = { suggestionId: this.suggestion.id, tagLabel: this.newTag, event: event };
+      await this.addTagToSuggestion(params);
       this.toggleNewTagInputs();
       await this.handleUpdateNewTagToPage();
     },

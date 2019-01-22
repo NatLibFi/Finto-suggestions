@@ -36,7 +36,7 @@ import markdownEditor from 'vue-simplemde/src/markdown-editor';
 
 import { mapEventActions } from '../../store/modules/event/eventModule.js';
 import { eventActions } from '../../store/modules/event/eventConsts.js';
-import { eventTypes } from '../../utils/eventMappings.js';
+import { eventTypes } from '../../utils/eventHelper';
 
 import { mapAuthenticatedUserGetters } from '../../store/modules/authenticatedUser/authenticatedUserModule.js';
 import { authenticatedUserGetters } from '../../store/modules/authenticatedUser/authenticatedUserConsts.js';
