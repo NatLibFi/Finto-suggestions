@@ -1,18 +1,28 @@
 export const userNameInitials = userName => {
-  let initials = '';
   if (userName && userName.length > 0) {
-    if (!(userName.indexOf(' ') > -1)) {
-      return userName[0].toUpperCase();
-    }
-    const splitArray = userName.split(' ');
-    if (splitArray && splitArray.length > 0) {
-      const firstElement = splitArray[0];
-      const lastElement = splitArray[1];
-      if (firstElement && lastElement && (firstElement.length > 0 && lastElement.length > 0)) {
-        initials = `${firstElement[0].toUpperCase()}${lastElement[0].toUpperCase()}`;
-        return initials.toUpperCase();
-      }
-    }
+    return createInitials(userName);
   }
-  return initials.toUpperCase();
+  return '';
 };
+
+function createInitials(userName) {
+  if (!hasSpaceIn(userName)) {
+    return userName[0].toUpperCase();
+  }
+  let individualNames = userName.split(' ');
+  const initials = [ individualNames[0], individualNames[1] ]
+  return handleSpacedUserName(initials);
+}
+
+function hasSpaceIn(userName) {
+  if (!(userName.indexOf(' ') > -1)) {
+    return false;
+  }
+  return true;
+}
+
+function handleSpacedUserName(initials) {
+  if (initials[0] && initials[1]) {
+    return `${initials[0][0].toUpperCase()}${initials[1][0].toUpperCase()}`;
+  }
+}
