@@ -65,7 +65,6 @@ export default {
   methods: {
     goToSuggestion() {
       if (!this.meetingId) {
-        console.log('asdasd', this.meetingId);
         this.$router.push({
           name: 'suggestion',
           params: {
