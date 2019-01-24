@@ -1,6 +1,7 @@
 export const suggestionStateStatus = {
   ACCEPTED: 'ACCEPTED',
-  REJECTED: 'REJECTED'
+  REJECTED: 'REJECTED',
+  DEFAUT: 'DEFAULT'
 };
 
 export const suggestionType = {

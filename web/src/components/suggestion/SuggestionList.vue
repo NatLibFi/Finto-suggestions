@@ -111,6 +111,7 @@ export default {
       } else {
         await this.getSuggestionsByMeetingId(parseInt(this.meetingId));
       }
+      this.paginationPageChanged();
     },
     getPaginationStaringIndex(pageNumber) {
       return pageNumber > 1 ? this.paginationMaxCount * pageNumber - this.paginationMaxCount : 0;
