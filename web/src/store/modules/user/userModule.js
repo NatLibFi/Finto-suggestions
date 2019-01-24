@@ -1,5 +1,5 @@
 import Vue from 'vue';
-import { mapGetters, mapActions } from 'vuex';
+import { mapGetters, mapActions, mapMutations } from 'vuex';
 
 import { namespace, storeStateNames, userGetters, userActions, userMutations } from './userConsts';
 
@@ -7,6 +7,7 @@ import api from '../../../api';
 
 export const mapUserGetters = getters => mapGetters(namespace, getters);
 export const mapUserActions = actions => mapActions(namespace, actions);
+export const mapUserMutations = mutations => mapMutations(namespace, mutations);
 
 export default {
   namespaced: true,
@@ -22,8 +23,8 @@ export default {
     [userMutations.SET_USER](state, user) {
       Vue.set(state, storeStateNames.USER, user);
     },
-    [userMutations.SET_USERS](state, user) {
-      Vue.set(state, storeStateNames.USERS, user);
+    [userMutations.SET_USERS](state, users) {
+      Vue.set(state, storeStateNames.USERS, users);
     }
   },
   actions: {
