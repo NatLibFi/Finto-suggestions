@@ -22,7 +22,8 @@ function hasSpaceIn(userName) {
 }
 
 function handleSpacedUserName(initials) {
-  if (initials[0] && initials[1]) {
-    return `${initials[0][0].toUpperCase()}${initials[1][0].toUpperCase()}`;
+  let firstName = initials[0], secondName = initials[1]
+  if (firstName && secondName) {
+    return `${firstName[0].toUpperCase()}${secondName[0].toUpperCase()}`;
   }
 }
