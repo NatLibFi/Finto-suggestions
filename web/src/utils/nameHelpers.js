@@ -10,8 +10,7 @@ const createInitials = (userName) => {
     return userName[0].toUpperCase();
   }
   let individualNames = userName.split(' ');
-  const initials = [ individualNames[0], individualNames[1] ]
-  return handleSpacedUserName(initials);
+  return handleSpacedUserName([individualNames[0], individualNames[1]]);
 }
 
 const hasSpaceIn = (userName) => {
@@ -21,8 +20,8 @@ const hasSpaceIn = (userName) => {
   return true;
 }
 
-const handleSpacedUserName = (initials) => {
-  let firstName = initials[0], secondName = initials[1]
+const handleSpacedUserName = (names) => {
+  let firstName = names[0], secondName = names[1]
   if (firstName && secondName) {
     return `${firstName[0].toUpperCase()}${secondName[0].toUpperCase()}`;
   }
