@@ -5,7 +5,7 @@ export const userNameInitials = userName => {
   return '';
 };
 
-function createInitials(userName) {
+const createInitials = (userName) => {
   if (!hasSpaceIn(userName)) {
     return userName[0].toUpperCase();
   }
@@ -14,14 +14,14 @@ function createInitials(userName) {
   return handleSpacedUserName(initials);
 }
 
-function hasSpaceIn(userName) {
+const hasSpaceIn = (userName) => {
   if (!(userName.indexOf(' ') > -1)) {
     return false;
   }
   return true;
 }
 
-function handleSpacedUserName(initials) {
+const handleSpacedUserName = (initials) => {
   let firstName = initials[0], secondName = initials[1]
   if (firstName && secondName) {
     return `${firstName[0].toUpperCase()}${secondName[0].toUpperCase()}`;
