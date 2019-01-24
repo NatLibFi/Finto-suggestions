@@ -20,7 +20,8 @@ class EventActionSubTypes(enum.IntEnum):
 
 class SuggestionStatusTypes(enum.IntEnum):
     REJECTED = 0
-    ACCEPTED = 1
+    ACCEPTED = 1,
+    RETAINED = 2
 
 
 class SuggestionTypes(enum.IntEnum):

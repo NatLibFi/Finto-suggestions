@@ -8,6 +8,18 @@
             :class="[suggestionTypeToStyleClass[suggestion.suggestion_type], 'tag']">
             {{ suggestionTypeToString[suggestion.suggestion_type] }}
           </span>
+          <span
+            v-if="suggestion.status === suggestionStateStatus.ACCEPTED"
+            class="tag status-accepted">{{ suggestionStateStatusToString[suggestionStateStatus.ACCEPTED] }}
+          </span>
+          <span
+            v-if="suggestion.status === suggestionStateStatus.REJECTED"
+            class="tag status-rejected">{{ suggestionStateStatusToString[suggestionStateStatus.REJECTED] }}
+          </span>
+          <span
+            v-if="suggestion.status === suggestionStateStatus.RETAINED"
+            class="tag status-retained">{{ suggestionStateStatusToString[suggestionStateStatus.RETAINED] }}
+          </span>
           <span v-if="suggestion.tags.length > 0">
             <span class="tags tag" v-for="tag in suggestion.tags" :key="tag.label">
               {{ tag.label}}
@@ -37,7 +49,7 @@
 <script>
 import SvgIcon from '../icons/SvgIcon';
 import IconComments from '../icons/IconComments';
-import { suggestionTypeToStyleClass, suggestionTypeToString } from '../../utils/suggestionHelpers';
+import { suggestionTypeToStyleClass, suggestionTypeToString, suggestionStateStatus, suggestionStateStatusToString } from '../../utils/suggestionHelpers';
 import { dateTimeFormatLabel } from '../../utils/dateHelper';
 import { eventTypes } from '../../utils/eventHelper';
 
@@ -60,7 +72,9 @@ export default {
     suggestionTypeToStyleClass,
     suggestionTypeToString,
     eventTypes,
-    dateTimeFormatLabel
+    dateTimeFormatLabel,
+    suggestionStateStatus,
+    suggestionStateStatusToString
   }),
   methods: {
     goToSuggestion() {
@@ -84,7 +98,6 @@ export default {
       }
     },
     goToMeeting(id) {
-      console.log(id);
       this.$router.push({
         name: 'meeting-suggestion-list',
         params: {
@@ -155,6 +168,20 @@ li.item:hover {
 .type-modify {
   background-color: #ff8111;
   border: 2px solid #ff8111;
+}
+.status-accepted {
+  background-color: #58BA81;
+  border: 2px solid #58BA81;
+}
+
+.status-rejected {
+  background-color: #CC4A4A;
+  border: 2px solid #CC4A4A;
+}
+
+.status-retained {
+  background-color: #F2994A;
+  border: 2px solid #F2994A;
 }
 .label {
   font-size: smaller;

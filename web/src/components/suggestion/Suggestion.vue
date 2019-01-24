@@ -39,10 +39,24 @@
           <div class="tags">
             <span
               v-if="suggestion.suggestion_type === suggestionType.NEW"
-              class="tag type-new">{{ suggestionTypeToString[suggestion.suggestion_type] }}</span>
+              class="tag type-new">{{ suggestionTypeToString[suggestion.suggestion_type] }}
+            </span>
             <span
               v-if="suggestion.suggestion_type === suggestionType.MODIFY"
-              class="tag type-modify">{{ suggestionTypeToString[suggestion.suggestion_type] }}</span>
+              class="tag type-modify">{{ suggestionTypeToString[suggestion.suggestion_type] }}
+            </span>
+            <span
+              v-if="suggestion.status === suggestionStateStatus.ACCEPTED"
+              class="tag status-accepted">{{ suggestionStateStatusToString[suggestionStateStatus.ACCEPTED] }}
+            </span>
+            <span
+              v-if="suggestion.status === suggestionStateStatus.REJECTED"
+              class="tag status-rejected">{{ suggestionStateStatusToString[suggestionStateStatus.REJECTED] }}
+            </span>
+            <span
+              v-if="suggestion.status === suggestionStateStatus.RETAINED"
+              class="tag status-retained">{{ suggestionStateStatusToString[suggestionStateStatus.RETAINED] }}
+            </span>
             <span
               v-if="suggestion.tags && suggestion.tags.length > 0">
               <span
@@ -114,7 +128,7 @@ import SvgIcon from '../icons/SvgIcon';
 import AddComment from './AddComment';
 import AssignUser from './AssignUser';
 
-import { suggestionType, suggestionTypeToString } from '../../utils/suggestionHelpers';
+import { suggestionType, suggestionTypeToString, suggestionStateStatus, suggestionStateStatusToString } from '../../utils/suggestionHelpers';
 import {
   suggestionGetters,
   suggestionActions
@@ -151,7 +165,7 @@ export default {
     SvgIcon,
     AddComment,
     AssignUser,
-    TagSelector
+    TagSelector,
   },
   props: {
     suggestionId: {
@@ -175,7 +189,9 @@ export default {
       NEXT: 'next',
       PREVIOUS: 'previous'
     },
-    userRoles
+    userRoles,
+    suggestionStateStatus,
+    suggestionStateStatusToString
   }),
   computed: {
     ...mapSuggestionGetters({
@@ -228,7 +244,6 @@ export default {
       }
     },
     goToMeeting(id) {
-      console.log(id);
       this.$router.push({
         name: 'meeting-suggestion-list',
         params: {
@@ -458,13 +473,30 @@ h1.suggestion-title {
   border-radius: 2px;
   display: inline-block;
 }
+
 .type-new {
   background-color: #1137ff;
   border: 2px solid #1137ff;
 }
+
 .type-modify {
   background-color: #ff8111;
   border: 2px solid #ff8111;
+}
+
+.status-accepted {
+  background-color: #58BA81;
+  border: 2px solid #58BA81;
+}
+
+.status-rejected {
+  background-color: #CC4A4A;
+  border: 2px solid #CC4A4A;
+}
+
+.status-retained {
+  background-color: #F2994A;
+  border: 2px solid #F2994A;
 }
 
 .comment-container {

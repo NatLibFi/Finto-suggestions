@@ -5,7 +5,7 @@
       <span class="button move-to-next-meeting">
         Siirrä seuraavaan<span class="hidden-in-mobile"> kokoukseen</span>
       </span>
-      <span class="button dismiss" @click="dismissSuggestion()">
+      <span class="button dismiss" @click="retainSuggestion()">
         Jätä ehdotukseksi
       </span>
       <span class="button approve" @click="approveSuggestion()">
@@ -57,7 +57,8 @@ export default {
   methods: {
     ...mapSuggestionActions({
       setSuggestionAccepted: suggestionActions.SET_SUGGESTION_ACCEPTED,
-      setSuggestionRejected: suggestionActions.SET_SUGGESTION_REJECTED
+      setSuggestionRejected: suggestionActions.SET_SUGGESTION_REJECTED,
+      setSuggestionRetained: suggestionActions.SET_SUGGESTION_RETAINED
     }),
     ...mapAuthenticatedUserActions({
       validateAuthentication: authenticatedUserActions.VALIDATE_AUTHENTICATION,
@@ -77,6 +78,11 @@ export default {
     async approveSuggestion() {
       await this.setSuggestionAccepted({ suggestionId: this.suggestionId, status: suggestionStateStatus.ACCEPTED });
       await this.createEvent(suggestionStateStatus.ACCEPTED);
+      this.$emit('moveToNextSuggestion');
+    },
+    async retainSuggestion() {
+      await this.setSuggestionRetained({ suggestionId: this.suggestionId, status: suggestionStateStatus.RETAINED });
+      await this.createEvent(suggestionStateStatus.RETAINED);
       this.$emit('moveToNextSuggestion');
     }
   }

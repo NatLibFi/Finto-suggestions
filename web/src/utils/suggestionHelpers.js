@@ -1,6 +1,13 @@
 export const suggestionStateStatus = {
   ACCEPTED: 'ACCEPTED',
-  REJECTED: 'REJECTED'
+  REJECTED: 'REJECTED',
+  RETAINED: 'RETAINED'
+};
+
+export const suggestionStateStatusToString = {
+  ACCEPTED: 'Hyväksytty',
+  REJECTED: 'Hylätty',
+  RETAINED: 'Jää ehdotukseksi'
 };
 
 export const suggestionType = {

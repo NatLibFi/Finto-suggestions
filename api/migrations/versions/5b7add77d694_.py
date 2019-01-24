@@ -1,4 +1,5 @@
 """drops external_token table and creates table access_token
+
 Revision ID: 5b7add77d694
 Revises: 06bf1080e004
 Create Date: 2018-11-26 09:07:31.555275
