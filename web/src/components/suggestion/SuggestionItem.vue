@@ -84,7 +84,6 @@ export default {
       }
     },
     goToMeeting(id) {
-      console.log(id);
       this.$router.push({
         name: 'meeting-suggestion-list',
         params: {
