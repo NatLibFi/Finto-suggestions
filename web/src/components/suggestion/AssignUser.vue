@@ -1,17 +1,23 @@
 <template>
   <div class="assign-user">
-    <button @click="toggleSearch">
-        <svg-icon icon-name='add-person'><icon-add-person /></svg-icon>
-    </button>
-    <div class="dropdown-content" id="users-list" v-show="searchOpen" v-on:mouseleave="searchOpen = false">
+    <a @click="openSearch">
+      Lisää käsittelijä
+    </a>
+    <div class="dropdown-content" v-if="searchOpen" v-on-clickaway="closeSearch">
       <div class="dropdown-header">Kutsu käyttäjä ehdotukseen</div>
-      <hr class="line"/>
-      <input type="text" class="dropdown-filter" v-model="searchQuery" v-on:keydown="filterResults"/>
-      <hr class="line"/>
-      <div class="dropdown-users">
-        <div class="user-item" v-for="user in users" :key="user.id" v-on:click="assignUserToSuggestion({ suggestionId: suggestion.id, userId: user.id })">
-          <div class="user-image">{{ userNameInitials(user.name) }}</div>
-          <div class="user-name">{{ user.name }}</div>
+      <div class="dropdown-filter">
+        <input type="text" class="dropdown-filter-input" v-model="searchQuery" />
+      </div>
+      <div class="dropdown-options">
+        <div class="user-item" v-for="user in filteredUsers" :key="user.id" v-on:click="assignUserToSuggestion({ suggestionId: suggestion.id, userId: user.id })">
+          <div v-if="user.name && user.name.length > 0">
+            <div  class="user-image">{{ userNameInitials(user.name) }}</div>
+            <div class="user-name">{{ user.name }}</div>
+          </div>
+          <div v-if="user.name && user.name.length === 0">
+            <div  class="user-image">{{ user.id }}</div>
+            <div class="user-name">Käyttäjä {{ user.id }}</div>
+          </div>
         </div>
       </div>
     </div>
@@ -19,16 +25,15 @@
 </template>
 
 <script>
-import SvgIcon from '../icons/SvgIcon';
-import IconAddPerson from '../icons/IconAddPerson';
 import { userNameInitials } from '../../utils/nameHelpers';
 import { suggestionActions } from '../../store/modules/suggestion/suggestionConsts';
 import { mapSuggestionActions } from '../../store/modules/suggestion/suggestionModule';
-import { mapUserActions, mapUserGetters } from '../../store/modules/user/userModule';
-import { userActions, userGetters } from '../../store/modules/user/userConsts';
+import { mapUserActions, mapUserGetters, mapUserMutations } from '../../store/modules/user/userModule';
+import { userActions, userGetters, userMutations } from '../../store/modules/user/userConsts';
+import { directive as onClickaway } from 'vue-clickaway';
 
 export default {
-  components: {SvgIcon, IconAddPerson},
+  directives: {onClickaway: onClickaway},
   props: {
     suggestion: {
       type: Object,
@@ -37,107 +42,143 @@ export default {
   },
   data() {
     return {
-      userCache: [],
       searchOpen: false,
       searchQuery: '',
-      userNameInitials
+      userNameInitials,
+      filteredUsers: []
     }
   },
   computed: {
     ...mapUserGetters({ users: userGetters.GET_USERS })
   },
-  methods: {
-    toggleSearch() {
-      this.searchOpen = !this.searchOpen;
-    },
-    filterResults() {
-      this.users = this.userCache;
-      if (this.searchQuery.length === 1) return this.users = this.userCache;
-      this.users = this.userCache.filter(item => item.name.toLowerCase().match(this.searchQuery.toLowerCase()));
-    },
-    ...mapSuggestionActions({ assignUserToSuggestion: suggestionActions.ASSIGN_SUGGESTION_TO_USER }),
-    ...mapUserActions({ getUsers: userActions.GET_USERS }),
-
+  watch: {
+    searchQuery: function() {
+      this.filterResults()
+    }
   },
   async created() {
     // If "admin" in user.roles:
     await this.getUsers();
-    this.userCache = this.users;
+    this.filteredUsers = this.users;
+  },
+  mounted() {
+    document.body.addEventListener('keyup', e => {
+      if (e.keyCode === 27) {
+        this.closeSearch();
+      }
+    })
+  },
+  methods: {
+    ...mapSuggestionActions({ assignUserToSuggestion: suggestionActions.ASSIGN_SUGGESTION_TO_USER }),
+    ...mapUserActions({ getUsers: userActions.GET_USERS }),
+    openSearch() {
+      this.searchOpen = true;
+    },
+    closeSearch() {
+      this.searchOpen = false;
+    },
+    filterResults() {
+      this.filteredUsers = this.users.filter(user => user.name.toLowerCase().includes(this.searchQuery.toLowerCase()));
+    }
   }
   };
 </script>
 
 <style scoped>
-    .assign-user {
-        position: relative;
-        display: inline-block;
-    }
-    .assign-user button {
-        background-color: rgba(0,0,0,0);
-        border-width: 0;
-    }
-    .dropdown-content {
-        text-align: center;
-        position: absolute;
-        right: 0;
-        width: 200px;
-        height: auto;
-        background: #FFFFFF;
-        border: 2px solid #E1E1E1;
-        box-sizing: border-box;
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
-        border-radius: 1px;
-    }
-    .dropdown-header {
-        font-style: normal;
-        font-weight: bold;
-        line-height: normal;
-        font-size: 14px;
-        padding: 5px;
-        color: #444444;
-    }
-    input.dropdown-filter {
-        width: 180px;
-        height: 26px;
-        left: 10px;
-        top: 44px;
-        border: 1px solid #E1E1E1;
-        box-sizing: border-box;
-        border-radius: 1px;
+.assign-user {
+  position: relative;
+  display: inline-block;
+}
+.assign-user a {
+  font-size: 14px;
+  -webkit-user-select: none; /* Safari */
+  -moz-user-select: none; /* Firefox */
+  -ms-user-select: none; /* IE10+/Edge */
+  user-select: none; /* Standard */
+}
+.assign-user a:hover {
+  cursor: pointer;
+  cursor: hand;
+}
+.dropdown-content {
+  text-align: center;
+  position: absolute;
+  top: 22px;
+  left: -30%;
+  width: 200px;
+  height: auto;
+  background: #FFFFFF;
+  border: 1px solid #f5f5f5;
+  box-sizing: border-box;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+  border-radius: 1px;
+}
+.dropdown-header {
+  font-style: normal;
+  font-weight: bold;
+  line-height: normal;
+  padding: 9px 0 8px 0;
+  border-bottom: 1px solid #f5f5f5;
+  font-size: 12px;
+  color: #444444;
+}
+.dropdown-filter {
+  border-bottom: 1px solid #f5f5f5;
+  padding: 10px;
+}
+input.dropdown-filter-input {
+  width: 180px;
+  height: 26px;
+  left: 10px;
+  top: 44px;
+  border: 1px solid #E1E1E1;
+  box-sizing: border-box;
+  border-radius: 1px;
+}
+.dropdown-options {
+  max-height: 180px;
+  overflow-x: scroll;
+}
+.user-item {
+  text-align: left;
+  position: relative;
+  height: 42px;
+  padding: 0 10px;
+}
+.user-item:hover {
+  cursor: pointer;
+  background-color: #f3fbfa;
+}
+.user-image {
+  position: absolute;
+  top: 22%;
+  height: 25px;
+  width: 25px;
+  display: inline-block;
+  border-radius: 35px;
+  line-height: 27px;
+  text-align: center;
+  background-color: #804af2;
+  color: #ffffff;
+  font-size: 10px;
+  font-weight: 800;
+}
+.user-name {
+  position: absolute;
+  top: 22%;
+  margin-left: 40px;
+  padding-top: 2px;
+  display: inline-block;
+  font-style: normal;
+  font-weight: bold;
+  line-height: 20px;
+  font-size: 13px;
+  color: #333333;
+}
 
-    }
-    .user-item {
-        text-align: left;
-        position: relative;
-        height: 30px;
-    }
-    .user-item:hover {
-        cursor: pointer;
-        background-color: #f3f3f3 ;
-    }
-    .user-image {
-        position: absolute;
-        display: inline-block;
-        height: 25px;
-        width: 25px;
-        border-radius: 35px;
-        line-height: 25px;
-        text-align: center;
-        background-color: #804af2;
-        color: #ffffff;
-        font-size: 8px;
-        font-weight: 800;
-    }
-    .user-name {
-        margin-left: 40px;
-        display: inline-block;
-        font-style: normal;
-        font-weight: bold;
-        line-height: normal;
-        font-size: 14px;
-        color: #333333;
-    }
-    hr.line {
-        border: 1px solid #F5F5F5;
-    }
+@media (max-width: 700px) {
+  .dropdown-content {
+    left: -25%;
+  }
+}
 </style>
