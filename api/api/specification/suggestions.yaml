@@ -1,9 +1,8 @@
 paths:
-
   /suggestions:
     get:
       operationId: api.logic.suggestions.get_suggestions
-      description: |
+      description:
         Get all suggestions.
         Optional query parameters can be used to limit the request.
         Parameter **limit** determines the size of the returned array and **offset**

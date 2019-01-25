@@ -82,9 +82,18 @@ def post_suggestion() -> str:
 
     :returns: the created suggestion as json
     """
+    created_response = create_or_404(Suggestion, connexion.request.json)
+    response = created_response[0]
 
-    return create_or_404(Suggestion, connexion.request.json)
+    if response is not None and response['code'] is 201:
+      suggestion_id = response['data']['id']
+      protocol = connexion.request.environ['HTTP_X_FORWARDED_PROTO']
+      baseurl = connexion.request.environ['HTTP_HOST'].split(',')[1]
 
+      if suggestion_id > 0 and protocol is not '' and baseurl is not None and baseurl is not '':
+        response['suggestionUrl'] = f'{protocol}://{baseurl}/suggestions/{suggestion_id}'
+
+    return response
 
 @admin_only
 @suggestion_parameter_validator
