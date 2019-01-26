@@ -93,6 +93,14 @@
       </div>
     </div>
 
+    <div v-if="events && events.length > 0">
+      <div v-for="event in events" :key="event.id">
+        <suggestion-event
+          :event="event"
+          :type="event.event_type" />
+      </div>
+    </div>
+
     <div v-if="meetingId" class="meeting-actions">
       <meeting-actions
         :userId="userId"
@@ -103,15 +111,7 @@
       />
     </div>
 
-    <div v-if="events && events.length > 0">
-      <div v-for="event in events" :key="event.id">
-        <suggestion-event
-          :event="event"
-          :type="event.event_type" />
-      </div>
-    </div>
-
-    <div>
+    <div v-else>
       <add-comment :suggestionId="suggestionId" />
     </div>
   </div>
@@ -273,16 +273,20 @@ export default {
       }
     },
     goToNextSuggestion() {
-      this.getNexUsableSuggestionId(this.movingAction.NEXT);
-      if (this.requestedSuggestionId) {
-        this.$router.push({
-          name: 'meeting-suggestion',
-          params: {
-            suggestionId: this.requestedSuggestionId,
-            suggestion: this.suggestion,
-            meetingId: this.meetingId
-          }
-        });
+      if(this.noNextSuggestions) {
+        this.$router.push('/meetings');
+      } else {
+        this.getNexUsableSuggestionId(this.movingAction.NEXT);
+        if (this.requestedSuggestionId) {
+          this.$router.push({
+            name: 'meeting-suggestion',
+            params: {
+              suggestionId: this.requestedSuggestionId,
+              suggestion: this.suggestion,
+              meetingId: this.meetingId
+            }
+          });
+        }
       }
     },
     getNexUsableSuggestionId(action) {

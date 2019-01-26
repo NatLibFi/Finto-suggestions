@@ -97,6 +97,7 @@ export default {
 }
 
 .action-buttons {
+  margin-top: 10px;
   padding: 20px 40px 25px;
   border-top: 1px solid #eeeeee;
   display: flex;
