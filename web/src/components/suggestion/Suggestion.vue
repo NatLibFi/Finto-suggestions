@@ -153,6 +153,7 @@ import { authenticatedUserGetters, authenticatedUserActions } from '../../store/
 
 import { userRoles } from '../../utils/userHelpers';
 
+import AssignUser from '../suggestion/AssignUser';
 import TagSelector from '../tag/TagSelector';
 
 export default {

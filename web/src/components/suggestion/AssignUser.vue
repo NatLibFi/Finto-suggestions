@@ -53,11 +53,6 @@ export default {
   computed: {
     ...mapUserGetters({ users: userGetters.GET_USERS })
   },
-  watch: {
-    searchQuery: function() {
-      this.filterResults()
-    }
-  },
   async created() {
     // If "admin" in user.roles:
     await this.getUsers();
@@ -90,11 +85,13 @@ export default {
     },
     closeSearch() {
       this.searchOpen = false;
-    },
-    filterResults() {
-      this.filteredUsers = this.users.filter(user => user.name.toLowerCase().includes(this.searchQuery.toLowerCase()));
     }
-  }
+  },
+  watch: {
+    searchQuery() {
+      this.filterResults();
+    }
+  },
   };
 </script>
 
