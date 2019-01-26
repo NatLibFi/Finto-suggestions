@@ -25,21 +25,14 @@
 </template>
 
 <script>
-<<<<<<< HEAD
 import SvgIcon from '../icons/SvgIcon';
 import IconAddPerson from '../icons/IconAddPerson';
 import { userNameInitials } from '../../utils/userHelpers';
-=======
-import { userNameInitials } from '../../utils/nameHelpers';
->>>>>>> develop
 import { suggestionActions } from '../../store/modules/suggestion/suggestionConsts';
 import { mapSuggestionActions } from '../../store/modules/suggestion/suggestionModule';
 import { mapUserActions, mapUserGetters, mapUserMutations } from '../../store/modules/user/userModule';
 import { userActions, userGetters, userMutations } from '../../store/modules/user/userConsts';
-<<<<<<< HEAD
-=======
 import { directive as onClickaway } from 'vue-clickaway';
->>>>>>> develop
 
 export default {
   directives: {onClickaway: onClickaway},
@@ -53,22 +46,13 @@ export default {
     return {
       searchOpen: false,
       searchQuery: '',
-<<<<<<< HEAD
-      userNameInitials
-=======
       userNameInitials,
       filteredUsers: []
->>>>>>> develop
     }
   },
   computed: {
     ...mapUserGetters({ users: userGetters.GET_USERS })
   },
-<<<<<<< HEAD
-  async created() {
-    // If "admin" in user.roles:
-    await this.getUsers();
-=======
   watch: {
     searchQuery: function() {
       this.filterResults()
@@ -85,12 +69,10 @@ export default {
         this.closeSearch();
       }
     })
->>>>>>> develop
   },
   methods: {
     ...mapSuggestionActions({ assignUserToSuggestion: suggestionActions.ASSIGN_SUGGESTION_TO_USER }),
     ...mapUserActions({ getUsers: userActions.GET_USERS }),
-<<<<<<< HEAD
     ...mapUserMutations({ setUsers: userMutations.SET_USERS }),
     toggleSearch() {
       this.searchOpen = !this.searchOpen;
@@ -102,7 +84,7 @@ export default {
       } else {
         this.getUsers();
       }
-=======
+    },
     openSearch() {
       this.searchOpen = true;
     },
@@ -111,7 +93,6 @@ export default {
     },
     filterResults() {
       this.filteredUsers = this.users.filter(user => user.name.toLowerCase().includes(this.searchQuery.toLowerCase()));
->>>>>>> develop
     }
   }
   };
