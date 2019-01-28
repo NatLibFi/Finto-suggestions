@@ -89,7 +89,7 @@
     </div>
 
     <transition name="fade">
-      <div v-if="!suggestion.user_id">
+      <div v-if="!suggestion.user_id && isAdmin">
         <assign-user :suggestion="suggestion" class="icon-button" />
       </div>
 
