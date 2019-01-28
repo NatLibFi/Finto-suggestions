@@ -55,7 +55,6 @@
           </div>
         </div>
         <div class="suggestion-header-buttons" v-if="isAuthenticated && role === userRoles.ADMIN">
-          <assign-user :suggestion="suggestion" class="icon-button" />
           <tag-selector :suggestion="suggestion" />
           <svg-icon icon-name="more" class="icon-button"><icon-more /></svg-icon>
         </div>
@@ -151,7 +150,6 @@ export default {
     IconMore,
     SvgIcon,
     AddComment,
-    AssignUser,
     TagSelector
   },
   props: {
