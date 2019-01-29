@@ -25,7 +25,7 @@
 </template>
 
 <script>
-import { userNameInitials } from '../../utils/nameHelpers';
+import { userNameInitials } from '../../utils/userHelpers';
 import { suggestionActions } from '../../store/modules/suggestion/suggestionConsts';
 import { mapSuggestionActions } from '../../store/modules/suggestion/suggestionModule';
 import { mapUserActions, mapUserGetters, mapUserMutations } from '../../store/modules/user/userModule';

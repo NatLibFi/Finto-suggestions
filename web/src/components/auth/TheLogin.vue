@@ -13,10 +13,10 @@
     </div>
   </div>
   <div class="login-own-credentials">
-    <h4 v-if="!showOwnCredentialLogin" @click="showOwnCredentialLogin = !showOwnCredentialLogin">
+    <h4 v-if="!showOwnCredentialLogin" @click="showOwnCredentialInputs()">
       Kirjaudu sisään omilla tunnuksilla
     </h4>
-    <div v-if="showOwnCredentialLogin" class="login-inputs">
+    <div v-if="showOwnCredentialLogin">
       <div class="login-input">
         <span>Sähköposti</span>
         <input type="text" v-model="email">
@@ -28,8 +28,17 @@
       <div @click="login('local')" class="login-submit">
         <span>Kirjaudu sisään</span>
       </div>
-      <div class="login-forgot-password">
+      <div class="login-forgot-password" @click="showResetPasswordInputs()">
         <span>Unohditko salasanasi?</span>
+      </div>
+    </div>
+    <div class="forgot-password-input" v-if="showForgottenPsswordForm">
+      <div class="login-input">
+        <span>Sähköposti</span>
+        <input type="text" v-model="resetEmail">
+      </div>
+      <div @click="resetPassword()" class="login-submit">
+        <span>Tilaa uusi salasana</span>
       </div>
     </div>
   </div>
@@ -52,7 +61,9 @@ export default {
       baseUrl: process.env.BASE_URL,
       showOwnCredentialLogin: false,
       email: '',
-      password: ''
+      password: '',
+      showForgottenPsswordForm: false,
+      resetEmail: ''
     }
   },
   methods: {
@@ -63,6 +74,17 @@ export default {
     },
     gatherLoginData() {
       return { email: this.email, password: this.password };
+    },
+    showOwnCredentialInputs() {
+      this.showOwnCredentialLogin = true;
+      this.showForgottenPsswordForm = false;
+    },
+    showResetPasswordInputs() {
+      this.showOwnCredentialLogin = false;
+      this.showForgottenPsswordForm = true;
+    },
+    resetPassword() {
+      this.$emit('resetPassword', this.resetEmail);
     }
   }
 };

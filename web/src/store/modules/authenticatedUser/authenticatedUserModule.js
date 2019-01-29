@@ -134,6 +134,9 @@ export default {
       } else {
         dispatch(authenticatedUserActions.REVOKE_AUTHENTICATION);
       }
+    },
+    async [authenticatedUserActions.RESET_PASSWORD]({ dispatch }, email) {
+
     }
   }
 };

@@ -38,5 +38,6 @@ export const authenticatedUserActions = {
   GET_USER_ID_FROM_STORAGE: 'getUserIdFromStorage',
   GET_USER_NAME: 'getUserName',
   AUTHENTICATE_LOCAL_USER: 'authenticateLocalUser',
-  REFRESH_AUTHORIZATION_TOKEN: 'refreshAuthorizationToken'
+  REFRESH_AUTHORIZATION_TOKEN: 'refreshAuthorizationToken',
+  RESET_PASSWORD: 'resetPassword'
 };

@@ -66,7 +66,7 @@
 
     <div v-if="showLoginDialog">
       <centered-dialog @close="closeDialog">
-        <the-login @login="login"/>
+        <the-login @login="login" @resetPassword="resetPassword"/>
       </centered-dialog>
     </div>
     <div v-if="showSignupDialog">
@@ -96,7 +96,7 @@ import { mapAuthenticatedUserGetters, mapAuthenticatedUserActions } from '../../
 import { authenticatedUserGetters, authenticatedUserActions, storeKeyNames } from '../../store/modules/authenticatedUser/authenticatedUserConsts.js';
 
 import api from '../../api/index.js';
-import { userNameInitials } from '../../utils/nameHelpers.js';
+import { userNameInitials, emailValidator } from '../../utils/userHelpers.js';
 
 export default {
   components: {
@@ -205,6 +205,16 @@ export default {
       const access_token = $cookies.get(storeKeyNames.ACCESS_TOKEN);
       const refreshToken = $cookies.get(storeKeyNames.REFRESH_TOKEN);
       await this.refreshToken({ access_token: access_token, refresh_token: refreshToken });
+    },
+    resetPassword(email) {
+      console.log(email);
+      const validEmail = emailValidator(email);
+      if(validEmail) {
+        console.log('do password reset', email);
+      } else {
+        //TODO: show some info to user about this
+        console.log('email is not valid', email);
+      }
     }
   },
   watch: {
