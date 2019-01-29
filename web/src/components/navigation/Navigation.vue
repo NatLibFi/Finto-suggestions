@@ -1,12 +1,10 @@
 <template>
   <div class="navigation">
-
     <div class="nav-content">
       <div class="nav-title">
         <img @click="returnToHome" src="./finto-logo.svg" alt="">
         <span @click="returnToHome">Finto – Käsite-ehdotukset</span>
       </div>
-
       <transition name="fade">
         <div v-if="isAuthenticated" class="nav-menu" @click="showDropdown = true">
           <div class="user-bubble">
@@ -36,12 +34,11 @@
           <div @click="showSignupDialog = !showSignupDialog">Luo tunnus</div>
         </div>
       </transition>
-
     </div>
 
     <div v-if="showDropdown" v-on-clickaway="closeDropdown" class="nav-menu-dropdown dropdown">
-      <div class="disabled">Profiili</div>
-      <div class="disabled">Asetukset</div>
+      <div @click="goToProfile">Profiili</div>
+      <div @click="goToSettings">Asetukset</div>
       <div @click="logOut">Kirjaudu ulos</div>
     </div>
 
@@ -58,8 +55,8 @@
         </div>
       </div>
       <div class="nav-mobile-dropdown-content">
-        <div class="disabled">Profiili</div>
-        <div class="disabled">Asetukset</div>
+        <div @click="goToProfile">Profiili</div>
+        <div @click="goToSettings">Asetukset</div>
         <div @click="logOut">Kirjaudu ulos</div>
       </div>
     </div>
@@ -92,7 +89,9 @@ import IconMore from '../icons/IconMore';
 import IconTriangle from '../icons/IconTriangle';
 import { directive as onClickaway } from 'vue-clickaway';
 
+// eslint-disable-next-line
 import { mapAuthenticatedUserGetters, mapAuthenticatedUserActions } from '../../store/modules/authenticatedUser/authenticatedUserModule.js';
+// eslint-disable-next-line
 import { authenticatedUserGetters, authenticatedUserActions, storeKeyNames } from '../../store/modules/authenticatedUser/authenticatedUserConsts.js';
 
 import api from '../../api/index.js';
@@ -181,6 +180,26 @@ export default {
       }
       this.showSignupDialog = false;
       this.showSignupConfirmation = true;
+    },
+    goToProfile: function() {
+      this.$router.push({
+        name: 'user',
+        params: {
+          userId: this.userId
+        }
+      });
+      this.showDropdown = false;
+      this.showMobileDropdown = false;
+    },
+    goToSettings: function() {
+      this.$router.push({
+        name: 'settings',
+        params: {
+          userId: this.userId
+        }
+      });
+      this.showDropdown = false;
+      this.showMobileDropdown = false;
     },
     logOut() {
       this.revokeAuthentication();
@@ -494,10 +513,6 @@ export default {
   color: #ffffff;
   font-size: 14px;
   font-weight: 800;
-}
-
-.disabled {
-  color: #ccc;
 }
 
 .fade-enter-active,

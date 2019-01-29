@@ -61,6 +61,21 @@ def get_suggestions(limit: int = None, offset: int = None, filters: str = None, 
     return get_all_or_404_custom(query_func)
 
 
+def get_user_suggestions(user_id: int) -> str:
+    """
+    Gets suggestions by user id
+    :params user_id
+    :returns suggestions or error
+    """
+
+    if user_id > 0:
+        user_suggestions = Suggestion.query.filter_by(user_id=user_id).all()
+        serialized_objects = [o.as_dict() for o in user_suggestions]
+        return { 'data': serialized_objects, 'code': 200 }, 200
+
+    return { 'error': 'user_id was not valid', 'code': 400}, 400
+
+
 def get_suggestion(suggestion_id: int) -> str:
     """
     Returns a suggestion by id.

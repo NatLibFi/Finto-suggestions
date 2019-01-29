@@ -1,8 +1,11 @@
 <template>
   <div class="header-container">
-    <div class="counts">
+    <div v-if="!userPage" class="title">
       <span class="open">{{ openSuggestionCount }} käsittelemätöntä</span>
       <span class="resolved">{{ resolvedSuggestionCount }} käsiteltyä</span>
+    </div>
+    <div v-if="userPage" class="title">
+      <span>Käyttäjälle asetut ehdotukset</span>
     </div>
     <div
       @click="isDropDownOpened = !isDropDownOpened"
@@ -45,7 +48,8 @@ export default {
   props: {
     openSuggestionCount: Number,
     resolvedSuggestionCount: Number,
-    meetingSort: Boolean
+    meetingSort: Boolean,
+    userPage: Boolean
   },
   data: () => ({
     selectedSortOptionIndex: 0,
@@ -120,8 +124,9 @@ export default {
   text-align: left;
   background-color: #ffffff;
   border: 2px solid #f5f5f5;
+  height: 36px;
 }
-.counts {
+.title {
   display: inline-block;
   overflow: hidden;
   text-align: left;
@@ -211,7 +216,7 @@ export default {
     margin: 20px 10vw 0;
   }
 
-  .counts {
+  .title {
     font-size: 12px;
   }
 

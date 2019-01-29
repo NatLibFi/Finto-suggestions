@@ -1,7 +1,7 @@
 <template>
   <div class="suggestion">
     <div class="arrow-button">
-      <a @click="goToSuggestionList()" unselectable="on">
+      <a @click="goBack()" unselectable="on">
         <svg-icon icon-name="arrow"><icon-arrow /></svg-icon>
         Takaisin käsite-ehdotuksiin
       </a>
@@ -198,7 +198,6 @@ export default {
     if (this.meetingId) {
       await this.getSuggestionsByMeetingId(this.meetingId);
     }
-    
     this.checkVisibilityOfGoingNextOrPrevious();
   },
   methods: {
@@ -212,17 +211,8 @@ export default {
     ...mapUserActions({
       getUser: userActions.GET_USER
     }),
-    goToSuggestionList() {
-      if (!this.meetingId) {
-        this.$router.push('/');
-      } else {
-        this.$router.push({
-          name: 'meeting-suggestion-list',
-          params: {
-            meetingId: this.meetingId
-          }
-        });
-      }
+    goBack() {
+      this.$router.go(-1);
     },
     goToMeeting(id) {
       console.log(id);

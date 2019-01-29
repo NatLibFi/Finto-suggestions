@@ -4,6 +4,9 @@ import { asciiUriEncoding } from '../helper';
 
 export default {
   getSuggestions: () => get({ resource: '/suggestions' }),
+  getSuggestionsByUserId: userId => get({ resource: `/suggestions/user=${userId}` }),
+  getSortedSuggestionByUserId: (userId, sortValue) =>
+    get({ resource: `/suggestions/user=${userId}?sort=${sortValue}` }),
   getOpenSuggestions: () =>
     get({ resource: `/suggestions?filters=type${asciiUriEncoding.VALUE_OF_PARAM}new` }),
   getResolvedSuggestions: () =>

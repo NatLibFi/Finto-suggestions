@@ -58,13 +58,15 @@ export default {
       default: null
     }
   },
-  data: () => ({
-    paginationMaxCount: 10,
-    openCount: 0,
-    resolvedCount: 0,
-    paginated_items: [],
-    meetingSort: false
-  }),
+  data () {
+    return {
+      paginationMaxCount: 10,
+      openCount: 0,
+      resolvedCount: 0,
+      paginated_items: [],
+      meetingSort: false
+    }
+  },
   computed: {
     ...mapSuggestionGetters({
       items: suggestionGetters.GET_SUGGESTIONS,
