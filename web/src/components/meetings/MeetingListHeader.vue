@@ -27,14 +27,8 @@ import SortingDropDown from '../common/SortingDropDown';
 import SvgIcon from '../icons/SvgIcon';
 import IconTriangle from '../icons/IconTriangle';
 
-import {
-  mapMeetingGetters,
-  mapMeetingActions
-} from '../../store/modules/meeting/meetingModule.js';
-import {
-  meetingGetters,
-  meetingActions
-} from '../../store/modules/meeting/meetingConst.js';
+import { mapMeetingGetters, mapMeetingActions } from '../../store/modules/meeting/meetingModule.js';
+import { meetingGetters, meetingActions } from '../../store/modules/meeting/meetingConst.js';
 
 export default {
   components: {
@@ -76,7 +70,10 @@ export default {
     },
     handleSortinDropDownIndex() {
       if (this.selectedSort) {
-        this.selectedSortOptionIndex = getSelectedSortOptionIndex(this.dropDownOptions, this.selectedSort);
+        this.selectedSortOptionIndex = getSelectedSortOptionIndex(
+          this.dropDownOptions,
+          this.selectedSort
+        );
       }
     }
   },

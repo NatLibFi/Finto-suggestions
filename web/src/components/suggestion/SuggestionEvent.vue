@@ -44,7 +44,7 @@ export default {
       action: 'vaihtoi tyypiksi ',
       userName: '',
       userNameInitials: ''
-    }
+    };
   },
   async created() {
     await this.getUser(this.event.user_id);

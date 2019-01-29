@@ -31,8 +31,7 @@ import { mapMeetingGetters, mapMeetingActions } from '../../store/modules/meetin
 import { meetingGetters, meetingActions } from '../../store/modules/meeting/meetingConst.js';
 
 import { sortingKeys, comparerDesc, comparerAsc } from '../../utils/sortingHelper.js';
-import { compareDesc, compareAsc, parse, isAfter, isEqual } from 'date-fns';
-import meeting from '../../api/meeting/meeting';
+import { parse, isAfter, isEqual } from 'date-fns';
 
 export default {
   components: {
@@ -47,7 +46,7 @@ export default {
       paginated_meetings: [],
       futureMeetingCount: 0,
       pastMeetingCount: 0
-    }
+    };
   },
   async created() {
     await this.getMeetings();
@@ -70,11 +69,11 @@ export default {
       return 10;
     },
     sortMeetingList() {
-      if(this.selectedSort) {
-        if(this.selectedSort === sortingKeys.NEWEST_FIRST) {
+      if (this.selectedSort) {
+        if (this.selectedSort === sortingKeys.NEWEST_FIRST) {
           this.meetings.sort(comparerDesc('meeting_date'));
         }
-        if(this.selectedSort === sortingKeys.OLDEST_FIRST) {
+        if (this.selectedSort === sortingKeys.OLDEST_FIRST) {
           this.meetings.sort(comparerAsc('meeting_date'));
         }
       }
@@ -101,8 +100,8 @@ export default {
   },
   watch: {
     selectedSort() {
-      if(this.selectedSort) {
-        this.sortMeetingList()
+      if (this.selectedSort) {
+        this.sortMeetingList();
       }
     }
   }
@@ -145,10 +144,12 @@ ul {
   }
 }
 
-.fade-enter-active, .fade-leave-active {
+.fade-enter-active,
+.fade-leave-active {
   transition: opacity 3s;
 }
-.fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
+.fade-enter,
+.fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
   opacity: 0.75;
 }
 </style>

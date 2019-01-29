@@ -27,9 +27,13 @@
         </p>
       </div>
     </div>
-    <div class="item-comments" v-if="suggestion.events.filter((event) => event.event_type === eventTypes.COMMENT).length > 0">
+    <div
+      v-if="suggestion.events.filter((event) => event.event_type === eventTypes.COMMENT).length > 0"
+      class="item-comments">
       <svg-icon icon-name="comments"><icon-comments /></svg-icon>
-      <span>{{ suggestion.events.filter((event) => event.event_type === eventTypes.COMMENT).length }}</span>
+      <span>
+        {{ suggestion.events.filter((event) => event.event_type === eventTypes.COMMENT).length }}
+      </span>
     </div>
   </li>
 </template>
@@ -65,7 +69,6 @@ export default {
   methods: {
     goToSuggestion() {
       if (!this.meetingId) {
-        console.log('asdasd', this.meetingId);
         this.$router.push({
           name: 'suggestion',
           params: {
@@ -85,13 +88,12 @@ export default {
       }
     },
     goToMeeting(id) {
-      console.log(id);
       this.$router.push({
         name: 'meeting-suggestion-list',
         params: {
           meetingId: id
         }
-      })
+      });
     }
   }
 };

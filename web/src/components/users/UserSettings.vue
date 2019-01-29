@@ -24,7 +24,6 @@
         :imageUrl="user.image_url"
         />
     </div>
-
   </div>
 </template>
 
@@ -35,8 +34,9 @@ import { userRoleToString } from '../../utils/userMappings.js';
 
 import { userActions, userGetters } from '../../store/modules/user/userConsts';
 import { mapUserActions, mapUserGetters } from '../../store/modules/user/userModule';
-
+// eslint-disable-next-line
 import { authenticatedUserGetters } from '../../store/modules/authenticatedUser/authenticatedUserConsts.js';
+// eslint-disable-next-line
 import { mapAuthenticatedUserGetters } from '../../store/modules/authenticatedUser/authenticatedUserModule.js';
 
 export default {
@@ -51,7 +51,7 @@ export default {
       userRoleToString,
       userNameInitials: '',
       isTouched: false
-    }
+    };
   },
   computed: {
     ...mapAuthenticatedUserGetters({
@@ -77,7 +77,7 @@ export default {
       }
     }
   }
-}
+};
 </script>
 
 <style scoped>
@@ -177,10 +177,12 @@ export default {
   }
 }
 
-.fade-enter-active, .fade-leave-active {
+.fade-enter-active,
+.fade-leave-active {
   transition: opacity 3s;
 }
-.fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
+.fade-enter,
+.fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
   opacity: 0.75;
 }
 </style>

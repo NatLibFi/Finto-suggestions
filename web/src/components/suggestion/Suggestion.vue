@@ -42,7 +42,8 @@
               class="tag type-new">{{ suggestionTypeToString[suggestion.suggestion_type] }}</span>
             <span
               v-if="suggestion.suggestion_type === suggestionType.MODIFY"
-              class="tag type-modify">{{ suggestionTypeToString[suggestion.suggestion_type] }}</span>
+              class="tag type-modify">{{ suggestionTypeToString[suggestion.suggestion_type] }}
+            </span>
             <span
               v-if="suggestion.tags && suggestion.tags.length > 0">
               <span
@@ -131,8 +132,9 @@ import { userActions, userGetters } from '../../store/modules/user/userConsts';
 import { mapUserActions, mapUserGetters } from '../../store/modules/user/userModule';
 
 import { dateTimeFormatLabel } from '../../utils/dateHelper.js';
-
+// eslint-disable-next-line
 import { mapAuthenticatedUserGetters } from '../../store/modules/authenticatedUser/authenticatedUserModule.js';
+// eslint-disable-next-line
 import { authenticatedUserGetters } from '../../store/modules/authenticatedUser/authenticatedUserConsts.js';
 
 import { userRoles } from '../../utils/userHelpers';

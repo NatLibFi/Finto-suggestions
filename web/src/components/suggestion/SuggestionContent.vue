@@ -79,7 +79,9 @@
     </div>
 
     <div v-if="suggestion.neededFor">
-      <p class="content-title"><strong>Aineisto jonka kuvailussa käsitettä tarvitaan (esim. nimeke tai URL)</strong></p>
+      <p class="content-title">
+        <strong>Aineisto jonka kuvailussa käsitettä tarvitaan (esim. nimeke tai URL)</strong>
+      </p>
       <p>{{ suggestion.neededFor }}</p>
     </div>
 
@@ -90,7 +92,11 @@
 
     <div v-if="userName">
       <p class="content-title"><strong>Käsittelijä</strong></p>
-      <p>{{ userName }} <a href="#" v-on:click="unassignUserFromSuggestion(suggestion.id, suggestion.user_id)">Poista käsittelijä ehdotuksesta</a></p>
+      <p>{{ userName }}
+        <a href="#" v-on:click="unassignUserFromSuggestion(suggestion.id, suggestion.user_id)">
+          Poista käsittelijä ehdotuksesta
+        </a>
+      </p>
     </div>
 
   </div>

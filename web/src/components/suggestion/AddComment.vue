@@ -38,7 +38,9 @@ import { mapEventActions } from '../../store/modules/event/eventModule.js';
 import { eventActions } from '../../store/modules/event/eventConsts.js';
 import { eventTypes } from '../../utils/eventMappings.js';
 
+// eslint-disable-next-line
 import { mapAuthenticatedUserGetters } from '../../store/modules/authenticatedUser/authenticatedUserModule.js';
+// eslint-disable-next-line
 import { authenticatedUserGetters } from '../../store/modules/authenticatedUser/authenticatedUserConsts.js';
 
 export default {
@@ -156,12 +158,11 @@ export default {
   background-color: #44bdb2;
 }
 
-.disabled
-{
+.disabled {
   pointer-events: none;
   /* for "disabled" effect */
   opacity: 0.5;
-  background: #CCC;
+  background: #cccccc;
 }
 
 @media (max-width: 750px) {
@@ -183,7 +184,8 @@ export default {
 </style>
 
 <style>
-.markdown-editor .CodeMirror, .markdown-editor .CodeMirror-scroll {
+.markdown-editor .CodeMirror,
+.markdown-editor .CodeMirror-scroll {
   min-height: 100px;
 }
 </style>

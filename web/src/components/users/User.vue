@@ -3,8 +3,12 @@
     <div class="profile-container">
       <div class="user-name-initials">{{ userNameInitials }}</div>
       <div class="profile">
-        <p class="profile-user" v-if="!user.name">Käyttäjä {{ userId }}, {{ user.role }}</p>
-        <p class="profile-user" v-if="user.name">{{ user.name }}, {{ userRoleToString[user.role] }}</p>
+        <p class="profile-user" v-if="!user.name">
+          Käyttäjä {{ userId }}<span v-if="user.role">, {{ userRoleToString[user.role] }}</span>
+        </p>
+        <p class="profile-user" v-if="user.name">
+          {{ user.name }}<span v-if="user.role">, {{ userRoleToString[user.role] }}</span>
+        </p>
         <p v-if="user.title || user.organization" class="profile-role">
           <span v-if="user.title">{{ user.title }}, </span>
           <span v-if="user.organization">{{ user.organization }}</span>
@@ -54,23 +58,22 @@ import { userActions, userGetters } from '../../store/modules/user/userConsts';
 import { mapUserActions, mapUserGetters } from '../../store/modules/user/userModule';
 import { userNameInitials } from '../../utils/nameHelpers.js';
 import { userRoleToString } from '../../utils/userMappings.js';
+// eslint-disable-next-line
 import { authenticatedUserGetters } from '../../store/modules/authenticatedUser/authenticatedUserConsts.js';
+// eslint-disable-next-line
 import { mapAuthenticatedUserGetters } from '../../store/modules/authenticatedUser/authenticatedUserModule.js';
 
 import {
   suggestionGetters,
-  suggestionActions,
-  suggestionMutations
+  suggestionActions
 } from '../../store/modules/suggestion/suggestionConsts.js';
 
 import {
   mapSuggestionActions,
-  mapSuggestionGetters,
-  mapSuggestionMutations
+  mapSuggestionGetters
 } from '../../store/modules/suggestion/suggestionModule.js';
 
-import { filterType, suggestionType, suggestionStateStatus } from '../../utils/suggestionMappings';
-import { sortingKeys } from '../../utils/sortingHelper.js';
+import { filterType } from '../../utils/suggestionMappings';
 
 import SvgIcon from '../icons/SvgIcon';
 import IconMore from '../icons/IconMore';
@@ -99,7 +102,7 @@ export default {
       resolvedCount: 0,
       paginated_items: [],
       showDropdown: false
-    }
+    };
   },
   computed: {
     ...mapAuthenticatedUserGetters({
@@ -129,7 +132,7 @@ export default {
     ...mapSuggestionActions({
       getSuggestionsByUserId: suggestionActions.GET_SUGGESTIONS_BY_USER_ID,
       getSortedSuggestionsByUserId: suggestionActions.GET_SORTED_SUGGESTIONS_BY_USER_ID,
-      getSuggestionsSelectedSortKey: suggestionActions.GET_SUGGESTIONS_SELECTED_SORT,
+      getSuggestionsSelectedSortKey: suggestionActions.GET_SUGGESTIONS_SELECTED_SORT
     }),
     fetchUserNameAndInitials() {
       if (this.user) {
@@ -163,6 +166,7 @@ export default {
       const start = this.getPaginationStaringIndex(pageNumber);
       const end = this.getPaginationEndingIndex(pageNumber);
       const paginatedItems = items ? items : this.items;
+      // eslint-disable-next-line
       this.paginated_items = paginatedItems && paginatedItems.length > 0 ? paginatedItems.slice(start, end) : []
       this.calculateOpenAndResolvedSuggestionCounts();
     },
@@ -183,7 +187,7 @@ export default {
         name: 'settings'
       });
       this.showDropdown = false;
-    },
+    }
   },
   watch: {
     async filters() {
@@ -212,7 +216,7 @@ export default {
       }
     });
   }
-}
+};
 </script>
 
 
@@ -353,10 +357,12 @@ ul {
   }
 }
 
-.fade-enter-active, .fade-leave-active {
+.fade-enter-active,
+.fade-leave-active {
   transition: opacity 3s;
 }
-.fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
+.fade-enter,
+.fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
   opacity: 0.75;
 }
 </style>

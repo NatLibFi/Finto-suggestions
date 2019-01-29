@@ -135,7 +135,8 @@ export default {
       isAuthenticated: authenticatedUserGetters.GET_IS_AUTHENTICATED,
       userId: authenticatedUserGetters.GET_USER_ID,
       name: authenticatedUserGetters.GET_USER_NAME,
-      error: authenticatedUserGetters.GET_AUTHENTICATE_ERROR //can be showed if login did not succeed
+      // can be shown if login did not succeed:
+      error: authenticatedUserGetters.GET_AUTHENTICATE_ERROR
     })
   },
   methods: {
@@ -206,7 +207,7 @@ export default {
       this.closeDropdown();
       this.closeMobileDropdown();
     },
-    async oAuth2Authenticate(provider) {
+    async oAuth2Authenticate() {
       this.$router.push('/github');
     },
     async registerLocalUser(userdata) {
@@ -221,7 +222,9 @@ export default {
       this.userInitials = userNameInitials(this.name);
     },
     async handleTokenRefesh() {
+      // eslint-disable-next-line no-undef
       const access_token = $cookies.get(storeKeyNames.ACCESS_TOKEN);
+      // eslint-disable-next-line no-undef
       const refreshToken = $cookies.get(storeKeyNames.REFRESH_TOKEN);
       await this.refreshToken({ access_token: access_token, refresh_token: refreshToken });
     }

@@ -70,7 +70,7 @@ export default {
     })
   },
   created() {
-    if(this.meetingSort) {
+    if (this.meetingSort) {
       this.getMeetingSuggestionSelectedSort();
     } else {
       this.getSuggestionSelectedSort();
@@ -97,10 +97,18 @@ export default {
       this.isDropDownOpened = false;
     },
     handleSortinDropDownIndex() {
-      if(this.meetingSort) {
-        this.selectedSortOptionIndex = getSelectedSortOptionIndex(this.dropDownOptions, this.meetingSuggestionSelectedSort, 0);
+      if (this.meetingSort) {
+        this.selectedSortOptionIndex = getSelectedSortOptionIndex(
+          this.dropDownOptions,
+          this.meetingSuggestionSelectedSort,
+          0
+        );
       } else {
-        this.selectedSortOptionIndex = getSelectedSortOptionIndex(this.dropDownOptions, this.suggestionSelectedSort, 0);
+        this.selectedSortOptionIndex = getSelectedSortOptionIndex(
+          this.dropDownOptions,
+          this.suggestionSelectedSort,
+          0
+        );
       }
     }
   },

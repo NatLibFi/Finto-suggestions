@@ -9,7 +9,8 @@
       <div class="status-summary">
         <p>{{ processed }}/{{ suggestions }} ehdotusta käsitelty ({{ progression }}%)</p>
         <p
-          v-if="['meeting-suggestion-list'].includes($route.name) && isAuthenticated && continueSuggestionHandle"
+          v-if="['meeting-suggestion-list']
+            .includes($route.name) && isAuthenticated && continueSuggestionHandle"
           class="next-suggestion-link" @click="goToNextSuggestion()">
           Jatka käsittelyä
         </p>
@@ -22,8 +23,11 @@
 import { mapMeetingGetters, mapMeetingActions } from '../../store/modules/meeting/meetingModule.js';
 import { meetingGetters, meetingActions } from '../../store/modules/meeting/meetingConst.js';
 
+// eslint-disable-next-line
 import { getMeetingProgressionCounts, getMeetingProgressionWidths } from '../../utils/meetingHelper.js';
+// eslint-disable-next-line
 import { mapAuthenticatedUserGetters } from '../../store/modules/authenticatedUser/authenticatedUserModule.js';
+// eslint-disable-next-line
 import { authenticatedUserGetters } from '../../store/modules/authenticatedUser/authenticatedUserConsts.js';
 import { mapSuggestionGetters } from '../../store/modules/suggestion/suggestionModule.js';
 import { suggestionGetters } from '../../store/modules/suggestion/suggestionConsts.js';
@@ -64,10 +68,7 @@ export default {
   },
   async created() {
     await this.getMeeting(this.meetingId);
-    this.handleMeetingProgressionCounts(
-      getMeetingProgressionCounts(
-        this.meeting
-    ));
+    this.handleMeetingProgressionCounts(getMeetingProgressionCounts(this.meeting));
     this.checkSuggestionNeededToContinueToHandle();
   },
   methods: {
@@ -98,9 +99,11 @@ export default {
     getNextSuggestionIdToHandle() {
       let nextSuggestionId = null;
       if (this.suggestion_items && this.suggestion_items.length > 0) {
-        const orderedSuggestionList = this.suggestion_items.filter(s => s.status === null).sort(comparerDesc('created'));
+        const orderedSuggestionList = this.suggestion_items
+          .filter(s => s.status === null)
+          .sort(comparerDesc('created'));
         if (orderedSuggestionList && orderedSuggestionList.length > 0) {
-          nextSuggestionId = orderedSuggestionList[0].id
+          nextSuggestionId = orderedSuggestionList[0].id;
         }
       }
       return nextSuggestionId;
@@ -147,8 +150,7 @@ export default {
   margin-bottom: 4px;
 }
 .meeting-status .status-bar .progress-bar,
-.meeting-status .status-bar .progress-background
-{
+.meeting-status .status-bar .progress-background {
   display: inline-block;
   height: 6px;
   background-color: #eeeeee;
