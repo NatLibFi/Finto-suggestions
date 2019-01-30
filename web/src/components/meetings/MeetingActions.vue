@@ -1,6 +1,6 @@
 <template>
   <div v-if="isAuthenticated" class="actions-container">
-    <add-comment v-if="events && events.length < 2" :userId="userId" :suggestionId="suggestionId" />
+    <add-comment v-if="events && events.length > 1" :userId="userId" :suggestionId="suggestionId" />
     <div class="action-buttons">
       <span class="button move-to-next-meeting">
         Siirrä seuraavaan<span class="hidden-in-mobile"> kokoukseen</span>
@@ -91,15 +91,14 @@ export default {
 
 <style scoped>
 .actions-container {
-  border: 2px solid #f5f5f5;
   background-color: #ffffff;
   border-top: none;
 }
 
 .action-buttons {
-  margin-top: 10px;
   padding: 20px 40px 25px;
-  border-top: 1px solid #eeeeee;
+  border: 2px solid #f5f5f5;
+  border-top: none;
   display: flex;
   justify-content: space-between;
 }

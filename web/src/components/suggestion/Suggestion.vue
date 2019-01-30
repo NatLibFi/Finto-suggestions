@@ -79,26 +79,6 @@
         :suggestion="suggestion"
         :user-name="userName"
       />
-
-      <div v-if="suggestion && suggestion.reactions.length > 0" class="suggestion-reactions">
-        <div v-for="reaction in suggestion.reactions" :key="reaction.id">
-          <div class="reaction">
-            <div class="emoji">{{ reaction.code }}</div>
-            <div class="counter">2</div>
-            <a @click="displayEmoji(reaction.code)">
-              button
-            </a>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div v-if="events && events.length > 0">
-      <div v-for="event in events" :key="event.id">
-        <suggestion-event
-          :event="event"
-          :type="event.event_type" />
-      </div>
     </div>
 
     <div v-if="meetingId" class="meeting-actions">
@@ -111,7 +91,15 @@
       />
     </div>
 
-    <div v-else>
+    <div v-if="events && events.length > 0">
+      <div v-for="event in events" :key="event.id">
+        <suggestion-event
+          :event="event"
+          :type="event.event_type" />
+      </div>
+    </div>
+
+    <div>
       <add-comment :suggestionId="suggestionId" />
     </div>
   </div>
@@ -270,11 +258,12 @@ export default {
             meetingId: this.meetingId
           }
         });
+        this.getEventsBySuggestionId(parseInt(this.requestedSuggestionId));
       }
     },
     goToNextSuggestion() {
       if(this.noNextSuggestions) {
-        this.$router.push('/meetings');
+        this.$router.push('/meetings/'+ this.meetingId);
       } else {
         this.getNexUsableSuggestionId(this.movingAction.NEXT);
         if (this.requestedSuggestionId) {
@@ -286,6 +275,7 @@ export default {
               meetingId: this.meetingId
             }
           });
+          this.getEventsBySuggestionId(parseInt(this.requestedSuggestionId));
         }
       }
     },

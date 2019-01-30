@@ -82,7 +82,6 @@ div.event-divider {
 }
 
 div.event-container {
-  width: 100%;
   background-color: #ffffff;
   border: 2px solid #f5f5f5;
   text-align: left;
