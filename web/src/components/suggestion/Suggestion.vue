@@ -69,7 +69,6 @@
           </div>
         </div>
         <div class="suggestion-header-buttons" v-if="isAuthenticated && role === userRoles.ADMIN">
-          <assign-user :suggestion="suggestion" class="icon-button" />
           <tag-selector :suggestion="suggestion" :userId="userId" />
           <svg-icon icon-name="more" class="icon-button"><icon-more /></svg-icon>
         </div>
@@ -78,6 +77,8 @@
       <suggestion-content
         :suggestion="suggestion"
         :user-name="userName"
+        :isAuthenticated="isAuthenticated"
+        :isAdmin="role === userRoles.ADMIN"
       />
     </div>
 
@@ -114,7 +115,6 @@ import IconArrow from '../icons/IconArrow';
 import IconMore from '../icons/IconMore';
 import SvgIcon from '../icons/SvgIcon';
 import AddComment from './AddComment';
-import AssignUser from './AssignUser';
 
 import { suggestionType, suggestionTypeToString, suggestionStateStatus, suggestionStateStatusToString } from '../../utils/suggestionHelpers';
 import {
@@ -152,8 +152,7 @@ export default {
     IconMore,
     SvgIcon,
     AddComment,
-    AssignUser,
-    TagSelector,
+    TagSelector
   },
   props: {
     suggestionId: {
@@ -347,9 +346,10 @@ export default {
 .arrow-button {
   color: #1ea195;
   font-weight: 800;
-  font-size: 16px;
+  font-size: 14px;
   text-align: left;
   margin-left: 6px;
+  margin-bottom: 2px;
   -webkit-user-select: none; /* Safari */
   -moz-user-select: none; /* Firefox */
   -ms-user-select: none; /* IE10+/Edge */
@@ -362,7 +362,7 @@ export default {
 }
 
 .arrow-button svg {
-  margin: 0 -15px -27px 0;
+  margin: 0 -15px -28px 0;
   width: 37px;
   height: 37px;
 }
