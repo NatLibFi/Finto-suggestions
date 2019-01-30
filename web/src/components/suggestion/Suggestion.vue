@@ -139,6 +139,7 @@ import { authenticatedUserGetters } from '../../store/modules/authenticatedUser/
 import { userRoles } from '../../utils/userHelpers';
 
 import TagSelector from '../tag/TagSelector';
+import AssignUser from '../suggestion/AssignUser';
 
 export default {
   components: {
