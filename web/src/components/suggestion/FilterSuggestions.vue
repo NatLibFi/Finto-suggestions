@@ -72,7 +72,11 @@ import MultipleChoiceDropDown from '../common/MultipleChoiceDropDown';
 import SvgIcon from '../icons/SvgIcon';
 import IconTriangle from '../icons/IconTriangle';
 
-import { filterType } from '../../utils/suggestionMappings.js';
+import {
+  suggestionStateStatus,
+  suggestionType,
+  filterType
+} from '../../utils/suggestionHelpers.js';
 
 import {
   suggestionGetters,
@@ -216,8 +220,7 @@ export default {
     },
     mapTagsToDropDown() {
       let tags = [];
-
-      if (this.tags && this.tags.lenght > 0) {
+      if (this.tags && this.tags.length > 0) {
         this.tags.forEach(tag => {
           tags.push({ label: tag.label, value: tag.label });
         });

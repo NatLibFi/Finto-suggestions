@@ -39,10 +39,23 @@
           <div class="tags">
             <span
               v-if="suggestion.suggestion_type === suggestionType.NEW"
-              class="tag type-new">{{ suggestionTypeToString[suggestion.suggestion_type] }}</span>
+              class="tag type-new">{{ suggestionTypeToString[suggestion.suggestion_type] }}
+            </span>
             <span
               v-if="suggestion.suggestion_type === suggestionType.MODIFY"
               class="tag type-modify">{{ suggestionTypeToString[suggestion.suggestion_type] }}
+            </span>
+            <span
+              v-if="suggestion.status === suggestionStateStatus.ACCEPTED"
+              class="tag status-accepted">{{ suggestionStateStatusToString[suggestionStateStatus.ACCEPTED] }}
+            </span>
+            <span
+              v-if="suggestion.status === suggestionStateStatus.REJECTED"
+              class="tag status-rejected">{{ suggestionStateStatusToString[suggestionStateStatus.REJECTED] }}
+            </span>
+            <span
+              v-if="suggestion.status === suggestionStateStatus.RETAINED"
+              class="tag status-retained">{{ suggestionStateStatusToString[suggestionStateStatus.RETAINED] }}
             </span>
             <span
               v-if="suggestion.tags && suggestion.tags.length > 0">
@@ -55,8 +68,8 @@
             </span>
           </div>
         </div>
-        <div v-if="isAuthenticated && role === userRoles.ADMIN" class="suggestion-header-buttons">
-          <assign-user :suggestion="suggestion" class="icon-button" />
+        <div class="suggestion-header-buttons" v-if="isAuthenticated && role === userRoles.ADMIN">
+          <tag-selector :suggestion="suggestion" :userId="userId" />
           <svg-icon icon-name="more" class="icon-button"><icon-more /></svg-icon>
         </div>
       </div>
@@ -64,19 +77,9 @@
       <suggestion-content
         :suggestion="suggestion"
         :user-name="userName"
+        :isAuthenticated="isAuthenticated"
+        :isAdmin="role === userRoles.ADMIN"
       />
-
-      <div v-if="suggestion && suggestion.reactions.length > 0" class="suggestion-reactions">
-        <div v-for="reaction in suggestion.reactions" :key="reaction.id">
-          <div class="reaction">
-            <div class="emoji">{{ reaction.code }}</div>
-            <div class="counter">2</div>
-            <a @click="displayEmoji(reaction.code)">
-              button
-            </a>
-          </div>
-        </div>
-      </div>
     </div>
 
     <div v-if="meetingId" class="meeting-actions">
@@ -112,9 +115,8 @@ import IconArrow from '../icons/IconArrow';
 import IconMore from '../icons/IconMore';
 import SvgIcon from '../icons/SvgIcon';
 import AddComment from './AddComment';
-import AssignUser from './AssignUser';
 
-import { suggestionType, suggestionTypeToString } from '../../utils/suggestionMappings.js';
+import { suggestionType, suggestionTypeToString, suggestionStateStatus, suggestionStateStatusToString } from '../../utils/suggestionHelpers';
 import {
   suggestionGetters,
   suggestionActions
@@ -132,12 +134,16 @@ import { userActions, userGetters } from '../../store/modules/user/userConsts';
 import { mapUserActions, mapUserGetters } from '../../store/modules/user/userModule';
 
 import { dateTimeFormatLabel } from '../../utils/dateHelper.js';
+
 // eslint-disable-next-line
-import { mapAuthenticatedUserGetters } from '../../store/modules/authenticatedUser/authenticatedUserModule.js';
+import { mapAuthenticatedUserGetters, mapAuthenticatedUserActions } from '../../store/modules/authenticatedUser/authenticatedUserModule.js';
 // eslint-disable-next-line
-import { authenticatedUserGetters } from '../../store/modules/authenticatedUser/authenticatedUserConsts.js';
+import { authenticatedUserGetters, authenticatedUserActions } from '../../store/modules/authenticatedUser/authenticatedUserConsts.js';
 
 import { userRoles } from '../../utils/userHelpers';
+
+import AssignUser from '../suggestion/AssignUser';
+import TagSelector from '../tag/TagSelector';
 
 export default {
   components: {
@@ -149,7 +155,7 @@ export default {
     IconMore,
     SvgIcon,
     AddComment,
-    AssignUser
+    TagSelector
   },
   props: {
     suggestionId: {
@@ -173,7 +179,9 @@ export default {
       NEXT: 'next',
       PREVIOUS: 'previous'
     },
-    userRoles
+    userRoles,
+    suggestionStateStatus,
+    suggestionStateStatusToString
   }),
   computed: {
     ...mapSuggestionGetters({
@@ -217,7 +225,6 @@ export default {
       this.$router.go(-1);
     },
     goToMeeting(id) {
-      console.log(id);
       this.$router.push({
         name: 'meeting-suggestion-list',
         params: {
@@ -244,19 +251,25 @@ export default {
             meetingId: this.meetingId
           }
         });
+        this.getEventsBySuggestionId(parseInt(this.requestedSuggestionId));
       }
     },
     goToNextSuggestion() {
-      this.getNexUsableSuggestionId(this.movingAction.NEXT);
-      if (this.requestedSuggestionId) {
-        this.$router.push({
-          name: 'meeting-suggestion',
-          params: {
-            suggestionId: this.requestedSuggestionId,
-            suggestion: this.suggestion,
-            meetingId: this.meetingId
-          }
-        });
+      if(this.noNextSuggestions) {
+        this.$router.push('/meetings/'+ this.meetingId);
+      } else {
+        this.getNexUsableSuggestionId(this.movingAction.NEXT);
+        if (this.requestedSuggestionId) {
+          this.$router.push({
+            name: 'meeting-suggestion',
+            params: {
+              suggestionId: this.requestedSuggestionId,
+              suggestion: this.suggestion,
+              meetingId: this.meetingId
+            }
+          });
+          this.getEventsBySuggestionId(parseInt(this.requestedSuggestionId));
+        }
       }
     },
     getNexUsableSuggestionId(action) {
@@ -298,6 +311,11 @@ export default {
           this.noNextSuggestions = false;
         }
       }
+    },
+    handleOpenTagSelector() {
+      this.openTagSelector
+        ? this.openTagSelector = false
+        : this.openTagSelector = true;
     }
   },
   watch: {
@@ -322,9 +340,10 @@ export default {
 .arrow-button {
   color: #1ea195;
   font-weight: 800;
-  font-size: 16px;
+  font-size: 14px;
   text-align: left;
   margin-left: 6px;
+  margin-bottom: 2px;
   -webkit-user-select: none; /* Safari */
   -moz-user-select: none; /* Firefox */
   -ms-user-select: none; /* IE10+/Edge */
@@ -337,7 +356,7 @@ export default {
 }
 
 .arrow-button svg {
-  margin: 0 -15px -27px 0;
+  margin: 0 -15px -28px 0;
   width: 37px;
   height: 37px;
 }
@@ -407,7 +426,7 @@ h1.suggestion-title {
   right: 0px;
   bottom: 0px;
   display: inline-block;
-  width: 20%;
+  width: 30%;
   height: 100px;
   text-align: right;
 }
@@ -442,13 +461,30 @@ h1.suggestion-title {
   border-radius: 2px;
   display: inline-block;
 }
+
 .type-new {
   background-color: #1137ff;
   border: 2px solid #1137ff;
 }
+
 .type-modify {
   background-color: #ff8111;
   border: 2px solid #ff8111;
+}
+
+.status-accepted {
+  background-color: #58BA81;
+  border: 2px solid #58BA81;
+}
+
+.status-rejected {
+  background-color: #CC4A4A;
+  border: 2px solid #CC4A4A;
+}
+
+.status-retained {
+  background-color: #F2994A;
+  border: 2px solid #F2994A;
 }
 
 .comment-container {

@@ -41,7 +41,7 @@
 <script>
 import SvgIcon from '../icons/SvgIcon';
 import IconComments from '../icons/IconComments';
-import { formatDate, hasDatePassed } from '../../utils/dateHelper.js';
+import { formatDate, hasDatePassed } from '../../utils/dateHelper';
 
 import {
   getMeetingProgressionCounts,

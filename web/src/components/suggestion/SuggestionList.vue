@@ -39,7 +39,7 @@ import {
 } from '../../store/modules/suggestion/suggestionModule.js';
 
 import SuggestionListPagination from './SuggestionListPagination';
-import { filterType } from '../../utils/suggestionMappings';
+import { filterType, suggestionType, suggestionStateStatus } from '../../utils/suggestionHelpers';
 import { sortingKeys } from '../../utils/sortingHelper.js';
 
 export default {
@@ -113,6 +113,7 @@ export default {
       } else {
         await this.getSuggestionsByMeetingId(parseInt(this.meetingId));
       }
+      this.paginationPageChanged();
     },
     getPaginationStaringIndex(pageNumber) {
       return pageNumber > 1 ? this.paginationMaxCount * pageNumber - this.paginationMaxCount : 0;
@@ -141,7 +142,7 @@ export default {
   },
   watch: {
     async filters() {
-      if (this.filters.length > 0) {
+      if (this.filters && this.filters.length > 0) {
         let items = this.items;
         this.filters.forEach(filter => {
           switch (filter.type) {

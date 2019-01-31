@@ -1,9 +1,8 @@
 paths:
-
   /suggestions:
     get:
       operationId: api.logic.suggestions.get_suggestions
-      description: |
+      description:
         Get all suggestions.
         Optional query parameters can be used to limit the request.
         Parameter **limit** determines the size of the returned array and **offset**
@@ -181,7 +180,7 @@ paths:
           schema:
             $ref: '#/definitions/TagListParameterObject'
       responses:
-        '204':
+        "202":
           description: List of deleted tags
   /suggestions/{suggestion_id}/assign/{user_id}:
     put:

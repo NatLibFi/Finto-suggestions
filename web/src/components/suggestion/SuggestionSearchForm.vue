@@ -22,7 +22,7 @@ import {
 } from '../../store/modules/suggestion/suggestionModule.js';
 
 import { handleSetFilters } from '../../utils/filterValueHelper.js';
-import { filterType } from '../../utils/suggestionMappings.js';
+import { filterType } from '../../utils/suggestionHelpers.js';
 
 export default {
   data: () => ({

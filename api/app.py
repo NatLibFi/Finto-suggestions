@@ -11,6 +11,7 @@ from api.authentication import jwt, prune_expired_tokens
 
 
 def create_app(config_object='config.DevelopmentConfig'):
+
     app = connexion.FlaskApp(__name__, specification_dir='api/specification/')
 
     # This is required for Flask CLI and FLASK_APP env to work
@@ -28,7 +29,7 @@ def create_app(config_object='config.DevelopmentConfig'):
     # You might want to split this into two apis
     enable_swagger = flask_app.config['ENABLE_SWAGGER_UI']
     # TODO: disabled for now, needs fix later on
-    app.add_api(api_spec, options={"swagger_ui": False})
+    app.add_api(api_spec, options={"swagger_ui": enable_swagger})
 
     db.init_app(flask_app)
     jwt.init_app(flask_app)

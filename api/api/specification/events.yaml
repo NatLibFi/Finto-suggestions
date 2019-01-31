@@ -28,7 +28,7 @@ paths:
         "200":
           description:  An array of all events in the database
           schema:
-            $ref: '#/definitions/EventResponseArray'
+            $ref: "#/definitions/EventResponseArray"
     post:
       operationId: api.logic.events.post_event
       parameters:
@@ -37,12 +37,12 @@ paths:
           description: Event object to be added
           required: true
           schema:
-            $ref: '#/definitions/EventParameterObject'
+            $ref: "#/definitions/EventParameterObject"
       responses:
-        "200":
+        "201":
           description:  Newly created event
           schema:
-            $ref: '#/definitions/EventResponse'
+            $ref: "#/definitions/EventResponse"
 
   /events/{event_id}:
     parameters:
@@ -53,18 +53,18 @@ paths:
     get:
       operationId: api.logic.events.get_event
       responses:
-        '200':
+        "200":
           description:  A single event by id
           schema:
-            $ref: '#/definitions/EventResponse'
-        '404':
+            $ref: "#/definitions/EventResponse"
+        "404":
           description: No event found
     delete:
       operationId: api.logic.events.delete_event
       responses:
-        '204':
+        "204":
           description: Event deleted
-        '404':
+        "404":
           description: No event found
 
     put:
@@ -75,13 +75,13 @@ paths:
           description: (A complete) event object to be updated
           required: true
           schema:
-            $ref: '#/definitions/EventParameterObject'
+            $ref: "#/definitions/EventParameterObject"
       responses:
-        '200':
+        "200":
           description:  The updated event by id
           schema:
-            $ref: '#/definitions/EventResponse'
-        '404':
+            $ref: "#/definitions/EventResponse"
+        "404":
           description: No event found
 
     patch:
@@ -92,13 +92,13 @@ paths:
           description: (A partial) event object to be patched
           required: true
           schema:
-            $ref: '#/definitions/EventPatchObject'
+            $ref: "#/definitions/EventPatchObject"
       responses:
-        '200':
+        "200":
           description:  The patched event by id
           schema:
-            $ref: '#/definitions/EventResponse'
-        '404':
+            $ref: "#/definitions/EventResponse"
+        "404":
           description: No event found
 
   /suggestions/{suggestion_id}/events:
@@ -123,7 +123,7 @@ paths:
         "200":
           description:  An array of all events related with the suggestion
           schema:
-            $ref: '#/definitions/EventResponseArray'
+            $ref: "#/definitions/EventResponseArray"
 
   /users/{user_id}/events:
     parameters:
@@ -147,4 +147,4 @@ paths:
         "200":
           description:  An array of all events created by the user
           schema:
-            $ref: '#/definitions/EventResponseArray'
+            $ref: "#/definitions/EventResponseArray"

@@ -60,22 +60,22 @@ definitions:
     properties:
       preferred_label:
         $ref: "#/definitions/preferred_label"
-      alternative_label:
-        $ref: "#/definitions/alternative_label"
+      alternative_labels:
+        $ref: "#/definitions/alternative_labels"
       status:
         $ref: "#/definitions/status"
       uri:
         $ref: "#/definitions/uri"
       suggestion_type:
         $ref: "#/definitions/suggestion_type"
-      broader:
-        $ref: "#/definitions/broader"
-      narrower:
-        $ref: "#/definitions/narrower"
-      related:
-        $ref: "#/definitions/related"
-      group:
-        $ref: "#/definitions/group"
+      broader_labels:
+        $ref: "#/definitions/broader_labels"
+      narrower_labels:
+        $ref: "#/definitions/narrower_labels"
+      related_labels:
+        $ref: "#/definitions/related_labels"
+      groups:
+        $ref: "#/definitions/groups"
       description:
         $ref: "#/definitions/description"
       reason:
@@ -109,22 +109,22 @@ definitions:
     properties:
       preferred_label:
         $ref: "#/definitions/preferred_label"
-      alternative_label:
-        $ref: "#/definitions/alternative_label"
+      alternative_labels:
+        $ref: "#/definitions/alternative_labels"
       status:
         $ref: "#/definitions/status"
       uri:
         $ref: "#/definitions/uri"
       suggestion_type:
         $ref: "#/definitions/suggestion_type"
-      broader:
-        $ref: "#/definitions/broader"
-      narrower:
-        $ref: "#/definitions/narrower"
-      related:
-        $ref: "#/definitions/related"
-      group:
-        $ref: "#/definitions/group"
+      broader_labels:
+        $ref: "#/definitions/broader_labels"
+      narrower_labels:
+        $ref: "#/definitions/narrower_labels"
+      related_labels:
+        $ref: "#/definitions/related_labels"
+      groups:
+        $ref: "#/definitions/groups"
       description:
         $ref: "#/definitions/description"
       reason:
@@ -146,22 +146,22 @@ definitions:
     properties:
       preferred_label:
         $ref: "#/definitions/preferred_label"
-      alternative_label:
-        $ref: "#/definitions/alternative_label"
+      alternative_labels:
+        $ref: "#/definitions/alternative_labels"
       status:
         $ref: "#/definitions/status"
       uri:
         $ref: "#/definitions/uri"
       suggestion_type:
         $ref: "#/definitions/suggestion_type"
-      broader:
-        $ref: "#/definitions/broader"
-      narrower:
-        $ref: "#/definitions/narrower"
-      related:
-        $ref: "#/definitions/related"
-      group:
-        $ref: "#/definitions/group"
+      broader_labels:
+        $ref: "#/definitions/broader_labels"
+      narrower_labels:
+        $ref: "#/definitions/narrower_labels"
+      related_labels:
+        $ref: "#/definitions/related_labels"
+      groups:
+        $ref: "#/definitions/groups"
       description:
         $ref: "#/definitions/description"
       reason:
@@ -176,7 +176,7 @@ definitions:
         type: array
         items:
           type: string
-          example: "ACCEPTED"
+          example: "TEST_TAG_1"
     required:
       - preferred_label
       - uri
@@ -209,7 +209,7 @@ definitions:
         type: string
         example: "katten"
 
-  alternative_label:
+  alternative_labels:
     type: object
     description: "Alternative label"
     properties:
@@ -244,7 +244,7 @@ definitions:
     description: "The type of a vocabulary suggestion: 'NEW' for new suggestions, 'MODIFY' for a modification."
     example: NEW
 
-  broader:
+  broader_labels:
     type: array
     items:
       type: string
@@ -252,7 +252,7 @@ definitions:
     example:
       - "http://www.yso.fi/onto/ysa/Y98177"
 
-  narrower:
+  narrower_labels:
     type: array
     items:
       type: string
@@ -260,7 +260,7 @@ definitions:
     example:
       - "http://www.yso.fi/onto/ysa/Y98176"
 
-  related:
+  related_labels:
     type: array
     items:
       type: string
@@ -268,11 +268,11 @@ definitions:
     example:
       - "http://www.yso.fi/onto/ysa/Y12345"
 
-  group:
+  groups:
     type: array
     items:
       type: string
-      description: An array of group/collection uris the suggested concept is a member of
+      description: An array of groups/collection uris the suggested concept is a member of
     example:
       - "http://www.yso.fi/onto/ysa/ryhma_07"
       - "http://www.yso.fi/onto/ysa/ryhma_09"
@@ -448,10 +448,13 @@ definitions:
         $ref: "#/definitions/event_type"
       text:
         $ref: "#/definitions/text"
+      value:
+        $ref: "#/definitions/text"
     required:
       - event_type
       - text
       - suggestion_id
+      - user_id
 
   EventPatchObject:
     type: object
