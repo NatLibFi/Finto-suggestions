@@ -110,7 +110,6 @@
 </template>
 
 <script>
-import { suggestionType } from '../../utils/suggestionHelpers.js';
 import AssignUser from './AssignUser';
 import { suggestionType } from '../../utils/suggestionHelpers.js';
 import { suggestionActions } from '../../store/modules/suggestion/suggestionConsts';

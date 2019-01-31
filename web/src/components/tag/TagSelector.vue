@@ -47,8 +47,6 @@ import { tagActions, tagGetters } from '../../store/modules/tag/tagConst';
 import { newActionEvent } from '../../utils/tagHelpers';
 import { directive as onClickaway } from 'vue-clickaway';
 
-import { newActionEvent } from '../../utils/tagHelpers';
-
 export default {
   components: {
     SvgIcon,
