@@ -139,7 +139,7 @@ export default {
   },
   watch: {
     async filters() {
-      if (this.filters.length > 0) {
+      if (this.filters && this.filters.length > 0) {
         let items = this.items;
         this.filters.forEach(filter => {
           switch (filter.type) {

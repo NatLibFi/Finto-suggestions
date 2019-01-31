@@ -89,7 +89,7 @@
     </div>
 
     <transition name="fade">
-      <div v-if="!suggestion.user_id">
+      <div v-if="!suggestion.user_id && isAdmin">
         <assign-user :suggestion="suggestion" class="icon-button" />
       </div>
 
@@ -112,6 +112,7 @@
 <script>
 import { suggestionType } from '../../utils/suggestionHelpers.js';
 import AssignUser from './AssignUser';
+import { suggestionType } from '../../utils/suggestionHelpers.js';
 import { suggestionActions } from '../../store/modules/suggestion/suggestionConsts';
 import { mapSuggestionActions } from '../../store/modules/suggestion/suggestionModule';
 

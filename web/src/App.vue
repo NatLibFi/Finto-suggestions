@@ -19,6 +19,10 @@ a {
   color: #06a798;
 }
 
+a:hover {
+  color: #21baac;
+}
+
 #app {
   font-family: 'Fira Sans', 'Avenir', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;

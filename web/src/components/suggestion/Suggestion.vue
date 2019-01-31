@@ -69,7 +69,6 @@
           </div>
         </div>
         <div class="suggestion-header-buttons" v-if="isAuthenticated && role === userRoles.ADMIN">
-          <assign-user :suggestion="suggestion" class="icon-button" />
           <tag-selector :suggestion="suggestion" :userId="userId" />
           <svg-icon icon-name="more" class="icon-button"><icon-more /></svg-icon>
         </div>
@@ -81,18 +80,6 @@
         :isAuthenticated="isAuthenticated"
         :isAdmin="role === userRoles.ADMIN"
       />
-
-      <div v-if="suggestion && suggestion.reactions.length > 0" class="suggestion-reactions">
-        <div v-for="reaction in suggestion.reactions" :key="reaction.id">
-          <div class="reaction">
-            <div class="emoji">{{ reaction.code }}</div>
-            <div class="counter">2</div>
-            <a @click="displayEmoji(reaction.code)">
-              button
-            </a>
-          </div>
-        </div>
-      </div>
     </div>
 
     <div v-if="meetingId" class="meeting-actions">
@@ -166,8 +153,7 @@ export default {
     IconMore,
     SvgIcon,
     AddComment,
-    AssignUser,
-    TagSelector,
+    TagSelector
   },
   props: {
     suggestionId: {
@@ -272,19 +258,25 @@ export default {
             meetingId: this.meetingId
           }
         });
+        this.getEventsBySuggestionId(parseInt(this.requestedSuggestionId));
       }
     },
     goToNextSuggestion() {
-      this.getNexUsableSuggestionId(this.movingAction.NEXT);
-      if (this.requestedSuggestionId) {
-        this.$router.push({
-          name: 'meeting-suggestion',
-          params: {
-            suggestionId: this.requestedSuggestionId,
-            suggestion: this.suggestion,
-            meetingId: this.meetingId
-          }
-        });
+      if(this.noNextSuggestions) {
+        this.$router.push('/meetings/'+ this.meetingId);
+      } else {
+        this.getNexUsableSuggestionId(this.movingAction.NEXT);
+        if (this.requestedSuggestionId) {
+          this.$router.push({
+            name: 'meeting-suggestion',
+            params: {
+              suggestionId: this.requestedSuggestionId,
+              suggestion: this.suggestion,
+              meetingId: this.meetingId
+            }
+          });
+          this.getEventsBySuggestionId(parseInt(this.requestedSuggestionId));
+        }
       }
     },
     getNexUsableSuggestionId(action) {
