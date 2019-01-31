@@ -82,7 +82,6 @@ div.event-divider {
 }
 
 div.event-container {
-  width: 100%;
   background-color: #ffffff;
   border: 2px solid #f5f5f5;
   text-align: left;
@@ -95,8 +94,10 @@ div.event-header {
 
 div.event-header .event-user-initials {
   display: inline-block;
-  height: 50px;
-  width: 50px;
+  height: 40px;
+  width: 40px;
+  font-size: 15px;
+  line-height: 41px;
   background-color: #eeeeee;
   vertical-align: middle;
 }
@@ -105,6 +106,7 @@ div.event-header .event-info {
   display: inline-block;
   vertical-align: middle;
   margin-left: 20px;
+  max-width: calc(100% - 60px);
 }
 
 div.event-header .event-info p {
@@ -143,6 +145,8 @@ div.event-comment {
 
 .tag {
   color: #ffffff;
+  font-size: 12px;
+  line-height: 20px;
   text-transform: lowercase;
   font-weight: bold;
   background-color: #4794a2;

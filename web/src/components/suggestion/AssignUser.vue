@@ -123,6 +123,7 @@ export default {
   box-sizing: border-box;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
   border-radius: 1px;
+  z-index: 1;
 }
 .dropdown-header {
   font-style: normal;
