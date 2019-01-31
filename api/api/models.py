@@ -247,6 +247,9 @@ class User(db.Model, SerializableMixin):
     email = db.Column(db.String(128), index=True, unique=True, nullable=False)
     role = db.Column(db.Enum(UserRoles), default=UserRoles.NORMAL)
     password_hash = db.Column(db.String(128), nullable=True)
+    title = db.Column(db.String(128), nullable=True)
+    organization = db.Column(db.String(128), nullable=True)
+    imageUrl = db.Column(db.Text, nullable=True)
 
     events = db.relationship('Event', backref='user')
 

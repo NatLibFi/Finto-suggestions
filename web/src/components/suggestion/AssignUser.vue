@@ -25,7 +25,9 @@
 </template>
 
 <script>
-import { userNameInitials } from '../../utils/nameHelpers';
+import SvgIcon from '../icons/SvgIcon';
+import IconAddPerson from '../icons/IconAddPerson';
+import { userNameInitials } from '../../utils/userHelpers';
 import { suggestionActions } from '../../store/modules/suggestion/suggestionConsts';
 import { mapSuggestionActions } from '../../store/modules/suggestion/suggestionModule';
 import { mapUserActions, mapUserGetters, mapUserMutations } from '../../store/modules/user/userModule';
@@ -51,11 +53,6 @@ export default {
   computed: {
     ...mapUserGetters({ users: userGetters.GET_USERS })
   },
-  watch: {
-    searchQuery: function() {
-      this.filterResults()
-    }
-  },
   async created() {
     // If "admin" in user.roles:
     await this.getUsers();
@@ -71,16 +68,30 @@ export default {
   methods: {
     ...mapSuggestionActions({ assignUserToSuggestion: suggestionActions.ASSIGN_SUGGESTION_TO_USER }),
     ...mapUserActions({ getUsers: userActions.GET_USERS }),
+    ...mapUserMutations({ setUsers: userMutations.SET_USERS }),
+    toggleSearch() {
+      this.searchOpen = !this.searchOpen;
+    },
+    filterResults() {
+      if (this.searchQuery.length >= 1) {
+        const filteredUsers = this.users.filter(user => user.name.toLowerCase().match(this.searchQuery.toLowerCase()));
+        this.setUsers(filteredUsers);
+      } else {
+        this.getUsers();
+      }
+    },
     openSearch() {
       this.searchOpen = true;
     },
     closeSearch() {
       this.searchOpen = false;
-    },
-    filterResults() {
-      this.filteredUsers = this.users.filter(user => user.name.toLowerCase().includes(this.searchQuery.toLowerCase()));
     }
-  }
+  },
+  watch: {
+    searchQuery() {
+      this.filterResults();
+    }
+  },
   };
 </script>
 
