@@ -41,7 +41,7 @@ import {
 } from '../../store/modules/suggestion/suggestionModule.js';
 
 import SuggestionListPagination from './SuggestionListPagination';
-import { filterType, suggestionType, suggestionStateStatus } from '../../utils/suggestionMappings';
+import { filterType, suggestionType, suggestionStateStatus } from '../../utils/suggestionHelpers';
 import { sortingKeys } from '../../utils/sortingHelper.js';
 
 

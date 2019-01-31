@@ -1,5 +1,5 @@
 import { get, put, post, del } from '../utils';
-import { suggestionStateStatus } from '../../utils/suggestionMappings';
+import { suggestionStateStatus } from '../../utils/suggestionHelpers';
 import { asciiUriEncoding } from '../helper';
 
 export default {

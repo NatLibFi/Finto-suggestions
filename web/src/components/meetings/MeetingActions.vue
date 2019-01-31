@@ -1,11 +1,11 @@
 <template>
   <div v-if="isAuthenticated" class="actions-container">
-    <add-comment v-if="events && events.length < 2" :userId="userId" :suggestionId="suggestionId" />
+    <add-comment v-if="events && events.length > 1" :userId="userId" :suggestionId="suggestionId" />
     <div class="action-buttons">
       <span class="button move-to-next-meeting">
         Siirrä seuraavaan<span class="hidden-in-mobile"> kokoukseen</span>
       </span>
-      <span class="button dismiss" @click="dismissSuggestion()">
+      <span class="button dismiss" @click="retainSuggestion()">
         Jätä ehdotukseksi
       </span>
       <span class="button approve" @click="approveSuggestion()">
@@ -22,7 +22,10 @@ import { mapAuthenticatedUserGetters, mapAuthenticatedUserActions } from '../../
 import { authenticatedUserGetters, authenticatedUserActions } from '../../store/modules/authenticatedUser/authenticatedUserConsts.js';
 import { mapSuggestionActions } from '../../store/modules/suggestion/suggestionModule';
 import { suggestionActions } from '../../store/modules/suggestion/suggestionConsts';
-import { suggestionStateStatus } from '../../utils//suggestionMappings';
+import { suggestionStateStatus } from '../../utils/suggestionHelpers';
+import { newActionEvent } from '../../utils/tagHelpers';
+import { mapEventActions } from '../../store/modules/event/eventModule';
+import { eventActions } from '../../store/modules/event/eventConsts';
 
 export default {
   components: {
@@ -54,17 +57,32 @@ export default {
   methods: {
     ...mapSuggestionActions({
       setSuggestionAccepted: suggestionActions.SET_SUGGESTION_ACCEPTED,
-      setSuggestionRejected: suggestionActions.SET_SUGGESTION_REJECTED
+      setSuggestionRejected: suggestionActions.SET_SUGGESTION_REJECTED,
+      setSuggestionRetained: suggestionActions.SET_SUGGESTION_RETAINED
     }),
     ...mapAuthenticatedUserActions({
       validateAuthentication: authenticatedUserActions.VALIDATE_AUTHENTICATION,
     }),
+    ...mapEventActions({
+      addEvent: eventActions.ADD_NEW_EVENT
+    }),
+    async createEvent(status) {
+      const event = newActionEvent('käsitteli ehdotuksen.', status, this.userId, this.suggestionId);
+      await this.addEvent(event);
+    },
     async dismissSuggestion() {
       await this.setSuggestionRejected({ suggestionId: this.suggestionId, status: suggestionStateStatus.REJECTED });
+      await this.createEvent(suggestionStateStatus.REJECTED);
       this.$emit('moveToNextSuggestion');
     },
     async approveSuggestion() {
       await this.setSuggestionAccepted({ suggestionId: this.suggestionId, status: suggestionStateStatus.ACCEPTED });
+      await this.createEvent(suggestionStateStatus.ACCEPTED);
+      this.$emit('moveToNextSuggestion');
+    },
+    async retainSuggestion() {
+      await this.setSuggestionRetained({ suggestionId: this.suggestionId, status: suggestionStateStatus.RETAINED });
+      await this.createEvent(suggestionStateStatus.RETAINED);
       this.$emit('moveToNextSuggestion');
     }
   }
@@ -73,14 +91,14 @@ export default {
 
 <style scoped>
 .actions-container {
-  border: 2px solid #f5f5f5;
   background-color: #ffffff;
   border-top: none;
 }
 
 .action-buttons {
   padding: 20px 40px 25px;
-  border-top: 1px solid #eeeeee;
+  border: 2px solid #f5f5f5;
+  border-top: none;
   display: flex;
   justify-content: space-between;
 }

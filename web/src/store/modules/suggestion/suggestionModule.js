@@ -155,6 +155,19 @@ export default {
       } catch (error) {
         console.log(`Could not set suggestion state to rejected ${params.suggestionId}, ${error}`);
       }
+    },
+    async [suggestionActions.SET_SUGGESTION_RETAINED]({ dispatch }, params) {
+      try {
+        const response = await api.suggestion.updateSuggestionStatus(
+          params.suggestionId,
+          params.status
+        );
+        if (response && response.code == 202) {
+          dispatch(suggestionActions.GET_SUGGESTION_BY_ID, params.suggestionId);
+        }
+      } catch (error) {
+        console.log(`Could not set suggestion state to rejected ${params.suggestionId}, ${error}`);
+      }
     }
   }
 };

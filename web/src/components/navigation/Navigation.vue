@@ -96,7 +96,7 @@ import { mapAuthenticatedUserGetters, mapAuthenticatedUserActions } from '../../
 import { authenticatedUserGetters, authenticatedUserActions, storeKeyNames } from '../../store/modules/authenticatedUser/authenticatedUserConsts.js';
 
 import api from '../../api/index.js';
-import { userNameInitials } from '../../utils/nameHelpers.js';
+import { userNameInitials } from '../../utils/userHelpers';
 
 export default {
   components: {
