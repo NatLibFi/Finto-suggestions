@@ -36,7 +36,6 @@ import markdownEditor from 'vue-simplemde/src/markdown-editor';
 
 import { mapEventActions } from '../../store/modules/event/eventModule.js';
 import { eventActions } from '../../store/modules/event/eventConsts.js';
-import { eventTypes } from '../../utils/eventHelper';
 
 // eslint-disable-next-line
 import { mapAuthenticatedUserGetters } from '../../store/modules/authenticatedUser/authenticatedUserModule.js';
@@ -79,7 +78,7 @@ export default {
       addNewEvent: eventActions.ADD_NEW_EVENT
     }),
     saveNewComment() {
-      if(this.isAuthenticated && this.userId > 0 && this.suggestionId > 0) {
+      if (this.isAuthenticated && this.userId > 0 && this.suggestionId > 0) {
         this.addNewEvent({
           event: newCommentEvent(this.content, this.userId, this.suggestionId),
           suggestionId: parseInt(this.suggestionId)

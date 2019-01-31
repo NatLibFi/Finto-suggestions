@@ -22,7 +22,7 @@ export default {
     put({ resource: `/suggestions/${suggestionId}/unassign` }),
   getSuggestionByMeetingId: meetingId => get({ resource: `/suggestions/meeting/${meetingId}` }),
   getSortedSuggestionByMeetingId: (meetingId, sortValue) =>
-    // eslint-disable-next-line prettier/prettier
+    // eslint-disable-next-line
     get({ resource: `/suggestions?sort=${sortValue}&filters=meeting_id${asciiUriEncoding.VALUE_OF_PARAM}${meetingId}` }),
   updateSuggestionStatus: (suggestionId, status) =>
     put({ resource: `/suggestions/${suggestionId}/status/${status}` }),

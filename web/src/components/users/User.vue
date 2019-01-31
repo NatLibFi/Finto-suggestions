@@ -56,7 +56,7 @@ import SuggestionListPagination from '../suggestion/SuggestionListPagination';
 
 import { userActions, userGetters } from '../../store/modules/user/userConsts';
 import { mapUserActions, mapUserGetters } from '../../store/modules/user/userModule';
-import { userNameInitials } from '../../utils/nameHelpers.js';
+import { userNameInitials } from '../../utils/userHelpers.js';
 import { userRoleToString } from '../../utils/userMappings.js';
 // eslint-disable-next-line
 import { authenticatedUserGetters } from '../../store/modules/authenticatedUser/authenticatedUserConsts.js';
@@ -73,7 +73,7 @@ import {
   mapSuggestionGetters
 } from '../../store/modules/suggestion/suggestionModule.js';
 
-import { filterType } from '../../utils/suggestionMappings';
+import { filterType } from '../../utils/suggestionHelpers';
 
 import SvgIcon from '../icons/SvgIcon';
 import IconMore from '../icons/IconMore';

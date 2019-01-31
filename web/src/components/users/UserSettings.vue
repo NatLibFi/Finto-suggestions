@@ -29,7 +29,7 @@
 
 <script>
 import UserSettingsForm from './UserSettingsForm';
-import { userNameInitials } from '../../utils/nameHelpers.js';
+import { userNameInitials } from '../../utils/userHelpers.js';
 import { userRoleToString } from '../../utils/userMappings.js';
 
 import { userActions, userGetters } from '../../store/modules/user/userConsts';

@@ -73,17 +73,26 @@ export default {
       await this.addEvent(event);
     },
     async dismissSuggestion() {
-      await this.setSuggestionRejected({ suggestionId: this.suggestionId, status: suggestionStateStatus.REJECTED });
+      await this.setSuggestionRejected({
+        suggestionId: this.suggestionId,
+        status: suggestionStateStatus.REJECTED
+      });
       await this.createEvent(suggestionStateStatus.REJECTED);
       this.$emit('moveToNextSuggestion');
     },
     async approveSuggestion() {
-      await this.setSuggestionAccepted({ suggestionId: this.suggestionId, status: suggestionStateStatus.ACCEPTED });
+      await this.setSuggestionAccepted({
+        suggestionId: this.suggestionId,
+        status: suggestionStateStatus.ACCEPTED
+      });
       await this.createEvent(suggestionStateStatus.ACCEPTED);
       this.$emit('moveToNextSuggestion');
     },
     async retainSuggestion() {
-      await this.setSuggestionRetained({ suggestionId: this.suggestionId, status: suggestionStateStatus.RETAINED });
+      await this.setSuggestionRetained({
+        suggestionId: this.suggestionId,
+        status: suggestionStateStatus.RETAINED
+      });
       await this.createEvent(suggestionStateStatus.RETAINED);
       this.$emit('moveToNextSuggestion');
     }
