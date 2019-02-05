@@ -3,11 +3,12 @@
 class GithubBodyModel(object):
   def __init__(self):
     self.type = ''
-    self.preferred_label = {}
+    self.preferred_labels = {}
     self.alternative_labels = ''
     self.related = []
+    self.description = ''
     self.reason = ''
-    self.need_for = []
+    self.scopeNote = ''
     self.groups = []
     self.organization = ''
 

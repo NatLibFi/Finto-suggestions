@@ -1,4 +1,4 @@
-import requests
+import requests, math
 from .github_models import GithubBodyModel, GithubMeetingModel, GithubIssueModel
 
 class GithubDataParser:
@@ -6,18 +6,26 @@ class GithubDataParser:
   ### ctor
   def __init__(self):
     self.prefrered_labels = dict()
+    self.last_request_completed = False
 
   ### privates
-  def __parse_preferred_labels(self, value):
+  def __parse_preferred_labels(self, value, body):
     if 'Ehdotettu termi suomeksi' in value:
       splitted_values = value.split('Ehdotettu termi suomeksi')
-      self.prefrered_labels['fi'] = { 'value': splitted_values[1].strip() }
+      body.preferred_labels['fi'] = { 'value': splitted_values[1].strip() }
     if 'Ehdotettu termi ruotsiksi' in value:
       splitted_values = value.split('Ehdotettu termi ruotsiksi')
-      self.prefrered_labels['sv'] = { 'value': splitted_values[1].strip() }
+      body.preferred_labels['sv'] = { 'value': splitted_values[1].strip() }
     if 'Ehdotettu termi englanniksi' in value:
       splitted_values = value.split('Ehdotettu termi englanniksi')
-      self.prefrered_labels['en'] = { 'value': splitted_values[1].strip() }
+      body.preferred_labels['en'] = { 'value': splitted_values[1].strip() }
+    if 'preflabel' in value:
+      splitted_values = value.split('preflabel')
+      splitted_parsed_value = splitted_values[1].replace('[', '').replace(']', '').split('(')
+      body.preferred_labels['fi'] = {
+        'value': splitted_parsed_value[0].strip(),
+        'url': splitted_parsed_value[1].replace(')', '').strip()
+      }
 
   def __parse_alternative_labels(self, value):
     alternative_labels = ''
@@ -34,26 +42,32 @@ class GithubDataParser:
       if len(splitted_vocabulary) > 1 and len(splitted_vocabulary[0]) > 3:
         related.append({
           'vocab': splitted_vocabulary[0].strip(),
-          'value': splitted_vocabulary[1].strip()}
-        )
+          'value': splitted_vocabulary[1].strip()
+        })
     return related
 
-  def __parse_reason(self, value):
-    reason = ''
-    splitted_reason = value.split('Perustelut ehdotukselle')
-    reason = splitted_reason[1].strip()
-    return reason
+  def __parse_description(self, value):
+    description = ''
+    if 'Perustelut ehdotukselle' in value:
+      splitted_description = value.split('Perustelut ehdotukselle')
+      description = splitted_description[1].strip()
+    if 'Ehdotettu muutos' in value:
+      splitted_description = value.split('Ehdotettu muutos')
+      description = splitted_description[1].strip()
+    return description
 
-  def __parse_need_for(self, value, body):
+  def __parse_reason(self, value, body):
     if 'Aineisto jonka kuvailussa käsitettä tarvitaan (esim. nimeke tai URL)' in value:
-      splitted_need_for = value.split('Aineisto jonka kuvailussa käsitettä tarvitaan (esim. nimeke tai URL)')
-      body.need_for.append(splitted_need_for[1].strip())
-    if 'Tarkoitusta täsmentävä selite' in value:
-      splitted_reason_qualification = value.split('Tarkoitusta täsmentävä selite')
-      body.need_for.append(splitted_reason_qualification[1].strip())
+      splitted_reasons = value.split('Aineisto jonka kuvailussa käsitettä tarvitaan (esim. nimeke tai URL)')
+      body.reason = splitted_reasons[1].strip()
     if 'Perustelut ehdotukselle' in value:
       splitted_reason_description = value.split('Perustelut ehdotukselle')
-      body.need_for.append(splitted_reason_description[1].strip())
+      body.reason = splitted_reason_description[1].strip()
+
+  def __parse_scopeNote(self, value, body):
+    if 'Tarkoitusta täsmentävä selite' in value:
+      splitted_scope_note = value.split('Tarkoitusta täsmentävä selite')
+      body.scopeNote = splitted_scope_note[1].strip()
 
   def __parse_groups(self, value, body):
     splitted_value = value.split('Ehdotetut temaattiset ryhmät (YSA-ryhmät)')
@@ -76,21 +90,21 @@ class GithubDataParser:
       splitted_body_strings = body_str.split("####")
       for section in splitted_body_strings:
         if 'Ehdotettu termi suomeksi' in section:
-          self.__parse_preferred_labels(section)
+          self.__parse_preferred_labels(section, body)
         if 'Ehdotettu termi ruotsiksi' in section:
-          self.__parse_preferred_labels(section)
+          self.__parse_preferred_labels(section, body)
         if 'Ehdotettu termi englanniksi' in section:
-          self.__parse_preferred_labels(section)
+          self.__parse_preferred_labels(section, body)
         if 'Vaihtoehtoiset termit ja ilmaisut' in section:
           body.alternative_labels = self.__parse_alternative_labels(section)
         if 'Vastaava käsite muussa sanastossa' in section:
           body.related = self.__parse_related(section)
         if 'Perustelut ehdotukselle' in section:
-          body.reason = self.__parse_reason(section)
+          body.description = self.__parse_description(section)
         if 'Aineisto jonka kuvailussa käsitettä tarvitaan (esim. nimeke tai URL)' in section:
-          self.__parse_need_for(section, body)
+          self.__parse_reason(section, body)
         if 'Tarkoitusta täsmentävä selite' in section:
-          self.__parse_need_for(section, body)
+          self.__parse_scopeNote(section, body)
         if 'Ehdotetut temaattiset ryhmät (YSA-ryhmät)' in section:
           self.__parse_groups(section, body)
         if '**Ehdottajan organisaatio:**' in section:
@@ -103,11 +117,11 @@ class GithubDataParser:
       splitted_body_strings = body_str.split("####")
       for section in splitted_body_strings:
         if 'preflabel' in section:
-          continue
+          self.__parse_preferred_labels(section, body)
         if 'Ehdotettu muutos' in section:
-          continue
+          body.description = self.__parse_description(section)
         if 'Perustelut ehdotukselle' in section:
-          self.__parse_need_for(section, body)
+          self.__parse_reason(section, body)
           continue
         if 'Ehdottajan organisaatio' in section:
           body.organization = self.__parse_organization(section)
@@ -126,10 +140,18 @@ class GithubDataParser:
     else:
       return None
 
+  def __parse_status(self, status):
+    if status != 'open':
+      print(status)
+    return None
+
+  def __fetch_data_from_github(self, page = 1):
+    return requests.get(f'https://api.github.com/repos/Finto-ehdotus/YSE/issues?per_page=100&page={page}', auth=('hytonevi', '39446d7cc336ea3c10d847ed002cf43ab67482b4'))
+
   def __map_reponse(self, json_item):
     suggestion_model = GithubIssueModel(
       json_item["title"],
-      None, # json_item["state"],
+      self.__parse_status(json_item["state"]),
       self.__parse_meeting(json_item["milestone"]),
       json_item["created_at"],
       json_item["updated_at"],
@@ -138,17 +160,36 @@ class GithubDataParser:
     )
 
     for label in json_item["labels"]:
+      print("parser loop",  label["name"])
       suggestion_model.tags.append([label["name"]])
 
     return suggestion_model
 
-  ### public methods
-  def fetch_data_from_github(self):
-    return requests.get('https://api.github.com/repos/Finto-ehdotus/YSE/issues?per_page=100&page=1')
+  def __parse_count_from_response_headers(self, headers):
+    if headers is not None and len(headers) > 0:
+      return int(headers["Link"].split(",")[1].split("&page=")[1].split(">")[0])
+    return 0
 
-  def handle_response(self, response):
+  ### public methods
+  def handle_response(self):
     models = []
-    for item in response.json():
-      model = self.__map_reponse(item)
-      models.append(model)
+
+    response = self.__fetch_data_from_github()
+    # loop_count = self.__parse_count_from_response_headers(response.headers)
+    loop_count = 1
+
+    i = 1
+    while i <= loop_count:
+      if self.last_request_completed == False:
+        response = self.__fetch_data_from_github(i)
+        if len(response.json()) > 0:
+          print(f"Response Fetch {i}/{loop_count}")
+          i+= 1
+          for json_item in response.json():
+            model = self.__map_reponse(json_item)
+            models.append(model)
+        else:
+          self.last_request_completed = True
+      else:
+        break
     return models

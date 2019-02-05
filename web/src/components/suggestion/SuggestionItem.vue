@@ -3,7 +3,7 @@
     <div class="item-summary">
       <div class="title">
         <p class="title-row">
-          <span class="item-name">{{ suggestion.preferred_label.fi }}</span>
+          <span class="item-name">{{ suggestion.preferred_label.fi.value }}</span>
           <span
             :class="[suggestionTypeToStyleClass[suggestion.suggestion_type], 'tag']">
             {{ suggestionTypeToString[suggestion.suggestion_type] }}

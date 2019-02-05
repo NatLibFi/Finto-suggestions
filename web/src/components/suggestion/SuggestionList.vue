@@ -162,7 +162,7 @@ export default {
               break;
             case filterType.SEARCH:
               items = items.filter(
-                i => i.preferred_label && i.preferred_label.fi.startsWith(filter.value)
+                i => i.preferred_label && i.preferred_label.fi.value.startsWith(filter.value)
               );
               break;
           }

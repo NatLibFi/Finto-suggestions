@@ -7,7 +7,7 @@
       <p v-if="suggestion.suggestion_type == suggestionTypes.MODIFY" class="content-title">
         <strong>Päätermi/asiasana</strong>
       </p>
-      <p>{{ suggestion.preferred_label.fi }}</p>
+      <p>{{ suggestion.preferred_label.fi.value }}</p>
     </div>
 
     <div v-if="suggestion.preferred_label.sv">
