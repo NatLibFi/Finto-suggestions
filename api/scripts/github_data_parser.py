@@ -148,7 +148,7 @@ class GithubDataParser:
   def __fetch_data_from_github(self, page = 1):
     user = os.environ.get('GITHUB_USERNAME')
     personal_token = os.environ.get('GITHUB_PERSONAL_TOKEN')
-    return requests.get(f'https://api.github.com/repos/Finto-ehdotus/YSE/issues?per_page=100&page={page}', auth=(user, personal_token))
+    return requests.get(f'https://api.github.com/repos/Finto-ehdotus/YSE/issues?per_page=100&state=all&page={page}', auth=(user, personal_token))
 
   def __map_reponse(self, json_item):
     suggestion_model = GithubIssueModel(
