@@ -162,7 +162,6 @@ class GithubDataParser:
     )
 
     for label in json_item["labels"]:
-      print("parser loop",  label["name"])
       suggestion_model.tags.append([label["name"]])
 
     return suggestion_model

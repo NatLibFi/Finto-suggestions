@@ -41,7 +41,6 @@ class DBInserter:
     return tags_bo
 
   def __map_tag_labels_to_suggestiontag_bo(self, tag_label, suggestion_id, event_id):
-    print(tag_label)
     if tag_label is not None and len(tag_label) > 0 and suggestion_id > 0 and event_id > 0:
       suggestion_tag = SuggestionTag()
       suggestion_tag.tag_label = tag_label
@@ -104,7 +103,6 @@ class DBInserter:
 
 
   def __insert_suggestion_tag_relationship(self, db, tag_label, suggestion_id, event_id):
-    print(tag_label, suggestion_id)
     suggestion_tag = self.__map_tag_labels_to_suggestiontag_bo(tag_label, suggestion_id, event_id)
     if suggestion_tag is not None:
       db.session.add(suggestion_tag)
@@ -124,7 +122,6 @@ class DBInserter:
         event_bo = self.__insert_event_bo_to_db(db, tag_label.label)
         if event_bo is not None:
           # lets not try to add this if event creation failed
-          print(suggestion_id, event_bo.id)
           self.__insert_suggestion_tag_relationship(db, tag_label.label, suggestion_id, event_bo.id)
 
   def insert_models_to_db(self, db, models):
