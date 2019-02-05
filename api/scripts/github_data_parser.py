@@ -1,4 +1,4 @@
-import requests, math
+import requests, math, os
 from .github_models import GithubBodyModel, GithubMeetingModel, GithubIssueModel
 
 class GithubDataParser:
@@ -146,7 +146,9 @@ class GithubDataParser:
     return None
 
   def __fetch_data_from_github(self, page = 1):
-    return requests.get(f'https://api.github.com/repos/Finto-ehdotus/YSE/issues?per_page=100&page={page}', auth=('hytonevi', '39446d7cc336ea3c10d847ed002cf43ab67482b4'))
+    user = os.environ.get('GITHUB_USERNAME')
+    personal_token = os.environ.get('GITHUB_PERSONAL_TOKEN')
+    return requests.get(f'https://api.github.com/repos/Finto-ehdotus/YSE/issues?per_page=100&page={page}', auth=(user, personal_token))
 
   def __map_reponse(self, json_item):
     suggestion_model = GithubIssueModel(
