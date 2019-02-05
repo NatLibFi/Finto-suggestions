@@ -141,6 +141,7 @@ class DBInserter:
         db.session.rollback()
       finally:
         db.session.close()
+    print("RESULTS: \r\n")
     print(f"Suggestions inserted {self.suggestion_count}")
     print(f"Meetings inserted {self.meeting_count}")
     print(f"Tags inserted {len(self.existing_tags)}")

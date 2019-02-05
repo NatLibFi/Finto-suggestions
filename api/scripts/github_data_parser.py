@@ -172,12 +172,15 @@ class GithubDataParser:
     return 0
 
   ### public methods
-  def handle_response(self):
+  def handle_response(self, arg_loop_count):
     models = []
 
-    response = self.__fetch_data_from_github()
-    # loop_count = self.__parse_count_from_response_headers(response.headers)
-    loop_count = 1
+    loop_count = 0
+    if arg_loop_count is not None and len(arg_loop_count) > 0:
+      loop_count = arg_loop_count
+    else:
+      response = self.__fetch_data_from_github()
+      loop_count = self.__parse_count_from_response_headers(response.headers)
 
     i = 1
     while i <= loop_count:
