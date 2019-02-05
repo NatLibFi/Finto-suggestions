@@ -55,8 +55,8 @@ def post_event() -> str:
     :returns: the created event as json
     """
 
-    response = create_or_404(Event, connexion.request.json)
-    if response is not None and response[1] is 201:
+    create_event_response = create_or_404(Event, connexion.request.json)
+    if create_event_response is not None and create_event_response[1] is 201:
       try:
         suggestion = Suggestion.query.get(connexion.request.json.get('suggestion_id'))
         if suggestion is not None:
@@ -66,7 +66,7 @@ def post_event() -> str:
       except ValueError as ex:
         print('Could not update suggestion modified time' + str(ex))
 
-      return response
+      return create_event_response
 
 @authorized
 @event_parameter_validator

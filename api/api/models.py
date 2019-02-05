@@ -14,9 +14,14 @@ class EventTypes(enum.IntEnum):
     COMMENT = 1
 
 
+class EventActionSubTypes(enum.IntEnum):
+    STATUS = 0
+    TAG = 1
+
 class SuggestionStatusTypes(enum.IntEnum):
     REJECTED = 0
-    ACCEPTED = 1
+    ACCEPTED = 1,
+    RETAINED = 2
 
 
 class SuggestionTypes(enum.IntEnum):
@@ -75,14 +80,16 @@ class Event(db.Model, SerializableMixin):
     """
 
     __tablename__ = 'events'
-    __public__ = ['id', 'event_type', 'text',
+    __public__ = ['id', 'event_type',  'sub_type', 'text', 'value',
                   'reactions', 'user_id', 'suggestion_id', 'created', 'modified', 'tags']
 
     id = db.Column(db.Integer, primary_key=True)
     created = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     modified = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     event_type = db.Column(db.Enum(EventTypes), nullable=False)
+    sub_type = db.Column(db.Enum(EventActionSubTypes), nullable=True)
     text = db.Column(db.Text)
+    value = db.Column(db.Text, nullable=True)
 
     reactions = db.relationship('Reaction', backref='event')
 
@@ -240,6 +247,9 @@ class User(db.Model, SerializableMixin):
     email = db.Column(db.String(128), index=True, unique=True, nullable=False)
     role = db.Column(db.Enum(UserRoles), default=UserRoles.NORMAL)
     password_hash = db.Column(db.String(128), nullable=True)
+    title = db.Column(db.String(128), nullable=True)
+    organization = db.Column(db.String(128), nullable=True)
+    imageUrl = db.Column(db.Text, nullable=True)
 
     events = db.relationship('Event', backref='user')
 

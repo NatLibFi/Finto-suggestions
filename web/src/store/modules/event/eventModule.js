@@ -28,8 +28,10 @@ export default {
   actions: {
     async [eventActions.ADD_NEW_EVENT]({ dispatch }, params) {
       if (params.event) {
-        await api.event.addNewComment(params.event);
-        dispatch(eventActions.GET_EVENTS_BY_SUGGESTION_ID, params.suggestionId);
+        const response = await api.event.addNewComment(params.event);
+        if (response && response.code === 201) {
+          dispatch(eventActions.GET_EVENTS_BY_SUGGESTION_ID, params.suggestionId);
+        }
       }
     },
     async [eventActions.GET_EVENTS_BY_SUGGESTION_ID]({ commit }, suggestionId) {

@@ -76,7 +76,7 @@ import {
   suggestionStateStatus,
   suggestionType,
   filterType
-} from '../../utils/suggestionMappings.js';
+} from '../../utils/suggestionHelpers.js';
 
 import {
   suggestionGetters,
@@ -220,8 +220,7 @@ export default {
     },
     mapTagsToDropDown() {
       let tags = [];
-
-      if (this.tags && this.tags.lenght > 0) {
+      if (this.tags && this.tags.length > 0) {
         this.tags.forEach(tag => {
           tags.push({ label: tag.label, value: tag.label });
         });

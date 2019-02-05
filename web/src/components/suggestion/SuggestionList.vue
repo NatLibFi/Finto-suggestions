@@ -41,7 +41,7 @@ import {
 } from '../../store/modules/suggestion/suggestionModule.js';
 
 import SuggestionListPagination from './SuggestionListPagination';
-import { filterType, suggestionType, suggestionStateStatus } from '../../utils/suggestionMappings';
+import { filterType, suggestionType, suggestionStateStatus } from '../../utils/suggestionHelpers';
 import { sortingKeys } from '../../utils/sortingHelper.js';
 
 
@@ -139,7 +139,7 @@ export default {
   },
   watch: {
     async filters() {
-      if (this.filters.length > 0) {
+      if (this.filters && this.filters.length > 0) {
         let items = this.items;
         this.filters.forEach(filter => {
           switch (filter.type) {

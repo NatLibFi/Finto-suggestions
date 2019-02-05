@@ -111,7 +111,7 @@
 
 <script>
 import AssignUser from './AssignUser';
-import { suggestionType } from '../../utils/suggestionMappings.js';
+import { suggestionType } from '../../utils/suggestionHelpers.js';
 import { suggestionActions } from '../../store/modules/suggestion/suggestionConsts';
 import { mapSuggestionActions } from '../../store/modules/suggestion/suggestionModule';
 

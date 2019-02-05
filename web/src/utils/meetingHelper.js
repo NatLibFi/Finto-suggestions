@@ -1,7 +1,30 @@
+import { suggestionStateStatus } from './suggestionHelpers';
+
+/*
+* Local method for calculating processed suggestions count
+*/
+const getProcessedCount = processed => {
+  let count = 0;
+
+  if (processed) {
+    const accepted = processed[suggestionStateStatus.ACCEPTED];
+    const rejected = processed[suggestionStateStatus.REJECTED];
+
+    if (accepted && accepted > 0) {
+      count += accepted;
+    }
+
+    if (rejected && rejected > 0) {
+      count += rejected;
+    }
+  }
+  return count;
+};
+
 export const getMeetingProgressionCounts = meeting => {
   if (meeting) {
-    const processed = meeting.processed.length ? meeting.processed.length : 0;
-    const suggestions = meeting.suggestions.length ? meeting.suggestions.length : 0;
+    const processed = getProcessedCount(meeting.processed);
+    const suggestions = meeting.suggestions && meeting.suggestions.length > 0 ? meeting.suggestions.length : 0;
     const progression = processed > 0 ? ((processed / suggestions) * 100).toFixed(1) : 0;
     return { processed, suggestions, progression };
   }
