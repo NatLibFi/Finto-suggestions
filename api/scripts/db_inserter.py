@@ -36,7 +36,7 @@ class DBInserter:
     if tags is not None and len(tags) > 0:
       for tagModel in tags:
         tag = Tag()
-        tag.label = tagModel[0]
+        tag.label = tagModel
         tags_bo.append(tag)
     return tags_bo
 
@@ -91,13 +91,13 @@ class DBInserter:
         return existing_tag
     return None
 
-  def __insert_event_bo_to_db(self, db, tag_label):
+  def __insert_event_bo_to_db(self, db, tag_label, suggestion_id):
     if tag_label is not None and len(tag_label) > 0:
       event_bo = self.__map_to_event_bo(tag_label)
       db.session.add(event_bo)
       db.session.commit()
       self.events_count += 1
-      print(f"New event {event_bo.id} add when creating new tag {tag_label}")
+      print(f"New event {event_bo.id} for adding tag {tag_label} to suggestion {suggestion_id} ")
       return event_bo
     return None
 
@@ -119,7 +119,7 @@ class DBInserter:
           db.session.commit()
           self.existing_tags.append(tag_label.label)
           print(f"New tag added {tag_label.label}")
-        event_bo = self.__insert_event_bo_to_db(db, tag_label.label)
+        event_bo = self.__insert_event_bo_to_db(db, tag_label.label, suggestion_id)
         if event_bo is not None:
           # lets not try to add this if event creation failed
           self.__insert_suggestion_tag_relationship(db, tag_label.label, suggestion_id, event_bo.id)
@@ -141,7 +141,8 @@ class DBInserter:
         db.session.rollback()
       finally:
         db.session.close()
-    print("RESULTS: \r\n")
+    print("\r\n")
+    print("RESULTS: ")
     print(f"Suggestions inserted {self.suggestion_count}")
     print(f"Meetings inserted {self.meeting_count}")
     print(f"Tags inserted {len(self.existing_tags)}")
