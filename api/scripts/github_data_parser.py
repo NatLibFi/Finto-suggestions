@@ -101,7 +101,7 @@ class GithubDataParser:
 
   def __parse_body_strings(self, body_str):
     body = GithubBodyModel()
-    if 'CONCEPT' in body_str:
+    if 'CONCEPT' or 'GEO' in body_str:
       body.type = 'NEW'
       splitted_body_strings = body_str.split("####")
       for section in splitted_body_strings:
@@ -127,9 +127,6 @@ class GithubDataParser:
           body.organization = self.__parse_organization(section)
         if 'Termiehdotus Fintossa' in section:
           body.yse_term = self.__parse_yse_term(section)
-
-      if self.prefrered_labels is not None and len(self.prefrered_labels) > 0:
-        body.prefrered_labels = self.prefrered_labels
     else:
       body.type = 'MODIFY'
       splitted_body_strings = body_str.split("####")
@@ -178,7 +175,8 @@ class GithubDataParser:
   def __fetch_data_from_github(self, page = 1):
     user = os.environ.get('GITHUB_USERNAME')
     personal_token = os.environ.get('GITHUB_PERSONAL_TOKEN')
-    return requests.get(f'https://api.github.com/repos/Finto-ehdotus/YSE/issues?per_page=100&state=all&page={page}', auth=(user, personal_token))
+    # return requests.get(f'https://api.github.com/repos/Finto-ehdotus/YSE/issues?per_page=100&state=all&page={page}', auth=(user, personal_token))
+    return requests.get(f'https://api.github.com/repos/Finto-ehdotus/YSE/issues?since=2019-01-01T05:00:25Z&page_number=100&page=3', auth=(user, personal_token))
 
   def __map_reponse(self, json_item):
     suggestion_model = GithubIssueModel(
