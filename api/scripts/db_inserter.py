@@ -3,13 +3,20 @@ from datetime import datetime
 
 class DBInserter:
 
-  def __init__(self):
+  def __init__(self, db):
     self.suggestion_count = 0
     self.meeting_count = 0
     self.existing_tags = []
     self.suggestion_tags_count = 0
     self.events_count = 0
 
+    self.__fetch_tags_from_db(db)
+
+  def __fetch_tags_from_db(self, db):
+    result = Tag.query.all()
+    if result is not None and len(result) > 0:
+      for tag in result:
+        self.existing_tags.append(tag.label)
 
   def __map_meeting_bo(self, meeting):
     meeting_bo = Meeting()

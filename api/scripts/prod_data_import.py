@@ -25,5 +25,5 @@ if __name__ == '__main__':
   models = parser.handle_response(arg_loop_count)
   print("Models to handle: ", len(models))
   print("Map models data to db business objects and insert data to database")
-  db_importer = DBInserter()
+  db_importer = DBInserter(db)
   db_importer.insert_models_to_db(db, models)

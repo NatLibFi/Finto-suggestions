@@ -140,10 +140,13 @@ class GithubDataParser:
     else:
       return None
 
-  def __parse_status(self, status):
-    if status != 'open':
-      print(status)
-    return None
+  def __parse_status(self, status, tags):
+    if status == 'closed':
+      return 'ARCHIVED'
+    else:
+      for label in tags:
+        # print(label["name"])
+        continue
 
   def __fetch_data_from_github(self, page = 1):
     user = os.environ.get('GITHUB_USERNAME')
@@ -153,7 +156,7 @@ class GithubDataParser:
   def __map_reponse(self, json_item):
     suggestion_model = GithubIssueModel(
       json_item["title"],
-      self.__parse_status(json_item["state"]),
+      self.__parse_status(json_item["state"], json_item["labels"]),
       self.__parse_meeting(json_item["milestone"]),
       json_item["created_at"],
       json_item["updated_at"],
@@ -162,7 +165,7 @@ class GithubDataParser:
     )
 
     for label in json_item["labels"]:
-      suggestion_model.tags.append([label["name"]])
+      suggestion_model.tags.append(label["name"])
 
     return suggestion_model
 
@@ -176,7 +179,7 @@ class GithubDataParser:
     models = []
 
     loop_count = 0
-    if arg_loop_count is not None and len(arg_loop_count) > 0:
+    if arg_loop_count is not None and arg_loop_count > 0:
       loop_count = arg_loop_count
     else:
       response = self.__fetch_data_from_github()
