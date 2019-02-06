@@ -8,6 +8,7 @@
       <span>Käyttäjälle asetut ehdotukset</span>
     </div>
     <div
+      v-if="!userPage"
       @click="isDropDownOpened = !isDropDownOpened"
       :class="[isDropDownOpened ? 'selected' : '', 'drop-down-button']">
       <span>Järjestä</span>
