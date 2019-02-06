@@ -191,6 +191,7 @@ class Suggestion(db.Model, SerializableMixin):
     scopeNote = db.Column(db.Text)
     exactMatches = db.Column(db.JSON)
     neededFor = db.Column(db.String(500))
+    yse_term = db.Column(db.JSON)
 
     events = db.relationship('Event', backref='suggestion')
     reactions = db.relationship('Reaction', backref='suggestion')

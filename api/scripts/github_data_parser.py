@@ -62,7 +62,11 @@ class GithubDataParser:
       body.reason = splitted_reasons[1].strip()
     if 'Perustelut ehdotukselle' in value:
       splitted_reason_description = value.split('Perustelut ehdotukselle')
-      body.reason = splitted_reason_description[1].strip()
+      if '**' in splitted_reason_description[1]:
+        splitted_remove_org = splitted_reason_description[1].split('**')
+        body.reason = splitted_remove_org[0].strip()
+      else:
+        body.reason = splitted_reason_description[1].strip()
 
   def __parse_scopeNote(self, value, body):
     if 'Tarkoitusta täsmentävä selite' in value:
@@ -85,6 +89,15 @@ class GithubDataParser:
       splitted_organization = organization_section.split('Termiehdotus Fintossa')
       organization = splitted_organization[0].replace('*', '').replace(':', '').strip()
     return organization
+
+  def __parse_yse_term(self, value):
+    splitted_value = value.split('Termiehdotus Fintossa')
+    splitted_yse_term_value = splitted_value[1].split(']')
+    yse_term = {
+      'value': splitted_yse_term_value[0].replace('[', '').replace(']', '').replace('*', '').strip(),
+      'url': splitted_yse_term_value[1].replace('(', '').replace(')', '').strip()
+    }
+    return yse_term
 
   def __parse_body_strings(self, body_str):
     body = GithubBodyModel()
@@ -112,6 +125,8 @@ class GithubDataParser:
           self.__parse_groups(section, body)
         if '**Ehdottajan organisaatio:**' in section:
           body.organization = self.__parse_organization(section)
+        if 'Termiehdotus Fintossa' in section:
+          body.yse_term = self.__parse_yse_term(section)
 
       if self.prefrered_labels is not None and len(self.prefrered_labels) > 0:
         body.prefrered_labels = self.prefrered_labels

@@ -23,7 +23,7 @@ export const suggestionType = {
 
 export const suggestionTypeToString = {
   NEW: 'Käsite-ehdotus',
-  MODIFY: 'Käsitemuutos'
+  MODIFY: 'Muutosehdotus'
 };
 
 export const suggestionTypeToStyleClass = {

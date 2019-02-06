@@ -37,6 +37,7 @@ class DBInserter:
     suggesiton_bo.groups = model.body.groups
     suggesiton_bo.description = model.body.description
     suggesiton_bo.scopeNote = model.body.scopeNote
+    suggesiton_bo.yse_term = model.body.yse_term
     return suggesiton_bo
 
   def __map_tags_to_tags_bo(self, tags):
