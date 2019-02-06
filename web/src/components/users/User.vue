@@ -47,7 +47,9 @@
       />
     </div>
 
-    <div v-if="paginated_items && paginated_items.length === 0" class="no-user-suggestions-container">
+    <div
+      v-if="paginated_items && paginated_items.length === 0"
+      class="no-user-suggestions-container">
         <p>Käyttäjälle ei ole asetettu käsitteitä.</p>
     </div>
   </div>
