@@ -40,5 +40,12 @@ export default {
         commit(userMutations.SET_USERS, response.data);
       }
     }
+    //,
+    //async [userActions.PATCH_USER]({ commit }, userId, params) {
+    //  const response = await api.user.patchUser(userId, params);
+    //  if (response && response.code === 200) {
+    //    // TODO: fix this to set the change into store
+    //  }
+    //}
   }
 };

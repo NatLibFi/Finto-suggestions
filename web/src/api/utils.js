@@ -42,4 +42,6 @@ export const get = async options => execute('get', options.resource, null);
 export const post = async options =>
   execute('post', options.resource, options.data, options.useRefreshToken);
 export const put = async options => execute('put', options.resource, options.data);
+export const patch = async options =>
+  execute('patch', options.resource, options.data, options.useRefreshToken);
 export const del = async options => execute('delete', options.resource, options.data);
