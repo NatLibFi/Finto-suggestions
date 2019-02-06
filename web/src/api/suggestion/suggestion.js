@@ -2,8 +2,9 @@ import { get, put, post, del } from '../utils';
 import { asciiUriEncoding } from '../helper';
 
 export default {
-  getSuggestions: () => get({ resource: '/suggestions?limit=500' }),
-  getSortedSuggestions: sortValue => get({ resource: `/suggestions?limit=500&sort=${sortValue}` }),
+  getSuggestions: () => get({ resource: '/suggestions?limit=300' }),
+  getSuggestionsBySearchWord: searchWord => get({ resource: `suggestions?search=${searchWord}` }),
+  getSortedSuggestions: sortValue => get({ resource: `/suggestions?limit=300&sort=${sortValue}` }),
   getSuggestionById: suggestionId => get({ resource: `/suggestions/${suggestionId}` }),
   assignUserToSuggestion: (suggestionId, userId) =>
     put({ resource: `/suggestions/${suggestionId}/assign/${userId}` }),

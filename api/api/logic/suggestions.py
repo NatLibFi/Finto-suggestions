@@ -38,7 +38,7 @@ def get_suggestions(limit: int = None, offset: int = None, filters: str = None, 
             # instead of the whole json blob (cast as string)
             query = query.filter(or_(
                 Suggestion.preferred_label.cast(Unicode).contains(search),
-                Suggestion.alternative_label.cast(Unicode).contains(search),
+                Suggestion.alternative_labels.cast(Unicode).contains(search),
                 Suggestion.description.contains(search),
                 Suggestion.reason.contains(search)
             ))

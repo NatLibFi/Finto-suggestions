@@ -168,6 +168,12 @@ export default {
       } catch (error) {
         console.log(`Could not set suggestion state to rejected ${params.suggestionId}, ${error}`);
       }
+    },
+    async [suggestionActions.GET_SUGGESTIONS_BY_SEARCH_WORD]({ commit }, searchWord) {
+      const result = await api.suggestion.getSuggestionsBySearchWord(searchWord);
+      if (result && result.code === 200) {
+        commit(suggestionMutations.SET_SUGGESTIONS, result.data);
+      }
     }
   }
 };
