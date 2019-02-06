@@ -3,7 +3,7 @@ import Router from 'vue-router';
 import Index from '../views/Index.vue';
 import Suggestion from '../views/Suggestion.vue';
 import User from '../views/User.vue';
-import UserSettings from '../views/UserSettings.vue';
+// import UserSettings from '../views/UserSettings.vue';
 import Meetings from '../views/Meetings.vue';
 import MeetingSuggestionList from '../views/MeetingSuggestionList.vue';
 import MeetingSuggestion from '../views/MeetingSuggestion.vue';
@@ -32,13 +32,13 @@ export default new Router({
       props: true
       // TODO: beforeEnter check authentication
     },
-    {
-      path: '/settings',
-      name: 'settings',
-      component: UserSettings,
-      props: true
-      // TODO: beforeEnter check authentication
-    },
+    //
+    //   path: '/settings',
+    //   name: 'settings',
+    //   component: UserSettings,
+    //   props: true
+    //   // TODO: beforeEnter check authentication
+    // ,
     {
       path: '/meetings',
       name: 'meetings',
@@ -69,6 +69,10 @@ export default new Router({
       name: 'oauth-redirect',
       component: GithubAuthentication,
       props: true
+    },
+    {
+      path: '*',
+      redirect: '/'
     }
   ],
   mode: 'history',
