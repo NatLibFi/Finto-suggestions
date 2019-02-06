@@ -7,6 +7,7 @@ class DBInserter:
     self.suggestion_count = 0
     self.meeting_count = 0
     self.existing_tags = []
+    self.new_tags = []
     self.suggestion_tags_count = 0
     self.events_count = 0
 
@@ -124,6 +125,7 @@ class DBInserter:
         if exists is None:
           db.session.add(tag_label)
           db.session.commit()
+          self.new_tags.append(tag_label.label)
           self.existing_tags.append(tag_label.label)
           print(f"New tag added {tag_label.label}")
         event_bo = self.__insert_event_bo_to_db(db, tag_label.label, suggestion_id)
@@ -152,4 +154,6 @@ class DBInserter:
     print("RESULTS: ")
     print(f"Suggestions inserted {self.suggestion_count}")
     print(f"Meetings inserted {self.meeting_count}")
-    print(f"Tags inserted {len(self.existing_tags)}")
+    print(f"Events inserted {self.events_count}")
+    print(f"Tags inserted {len(self.new_tags)}")
+    print(f"Tag <-> Suggestion relationships inserted {self.suggestion_tags_count}")

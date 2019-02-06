@@ -202,7 +202,7 @@ class GithubDataParser:
       if self.last_request_completed == False:
         response = self.__fetch_data_from_github(i)
         if len(response.json()) > 0:
-          print(f"Response Fetch {i}/{loop_count}")
+          print(f"Issue batch fetch {i}/{loop_count}")
           i+= 1
           for json_item in response.json():
             model = self.__map_reponse(json_item)
