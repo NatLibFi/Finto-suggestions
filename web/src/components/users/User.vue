@@ -24,7 +24,7 @@
         </div>
     </div>
 
-    <div class="user-suggestions">
+    <div v-if="paginated_items && paginated_items.length > 0" class="user-suggestions">
       <suggestion-header
         :openSuggestionCount="openCount || 0"
         :resolvedSuggestionCount="resolvedCount || 0"
@@ -45,6 +45,10 @@
         :pageCount="calculatePageCountForPagination()"
         @paginationPageChanged="paginationPageChanged"
       />
+    </div>
+
+    <div v-if="paginated_items && paginated_items.length === 0" class="no-user-suggestions-container">
+        <p>Käyttäjälle ei ole asetettu käsitteitä.</p>
     </div>
   </div>
 </template>
@@ -329,6 +333,25 @@ ul {
   border-bottom: 2px solid #f5f5f5;
 }
 
+.no-user-suggestions-container {
+  position: relative;
+  margin: 20px 20vw 0;
+  padding: 10px 40px;
+  font-weight: normal;
+  text-align: left;
+  background-color: #ffffff;
+  border: 2px solid #f5f5f5;
+  height: 36px;
+}
+
+.no-user-suggestions-container p {
+  margin: 0;
+  line-height: 100%;
+  position: absolute;
+  top: 50%;
+  transform: perspective(1px) translateY(-50%);
+}
+
 @media (max-width: 700px) {
   .profile-container {
     height: 100%;
@@ -354,6 +377,10 @@ ul {
   .list {
     width: 80vw;
     margin: 0 10vw 20px;
+  }
+
+  .no-user-suggestions-container {
+    margin: 20px 10vw 0;
   }
 }
 
