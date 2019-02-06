@@ -157,8 +157,6 @@ class GithubDataParser:
           mapped_status = 'ACCEPTED'
         if 'hylätty' in tag["name"]:
           mapped_status = 'REJECTED'
-    if mapped_status is not 'RECEIVED':
-      print(mapped_status)
     return mapped_status
 
 
