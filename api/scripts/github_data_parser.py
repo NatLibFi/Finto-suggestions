@@ -80,7 +80,10 @@ class GithubDataParser:
   def __parse_organization(self, value):
     organization = ''
     splitted_value = value.split('Ehdottajan organisaatio')
-    organization = splitted_value[1].replace('*', '').strip()
+    organization_section = splitted_value[1].strip()
+    if 'Termiehdotus Fintossa' in organization_section:
+      splitted_organization = organization_section.split('Termiehdotus Fintossa')
+      organization = splitted_organization[0].replace('*', '').replace(':', '').strip()
     return organization
 
   def __parse_body_strings(self, body_str):
@@ -141,12 +144,23 @@ class GithubDataParser:
       return None
 
   def __parse_status(self, status, tags):
-    if status == 'closed':
-      return 'ARCHIVED'
+    mapped_status = 'RECEIVED'
+    if status is 'closed':
+      mapped_status = 'ARCHIVED'
     else:
-      for label in tags:
-        # print(label["name"])
-        continue
+      for tag in tags:
+        if 'vastaanotettu' in tag["name"]:
+          mapped_status = 'READ'
+        if 'jää termiehdotukseksi' in tag["name"]:
+          mapped_status = 'RETAINED'
+        if 'hyväksytty' in tag["name"]:
+          mapped_status = 'ACCEPTED'
+        if 'hylätty' in tag["name"]:
+          mapped_status = 'REJECTED'
+    if mapped_status is not 'RECEIVED':
+      print(mapped_status)
+    return mapped_status
+
 
   def __fetch_data_from_github(self, page = 1):
     user = os.environ.get('GITHUB_USERNAME')

@@ -1,23 +1,20 @@
 <template>
   <div class="suggestion-content">
-    <div v-if="suggestion.preferred_label.fi">
-      <p v-if="suggestion.suggestion_type == suggestionTypes.NEW" class="content-title">
-        <strong>Ehdotettu termi suomeksi</strong>
+    <div>
+      <p class="content-title">
+        <strong>Tila</strong>
       </p>
-      <p v-if="suggestion.suggestion_type == suggestionTypes.MODIFY" class="content-title">
-        <strong>Päätermi/asiasana</strong>
-      </p>
-      <p>{{ suggestion.preferred_label.fi.value }}</p>
+      <p>{{ suggestionStateStatusToString[suggestion.status] }}</p>
     </div>
 
     <div v-if="suggestion.preferred_label.sv">
       <p class="content-title"><strong>Ehdotettu termi ruotsiksi</strong></p>
-      <p>{{ suggestion.preferred_label.sv }}</p>
+      <p>{{ suggestion.preferred_label.sv.value }}</p>
     </div>
 
     <div v-if="suggestion.preferred_label.en">
       <p class="content-title"><strong>Ehdotettu termi englanniksi</strong></p>
-      <p>{{ suggestion.preferred_label.en }}</p>
+      <p>{{ suggestion.preferred_label.en.value }}</p>
     </div>
 
     <div v-if="suggestion.alternative_labels">
@@ -64,10 +61,10 @@
     </div>
 
     <div v-if="suggestion.description">
-      <p v-if="suggestion.suggestion_type == suggestionTypes.NEW" class="content-title">
+      <p v-if="suggestion.suggestion_type == suggestionType.NEW" class="content-title">
         <strong>Tarkoitusta täsmentävä selite</strong>
       </p>
-      <p v-if="suggestion.suggestion_type == suggestionTypes.MODIFY" class="content-title">
+      <p v-if="suggestion.suggestion_type == suggestionType.MODIFY" class="content-title">
         <strong>Ehdotettu muutos</strong>
       </p>
       <p>{{ suggestion.description }}</p>
@@ -111,9 +108,10 @@
 
 <script>
 import AssignUser from './AssignUser';
-import { suggestionType } from '../../utils/suggestionHelpers.js';
+import { suggestionType, suggestionStateStatus, suggestionStateStatusToString } from '../../utils/suggestionHelpers.js';
 import { suggestionActions } from '../../store/modules/suggestion/suggestionConsts';
 import { mapSuggestionActions } from '../../store/modules/suggestion/suggestionModule';
+
 
 export default {
   components: {
@@ -130,10 +128,9 @@ export default {
   },
   data() {
     return {
-      suggestionTypes: {
-        NEW: suggestionType.NEW,
-        MODIFY: suggestionType.MODIFY
-      }
+      suggestionType,
+      suggestionStateStatus,
+      suggestionStateStatusToString
     };
   },
   methods: {
