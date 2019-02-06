@@ -18,9 +18,9 @@
           <div @click="showDropdown = true">
             <svg-icon icon-name="more"><icon-more/></svg-icon>
           </div>
-          <div v-if="showDropdown" v-on-clickaway="closeDropdown" class="dropdown">
+          <!--<div v-if="showDropdown" v-on-clickaway="closeDropdown" class="dropdown">
             <div @click="goToSettings">Muokkaa profiiliasi</div>
-          </div>
+          </div>-->
         </div>
     </div>
 

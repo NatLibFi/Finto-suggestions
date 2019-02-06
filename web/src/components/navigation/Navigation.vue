@@ -38,7 +38,7 @@
 
     <div v-if="showDropdown" v-on-clickaway="closeDropdown" class="nav-menu-dropdown dropdown">
       <div @click="goToProfile">Profiili</div>
-      <div @click="goToSettings">Asetukset</div>
+      <div class="disabled">Asetukset</div>
       <div @click="logOut">Kirjaudu ulos</div>
     </div>
 
@@ -56,7 +56,7 @@
       </div>
       <div class="nav-mobile-dropdown-content">
         <div @click="goToProfile">Profiili</div>
-        <div @click="goToSettings">Asetukset</div>
+        <div class="disabled">Asetukset</div>
         <div @click="logOut">Kirjaudu ulos</div>
       </div>
     </div>
@@ -525,5 +525,10 @@ export default {
 .fade-enter,
 .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
   opacity: 0;
+}
+
+.disabled {
+  color: #ccc;
+  cursor: default !important;
 }
 </style>

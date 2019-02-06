@@ -17,12 +17,7 @@
     </div>
 
     <div class="setting-container">
-      <user-settings-form
-        :userName="user.name"
-        :userTitle="user.title"
-        :userOrg="user.organization"
-        :imageUrl="user.image_url"
-        />
+      <user-settings-form />
     </div>
   </div>
 </template>
@@ -35,16 +30,13 @@ import { userRoleToString } from '../../utils/userMappings.js';
 import { userActions, userGetters } from '../../store/modules/user/userConsts';
 import { mapUserActions, mapUserGetters } from '../../store/modules/user/userModule';
 // eslint-disable-next-line
-import { authenticatedUserGetters } from '../../store/modules/authenticatedUser/authenticatedUserConsts.js';
+import { authenticatedUserGetters, authenticatedUserActions } from '../../store/modules/authenticatedUser/authenticatedUserConsts.js';
 // eslint-disable-next-line
-import { mapAuthenticatedUserGetters } from '../../store/modules/authenticatedUser/authenticatedUserModule.js';
+import { mapAuthenticatedUserGetters, mapAuthenticatedUserActions } from '../../store/modules/authenticatedUser/authenticatedUserModule.js';
 
 export default {
   components: {
     UserSettingsForm
-  },
-  props: {
-    userId: [String, Number]
   },
   data() {
     return {
@@ -55,19 +47,24 @@ export default {
   },
   computed: {
     ...mapAuthenticatedUserGetters({
-      // TODO: fix this to work async
-      isAuthenticated: authenticatedUserGetters.GET_IS_AUTHENTICATED
+      userId: authenticatedUserGetters.GET_USER_ID,
+      isAuthenticated: authenticatedUserGetters.GET_IS_AUTHENTICATED,
+      name: authenticatedUserGetters.GET_USER_NAME
     }),
     ...mapUserGetters({
-      // TODO: fix this to work async
       user: userGetters.GET_USER
     })
   },
-  async mounted() {
+  async created() {
+    this.getUserIdFromStorage();
     await this.getUser(this.userId);
     await this.fetchUserNameAndInitials();
   },
   methods: {
+    ...mapAuthenticatedUserActions({
+      getUserIdFromStorage: authenticatedUserActions.GET_USER_ID_FROM_STORAGE,
+      getUserName: authenticatedUserActions.GET_USER_NAME
+    }),
     ...mapUserActions({
       getUser: userActions.GET_USER
     }),
@@ -170,10 +167,6 @@ export default {
   .setting-container {
     padding-top: 6px;
     margin-top: 10px;
-  }
-
-  .setting-container h5 {
-    margin: 14px 0 0;
   }
 }
 

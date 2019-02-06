@@ -2,47 +2,93 @@
   <div class="form-container">
     <h5>Muokkaa asetuksiasi</h5>
     <div class="setting-inputs">
+      <!-- TODO: Finish patching functionality (store + api) -->
+      <!-- TODO: Then remove disabled input states  -->
       <div>
         <p>Nimi:</p>
-        <input v-model="userName" type="text">
+        <input disabled :value="$v.userName.$model" type="text">
       </div>
       <div>
-        <p>Nimike/titteli:</p>
-        <input v-model="userTitle" type="text">
+        <p>Nimike/titteli: {{ userTitle }}</p>
+        <input disabled v-model.trim.lazy="$v.userTitle" @input="$v.$touch()" type="text">
       </div>
       <div>
-        <p>Organisaatio:</p>
-        <input v-model="userOrg" type="text">
+        <p>Organisaatio: {{ userOrg }}</p>
+        <input disabled v-model.trim.lazy="$v.userOrg" @input="$v.$touch()" type="text">
       </div>
       <div>
-        <p>Profiilikuvan url-osoite:</p>
-        <input v-model="userImageUrl" type="url">
+        <p>Profiilikuvan url-osoite: {{ userImageUrl }}</p>
+        <input disabled v-model.trim.lazy="$v.userImageUrl" @input="$v.$touch()" type="url">
       </div>
     </div>
 
-    <div @click="submitForm" :class="[isTouched ? '' : 'disabled', 'button']">
+    <!--<div @click.stop="submitForm" :class="[$v.$invalid ? '' : 'disabled', 'button']">
       <span class="save">
         Tallenna muutokset
       </span>
-    </div>
+    </div>-->
   </div>
 </template>
 
 <script>
+import { userActions, userGetters } from '../../store/modules/user/userConsts';
+import { mapUserActions, mapUserGetters } from '../../store/modules/user/userModule';
+// eslint-disable-next-line
+import { authenticatedUserGetters, authenticatedUserActions } from '../../store/modules/authenticatedUser/authenticatedUserConsts.js';
+// eslint-disable-next-line
+import { mapAuthenticatedUserGetters, mapAuthenticatedUserActions } from '../../store/modules/authenticatedUser/authenticatedUserModule.js';
+
+import { required, minLength } from 'vuelidate/lib/validators';
+
 export default {
   data() {
     return {
-      isTouched: false,
-      userName: '',
       userTitle: '',
       userOrg: '',
       userImageUrl: ''
     };
   },
+  validations: {
+    userName: {
+      required,
+      minLength: minLength(1)
+    }
+  },
+  computed: {
+    ...mapAuthenticatedUserGetters({
+      userId: authenticatedUserGetters.GET_USER_ID,
+      isAuthenticated: authenticatedUserGetters.GET_IS_AUTHENTICATED,
+      userName: authenticatedUserGetters.GET_USER_NAME
+    }),
+    ...mapUserGetters({
+      user: userGetters.GET_USER
+    })
+  },
+  async created() {
+    this.getUserIdFromStorage();
+    await this.getUser(this.userId);
+  },
   methods: {
+    ...mapAuthenticatedUserActions({
+      getUserIdFromStorage: authenticatedUserActions.GET_USER_ID_FROM_STORAGE,
+      getUserName: authenticatedUserActions.GET_USER_NAME
+    }),
+    ...mapUserActions({
+      getUser: userActions.GET_USER,
+      patchUser: userActions.PATCH_USER
+    }),
+    async updateUser() {
+      const params = {
+        name: this.userName,
+        title: this.userTitle,
+        organization: this.userOrg,
+        imageUrl: this.userImageUrl
+      };
+      await this.patchUser(this.userId, params);
+    },
     submitForm() {
-      if (this.isTouched) {
-        this.isTouched = false;
+      if (!this.$v.$invalid) {
+        this.updateUser();
       }
     }
   }
@@ -54,8 +100,8 @@ export default {
   padding: 10px 0 20px;
 }
 
-.setting-inputs h5 {
-  margin: 14px 0 0;
+h5 {
+  margin: 6px 0 20px;
 }
 
 .setting-inputs div {
