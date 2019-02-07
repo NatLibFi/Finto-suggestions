@@ -101,6 +101,7 @@ class GithubDataParser:
 
   def __parse_body_strings(self, body_str):
     body = GithubBodyModel()
+
     if 'CONCEPT' in body_str or 'GEO' in body_str:
       body.type = 'NEW'
       splitted_body_strings = body_str.split("####")
@@ -127,6 +128,7 @@ class GithubDataParser:
           body.organization = self.__parse_organization(section)
         if 'Termiehdotus Fintossa' in section:
           body.yse_term = self.__parse_yse_term(section)
+
     else:
       body.type = 'MODIFY'
       splitted_body_strings = body_str.split("####")

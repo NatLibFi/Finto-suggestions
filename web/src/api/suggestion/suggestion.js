@@ -1,10 +1,14 @@
 import { get, put, post, del } from '../utils';
 import { asciiUriEncoding } from '../helper';
 
+const defaultLimit = 200;
+
+//TODO: cache limited fetch, because this is really slow
 export default {
-  getSuggestions: () => get({ resource: '/suggestions?limit=300' }),
+  getSuggestions: () => get({ resource: `/suggestions?limit=${defaultLimit}`}),
   getSuggestionsBySearchWord: searchWord => get({ resource: `suggestions?search=${searchWord}` }),
-  getSortedSuggestions: sortValue => get({ resource: `/suggestions?limit=300&sort=${sortValue}` }),
+  getSortedSuggestions: sortValue =>
+    get({ resource: `/suggestions?limit=${defaultLimit}&sort=${sortValue}` }),
   getSuggestionById: suggestionId => get({ resource: `/suggestions/${suggestionId}` }),
   assignUserToSuggestion: (suggestionId, userId) =>
     put({ resource: `/suggestions/${suggestionId}/assign/${userId}` }),

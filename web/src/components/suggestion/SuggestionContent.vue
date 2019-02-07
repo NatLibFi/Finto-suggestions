@@ -7,12 +7,12 @@
       <p>{{ suggestionStateStatusToString[suggestion.status] }}</p>
     </div>
 
-    <div v-if="suggestion.preferred_label.sv">
+    <div v-if="suggestion.preferred_label.sv && suggestion.preferred_label.sv.length > 0">
       <p class="content-title"><strong>Ehdotettu termi ruotsiksi</strong></p>
       <p>{{ suggestion.preferred_label.sv.value }}</p>
     </div>
 
-    <div v-if="suggestion.preferred_label.en">
+    <div v-if="suggestion.preferred_label.en && suggestion.preferred_label.en.length > 0">
       <p class="content-title"><strong>Ehdotettu termi englanniksi</strong></p>
       <p>{{ suggestion.preferred_label.en.value }}</p>
     </div>
