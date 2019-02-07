@@ -7,12 +7,24 @@
       <p v-if="suggestion.suggestion_type == suggestionTypes.MODIFY" class="content-title">
         <strong>Päätermi/asiasana</strong>
       </p>
-      <p>{{ suggestion.preferred_label.fi }}</p>
+      <p v-if="!suggestion.preferred_label.fi.value">{{ suggestion.preferred_label.fi }}</p>
+      <p v-if="suggestion.preferred_label.fi.value && !suggestion.preferred_label.fi.uri">
+        {{ suggestion.preferred_label.fi.value }}
+      </p>
+      <a :href="suggestion.preferred_label.fi.uri" v-if="suggestion.preferred_label.fi.uri">
+        {{ suggestion.preferred_label.fi.value }}
+      </a>
     </div>
 
     <div v-if="suggestion.preferred_label.sv">
       <p class="content-title"><strong>Ehdotettu termi ruotsiksi</strong></p>
-      <p>{{ suggestion.preferred_label.sv }}</p>
+      <p v-if="!suggestion.preferred_label.sv.value">{{ suggestion.preferred_label.sv }}</p>
+      <p v-if="suggestion.preferred_label.sv.value && !suggestion.preferred_label.sv.uri">
+        {{ suggestion.preferred_label.sv.value }}
+      </p>
+      <a :href="suggestion.preferred_label.sv.uri" v-if="suggestion.preferred_label.sv.uri">
+        {{ suggestion.preferred_label.sv.value }}
+      </a>
     </div>
 
     <div v-if="suggestion.preferred_label.en">
@@ -145,11 +157,12 @@ export default {
 </script>
 
 <style scoped>
-div.suggestion-content {
+.suggestion-content {
   border-top: 1px solid #f5f5f5;
   padding: 20px 40px 10px;
   font-size: 16px;
   margin-bottom: 0;
+  overflow-wrap: break-word;
 }
 
 div > div {
