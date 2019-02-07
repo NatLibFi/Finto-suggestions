@@ -1,6 +1,6 @@
 <template>
   <div class="suggestion-content">
-    <div v-if="suggestion.preferred_label.fi">
+    <div v-if="suggestion.preferred_label.fi > 0 || suggestion.preferred_label.fi.value">
       <p v-if="suggestion.suggestion_type == suggestionTypes.NEW" class="content-title">
         <strong>Ehdotettu termi suomeksi</strong>
       </p>
@@ -16,7 +16,7 @@
       </a>
     </div>
 
-    <div v-if="suggestion.preferred_label.sv">
+    <div v-if="suggestion.preferred_label.sv.length > 0 && suggestion.preferred_label.sv.value">
       <p class="content-title"><strong>Ehdotettu termi ruotsiksi</strong></p>
       <p v-if="!suggestion.preferred_label.sv.value">{{ suggestion.preferred_label.sv }}</p>
       <p v-if="suggestion.preferred_label.sv.value && !suggestion.preferred_label.sv.uri">
