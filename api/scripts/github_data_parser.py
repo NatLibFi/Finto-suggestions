@@ -101,7 +101,7 @@ class GithubDataParser:
 
   def __parse_body_strings(self, body_str):
     body = GithubBodyModel()
-    if 'CONCEPT' or 'GEO' in body_str:
+    if 'CONCEPT' in body_str or 'GEO' in body_str:
       body.type = 'NEW'
       splitted_body_strings = body_str.split("####")
       for section in splitted_body_strings:
@@ -223,4 +223,5 @@ class GithubDataParser:
           self.last_request_completed = True
       else:
         break
+
     return models
