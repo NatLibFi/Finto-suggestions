@@ -18,7 +18,9 @@
 <script>
 import AddComment from '../suggestion/AddComment';
 
+// eslint-disable-next-line
 import { mapAuthenticatedUserGetters, mapAuthenticatedUserActions } from '../../store/modules/authenticatedUser/authenticatedUserModule.js';
+// eslint-disable-next-line
 import { authenticatedUserGetters, authenticatedUserActions } from '../../store/modules/authenticatedUser/authenticatedUserConsts.js';
 import { mapSuggestionActions } from '../../store/modules/suggestion/suggestionModule';
 import { suggestionActions } from '../../store/modules/suggestion/suggestionConsts';
@@ -61,7 +63,7 @@ export default {
       setSuggestionRetained: suggestionActions.SET_SUGGESTION_RETAINED
     }),
     ...mapAuthenticatedUserActions({
-      validateAuthentication: authenticatedUserActions.VALIDATE_AUTHENTICATION,
+      validateAuthentication: authenticatedUserActions.VALIDATE_AUTHENTICATION
     }),
     ...mapEventActions({
       addEvent: eventActions.ADD_NEW_EVENT
@@ -71,17 +73,26 @@ export default {
       await this.addEvent(event);
     },
     async dismissSuggestion() {
-      await this.setSuggestionRejected({ suggestionId: this.suggestionId, status: suggestionStateStatus.REJECTED });
+      await this.setSuggestionRejected({
+        suggestionId: this.suggestionId,
+        status: suggestionStateStatus.REJECTED
+      });
       await this.createEvent(suggestionStateStatus.REJECTED);
       this.$emit('moveToNextSuggestion');
     },
     async approveSuggestion() {
-      await this.setSuggestionAccepted({ suggestionId: this.suggestionId, status: suggestionStateStatus.ACCEPTED });
+      await this.setSuggestionAccepted({
+        suggestionId: this.suggestionId,
+        status: suggestionStateStatus.ACCEPTED
+      });
       await this.createEvent(suggestionStateStatus.ACCEPTED);
       this.$emit('moveToNextSuggestion');
     },
     async retainSuggestion() {
-      await this.setSuggestionRetained({ suggestionId: this.suggestionId, status: suggestionStateStatus.RETAINED });
+      await this.setSuggestionRetained({
+        suggestionId: this.suggestionId,
+        status: suggestionStateStatus.RETAINED
+      });
       await this.createEvent(suggestionStateStatus.RETAINED);
       this.$emit('moveToNextSuggestion');
     }

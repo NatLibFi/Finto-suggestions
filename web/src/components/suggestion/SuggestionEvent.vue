@@ -47,7 +47,7 @@ export default {
       dateTimeFormatLabel,
       compineEventTextContent,
       userNameInitials: ''
-    }
+    };
   },
   async created() {
     await this.getUser(this.event.user_id);

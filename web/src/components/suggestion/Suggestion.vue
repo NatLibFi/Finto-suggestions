@@ -1,7 +1,7 @@
 <template>
   <div class="suggestion">
     <div class="arrow-button">
-      <a @click="goToSuggestionList()" unselectable="on">
+      <a @click="goBack()" unselectable="on">
         <svg-icon icon-name="arrow"><icon-arrow /></svg-icon>
         Takaisin käsite-ehdotuksiin
       </a>
@@ -39,11 +39,15 @@
           <div class="tags">
             <span
               v-if="suggestion.suggestion_type === suggestionType.NEW"
-              class="tag type-new">{{ suggestionTypeToString[suggestion.suggestion_type] }}
+              class="tag type-new">{{
+                suggestionTypeToString[suggestion.suggestion_type]
+              }}
             </span>
             <span
               v-if="suggestion.suggestion_type === suggestionType.MODIFY"
-              class="tag type-modify">{{ suggestionTypeToString[suggestion.suggestion_type] }}
+              class="tag type-modify">{{
+                suggestionTypeToString[suggestion.suggestion_type]
+              }}
             </span>
             <span
               v-if="suggestion.status === suggestionStateStatus.RECEIVED"
@@ -55,15 +59,21 @@
             </span>
             <span
               v-if="suggestion.status === suggestionStateStatus.ACCEPTED"
-              class="tag status-accepted">{{ suggestionStateStatusToString[suggestionStateStatus.ACCEPTED] }}
+              class="tag status-accepted">{{
+                suggestionStateStatusToString[suggestionStateStatus.ACCEPTED]
+              }}
             </span>
             <span
               v-if="suggestion.status === suggestionStateStatus.REJECTED"
-              class="tag status-rejected">{{ suggestionStateStatusToString[suggestionStateStatus.REJECTED] }}
+              class="tag status-rejected">{{
+                suggestionStateStatusToString[suggestionStateStatus.REJECTED]
+              }}
             </span>
             <span
               v-if="suggestion.status === suggestionStateStatus.RETAINED"
-              class="tag status-retained">{{ suggestionStateStatusToString[suggestionStateStatus.RETAINED] }}
+              class="tag status-retained">{{
+                suggestionStateStatusToString[suggestionStateStatus.RETAINED]
+              }}
             </span>
             <span
               v-if="suggestion.status === suggestionStateStatus.ARCHIVED"
@@ -128,7 +138,13 @@ import IconMore from '../icons/IconMore';
 import SvgIcon from '../icons/SvgIcon';
 import AddComment from './AddComment';
 
-import { suggestionType, suggestionTypeToString, suggestionStateStatus, suggestionStateStatusToString } from '../../utils/suggestionHelpers';
+import {
+  suggestionType,
+  suggestionTypeToString,
+  suggestionStateStatus,
+  suggestionStateStatusToString
+} from '../../utils/suggestionHelpers';
+
 import {
   suggestionGetters,
   suggestionActions
@@ -147,12 +163,13 @@ import { mapUserActions, mapUserGetters } from '../../store/modules/user/userMod
 
 import { dateTimeFormatLabel } from '../../utils/dateHelper.js';
 
+// eslint-disable-next-line
 import { mapAuthenticatedUserGetters, mapAuthenticatedUserActions } from '../../store/modules/authenticatedUser/authenticatedUserModule.js';
+// eslint-disable-next-line
 import { authenticatedUserGetters, authenticatedUserActions } from '../../store/modules/authenticatedUser/authenticatedUserConsts.js';
 
 import { userRoles } from '../../utils/userHelpers';
 
-import AssignUser from '../suggestion/AssignUser';
 import TagSelector from '../tag/TagSelector';
 
 export default {
@@ -231,17 +248,8 @@ export default {
     ...mapUserActions({
       getUser: userActions.GET_USER
     }),
-    goToSuggestionList() {
-      if (!this.meetingId) {
-        this.$router.push('/');
-      } else {
-        this.$router.push({
-          name: 'meeting-suggestion-list',
-          params: {
-            meetingId: this.meetingId
-          }
-        });
-      }
+    goBack() {
+      this.$router.go(-1);
     },
     goToMeeting(id) {
       this.$router.push({
@@ -274,8 +282,8 @@ export default {
       }
     },
     goToNextSuggestion() {
-      if(this.noNextSuggestions) {
-        this.$router.push('/meetings/'+ this.meetingId);
+      if (this.noNextSuggestions) {
+        this.$router.push('/meetings/' + this.meetingId);
       } else {
         this.getNexUsableSuggestionId(this.movingAction.NEXT);
         if (this.requestedSuggestionId) {
@@ -332,9 +340,7 @@ export default {
       }
     },
     handleOpenTagSelector() {
-      this.openTagSelector
-        ? this.openTagSelector = false
-        : this.openTagSelector = true;
+      this.openTagSelector ? (this.openTagSelector = false) : (this.openTagSelector = true);
     }
   },
   watch: {
@@ -502,18 +508,18 @@ h1.suggestion-title {
 }
 
 .status-accepted {
-  background-color: #58BA81;
-  border: 2px solid #58BA81;
+  background-color: #58ba81;
+  border: 2px solid #58ba81;
 }
 
 .status-rejected {
-  background-color: #CC4A4A;
-  border: 2px solid #CC4A4A;
+  background-color: #cc4a4a;
+  border: 2px solid #cc4a4a;
 }
 
 .status-retained {
-  background-color: #F2994A;
-  border: 2px solid #F2994A;
+  background-color: #f2994a;
+  border: 2px solid #f2994a;
 }
 
 .status-archived {

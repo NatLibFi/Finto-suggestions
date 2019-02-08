@@ -348,6 +348,12 @@ definitions:
           type: number
       role:
         $ref: "#/definitions/role"
+      title:
+        $ref: "#/definitions/title"
+      organization:
+        $ref: "#/definitions/organization"
+      imageUrl:
+        $ref: "#/definitions/imageUrl"
     required:
       - id
       - name
@@ -365,6 +371,12 @@ definitions:
         $ref: "#/definitions/role"
       password:
         $ref: "#/definitions/password"
+      title:
+        $ref: "#/definitions/title"
+      organization:
+        $ref: "#/definitions/organization"
+      imageUrl:
+        $ref: "#/definitions/imageUrl"
 
   UserParameterObject:
     type: object
@@ -376,6 +388,12 @@ definitions:
         $ref: "#/definitions/email"
       password:
         $ref: "#/definitions/password"
+      title:
+        $ref: "#/definitions/title"
+      organization:
+        $ref: "#/definitions/organization"
+      imageUrl:
+        $ref: "#/definitions/imageUrl"
     required:
       - name
       - email
@@ -400,6 +418,18 @@ definitions:
       - ADMIN
     description: "User role, NORMAL or ADMIN. "
     example: NORMAL
+
+  title:
+    type: string
+    example: "Tutkija"
+
+  organization:
+    type: string
+    example: "Kansalliskirjasto"
+
+  imageUrl:
+    type: string
+    example: ""
 
   # EVENT
 

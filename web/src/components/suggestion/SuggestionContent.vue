@@ -76,7 +76,9 @@
     </div>
 
     <div v-if="suggestion.neededFor">
-      <p class="content-title"><strong>Aineisto jonka kuvailussa käsitettä tarvitaan (esim. nimeke tai URL)</strong></p>
+      <p class="content-title">
+        <strong>Aineisto jonka kuvailussa käsitettä tarvitaan (esim. nimeke tai URL)</strong>
+      </p>
       <p>{{ suggestion.neededFor }}</p>
     </div>
 
@@ -102,7 +104,6 @@
         </p>
       </div>
     </transition>
-
   </div>
 </template>
 
@@ -186,10 +187,12 @@ a.remove-button:hover {
   }
 }
 
-.fade-enter-active, .fade-leave-active {
-  transition: opacity .5s;
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.5s;
 }
-.fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
+.fade-enter,
+.fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
   opacity: 0;
 }
 </style>

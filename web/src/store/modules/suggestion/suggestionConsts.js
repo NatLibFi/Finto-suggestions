@@ -36,6 +36,8 @@ export const suggestionMutations = {
 
 export const suggestionActions = {
   GET_SUGGESTIONS: 'getSuggestions',
+  GET_SUGGESTIONS_BY_USER_ID: 'getSuggestionsByUserId',
+  GET_SORTED_SUGGESTIONS_BY_USER_ID: 'getSortedSuggestionsByUserId',
   GET_SORTED_SUGGESTIONS: 'getSortedSuggestions',
   GET_SUGGESTION_BY_ID: 'getSuggestionById',
   ASSIGN_SUGGESTION_TO_USER: 'assignSuggestionToUser',
