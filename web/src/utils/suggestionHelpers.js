@@ -1,13 +1,19 @@
 export const suggestionStateStatus = {
+  RECEIVED: 'RECEIVED',
+  READ: 'READ',
   ACCEPTED: 'ACCEPTED',
   REJECTED: 'REJECTED',
-  RETAINED: 'RETAINED'
+  RETAINED: 'RETAINED',
+  ARCHIVED: 'ARCHIVED'
 };
 
 export const suggestionStateStatusToString = {
+  RECEIVED: 'Käsittelemätön',
+  READ: 'Vastaanotettu',
   ACCEPTED: 'Hyväksytty',
   REJECTED: 'Hylätty',
-  RETAINED: 'Jää ehdotukseksi'
+  RETAINED: 'Jää ehdotukseksi',
+  ARCHIVED: 'Arkistoitu'
 };
 
 export const suggestionType = {
@@ -17,7 +23,7 @@ export const suggestionType = {
 
 export const suggestionTypeToString = {
   NEW: 'Käsite-ehdotus',
-  MODIFY: 'Käsitemuutos'
+  MODIFY: 'Muutosehdotus'
 };
 
 export const suggestionTypeToStyleClass = {

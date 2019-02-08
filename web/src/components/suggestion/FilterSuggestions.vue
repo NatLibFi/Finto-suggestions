@@ -139,7 +139,7 @@ export default {
         value: 'NEW'
       },
       {
-        label: 'Käsitemuutos',
+        label: 'Muutosehdotus',
         value: 'MODIFY'
       }
     ]

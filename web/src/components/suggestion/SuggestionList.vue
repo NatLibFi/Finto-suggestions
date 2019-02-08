@@ -85,7 +85,8 @@ export default {
       getSuggestionsSelectedSortKey: suggestionActions.GET_SUGGESTIONS_SELECTED_SORT,
       getSuggestionsByMeetingId: suggestionActions.GET_SUGGESTIONS_BY_MEETING_ID,
       getSortedSuggestionsByMeetingId: suggestionActions.GET_SORTED_SUGGESTIONS_BY_MEETING_ID,
-      getMeetingsSuggestionsSelectedSortKey: suggestionActions.GET_MEETING_SUGGESTIONS_SELECTED_SORT
+      getMeetingsSuggestionsSelectedSortKey: suggestionActions.GET_MEETING_SUGGESTIONS_SELECTED_SORT,
+      getSuggestionsBySearchWord: suggestionActions.GET_SUGGESTIONS_BY_SEARCH_WORD
     }),
     async handleSuggestionFetching() {
       if (this.meetingId && parseInt(this.meetingId) > 0) {
@@ -164,9 +165,8 @@ export default {
               items = items.filter(i => i.meeting_id === filter.value);
               break;
             case filterType.SEARCH:
-              items = items.filter(
-                i => i.preferred_label && i.preferred_label.fi.startsWith(filter.value)
-              );
+              this.getSuggestionsBySearchWord(filter.value)
+              items = this.items;
               break;
           }
         });

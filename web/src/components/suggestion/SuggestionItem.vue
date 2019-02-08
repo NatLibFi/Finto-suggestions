@@ -3,29 +3,35 @@
     <div class="item-summary">
       <div class="title">
         <p class="title-row">
-          <span class="item-name">{{ suggestion.preferred_label.fi }}</span>
+          <span class="item-name">{{ suggestion.preferred_label.fi.value }}</span>
           <span
             :class="[suggestionTypeToStyleClass[suggestion.suggestion_type], 'tag']">
             {{ suggestionTypeToString[suggestion.suggestion_type] }}
           </span>
-          <span
-            v-if="suggestion.status === suggestionStateStatus.ACCEPTED"
-            class="tag status-accepted">{{
-              suggestionStateStatusToString[suggestionStateStatus.ACCEPTED]
-            }}
-          </span>
-          <span
-            v-if="suggestion.status === suggestionStateStatus.REJECTED"
-            class="tag status-rejected">{{
-              suggestionStateStatusToString[suggestionStateStatus.REJECTED]
-            }}
-          </span>
-          <span
-            v-if="suggestion.status === suggestionStateStatus.RETAINED"
-            class="tag status-retained">{{
-              suggestionStateStatusToString[suggestionStateStatus.RETAINED]
-            }}
-          </span>
+            <span
+              v-if="suggestion.status === suggestionStateStatus.RECEIVED"
+              class="tag status-received">{{ suggestionStateStatusToString[suggestionStateStatus.RECEIVED] }}
+            </span>
+            <span
+              v-if="suggestion.status === suggestionStateStatus.READ"
+              class="tag status-received">{{ suggestionStateStatusToString[suggestionStateStatus.READ] }}
+            </span>
+            <span
+              v-if="suggestion.status === suggestionStateStatus.ACCEPTED"
+              class="tag status-accepted">{{ suggestionStateStatusToString[suggestionStateStatus.ACCEPTED] }}
+            </span>
+            <span
+              v-if="suggestion.status === suggestionStateStatus.REJECTED"
+              class="tag status-rejected">{{ suggestionStateStatusToString[suggestionStateStatus.REJECTED] }}
+            </span>
+            <span
+              v-if="suggestion.status === suggestionStateStatus.RETAINED"
+              class="tag status-retained">{{ suggestionStateStatusToString[suggestionStateStatus.RETAINED] }}
+            </span>
+            <span
+              v-if="suggestion.status === suggestionStateStatus.ARCHIVED"
+              class="tag status-retained">{{ suggestionStateStatusToString[suggestionStateStatus.ARCHIVED] }}
+            </span>
           <span v-if="suggestion.tags.length > 0">
             <span class="tags tag" v-for="tag in suggestion.tags" :key="tag.label">
               {{ tag.label}}
@@ -184,6 +190,16 @@ li.item:hover {
   background-color: #ff8111;
   border: 2px solid #ff8111;
 }
+.status-received {
+  background-color: #1137ff;
+  border: 2px solid #1137ff;
+}
+
+.status-read {
+  background-color: #f5f5f5;
+  border: 2px solid #f5f5f5;
+}
+
 .status-accepted {
   background-color: #58ba81;
   border: 2px solid #58ba81;
@@ -198,6 +214,12 @@ li.item:hover {
   background-color: #f2994a;
   border: 2px solid #f2994a;
 }
+
+.status-archived {
+  background-color: #ad9d8f;
+  border: 2px solid #ad9d8f;
+}
+
 .label {
   font-size: smaller;
   padding-left: 5px;

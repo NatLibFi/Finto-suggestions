@@ -28,7 +28,7 @@
     <div v-if="suggestion" class="suggestion-container">
       <div class="suggestion-header">
         <div class="suggestion-header-headline">
-          <h1 class="suggestion-title">{{ suggestion.preferred_label.fi }}</h1>
+          <h1 class="suggestion-title">{{ suggestion.preferred_label.fi.value }}</h1>
           <div class="suggestion-header-details">
             <span><strong>#{{ suggestion.id }} </strong></span>
             <span>{{ dateTimeFormatLabel(suggestion.created) }} </span>
@@ -50,6 +50,14 @@
               }}
             </span>
             <span
+              v-if="suggestion.status === suggestionStateStatus.RECEIVED"
+              class="tag status-received">{{ suggestionStateStatusToString[suggestionStateStatus.RECEIVED] }}
+            </span>
+            <span
+              v-if="suggestion.status === suggestionStateStatus.READ"
+              class="tag status-received">{{ suggestionStateStatusToString[suggestionStateStatus.READ] }}
+            </span>
+            <span
               v-if="suggestion.status === suggestionStateStatus.ACCEPTED"
               class="tag status-accepted">{{
                 suggestionStateStatusToString[suggestionStateStatus.ACCEPTED]
@@ -66,6 +74,10 @@
               class="tag status-retained">{{
                 suggestionStateStatusToString[suggestionStateStatus.RETAINED]
               }}
+            </span>
+            <span
+              v-if="suggestion.status === suggestionStateStatus.ARCHIVED"
+              class="tag status-retained">{{ suggestionStateStatusToString[suggestionStateStatus.ARCHIVED] }}
             </span>
             <span
               v-if="suggestion.tags && suggestion.tags.length > 0">
@@ -485,6 +497,16 @@ h1.suggestion-title {
   border: 2px solid #ff8111;
 }
 
+.status-received {
+  background-color: #1137ff;
+  border: 2px solid #1137ff;
+}
+
+.status-read {
+  background-color: #f5f5f5;
+  border: 2px solid #f5f5f5;
+}
+
 .status-accepted {
   background-color: #58ba81;
   border: 2px solid #58ba81;
@@ -498,6 +520,11 @@ h1.suggestion-title {
 .status-retained {
   background-color: #f2994a;
   border: 2px solid #f2994a;
+}
+
+.status-archived {
+  background-color: #ad9d8f;
+  border: 2px solid #ad9d8f;
 }
 
 .comment-container {
