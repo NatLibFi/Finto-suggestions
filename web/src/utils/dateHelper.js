@@ -1,7 +1,7 @@
 import { differenceInDays, parse, format, isAfter } from 'date-fns';
 
 export const formatDate = (date, formatting) => {
-  return format(parse(date), formatting)
+  return format(parse(date), formatting);
 };
 
 export const hasDatePassed = date => {

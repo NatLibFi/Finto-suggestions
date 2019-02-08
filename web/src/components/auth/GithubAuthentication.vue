@@ -1,10 +1,12 @@
 <template>
+<div></div>
 </template>
 
 <script>
 import router from '../../router/index';
-
+// eslint-disable-next-line
 import { mapAuthenticatedUserActions, mapAuthenticatedUserGetters } from '../../store/modules/authenticatedUser/authenticatedUserModule';
+// eslint-disable-next-line
 import { authenticatedUserActions, authenticatedUserGetters } from '../../store/modules/authenticatedUser/authenticatedUserConsts';
 
 export default {
@@ -27,13 +29,13 @@ export default {
     parseCodeFromQueryString(query) {
       if (query && query.length > 0) {
         const splitArray = query.split('=');
-        if(splitArray && splitArray.length > 0) {
+        if (splitArray && splitArray.length > 0) {
           this.code = splitArray[1];
         }
       }
     },
     async callAuthenticate() {
-      if(this.code && this.code.length > 0) {
+      if (this.code && this.code.length > 0) {
         await this.authenticate({ code: this.code });
       }
     },

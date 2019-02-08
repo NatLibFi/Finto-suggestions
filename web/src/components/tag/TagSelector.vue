@@ -15,7 +15,12 @@
         <ul v-if="tags && tags.length > 0">
           <li class="tag-label" v-for="tag in tags" :key="tag.label">
             {{ normalizeText(tag.label) }}
-            <input type="checkbox" @click="handleTagUpdateToSuggestion(tag.label)" v-model="checkedTags" :id="tag.label" :value="tag.label" />
+            <input 
+              type="checkbox"
+              @click="handleTagUpdateToSuggestion(tag.label)"
+              v-model="checkedTags"
+              :id="tag.label"
+              :value="tag.label" />
           </li>
         </ul>
         <ul v-else>
@@ -93,19 +98,40 @@ export default {
       return `${firstCharacter}${restOfTheText}`;
     },
     async handleTagUpdateToSuggestion(tagLabel) {
-      if(this.isTagSetToSuggestion(tagLabel)) {
-        const event = newActionEvent('poisti ehdotuksesta tunnisteen', tagLabel, this.userId, this.suggestion.id);
-        const params = { suggestionId: this.suggestion.id, tagLabel: tagLabel, event: event};
+      if (this.isTagSetToSuggestion(tagLabel)) {
+        const event = newActionEvent(
+          'poisti ehdotuksesta tunnisteen',
+          tagLabel,
+          this.userId,
+          this.suggestion.id
+        );
+        const params = { suggestionId: this.suggestion.id, tagLabel: tagLabel, event: event };
         await this.removeTagFromSuggestion(params);
       } else {
-        const event = newActionEvent('lisäsi ehdotukseen tunnisteen', tagLabel, this.userId, this.suggestion.id);
-        const params = { suggestionId: this.suggestion.id, tagLabel: tagLabel, event: event};
+        const event = newActionEvent(
+          'lisäsi ehdotukseen tunnisteen',
+          tagLabel,
+          this.userId,
+          this.suggestion.id
+        );
+        const params = {
+          suggestionId: this.suggestion.id,
+          tagLabel: tagLabel,
+          event: event
+        };
         await this.addTagToSuggestion(params);
       }
     },
     isTagSetToSuggestion(tagLabel) {
-      if(this.suggestion.tags && this.suggestion.tags.length > 0 && tagLabel && tagLabel.length > 0) {
-        return this.suggestion.tags.find(tag => tag.label === tagLabel.toUpperCase()) ? true : false;
+      if (
+        this.suggestion.tags &&
+        this.suggestion.tags.length > 0 &&
+        tagLabel &&
+        tagLabel.length > 0
+      ) {
+        return this.suggestion.tags.find(tag => tag.label === tagLabel.toUpperCase())
+          ? true
+          : false;
       }
       return false;
     },
@@ -118,7 +144,12 @@ export default {
       this.showCreateTagInputs = !this.showCreateTagInputs;
     },
     async addNewTag() {
-      const event = newActionEvent('lisäsi ehdotukseen tunnisteen', this.newTag, this.userId, this.suggestion.id);
+      const event = newActionEvent(
+        'lisäsi ehdotukseen tunnisteen',
+        this.newTag,
+        this.userId,
+        this.suggestion.id
+      );
       const params = { suggestionId: this.suggestion.id, tagLabel: this.newTag, event: event };
       await this.addTagToSuggestion(params);
       this.toggleNewTagInputs();
@@ -140,7 +171,7 @@ div.select-tag-box {
 }
 
 div.select-tag-box button {
-  background-color: rgba(0,0,0,0);
+  background-color: rgba(0, 0, 0, 0);
   border-width: 0;
 }
 
@@ -280,5 +311,3 @@ div.tag-selector-new-tag-form-submit > button:focus {
   }
 }
 </style>
-
-

@@ -1,12 +1,10 @@
 <template>
   <div class="navigation">
-
     <div class="nav-content">
       <div class="nav-title">
         <img @click="returnToHome" src="./finto-logo.svg" alt="">
         <span @click="returnToHome">Finto – Käsite-ehdotukset</span>
       </div>
-
       <transition name="fade">
         <div v-if="isAuthenticated" class="nav-menu" @click="showDropdown = true">
           <div class="user-bubble">
@@ -36,11 +34,10 @@
           <div @click="showSignupDialog = !showSignupDialog">Luo tunnus</div>
         </div>
       </transition>
-
     </div>
 
     <div v-if="showDropdown" v-on-clickaway="closeDropdown" class="nav-menu-dropdown dropdown">
-      <div class="disabled">Profiili</div>
+      <div @click="goToProfile">Profiili</div>
       <div class="disabled">Asetukset</div>
       <div @click="logOut">Kirjaudu ulos</div>
     </div>
@@ -54,11 +51,11 @@
           <span unselectable="on">{{ userInitials }}</span>
         </div>
         <div class="nav-dropdown-user">
-          <p>{{ userName }}</p>
+          <p v-if="name && name.length > 0">{{ name }}</p>
         </div>
       </div>
       <div class="nav-mobile-dropdown-content">
-        <div class="disabled">Profiili</div>
+        <div @click="goToProfile">Profiili</div>
         <div class="disabled">Asetukset</div>
         <div @click="logOut">Kirjaudu ulos</div>
       </div>
@@ -92,7 +89,9 @@ import IconMore from '../icons/IconMore';
 import IconTriangle from '../icons/IconTriangle';
 import { directive as onClickaway } from 'vue-clickaway';
 
+// eslint-disable-next-line
 import { mapAuthenticatedUserGetters, mapAuthenticatedUserActions } from '../../store/modules/authenticatedUser/authenticatedUserModule.js';
+// eslint-disable-next-line
 import { authenticatedUserGetters, authenticatedUserActions, storeKeyNames } from '../../store/modules/authenticatedUser/authenticatedUserConsts.js';
 
 import api from '../../api/index.js';
@@ -136,7 +135,8 @@ export default {
       isAuthenticated: authenticatedUserGetters.GET_IS_AUTHENTICATED,
       userId: authenticatedUserGetters.GET_USER_ID,
       name: authenticatedUserGetters.GET_USER_NAME,
-      error: authenticatedUserGetters.GET_AUTHENTICATE_ERROR //can be showed if login did not succeed
+      // can be shown if login did not succeed:
+      error: authenticatedUserGetters.GET_AUTHENTICATE_ERROR
     })
   },
   methods: {
@@ -182,12 +182,32 @@ export default {
       this.showSignupDialog = false;
       this.showSignupConfirmation = true;
     },
+    goToProfile: function() {
+      this.$router.push({
+        name: 'user',
+        params: {
+          userId: this.userId
+        }
+      });
+      this.showDropdown = false;
+      this.showMobileDropdown = false;
+    },
+    goToSettings: function() {
+      this.$router.push({
+        name: 'settings',
+        params: {
+          userId: this.userId
+        }
+      });
+      this.showDropdown = false;
+      this.showMobileDropdown = false;
+    },
     logOut() {
       this.revokeAuthentication();
       this.closeDropdown();
       this.closeMobileDropdown();
     },
-    async oAuth2Authenticate(provider) {
+    async oAuth2Authenticate() {
       this.$router.push('/github');
     },
     async registerLocalUser(userdata) {
@@ -202,7 +222,9 @@ export default {
       this.userInitials = userNameInitials(this.name);
     },
     async handleTokenRefesh() {
+      // eslint-disable-next-line no-undef
       const access_token = $cookies.get(storeKeyNames.ACCESS_TOKEN);
+      // eslint-disable-next-line no-undef
       const refreshToken = $cookies.get(storeKeyNames.REFRESH_TOKEN);
       await this.refreshToken({ access_token: access_token, refresh_token: refreshToken });
     }
@@ -496,10 +518,6 @@ export default {
   font-weight: 800;
 }
 
-.disabled {
-  color: #ccc;
-}
-
 .fade-enter-active,
 .fade-leave-active {
   transition: opacity 0.4s;
@@ -507,5 +525,10 @@ export default {
 .fade-enter,
 .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
   opacity: 0;
+}
+
+.disabled {
+  color: #ccc;
+  cursor: default !important;
 }
 </style>

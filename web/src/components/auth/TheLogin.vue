@@ -53,7 +53,7 @@ export default {
       showOwnCredentialLogin: false,
       email: '',
       password: ''
-    }
+    };
   },
   methods: {
     login(service) {

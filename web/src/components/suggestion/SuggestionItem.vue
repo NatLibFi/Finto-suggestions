@@ -10,15 +10,21 @@
           </span>
           <span
             v-if="suggestion.status === suggestionStateStatus.ACCEPTED"
-            class="tag status-accepted">{{ suggestionStateStatusToString[suggestionStateStatus.ACCEPTED] }}
+            class="tag status-accepted">{{
+              suggestionStateStatusToString[suggestionStateStatus.ACCEPTED]
+            }}
           </span>
           <span
             v-if="suggestion.status === suggestionStateStatus.REJECTED"
-            class="tag status-rejected">{{ suggestionStateStatusToString[suggestionStateStatus.REJECTED] }}
+            class="tag status-rejected">{{
+              suggestionStateStatusToString[suggestionStateStatus.REJECTED]
+            }}
           </span>
           <span
             v-if="suggestion.status === suggestionStateStatus.RETAINED"
-            class="tag status-retained">{{ suggestionStateStatusToString[suggestionStateStatus.RETAINED] }}
+            class="tag status-retained">{{
+              suggestionStateStatusToString[suggestionStateStatus.RETAINED]
+            }}
           </span>
           <span v-if="suggestion.tags.length > 0">
             <span class="tags tag" v-for="tag in suggestion.tags" :key="tag.label">
@@ -39,9 +45,13 @@
         </p>
       </div>
     </div>
-    <div class="item-comments" v-if="suggestion.events.filter((event) => event.event_type === eventTypes.COMMENT).length > 0">
+    <div
+      v-if="suggestion.events.filter((event) => event.event_type === eventTypes.COMMENT).length > 0"
+      class="item-comments">
       <svg-icon icon-name="comments"><icon-comments /></svg-icon>
-      <span>{{ suggestion.events.filter((event) => event.event_type === eventTypes.COMMENT).length }}</span>
+      <span>
+        {{ suggestion.events.filter((event) => event.event_type === eventTypes.COMMENT).length }}
+      </span>
     </div>
   </li>
 </template>
@@ -49,7 +59,12 @@
 <script>
 import SvgIcon from '../icons/SvgIcon';
 import IconComments from '../icons/IconComments';
-import { suggestionTypeToStyleClass, suggestionTypeToString, suggestionStateStatus, suggestionStateStatusToString } from '../../utils/suggestionHelpers';
+import {
+  suggestionTypeToStyleClass,
+  suggestionTypeToString,
+  suggestionStateStatus,
+  suggestionStateStatusToString
+} from '../../utils/suggestionHelpers';
 import { dateTimeFormatLabel } from '../../utils/dateHelper';
 import { eventTypes } from '../../utils/eventHelper';
 
@@ -103,7 +118,7 @@ export default {
         params: {
           meetingId: id
         }
-      })
+      });
     }
   }
 };
@@ -170,18 +185,18 @@ li.item:hover {
   border: 2px solid #ff8111;
 }
 .status-accepted {
-  background-color: #58BA81;
-  border: 2px solid #58BA81;
+  background-color: #58ba81;
+  border: 2px solid #58ba81;
 }
 
 .status-rejected {
-  background-color: #CC4A4A;
-  border: 2px solid #CC4A4A;
+  background-color: #cc4a4a;
+  border: 2px solid #cc4a4a;
 }
 
 .status-retained {
-  background-color: #F2994A;
-  border: 2px solid #F2994A;
+  background-color: #f2994a;
+  border: 2px solid #f2994a;
 }
 .label {
   font-size: smaller;

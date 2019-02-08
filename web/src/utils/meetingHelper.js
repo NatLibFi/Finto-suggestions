@@ -24,7 +24,8 @@ const getProcessedCount = processed => {
 export const getMeetingProgressionCounts = meeting => {
   if (meeting) {
     const processed = getProcessedCount(meeting.processed);
-    const suggestions = meeting.suggestions && meeting.suggestions.length > 0 ? meeting.suggestions.length : 0;
+    const suggestions =
+      meeting.suggestions && meeting.suggestions.length > 0 ? meeting.suggestions.length : 0;
     const progression = processed > 0 ? ((processed / suggestions) * 100).toFixed(1) : 0;
     return { processed, suggestions, progression };
   }

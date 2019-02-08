@@ -72,12 +72,7 @@ import MultipleChoiceDropDown from '../common/MultipleChoiceDropDown';
 import SvgIcon from '../icons/SvgIcon';
 import IconTriangle from '../icons/IconTriangle';
 
-import {
-  suggestionStateStatus,
-  suggestionType,
-  filterType
-} from '../../utils/suggestionHelpers.js';
-
+import { filterType } from '../../utils/suggestionHelpers.js';
 import {
   suggestionGetters,
   suggestionMutations

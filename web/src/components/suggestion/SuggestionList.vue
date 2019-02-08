@@ -30,20 +30,17 @@ import SuggestionItem from './SuggestionItem';
 
 import {
   suggestionGetters,
-  suggestionActions,
-  suggestionMutations
+  suggestionActions
 } from '../../store/modules/suggestion/suggestionConsts.js';
 
 import {
-  mapSuggestionActions,
   mapSuggestionGetters,
-  mapSuggestionMutations
+  mapSuggestionActions
 } from '../../store/modules/suggestion/suggestionModule.js';
 
 import SuggestionListPagination from './SuggestionListPagination';
-import { filterType, suggestionType, suggestionStateStatus } from '../../utils/suggestionHelpers';
+import { filterType } from '../../utils/suggestionHelpers';
 import { sortingKeys } from '../../utils/sortingHelper.js';
-
 
 export default {
   components: {
@@ -58,13 +55,15 @@ export default {
       default: null
     }
   },
-  data: () => ({
-    paginationMaxCount: 10,
-    openCount: 0,
-    resolvedCount: 0,
-    paginated_items: [],
-    meetingSort: false
-  }),
+  data() {
+    return {
+      paginationMaxCount: 10,
+      openCount: 0,
+      resolvedCount: 0,
+      paginated_items: [],
+      meetingSort: false
+    };
+  },
   computed: {
     ...mapSuggestionGetters({
       items: suggestionGetters.GET_SUGGESTIONS,
@@ -74,7 +73,7 @@ export default {
     })
   },
   async created() {
-    this.meetingSort = this.meetingId && parseInt(this.meetingId) > 0 ? true  : false;
+    this.meetingSort = this.meetingId && parseInt(this.meetingId) > 0 ? true : false;
     await this.getSuggestionsSelectedSortKey();
     await this.getMeetingsSuggestionsSelectedSortKey();
     await this.handleSuggestionFetching();
@@ -89,7 +88,7 @@ export default {
       getMeetingsSuggestionsSelectedSortKey: suggestionActions.GET_MEETING_SUGGESTIONS_SELECTED_SORT
     }),
     async handleSuggestionFetching() {
-      if(this.meetingId && parseInt(this.meetingId) > 0) {
+      if (this.meetingId && parseInt(this.meetingId) > 0) {
         await this.fetchAndSortMeetingSuggestions();
       } else {
         await this.fetchAndSortAllSuggestions();
@@ -107,7 +106,10 @@ export default {
     async fetchAndSortMeetingSuggestions() {
       await this.getMeetingsSuggestionsSelectedSortKey();
       if (this.meetingSuggestionsSelectedSort && this.meetingSuggestionsSelectedSort !== '') {
-        await this.getSortedSuggestionsByMeetingId({ meetingId: this.meetingId, sortValue: this.meetingSuggestionsSelectedSort });
+        await this.getSortedSuggestionsByMeetingId({
+          meetingId: this.meetingId,
+          sortValue: this.meetingSuggestionsSelectedSort
+        });
       } else {
         await this.getSuggestionsByMeetingId(parseInt(this.meetingId));
       }
@@ -124,7 +126,8 @@ export default {
       const start = this.getPaginationStaringIndex(pageNumber);
       const end = this.getPaginationEndingIndex(pageNumber);
       const paginatedItems = items ? items : this.items;
-      this.paginated_items = paginatedItems && paginatedItems.length > 0 ? paginatedItems.slice(start, end) : []
+      this.paginated_items =
+        paginatedItems && paginatedItems.length > 0 ? paginatedItems.slice(start, end) : [];
       this.calculateOpenAndResolvedSuggestionCounts();
     },
     calculatePageCountForPagination() {
@@ -214,10 +217,12 @@ ul {
   }
 }
 
-.fade-enter-active, .fade-leave-active {
+.fade-enter-active,
+.fade-leave-active {
   transition: opacity 3s;
 }
-.fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
+.fade-enter,
+.fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
   opacity: 0.75;
 }
 </style>

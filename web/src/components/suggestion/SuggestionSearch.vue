@@ -33,7 +33,7 @@ export default {
     return {
       welcomeText: `Tämä palvelu on YSA/YSO -käsite-ehdotuksille ja niiden etenemisen seuraamiselle.
         Voit selata ja kommentoida ehdotuksia täällä. Ehdotusten selaaminen onnistuu ilman
-        käyttäjätunnuksia,mutta kommentointi edellyttää tunnuksen luomista. Voit osoittaa
+        käyttäjätunnuksia, mutta kommentointi edellyttää tunnuksen luomista. Voit osoittaa
         tukesi ehdotukselle kommentoimalla sitä. Halutessasi voit nopeuttaa ehdotuksen
         käsittelyä jättämällä ehdotuksen kommenttikenttään täsmennyksiä ja lisätietoja.
         Uusien käsite-ehdotuksien tekeminen onnistuu Fintossa.`
