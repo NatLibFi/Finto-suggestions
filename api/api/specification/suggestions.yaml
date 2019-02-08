@@ -62,7 +62,17 @@ paths:
           description: The created suggestion
           schema:
             $ref: '#/definitions/SuggestionResponse'
-
+  /suggestions/user={user_id}:
+    get:
+      operationId: api.logic.suggestions.get_user_suggestions
+      parameters:
+        - name: user_id
+          in: path
+          type: integer
+          required: true
+      responses:
+        "200":
+          description: List of user-assigned suggestions
   /suggestions/{suggestion_id}:
     get:
       operationId: api.logic.suggestions.get_suggestion

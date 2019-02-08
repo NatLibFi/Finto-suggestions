@@ -30,20 +30,17 @@ import SuggestionItem from './SuggestionItem';
 
 import {
   suggestionGetters,
-  suggestionActions,
-  suggestionMutations
+  suggestionActions
 } from '../../store/modules/suggestion/suggestionConsts.js';
 
 import {
-  mapSuggestionActions,
   mapSuggestionGetters,
-  mapSuggestionMutations
+  mapSuggestionActions
 } from '../../store/modules/suggestion/suggestionModule.js';
 
 import SuggestionListPagination from './SuggestionListPagination';
-import { filterType, suggestionType, suggestionStateStatus } from '../../utils/suggestionHelpers';
+import { filterType } from '../../utils/suggestionHelpers';
 import { sortingKeys } from '../../utils/sortingHelper.js';
-
 
 export default {
   components: {
@@ -58,13 +55,15 @@ export default {
       default: null
     }
   },
-  data: () => ({
-    paginationMaxCount: 10,
-    openCount: 0,
-    resolvedCount: 0,
-    paginated_items: [],
-    meetingSort: false
-  }),
+  data() {
+    return {
+      paginationMaxCount: 10,
+      openCount: 0,
+      resolvedCount: 0,
+      paginated_items: [],
+      meetingSort: false
+    };
+  },
   computed: {
     ...mapSuggestionGetters({
       items: suggestionGetters.GET_SUGGESTIONS,
@@ -74,7 +73,7 @@ export default {
     })
   },
   async created() {
-    this.meetingSort = this.meetingId && parseInt(this.meetingId) > 0 ? true  : false;
+    this.meetingSort = this.meetingId && parseInt(this.meetingId) > 0 ? true : false;
     await this.getSuggestionsSelectedSortKey();
     await this.getMeetingsSuggestionsSelectedSortKey();
     await this.handleSuggestionFetching();
@@ -86,10 +85,11 @@ export default {
       getSuggestionsSelectedSortKey: suggestionActions.GET_SUGGESTIONS_SELECTED_SORT,
       getSuggestionsByMeetingId: suggestionActions.GET_SUGGESTIONS_BY_MEETING_ID,
       getSortedSuggestionsByMeetingId: suggestionActions.GET_SORTED_SUGGESTIONS_BY_MEETING_ID,
-      getMeetingsSuggestionsSelectedSortKey: suggestionActions.GET_MEETING_SUGGESTIONS_SELECTED_SORT
+      getMeetingsSuggestionsSelectedSortKey: suggestionActions.GET_MEETING_SUGGESTIONS_SELECTED_SORT,
+      getSuggestionsBySearchWord: suggestionActions.GET_SUGGESTIONS_BY_SEARCH_WORD
     }),
     async handleSuggestionFetching() {
-      if(this.meetingId && parseInt(this.meetingId) > 0) {
+      if (this.meetingId && parseInt(this.meetingId) > 0) {
         await this.fetchAndSortMeetingSuggestions();
       } else {
         await this.fetchAndSortAllSuggestions();
@@ -107,7 +107,10 @@ export default {
     async fetchAndSortMeetingSuggestions() {
       await this.getMeetingsSuggestionsSelectedSortKey();
       if (this.meetingSuggestionsSelectedSort && this.meetingSuggestionsSelectedSort !== '') {
-        await this.getSortedSuggestionsByMeetingId({ meetingId: this.meetingId, sortValue: this.meetingSuggestionsSelectedSort });
+        await this.getSortedSuggestionsByMeetingId({
+          meetingId: this.meetingId,
+          sortValue: this.meetingSuggestionsSelectedSort
+        });
       } else {
         await this.getSuggestionsByMeetingId(parseInt(this.meetingId));
       }
@@ -124,7 +127,8 @@ export default {
       const start = this.getPaginationStaringIndex(pageNumber);
       const end = this.getPaginationEndingIndex(pageNumber);
       const paginatedItems = items ? items : this.items;
-      this.paginated_items = paginatedItems && paginatedItems.length > 0 ? paginatedItems.slice(start, end) : []
+      this.paginated_items =
+        paginatedItems && paginatedItems.length > 0 ? paginatedItems.slice(start, end) : [];
       this.calculateOpenAndResolvedSuggestionCounts();
     },
     calculatePageCountForPagination() {
@@ -161,9 +165,8 @@ export default {
               items = items.filter(i => i.meeting_id === filter.value);
               break;
             case filterType.SEARCH:
-              items = items.filter(
-                i => i.preferred_label && i.preferred_label.fi.startsWith(filter.value)
-              );
+              this.getSuggestionsBySearchWord(filter.value)
+              items = this.items;
               break;
           }
         });
@@ -214,10 +217,12 @@ ul {
   }
 }
 
-.fade-enter-active, .fade-leave-active {
+.fade-enter-active,
+.fade-leave-active {
   transition: opacity 3s;
 }
-.fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
+.fade-enter,
+.fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
   opacity: 0.75;
 }
 </style>

@@ -1,5 +1,12 @@
 <template>
   <div class="suggestion-content">
+    <div>
+      <p class="content-title">
+        <strong>Tila</strong>
+      </p>
+      <p>{{ suggestionStateStatusToString[suggestion.status] }}</p>
+    </div>
+
     <div v-if="suggestion.preferred_label.fi > 0 || suggestion.preferred_label.fi.value">
       <p v-if="suggestion.suggestion_type == suggestionTypes.NEW" class="content-title">
         <strong>Ehdotettu termi suomeksi</strong>
@@ -27,9 +34,9 @@
       </a>
     </div>
 
-    <div v-if="suggestion.preferred_label.en">
+    <div v-if="suggestion.preferred_label.en && suggestion.preferred_label.en.length > 0">
       <p class="content-title"><strong>Ehdotettu termi englanniksi</strong></p>
-      <p>{{ suggestion.preferred_label.en }}</p>
+      <p>{{ suggestion.preferred_label.en.value }}</p>
     </div>
 
     <div v-if="suggestion.alternative_labels">
@@ -76,10 +83,10 @@
     </div>
 
     <div v-if="suggestion.description">
-      <p v-if="suggestion.suggestion_type == suggestionTypes.NEW" class="content-title">
+      <p v-if="suggestion.suggestion_type == suggestionType.NEW" class="content-title">
         <strong>Tarkoitusta täsmentävä selite</strong>
       </p>
-      <p v-if="suggestion.suggestion_type == suggestionTypes.MODIFY" class="content-title">
+      <p v-if="suggestion.suggestion_type == suggestionType.MODIFY" class="content-title">
         <strong>Ehdotettu muutos</strong>
       </p>
       <p>{{ suggestion.description }}</p>
@@ -91,7 +98,9 @@
     </div>
 
     <div v-if="suggestion.neededFor">
-      <p class="content-title"><strong>Aineisto jonka kuvailussa käsitettä tarvitaan (esim. nimeke tai URL)</strong></p>
+      <p class="content-title">
+        <strong>Aineisto jonka kuvailussa käsitettä tarvitaan (esim. nimeke tai URL)</strong>
+      </p>
       <p>{{ suggestion.neededFor }}</p>
     </div>
 
@@ -117,15 +126,15 @@
         </p>
       </div>
     </transition>
-
   </div>
 </template>
 
 <script>
 import AssignUser from './AssignUser';
-import { suggestionType } from '../../utils/suggestionHelpers.js';
+import { suggestionType, suggestionStateStatus, suggestionStateStatusToString } from '../../utils/suggestionHelpers.js';
 import { suggestionActions } from '../../store/modules/suggestion/suggestionConsts';
 import { mapSuggestionActions } from '../../store/modules/suggestion/suggestionModule';
+
 
 export default {
   components: {
@@ -142,10 +151,9 @@ export default {
   },
   data() {
     return {
-      suggestionTypes: {
-        NEW: suggestionType.NEW,
-        MODIFY: suggestionType.MODIFY
-      }
+      suggestionType,
+      suggestionStateStatus,
+      suggestionStateStatusToString
     };
   },
   methods: {
@@ -202,10 +210,12 @@ a.remove-button:hover {
   }
 }
 
-.fade-enter-active, .fade-leave-active {
-  transition: opacity .5s;
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.5s;
 }
-.fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
+.fade-enter,
+.fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
   opacity: 0;
 }
 </style>

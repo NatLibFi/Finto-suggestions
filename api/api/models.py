@@ -19,10 +19,12 @@ class EventActionSubTypes(enum.IntEnum):
     TAG = 1
 
 class SuggestionStatusTypes(enum.IntEnum):
-    REJECTED = 0
-    ACCEPTED = 1,
-    RETAINED = 2
-
+    RECEIVED = 0,
+    READ = 1,
+    ACCEPTED = 2
+    REJECTED = 3,
+    RETAINED = 4,
+    ARCHIVED = 5
 
 class SuggestionTypes(enum.IntEnum):
     NEW = 0
@@ -189,6 +191,7 @@ class Suggestion(db.Model, SerializableMixin):
     scopeNote = db.Column(db.Text)
     exactMatches = db.Column(db.JSON)
     neededFor = db.Column(db.String(500))
+    yse_term = db.Column(db.JSON)
 
     events = db.relationship('Event', backref='suggestion')
     reactions = db.relationship('Reaction', backref='suggestion')

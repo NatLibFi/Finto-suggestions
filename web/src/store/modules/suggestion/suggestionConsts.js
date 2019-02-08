@@ -36,6 +36,8 @@ export const suggestionMutations = {
 
 export const suggestionActions = {
   GET_SUGGESTIONS: 'getSuggestions',
+  GET_SUGGESTIONS_BY_USER_ID: 'getSuggestionsByUserId',
+  GET_SORTED_SUGGESTIONS_BY_USER_ID: 'getSortedSuggestionsByUserId',
   GET_SORTED_SUGGESTIONS: 'getSortedSuggestions',
   GET_SUGGESTION_BY_ID: 'getSuggestionById',
   ASSIGN_SUGGESTION_TO_USER: 'assignSuggestionToUser',
@@ -48,5 +50,6 @@ export const suggestionActions = {
   SET_MEETING_SUGGESTIONS_SELECTED_SORT: 'setMeetingSuggestionsSelectedSort',
   SET_SUGGESTION_ACCEPTED: 'setSuggestionAccpeted',
   SET_SUGGESTION_REJECTED: 'setSuggestionRejected',
-  SET_SUGGESTION_RETAINED: 'setSuggestionRetained'
+  SET_SUGGESTION_RETAINED: 'setSuggestionRetained',
+  GET_SUGGESTIONS_BY_SEARCH_WORD: 'getSuggestionsBySearchWord'
 };

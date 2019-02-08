@@ -59,10 +59,8 @@ def post_event() -> str:
     if create_event_response is not None and create_event_response[1] is 201:
       try:
         suggestion = Suggestion.query.get(connexion.request.json.get('suggestion_id'))
-        print(suggestion)
         if suggestion is not None:
           suggestion.modified = datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')
-          print(suggestion.modified)
           db.session.add(suggestion)
           db.session.commit()
       except ValueError as ex:
