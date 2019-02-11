@@ -39,7 +39,7 @@
       <p>{{ suggestion.preferred_label.en.value }}</p>
     </div>
 
-    <div v-if="suggestion.alternative_labels[0].isTouched">
+    <div v-if="suggestion.alternative_labels && suggestion.alternative_labels[0].isTouched">
       <p class="content-title"><strong>Vaihtoehtoiset termit ja ilmaisut</strong></p>
       <p v-if="suggestion.alternative_labels.fi">{{ suggestion.alternative_labels.fi }} [fin]</p>
       <p v-if="suggestion.alternative_labels.sv">{{ suggestion.alternative_labels.sv }} [swe]</p>
