@@ -39,28 +39,28 @@
       <p>{{ suggestion.preferred_label.en.value }}</p>
     </div>
 
-    <div v-if="suggestion.alternative_labels">
+    <div v-if="suggestion.alternative_labels[0].isTouched">
       <p class="content-title"><strong>Vaihtoehtoiset termit ja ilmaisut</strong></p>
       <p v-if="suggestion.alternative_labels.fi">{{ suggestion.alternative_labels.fi }} [fin]</p>
       <p v-if="suggestion.alternative_labels.sv">{{ suggestion.alternative_labels.sv }} [swe]</p>
       <p v-if="suggestion.alternative_labels.en">{{ suggestion.alternative_labels.en }} [eng]</p>
     </div>
 
-    <div v-if="suggestion.broader_labels && suggestion.broader_labels.length > 0">
+    <div v-if="suggestion.broader_labels && suggestion.broader_labels[0].isTouched">
       <p class="content-title"><strong>Yläkäsite YSOssa (LT)</strong></p>
       <p v-for="term in suggestion.broader_labels" :key="term.id">
         <a :href="term.uri">{{ term.value }}</a>
       </p>
     </div>
 
-    <div v-if="suggestion.narrower_labels && suggestion.narrower_labels.length > 0">
-      <p><strong>Alakäsitteet (ST)</strong></p>
+    <div v-if="suggestion.narrower_labels && suggestion.narrower_labels[0].isTouched">
+      <p class="content-title"><strong>Alakäsitteet (ST)</strong></p>
       <p v-for="term in suggestion.narrower_labels" :key="term.id">
         <a :href="term.uri">{{ term.value }}</a>
       </p>
     </div>
 
-    <div v-if="suggestion.related_labelsrelated && suggestion.related_labels.length > 0">
+    <div v-if="suggestion.related_labelsrelated && suggestion.related_labels[0].isTouched">
       <p class="content-title"><strong>Assosiatiiviset (RT)</strong></p>
       <p v-for="term in suggestion.related_labels" :key="term.id">
         {{ term.vocab }}: <a :href="term.uri">{{ term.value }}</a>
@@ -74,11 +74,11 @@
       </p>
     </div>
 
-    <div v-if="suggestion.exactMatches && suggestion.exactMatchesuggestion.length > 0">
+    <div v-if="suggestion.exactMatches && suggestion.exactMatches[0].isTouched">
       <p class="content-title"><strong>Vastaava käsite muussa sanastossa</strong></p>
       <p v-for="match in suggestion.exactMatches" :key="match.id">
-        <span>{{ match.vocab }}, </span>
-        <span>{{ match.value }}</span>
+        <span v-if="match.vocab.length > 0">{{ match.vocab }}, </span>
+        <span v-if="match.value.length > 0">{{ match.value }}</span>
       </p>
     </div>
 
