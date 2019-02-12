@@ -1,3 +1,4 @@
+import os
 import connexion
 from sqlalchemy import or_
 from sqlalchemy.types import Unicode
@@ -7,8 +8,7 @@ from .common import (create_response, get_one_or_404, get_all_or_404_custom,
                      create_or_404, delete_or_404, patch_or_404, update_or_404)
 from .utils import SUGGESTION_FILTER_FUNCTIONS, SUGGESTION_SORT_FUNCTIONS
 from ..models import db, Suggestion, Tag, User
-
-
+from flask import jsonify
 
 def get_suggestions(limit: int = None, offset: int = None, filters: str = None, search: str = None, sort: str = 'DEFAULT') -> str:
     """
@@ -105,9 +105,9 @@ def post_suggestion() -> str:
         baseurl = connexion.request.environ['HTTP_HOST'].split(',')[1]
 
     if suggestion_id > 0 and protocol is not '' and baseurl is not None and baseurl is not '':
-        response['suggestionUrl'] = f'{protocol}://{baseurl}/suggestion/{suggestion_id}'
+        response['data']['suggestionUrl'] = f'{protocol}://{baseurl}/suggestion/{suggestion_id}'
 
-    return response
+    return jsonify(response['data']), 201
 
 
 @admin_only
