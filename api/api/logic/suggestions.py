@@ -40,7 +40,17 @@ def get_suggestions(limit: int = None, offset: int = None, filters: str = None, 
                 Suggestion.preferred_label.cast(Unicode).contains(search),
                 Suggestion.alternative_labels.cast(Unicode).contains(search),
                 Suggestion.description.contains(search),
-                Suggestion.reason.contains(search)
+                Suggestion.reason.contains(search),
+                Suggestion.uri.contains(search),
+                Suggestion.organization.contains(search),
+                Suggestion.broader_labels.cast(Unicode).contains(search),
+                Suggestion.narrower_labels.cast(Unicode).contains(search),
+                Suggestion.related_labels.cast(Unicode).contains(search),
+                Suggestion.groups.cast(Unicode).contains(search),
+                Suggestion.scopeNote.contains(search),
+                Suggestion.exactMatches.cast(Unicode).contains(search),
+                Suggestion.neededFor.contains(search),
+                Suggestion.yse_term.cast(Unicode).contains(search),
             ))
 
         if limit:
