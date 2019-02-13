@@ -1,16 +1,19 @@
 <template>
 <div class="login-dialog">
   <h3>Kirjaudu sisään</h3>
-  <p>Voit kirjautua sisään Github- ja Google-tunnuksilla</p>
+  <p>Voit kirjautua sisään Github-tunnuksilla</p>
+  <!-- TODO: uncomment this when google oauth2 is ready -->
+  <!-- <p>Voit kirjautua sisään Github- ja Google-tunnuksilla</p> -->
   <div class="login-services">
     <div @click="login('github')" class="login-service-button">
       <svg-icon icon-name="github"><icon-github /></svg-icon>
       <span>Kirjaudu GitHub-tunnuksilla</span>
     </div>
-    <div @click="login('google')" class="login-service-button">
+    <!-- TODO: uncomment this when google oauth2 is ready -->
+    <!-- <div @click="login('google')" class="login-service-button">
       <svg-icon icon-name="google"><icon-google /></svg-icon>
       <span>Kirjaudu Google-tunnuksilla</span>
-    </div>
+    </div> -->
   </div>
   <div class="login-own-credentials">
     <h4 v-if="!showOwnCredentialLogin" @click="showOwnCredentialLogin = !showOwnCredentialLogin">
