@@ -109,10 +109,10 @@
       <p>{{ suggestion.organization }}</p>
     </div>
 
-    <div v-if="suggestion.yse_term">
+    <div v-if="suggestion.yse_term.value">
       <p class="content-title"><strong>Termi Fintossa</strong></p>
       <p>
-        <a :href="suggestion.yse_term.uri">{{ suggestion.yse_term.value }}</a>
+        <a :href="suggestion.yse_term.url">{{ suggestion.yse_term.value }}</a>
       </p>
     </div>
 
