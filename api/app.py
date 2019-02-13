@@ -28,17 +28,18 @@ def create_app(config_object='config.DevelopmentConfig'):
     # In case you don't want to show the swagger_ui for private endpoints
     # You might want to split this into two apis
     enable_swagger = flask_app.config['ENABLE_SWAGGER_UI']
-    # TODO: disabled for now, needs fix later on
     app.add_api(api_spec, options={"swagger_ui": enable_swagger})
 
     db.init_app(flask_app)
     jwt.init_app(flask_app)
-    migrate = Migrate(flask_app, db)
+    migrate = Migrate(flask_app, db, compare_type=True)
 
-    cors_origins = flask_app.config['CORS_ALLOWED_ORIGINS']
-
-    # only allow CORS for suggestions endpoint
-    CORS(flask_app, origins=cors_origins, resources=r"/api/suggestions/*")
+    # CORS settings for allowing suggestions from a Skosmos client
+    CORS(flask_app, resources={r"/api/suggestions": {
+        "origins": os.environ.get('SKOSMOS_URI'),
+        "allow_headers": ['Content-Type', 'Access-Control-Allow-Origin'],
+        "methods": ['POST', 'OPTIONS']
+    }})
 
     @flask_app.shell_context_processor
     def shell_context():
