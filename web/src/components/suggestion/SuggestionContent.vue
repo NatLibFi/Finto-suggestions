@@ -1,72 +1,94 @@
 <template>
   <div class="suggestion-content">
-    <div>
+    <div v-if="suggestion.status && suggestion.status.length > 0">
       <p class="content-title">
         <strong>Tila</strong>
       </p>
       <p>{{ suggestionStateStatusToString[suggestion.status] }}</p>
     </div>
 
-    <div v-if="suggestion.preferred_label.sv && suggestion.preferred_label.sv.length > 0">
+    <div v-if="suggestion.preferred_label.fi > 0 || suggestion.preferred_label.fi.value">
+      <p v-if="suggestion.suggestion_type == suggestionType.NEW" class="content-title">
+        <strong>Ehdotettu termi suomeksi</strong>
+      </p>
+      <p v-if="suggestion.suggestion_type == suggestionType.MODIFY" class="content-title">
+        <strong>Päätermi/asiasana</strong>
+      </p>
+      <p v-if="!suggestion.preferred_label.fi.value">{{ suggestion.preferred_label.fi }}</p>
+      <p v-if="suggestion.preferred_label.fi.value && !suggestion.preferred_label.fi.uri">
+        {{ suggestion.preferred_label.fi.value }}
+      </p>
+      <a :href="suggestion.preferred_label.fi.uri" v-if="suggestion.preferred_label.fi.uri">
+        {{ suggestion.preferred_label.fi.value }}
+      </a>
+    </div>
+
+    <div v-if="suggestion.preferred_label.sv.length > 0 && suggestion.preferred_label.sv.value">
       <p class="content-title"><strong>Ehdotettu termi ruotsiksi</strong></p>
-      <p>{{ suggestion.preferred_label.sv.value }}</p>
+      <p v-if="!suggestion.preferred_label.sv.value">{{ suggestion.preferred_label.sv }}</p>
+      <p v-if="suggestion.preferred_label.sv.value && !suggestion.preferred_label.sv.uri">
+        {{ suggestion.preferred_label.sv.value }}
+      </p>
+      <a :href="suggestion.preferred_label.sv.uri" v-if="suggestion.preferred_label.sv.uri">
+        {{ suggestion.preferred_label.sv.value }}
+      </a>
     </div>
 
     <div v-if="suggestion.preferred_label.en && suggestion.preferred_label.en.length > 0">
       <p class="content-title"><strong>Ehdotettu termi englanniksi</strong></p>
-      <p>{{ suggestion.preferred_label.en.value }}</p>
+      <p>{{ suggestion.preferred_label.en }}</p>
     </div>
 
-    <div v-if="suggestion.alternative_labels">
+    <div v-if="suggestion.alternative_labels && suggestion.alternative_labels[0].isTouched">
       <p class="content-title"><strong>Vaihtoehtoiset termit ja ilmaisut</strong></p>
-      <p v-if="suggestion.alternative_labels.fi">{{ suggestion.alternative_labels.fi }} [fin]</p>
-      <p v-if="suggestion.alternative_labels.sv">{{ suggestion.alternative_labels.sv }} [swe]</p>
-      <p v-if="suggestion.alternative_labels.en">{{ suggestion.alternative_labels.en }} [eng]</p>
+      <p v-for="label in suggestion.alternative_labels" :key="label.id">
+        {{ label.value }}
+      </p>
     </div>
 
-    <div v-if="suggestion.broader_labels && suggestion.broader_labels.length > 0">
+    <div v-if="suggestion.broader_labels && suggestion.broader_labels[0].value.length > 0">
       <p class="content-title"><strong>Yläkäsite YSOssa (LT)</strong></p>
       <p v-for="term in suggestion.broader_labels" :key="term.id">
         <a :href="term.uri">{{ term.value }}</a>
       </p>
     </div>
 
-    <div v-if="suggestion.narrower_labels && suggestion.narrower_labels.length > 0">
-      <p><strong>Alakäsitteet (ST)</strong></p>
+    <div v-if="suggestion.narrower_labels && suggestion.narrower_labels[0].value.length > 0">
+      <p class="content-title"><strong>Alakäsitteet (ST)</strong></p>
       <p v-for="term in suggestion.narrower_labels" :key="term.id">
         <a :href="term.uri">{{ term.value }}</a>
       </p>
     </div>
 
-    <div v-if="suggestion.related_labelsrelated && suggestion.related_labels.length > 0">
+    <div v-if="suggestion.related_labels && suggestion.related_labels[0].value.length > 0">
       <p class="content-title"><strong>Assosiatiiviset (RT)</strong></p>
       <p v-for="term in suggestion.related_labels" :key="term.id">
-        {{ term.vocab }}: <a :href="term.uri">{{ term.value }}</a>
+        <a :href="term.uri">{{ term.value }}</a>
       </p>
     </div>
 
-    <div v-if="suggestion.groups && suggestion.groups.length > 0">
+    <div v-if="suggestion.groups[0] && suggestion.groups[0].hasMembers">
       <p class="content-title"><strong>YSA/YSO temaattinen ryhmä</strong></p>
       <p v-for="group in suggestion.groups" :key="group.id">
-        <a :href="group.uri">{{ group.value }}</a>
+        <a :href="group.uri">{{ group.prefLabel }}</a>
       </p>
     </div>
 
-    <div v-if="suggestion.exactMatches && suggestion.exactMatchesuggestion.length > 0">
+    <div v-if="suggestion.exactMatches && suggestion.exactMatches[0].isTouched">
       <p class="content-title"><strong>Vastaava käsite muussa sanastossa</strong></p>
       <p v-for="match in suggestion.exactMatches" :key="match.id">
-        <span>{{ match.vocab }}, </span>
-        <span>{{ match.value }}</span>
+        <span v-if="match.vocab.length > 0">{{ match.vocab }}, </span>
+        <span v-if="match.value.length > 0">{{ match.value }}</span>
       </p>
+    </div>
+
+    <div v-if="suggestion.scopeNote">
+      <p class="content-title"><strong>Tarkoitusta täsmentävä selite:</strong></p>
+      <p>{{ suggestion.scopeNote }}</p>
     </div>
 
     <div v-if="suggestion.description">
-      <p v-if="suggestion.suggestion_type == suggestionType.NEW" class="content-title">
-        <strong>Tarkoitusta täsmentävä selite</strong>
-      </p>
-      <p v-if="suggestion.suggestion_type == suggestionType.MODIFY" class="content-title">
-        <strong>Ehdotettu muutos</strong>
-      </p>
+      <p class="content-title"><strong>Ehdotettu muutos</strong></p>
       <p>{{ suggestion.description }}</p>
     </div>
 
@@ -114,10 +136,13 @@
 
 <script>
 import AssignUser from './AssignUser';
-import { suggestionType, suggestionStateStatus, suggestionStateStatusToString } from '../../utils/suggestionHelpers.js';
+import {
+  suggestionType,
+  suggestionStateStatus,
+  suggestionStateStatusToString
+} from '../../utils/suggestionHelpers.js';
 import { suggestionActions } from '../../store/modules/suggestion/suggestionConsts';
 import { mapSuggestionActions } from '../../store/modules/suggestion/suggestionModule';
-
 
 export default {
   components: {
@@ -148,11 +173,12 @@ export default {
 </script>
 
 <style scoped>
-div.suggestion-content {
+.suggestion-content {
   border-top: 1px solid #f5f5f5;
   padding: 20px 40px 10px;
   font-size: 16px;
   margin-bottom: 0;
+  overflow-wrap: break-word;
 }
 
 div > div {
