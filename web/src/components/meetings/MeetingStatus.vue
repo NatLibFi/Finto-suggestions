@@ -31,7 +31,7 @@ import { mapAuthenticatedUserGetters } from '../../store/modules/authenticatedUs
 import { authenticatedUserGetters } from '../../store/modules/authenticatedUser/authenticatedUserConsts.js';
 import { mapSuggestionGetters } from '../../store/modules/suggestion/suggestionModule.js';
 import { suggestionGetters } from '../../store/modules/suggestion/suggestionConsts.js';
-import { comparerDesc } from '../../utils/sortingHelper.js';
+import { comparerDesc, suggestionStateStatus } from '../../utils/sortingHelper.js';
 
 export default {
   props: {
@@ -100,7 +100,7 @@ export default {
       let nextSuggestionId = null;
       if (this.suggestion_items && this.suggestion_items.length > 0) {
         const orderedSuggestionList = this.suggestion_items
-          .filter(s => s.status === null)
+          .filter(s => s.status === suggestionStateStatus.READ)
           .sort(comparerDesc('created'));
         if (orderedSuggestionList && orderedSuggestionList.length > 0) {
           nextSuggestionId = orderedSuggestionList[0].id;

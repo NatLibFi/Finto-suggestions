@@ -226,11 +226,14 @@ definitions:
   status:
     type: string
     enum:
-      - DEFAULT
-      - REJECTED
-      - ACCEPTED
+      - RECEIVED,
+      - READ,
+      - ACCEPTED,
+      - REJECTED,
+      - RETAINED,
+      - ARCHIVED
     description: "Processing state of a particular `Suggestion`."
-    example: DEFAULT
+    example: READ
 
   uri:
     type: string

@@ -38,3 +38,24 @@ export const filterType = {
   MEETING: 'meeting',
   SEARCH: 'search'
 };
+
+/*
+* Helper method to calculate on place open and resolved count from suggestions
+* Return null if items count is empty
+*/
+export const calculateOpenAndResolvedSuggestionCounts = items => {
+  if (items && items.length > 0) {
+    const openCount = items.filter(
+      i => i.status === suggestionStateStatus.READ || i.status === suggestionStateStatus.RECEIVED
+    ).length;
+    const resolvedCount = items.filter(
+      i =>
+        i.status === suggestionStateStatus.ACCEPTED ||
+        i.status === suggestionStateStatus.REJECTED ||
+        i.status === suggestionStateStatus.RETAINED ||
+        i.status === suggestionStateStatus.ARCHIVED
+    ).length;
+    return { openCount, resolvedCount };
+  }
+  return null;
+};
