@@ -7,8 +7,6 @@
       <p>{{ suggestionStateStatusToString[suggestion.status] }}</p>
     </div>
 
-    {{suggestion}}
-
     <div v-if="suggestion.preferred_label.fi && suggestion.preferred_label.fi.value">
       <p v-if="suggestion.suggestion_type == suggestionType.NEW" class="content-title">
         <strong>Ehdotettu termi suomeksi</strong>
