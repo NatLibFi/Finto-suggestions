@@ -33,7 +33,8 @@ export default {
   },
   created() {
     if(this.filters.length > 0) {
-      this.searchQuery = this.filters.find(f => f.type === filterType.SEARCH).value
+      const searchFilter = this.filters.find(f => f.type === filterType.SEARCH);
+      this.searchQuery = searchFilter ? searchFilter.value : '';
     }
   },
   methods: {
