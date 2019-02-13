@@ -7,6 +7,8 @@
       <p>{{ suggestionStateStatusToString[suggestion.status] }}</p>
     </div>
 
+    {{suggestion}}
+
     <div v-if="suggestion.preferred_label.fi && suggestion.preferred_label.fi.value">
       <p v-if="suggestion.suggestion_type == suggestionType.NEW" class="content-title">
         <strong>Ehdotettu termi suomeksi</strong>
@@ -67,7 +69,7 @@
       </p>
     </div>
 
-    <div v-if="suggestion.groups[0] && suggestion.groups[0].hasMembers">
+    <div v-if="suggestion.groups && suggestion.groups[0].hasMembers">
       <p class="content-title"><strong>YSA/YSO temaattinen ryhmä</strong></p>
       <p v-for="group in suggestion.groups" :key="group.id">
         <a :href="group.uri">{{ group.prefLabel }}</a>
