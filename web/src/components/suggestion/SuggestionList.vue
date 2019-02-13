@@ -77,6 +77,10 @@ export default {
     await this.getSuggestionsSelectedSortKey();
     await this.getMeetingsSuggestionsSelectedSortKey();
     await this.handleSuggestionFetching();
+
+    if(this.filters.length > 0) {
+      this.filterSuggestions();
+    }
   },
   methods: {
     ...mapSuggestionActions({
@@ -139,11 +143,9 @@ export default {
         this.openCount = this.items.filter(i => i.status === null).length;
         this.resolvedCount = this.items.filter(i => i.status !== null).length;
       }
-    }
-  },
-  watch: {
-    async filters() {
-      if (this.filters && this.filters.length > 0) {
+    },
+    async filterSuggestions() {
+     if (this.filters && this.filters.length > 0) {
         let items = this.items;
         this.filters.forEach(filter => {
           switch (filter.type) {
@@ -166,6 +168,7 @@ export default {
               break;
             case filterType.SEARCH:
               this.getSuggestionsBySearchWord(filter.value)
+              
               items = this.items;
               break;
           }
@@ -174,12 +177,20 @@ export default {
       } else {
         await this.handleSuggestionFetching();
       }
+    }
+  },
+  watch: {
+    async filters() {
+      this.filterSuggestions();
     },
     async suggestionsSelectedSort() {
       await this.handleSuggestionFetching();
     },
     async meetingSuggestionsSelectedSort() {
       await this.handleSuggestionFetching();
+    },
+    async items() {
+       await this.paginationPageChanged(1, this.items);
     }
   }
 };
