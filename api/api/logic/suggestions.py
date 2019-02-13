@@ -104,10 +104,13 @@ def post_suggestion() -> str:
         protocol = connexion.request.environ['HTTP_X_FORWARDED_PROTO']
         baseurl = connexion.request.environ['HTTP_HOST'].split(',')[1]
 
-    if suggestion_id > 0 and protocol is not '' and baseurl is not None and baseurl is not '':
-        response['data']['suggestionUrl'] = f'{protocol}://{baseurl}/suggestion/{suggestion_id}'
+        if suggestion_id > 0 and protocol is not '' and baseurl is not None and baseurl is not '':
+            response['data']['suggestionUrl'] = f'{protocol}://{baseurl}/suggestion/{suggestion_id}'
 
-    return jsonify(response['data']), 201
+        return jsonify(response['data']), 201
+
+    else:
+        return {'error': 'Could not create suggestion.'}, 404
 
 
 @admin_only
