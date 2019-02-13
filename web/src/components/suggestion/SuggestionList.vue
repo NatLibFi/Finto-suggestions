@@ -17,8 +17,7 @@
     </transition-group>
   </ul>
   <suggestion-list-pagination
-    v-if="calculatePageCountForPagination() > 1"
-    :pageCount="calculatePageCountForPagination()"
+    :pageCount="paginationPageCount"
     @paginationPageChanged="paginationPageChanged"
   />
 </div>
@@ -58,6 +57,7 @@ export default {
   data() {
     return {
       paginationMaxCount: 10,
+      paginationPageCount: 0,
       openCount: 0,
       resolvedCount: 0,
       paginated_items: [],
@@ -123,20 +123,26 @@ export default {
     getPaginationStaringIndex(pageNumber) {
       return pageNumber > 1 ? this.paginationMaxCount * pageNumber - this.paginationMaxCount : 0;
     },
-    getPaginationEndingIndex(pageNumber) {
+    getPaginationEndingIndex(pageNumber, items) {
       const endIndex = this.paginationMaxCount * pageNumber;
-      return endIndex > this.items.length ? this.items.length : endIndex;
+      return items === null
+        ? endIndex > this.items.length ? this.items.length : endIndex
+        : endIndex > items.length ? items.length : endIndex
     },
     async paginationPageChanged(pageNumber = 1, items = null) {
+      console.log(items);
       const start = this.getPaginationStaringIndex(pageNumber);
-      const end = this.getPaginationEndingIndex(pageNumber);
+      const end = this.getPaginationEndingIndex(pageNumber, items);
       const paginatedItems = items ? items : this.items;
       this.paginated_items =
         paginatedItems && paginatedItems.length > 0 ? paginatedItems.slice(start, end) : [];
       this.calculateOpenAndResolvedSuggestionCounts();
+      this.calculatePageCountForPagination(items)
     },
-    calculatePageCountForPagination() {
-      return Math.ceil(this.items.length / this.paginationMaxCount);
+    calculatePageCountForPagination(items = null) {
+      this.paginationPageCount = items === null
+        ? Math.ceil(this.items.length / this.paginationMaxCount)
+        : Math.ceil(items.length / this.paginationMaxCount);
     },
     calculateOpenAndResolvedSuggestionCounts() {
       if (this.items && this.items.length > 0) {
@@ -168,7 +174,6 @@ export default {
               break;
             case filterType.SEARCH:
               this.getSuggestionsBySearchWord(filter.value)
-              
               items = this.items;
               break;
           }
