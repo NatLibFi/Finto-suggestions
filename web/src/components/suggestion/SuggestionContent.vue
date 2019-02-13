@@ -60,13 +60,13 @@
       </p>
     </div>
 
+    <div v-if="suggestion.scopeNote">
+      <p class="content-title"><strong>Tarkoitusta täsmentävä selite:</strong></p>
+      <p>{{ suggestion.scopeNote }}</p>
+    </div>
+
     <div v-if="suggestion.description">
-      <p v-if="suggestion.suggestion_type == suggestionType.NEW" class="content-title">
-        <strong>Tarkoitusta täsmentävä selite</strong>
-      </p>
-      <p v-if="suggestion.suggestion_type == suggestionType.MODIFY" class="content-title">
-        <strong>Ehdotettu muutos</strong>
-      </p>
+      <p class="content-title"><strong>Ehdotettu muutos</strong></p>
       <p>{{ suggestion.description }}</p>
     </div>
 
@@ -87,7 +87,7 @@
       <p>{{ suggestion.organization }}</p>
     </div>
 
-    <div v-if="suggestion.yse_term">
+    <div v-if="suggestion.yse_term.value">
       <p class="content-title"><strong>Termi Fintossa</strong></p>
       <a :href="suggestion.yse_term.url">{{ suggestion.yse_term.value }}</a>
     </div>
