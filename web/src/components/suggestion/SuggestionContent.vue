@@ -67,7 +67,7 @@
       </p>
     </div>
 
-    <div v-if="suggestion.groups && suggestion.groups[0].hasMembers">
+    <div v-if="suggestion.groups && suggestion.groups[0] && suggestion.groups[0].hasMembers">
       <p class="content-title"><strong>YSA/YSO temaattinen ryhmä</strong></p>
       <p v-for="group in suggestion.groups" :key="group.id">
         <a :href="group.uri">{{ group.prefLabel }}</a>
