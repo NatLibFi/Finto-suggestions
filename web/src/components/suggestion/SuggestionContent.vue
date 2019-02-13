@@ -7,10 +7,6 @@
       <p>{{ suggestionStateStatusToString[suggestion.status] }}</p>
     </div>
 
-    <div>
-      <p>{{suggestion}}</p>
-    </div>
-
     <div v-if="suggestion.preferred_label.fi > 0 || suggestion.preferred_label.fi.value">
       <p v-if="suggestion.suggestion_type == suggestionType.NEW" class="content-title">
         <strong>Ehdotettu termi suomeksi</strong>
@@ -111,6 +107,13 @@
     <div v-if="suggestion.organization">
       <p class="content-title"><strong>Ehdottajan organisaatio</strong></p>
       <p>{{ suggestion.organization }}</p>
+    </div>
+
+    <div v-if="suggestion.yse_term">
+      <p class="content-title"><strong>Termi Fintossa</strong></p>
+      <p>
+        <a :href="suggestion.yse_term.uri">{{ suggestion.yse_term.value }}</a>
+      </p>
     </div>
 
     <transition name="fade">
