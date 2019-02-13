@@ -98,10 +98,13 @@ class GithubDataParser:
   def __parse_organization(self, value):
     organization = ''
     splitted_value = value.split('Ehdottajan organisaatio')
-    organization_section = splitted_value[1].strip()
-    if 'Termiehdotus Fintossa' in organization_section:
-      splitted_organization = organization_section.split('Termiehdotus Fintossa')
+    organization = splitted_value[1].strip()
+    if 'Termiehdotus Fintossa' in organization:
+      splitted_organization = organization.split('Termiehdotus Fintossa')
       organization = splitted_organization[0].replace('*', '').replace(':', '').strip()
+    if 'Ehdottajan sähköpostiosoite' in organization:
+      split_remove_sender_email = organization.split('Ehdottajan sähköpostiosoite')
+      organization = split_remove_sender_email[0].strip()
     return organization
 
   def __parse_yse_term(self, value):
