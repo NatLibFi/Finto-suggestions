@@ -166,7 +166,7 @@ class Suggestion(db.Model, SerializableMixin):
     __tablename__ = 'suggestions'
     __public__ = ["alternative_labels", "broader_labels", "created", "description", "groups", "id", "created", "modified",
                   "narrower_labels", "organization", "preferred_label", "reason", "related_labels", "status", "suggestion_type",
-                  "uri", "scopeNote", "exactMatches", "neededFor", "meeting_id", "user_id"]
+                  "uri", "scopeNote", "exactMatches", "neededFor", "yse_term", "meeting_id", "user_id"]
 
     id = db.Column(db.Integer, primary_key=True)
     created = db.Column(db.DateTime, index=True, default=datetime.utcnow)

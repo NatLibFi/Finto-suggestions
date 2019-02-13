@@ -107,7 +107,6 @@ class DBInserter:
     return None
 
   def __insert_event_bo_to_db(self, db, tags, suggestion_id):
-    print(tags)
     if tags is not None and len(tags) > 0:
       event_bo = self.__map_to_event_bo(tags)
       db.session.add(event_bo)
