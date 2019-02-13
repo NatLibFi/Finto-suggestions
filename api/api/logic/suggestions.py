@@ -1,6 +1,6 @@
 import os
 import connexion
-from sqlalchemy import or_
+from sqlalchemy import or_, func
 from sqlalchemy.types import Unicode
 from ..authentication import admin_only
 from .validators import suggestion_parameter_validator, suggestion_id_validator, _error_messagify
@@ -37,20 +37,20 @@ def get_suggestions(limit: int = None, offset: int = None, filters: str = None, 
             # Ideally, you would like to search matches in each language separately,
             # instead of the whole json blob (cast as string)
             query = query.filter(or_(
-                Suggestion.preferred_label.cast(Unicode).contains(search),
-                Suggestion.alternative_labels.cast(Unicode).contains(search),
-                Suggestion.description.contains(search),
-                Suggestion.reason.contains(search),
-                Suggestion.uri.contains(search),
-                Suggestion.organization.contains(search),
-                Suggestion.broader_labels.cast(Unicode).contains(search),
-                Suggestion.narrower_labels.cast(Unicode).contains(search),
-                Suggestion.related_labels.cast(Unicode).contains(search),
-                Suggestion.groups.cast(Unicode).contains(search),
-                Suggestion.scopeNote.contains(search),
-                Suggestion.exactMatches.cast(Unicode).contains(search),
-                Suggestion.neededFor.contains(search),
-                Suggestion.yse_term.cast(Unicode).contains(search),
+                func.lower(Suggestion.preferred_label.cast(Unicode)).contains(search.lower()),
+                func.lower(Suggestion.alternative_labels.cast(Unicode)).contains(search.lower()),
+                func.lower(Suggestion.description).contains(search.lower()),
+                func.lower(Suggestion.reason).contains(search.lower()),
+                func.lower(Suggestion.uri).contains(search.lower()),
+                func.lower(Suggestion.organization).contains(search.lower()),
+                func.lower(Suggestion.broader_labels.cast(Unicode)).contains(search.lower()),
+                func.lower(Suggestion.narrower_labels.cast(Unicode)).contains(search.lower()),
+                func.lower(Suggestion.related_labels.cast(Unicode)).contains(search.lower()),
+                func.lower(Suggestion.groups.cast(Unicode)).contains(search.lower()),
+                func.lower(Suggestion.scopeNote).contains(search.lower()),
+                func.lower(Suggestion.exactMatches.cast(Unicode)).contains(search.lower()),
+                func.lower(Suggestion.neededFor).contains(search.lower()),
+                func.lower(Suggestion.yse_term.cast(Unicode)).contains(search.lower()),
             ))
 
         if limit:

@@ -98,10 +98,13 @@ class GithubDataParser:
   def __parse_organization(self, value):
     organization = ''
     splitted_value = value.split('Ehdottajan organisaatio')
-    organization_section = splitted_value[1].strip()
-    if 'Termiehdotus Fintossa' in organization_section:
-      splitted_organization = organization_section.split('Termiehdotus Fintossa')
+    organization = splitted_value[1].strip()
+    if 'Termiehdotus Fintossa' in organization:
+      splitted_organization = organization.split('Termiehdotus Fintossa')
       organization = splitted_organization[0].replace('*', '').replace(':', '').strip()
+    if 'Ehdottajan sähköpostiosoite' in organization:
+      split_remove_sender_email = organization.split('Ehdottajan sähköpostiosoite')
+      organization = split_remove_sender_email[0].strip()
     return organization
 
   def __parse_yse_term(self, value):
@@ -191,8 +194,7 @@ class GithubDataParser:
   def __fetch_data_from_github(self, page = 1):
     user = os.environ.get('GITHUB_USERNAME')
     personal_token = os.environ.get('GITHUB_PERSONAL_TOKEN')
-    # return requests.get(f'https://api.github.com/repos/Finto-ehdotus/YSE/issues?per_page=100&state=all&page={page}', auth=(user, personal_token))
-    return requests.get(f'https://api.github.com/repos/Finto-ehdotus/YSE/issues?milestone=19', auth=(user, personal_token))
+    return requests.get(f'https://api.github.com/repos/Finto-ehdotus/YSE/issues?per_page=100&state=all&page={page}', auth=(user, personal_token))
 
   def __map_reponse(self, json_item):
     suggestion_model = GithubIssueModel(
