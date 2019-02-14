@@ -15,6 +15,7 @@
         </p>
         <p class="date-sent">{{ dateTimeFormatLabel(this.event.created) }}</p>
       </div>
+      <menu-button :options="options" class="menu" />
     </div>
     <div v-if="type == 'COMMENT'" class="event-comment">
       <p>{{ event.text }}</p>
@@ -24,6 +25,7 @@
 </template>
 
 <script>
+import MenuButton from '../common/MenuButton';
 import { dateTimeFormatLabel } from '../../utils/dateHelper';
 
 import { mapUserGetters, mapUserActions } from '../../store/modules/user/userModule';
@@ -32,6 +34,9 @@ import { userNameInitials } from '../../utils/userHelpers';
 import { compineEventTextContent } from '../../utils/eventHelper';
 
 export default {
+  components: {
+    MenuButton
+  },
   props: {
     event: {
       type: Object,
@@ -46,7 +51,17 @@ export default {
     return {
       dateTimeFormatLabel,
       compineEventTextContent,
-      userNameInitials: ''
+      userNameInitials: '',
+      options: [
+        {
+          title: 'Muokkaa kommenttia',
+          method: this.editComment
+        },
+        {
+          title: 'Poista kommentti',
+          method: this.deleteComment
+        }
+      ]
     };
   },
   async created() {
@@ -66,13 +81,19 @@ export default {
       if (this.user) {
         this.userNameInitials = userNameInitials(this.user.name);
       }
+    },
+    editComment() {
+      console.log('edit comment')
+    },
+    deleteComment() {
+      console.log('delete comment')
     }
   }
 };
 </script>
 
 <style scoped>
-div.event-divider {
+.event-divider {
   display: inline-block;
   text-align: center;
   width: 2px;
@@ -81,18 +102,19 @@ div.event-divider {
   background-color: #dddddd;
 }
 
-div.event-container {
+.event-container {
   background-color: #ffffff;
   border: 2px solid #f5f5f5;
   text-align: left;
   margin-top: 10px;
 }
 
-div.event-header {
+.event-header {
   padding: 20px 40px;
+  position: relative;
 }
 
-div.event-header .event-user-initials {
+.event-header .event-user-initials {
   display: inline-block;
   height: 40px;
   width: 40px;
@@ -102,24 +124,24 @@ div.event-header .event-user-initials {
   vertical-align: middle;
 }
 
-div.event-header .event-info {
+.event-header .event-info {
   display: inline-block;
   vertical-align: middle;
   margin-left: 20px;
   max-width: calc(100% - 60px);
 }
 
-div.event-header .event-info p {
+.event-header .event-info p {
   vertical-align: middle;
   margin: 0;
 }
 
-div.event-header .event-info .user-name {
+.event-header .event-info .user-name {
   font-weight: 600;
   font-size: 16px;
 }
 
-div.event-header .event-info .date-sent {
+.event-header .event-info .date-sent {
   font-size: 14px;
 }
 
@@ -136,7 +158,7 @@ div.event-header .event-info .date-sent {
   font-weight: 800;
 }
 
-div.event-comment {
+.event-comment {
   width: 100%;
   border-top: 1px solid #f5f5f5;
   padding: 10px 40px;
@@ -156,13 +178,20 @@ div.event-comment {
   border-radius: 2px;
   display: inline-block;
 }
+
 .type-new {
   background-color: #1137ff;
   border: 2px solid #1137ff;
 }
+
 .type-modify {
   background-color: #ff8111;
   border: 2px solid #ff8111;
+}
+
+.menu {
+  position: absolute;
+  right: 20px;
 }
 
 @media (max-width: 700px) {
