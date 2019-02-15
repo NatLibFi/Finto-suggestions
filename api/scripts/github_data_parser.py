@@ -56,17 +56,31 @@ class GithubDataParser:
       description = splitted_description[1].strip()
     return description
 
+  def __parse_remove_org_and_term_suggestion_from_reason(self, value):
+    if 'Ehdottajan organisaatio' in value:
+      splitted_remove_org = value.split('Ehdottajan organisaatio')
+      parsed_value = splitted_remove_org[0].replace('*','').strip()
+      return parsed_value
+    if 'Termiehdotus Fintossa' in value:
+      splitted_remove_term_on_finto = value.split('Termiehdotus Fintossa')
+      parsed_value = splitted_remove_term_on_finto[0].replace('*', '').strip()
+      return parsed_value
+
   def __parse_reason(self, value, body):
     if 'Aineisto jonka kuvailussa käsitettä tarvitaan (esim. nimeke tai URL)' in value:
       splitted_reasons = value.split('Aineisto jonka kuvailussa käsitettä tarvitaan (esim. nimeke tai URL)')
-      body.reason = splitted_reasons[1].strip()
+      parsed_value = self.__parse_remove_org_and_term_suggestion_from_reason(splitted_reasons[1].strip())
+      if parsed_value is None:
+        body.reason = splitted_reasons[1].strip()
+      else:
+        body.reason = parsed_value
     if 'Perustelut ehdotukselle' in value:
       splitted_reason_description = value.split('Perustelut ehdotukselle')
-      if '**' in splitted_reason_description[1]:
-        splitted_remove_org = splitted_reason_description[1].split('**')
-        body.reason = splitted_remove_org[0].strip()
-      else:
+      parsed_value = self.__parse_remove_org_and_term_suggestion_from_reason(splitted_reason_description[1].strip())
+      if parsed_value is None:
         body.reason = splitted_reason_description[1].strip()
+      else:
+        body.reason = parsed_value
 
   def __parse_scopeNote(self, value, body):
     if 'Tarkoitusta täsmentävä selite' in value:
@@ -84,18 +98,21 @@ class GithubDataParser:
   def __parse_organization(self, value):
     organization = ''
     splitted_value = value.split('Ehdottajan organisaatio')
-    organization_section = splitted_value[1].strip()
-    if 'Termiehdotus Fintossa' in organization_section:
-      splitted_organization = organization_section.split('Termiehdotus Fintossa')
+    organization = splitted_value[1].strip()
+    if 'Termiehdotus Fintossa' in organization:
+      splitted_organization = organization.split('Termiehdotus Fintossa')
       organization = splitted_organization[0].replace('*', '').replace(':', '').strip()
+    if 'Ehdottajan sähköpostiosoite' in organization:
+      split_remove_sender_email = organization.split('Ehdottajan sähköpostiosoite')
+      organization = split_remove_sender_email[0].strip()
     return organization
 
   def __parse_yse_term(self, value):
     splitted_value = value.split('Termiehdotus Fintossa')
     splitted_yse_term_value = splitted_value[1].split(']')
     yse_term = {
-      'value': splitted_yse_term_value[0].replace('[', '').replace(']', '').replace('*', '').strip(),
-      'url': splitted_yse_term_value[1].replace('(', '').replace(')', '').strip()
+      'value': splitted_yse_term_value[0].replace('[','').replace(']','').replace('*','').replace(':','') .strip(),
+      'url': splitted_yse_term_value[1].replace('(','').replace(')','').strip()
     }
     return yse_term
 

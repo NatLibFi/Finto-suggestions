@@ -76,10 +76,16 @@ definitions:
         $ref: "#/definitions/related_labels"
       groups:
         $ref: "#/definitions/groups"
+      exactMatches:
+        $ref: "#/definitions/exactMatches"
+      scopeNote:
+        $ref: "#/definitions/scopeNote"
       description:
         $ref: "#/definitions/description"
       reason:
         $ref: "#/definitions/reason"
+      neededFor:
+        $ref: "#/definitions/neededFor"
       organization:
         $ref: "#/definitions/organization"
       created:
@@ -125,10 +131,16 @@ definitions:
         $ref: "#/definitions/related_labels"
       groups:
         $ref: "#/definitions/groups"
+      exactMatches:
+        $ref: "#/definitions/exactMatches"
+      scopeNote:
+        $ref: "#/definitions/scopeNote"
       description:
         $ref: "#/definitions/description"
       reason:
         $ref: "#/definitions/reason"
+      neededFor:
+        $ref: "#/definitions/neededFor"
       organization:
         $ref: "#/definitions/organization"
       meeting_id:
@@ -162,10 +174,16 @@ definitions:
         $ref: "#/definitions/related_labels"
       groups:
         $ref: "#/definitions/groups"
+      exactMatches:
+        $ref: "#/definitions/exactMatches"
+      scopeNote:
+        $ref: "#/definitions/scopeNote"
       description:
         $ref: "#/definitions/description"
       reason:
         $ref: "#/definitions/reason"
+      neededFor:
+        $ref: "#/definitions/neededFor"
       organization:
         $ref: "#/definitions/organization"
       meeting_id:
@@ -179,9 +197,7 @@ definitions:
           example: "TEST_TAG_1"
     required:
       - preferred_label
-      - uri
       - suggestion_type
-      - description
       - reason
 
   TagListParameterObject:
@@ -200,28 +216,41 @@ definitions:
     description: "Preferred label"
     properties:
       fi:
-        type: string
-        example: "kisu"
+        type: object
+        description: "Preferred label in Finnish"
+        properties:
+          value:
+            type: string
+            example: "kisu"
+          uri:
+            type: string
+            example: "http://www.yso.fi/onto/yso/p19378"
+      sv:
+        type: object
+        description: "Preferred label in Swedish"
+        properties:
+          value:
+            type: string
+            example: "katt"
+          uri:
+            type: string
+            example: "http://finto.fi/allars/fi/page/Y20635"
       en:
         type: string
+        description: "Preferred label in English"
         example: "cat"
-      sv:
-        type: string
-        example: "katten"
 
   alternative_labels:
-    type: object
-    description: "Alternative label"
-    properties:
-      fi:
-        type: string
-        example: "kisu"
-      en:
-        type: string
-        example: "cat"
-      sv:
-        type: string
-        example: "katten"
+    type: array
+    items:
+      type: object
+      description: "Array of synonymous or alternative labels"
+      properties:
+        value:
+          type: string
+          example: "Katti"
+        isTouched:
+          type: boolean
 
   status:
     type: string
@@ -250,35 +279,82 @@ definitions:
   broader_labels:
     type: array
     items:
-      type: string
+      type: object
       description: An array of broader concept URIs
+      properties:
+        value:
+          type: string
+        uri:
+          type: string
+        isTouched:
+          type: boolean
     example:
       - "http://www.yso.fi/onto/ysa/Y98177"
 
   narrower_labels:
     type: array
     items:
-      type: string
+      type: object
       description: An array of narrower concept URIs
+      properties:
+        value:
+          type: string
+        uri:
+          type: string
+        isTouched:
+          type: boolean
     example:
       - "http://www.yso.fi/onto/ysa/Y98176"
 
   related_labels:
     type: array
     items:
-      type: string
+      type: object
       description: An array of related concept URIs
+      properties:
+        value:
+          type: string
+        uri:
+          type: string
+        isTouched:
+          type: boolean
     example:
       - "http://www.yso.fi/onto/ysa/Y12345"
 
   groups:
     type: array
     items:
-      type: string
-      description: An array of groups/collection uris the suggested concept is a member of
-    example:
-      - "http://www.yso.fi/onto/ysa/ryhma_07"
-      - "http://www.yso.fi/onto/ysa/ryhma_09"
+      type: object
+      description: An array of groups the suggested concept is a member of
+      properties:
+        prefLabel:
+          type: string
+          example: "02 Filosofia"
+        uri:
+          type: string
+          example: "http://www.yso.fi/onto/yso/p26545"
+        hasMembers:
+          type: boolean
+
+  exactMatches:
+    type: array
+    items:
+      type: object
+      description: An array of the suggested concept represented exactly in other vocabularies
+      properties:
+        vocab:
+          type: string
+          example: "Library of Congress Subject Headings"
+        value:
+          type: string
+          example: "Cat"
+        isTouched:
+          type: boolean
+
+
+  scopeNote:
+    type: string
+    example: "Tarkoittaa tarkemmin sanottuna kissamaista nisäkästä."
 
   description:
     type: string
@@ -287,13 +363,18 @@ definitions:
 
   reason:
     type: string
+    description: Why is the suggested necessary?
+    example: "Vanha termi on vanhanaikainen."
+
+  neededFor:
+    type: string
     description: Additional notes on why the suggested concept is necessary. What is the concept needed for (e.g. a ISBN or the URL of a document)?
     example: "KULOssa ja MAO-ontologiassa. Ei ole käytetty kovin usein sisällönkuvailuun, mutta vaikea korvata muulla asiasanalla."
 
   organization:
     type: string
     description: Organization of the suggester
-    example: Ankkalinnan kaupunki
+    example: "Ankkalinnan kaupunki"
 
   meeting_id:
     type: number

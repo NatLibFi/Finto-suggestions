@@ -5,7 +5,7 @@ class DBInserter:
 
   def __init__(self, db):
     self.suggestion_count = 0
-    self.meeting_count = 0
+    self.new_meetings = []
     self.existing_tags = []
     self.new_tags = []
     self.suggestion_tags_count = 0
@@ -58,12 +58,12 @@ class DBInserter:
       return suggestion_tag
     return None
 
-  def __map_to_event_bo(self, tag_label):
+  def __map_to_event_bo(self, tags):
     event_bo = Event()
     event_bo.created = datetime.now()
     event_bo.modified = datetime.now()
     event_bo.event_type = EventTypes.ACTION
-    event_bo.text = f"tunniste tuotu vanhasta järjestelmästä {tag_label}"
+    event_bo.text = f"Vanhasta järjestelmästä tuodut tunnisteet ehdotukselle: {', '.join(tags)}"
     return event_bo
 
   def __map_models_to_db_bo(self, models):
@@ -80,11 +80,17 @@ class DBInserter:
         bo_models.append(suggestion_models)
     return bo_models
 
+  def __get_existing_meeting(self, meeting_name):
+    for existing_meeting in self.new_meetings:
+      if existing_meeting["name"] == meeting_name:
+        return existing_meeting
+    return None
+
   def __insert_meeting_to_db(self, db, meeting):
     if meeting is not None:
       db.session.add(meeting)
       db.session.commit()
-      self.meeting_count += 1
+      self.new_meetings.append({ "name": meeting.name, "id": meeting.id })
       print(f"New meeting added {meeting.id}")
 
   def __insert_suggestion_to_db(self, db, suggestion):
@@ -100,13 +106,13 @@ class DBInserter:
         return existing_tag
     return None
 
-  def __insert_event_bo_to_db(self, db, tag_label, suggestion_id):
-    if tag_label is not None and len(tag_label) > 0:
-      event_bo = self.__map_to_event_bo(tag_label)
+  def __insert_event_bo_to_db(self, db, tags, suggestion_id):
+    if tags is not None and len(tags) > 0:
+      event_bo = self.__map_to_event_bo(tags)
       db.session.add(event_bo)
       db.session.commit()
       self.events_count += 1
-      print(f"New event {event_bo.id} for adding tag {tag_label} to suggestion {suggestion_id} ")
+      print(f"New event {event_bo.id} for adding tags {', '.join(tags)} to suggestion {suggestion_id} ")
       return event_bo
     return None
 
@@ -121,18 +127,22 @@ class DBInserter:
 
   def __insert_tags_and_relation_to_suggestion(self, db, tags, suggestion_id):
     if tags is not None and len(tags) > 0:
+      suggestion_tags = []
       for tag_label in tags:
-        exists = self.__get_existing_tag(tag_label.label)
-        if exists is None:
+        exists_tag = self.__get_existing_tag(tag_label.label)
+        if exists_tag is None:
           db.session.add(tag_label)
           db.session.commit()
           self.new_tags.append(tag_label.label)
+          suggestion_tags.append(tag_label.label)
           self.existing_tags.append(tag_label.label)
           print(f"New tag added {tag_label.label}")
-        event_bo = self.__insert_event_bo_to_db(db, tag_label.label, suggestion_id)
-        if event_bo is not None:
-          # lets not try to add this if event creation failed
-          self.__insert_suggestion_tag_relationship(db, tag_label.label, suggestion_id, event_bo.id)
+        else:
+          suggestion_tags.append(exists_tag)
+      event_bo = self.__insert_event_bo_to_db(db, suggestion_tags, suggestion_id)
+      if event_bo is not None:
+        # lets not try to add this if event creation failed
+        self.__insert_suggestion_tag_relationship(db, tag_label.label, suggestion_id, event_bo.id)
 
   def insert_models_to_db(self, db, models):
     bo_models_dict = self.__map_models_to_db_bo(models)
@@ -142,8 +152,12 @@ class DBInserter:
         tags = model["tags"]
         if 'meeting' in model.keys():
           meeting = model["meeting"]
-          self.__insert_meeting_to_db(db, meeting)
-          suggestion.meeting_id = meeting.id
+          exists = self.__get_existing_meeting(meeting.name)
+          if exists is None:
+            self.__insert_meeting_to_db(db, meeting)
+            suggestion.meeting_id = meeting.id
+          else:
+            suggestion.meeting_id = exists["id"]
         self.__insert_suggestion_to_db(db, suggestion)
         self.__insert_tags_and_relation_to_suggestion(db, tags, suggestion.id)
       except Exception as ex:
@@ -154,7 +168,7 @@ class DBInserter:
     print("\r\n")
     print("RESULTS: ")
     print(f"Suggestions inserted {self.suggestion_count}")
-    print(f"Meetings inserted {self.meeting_count}")
+    print(f"Meetings inserted {len(self.new_meetings)}")
     print(f"Events inserted {self.events_count}")
     print(f"Tags inserted {len(self.new_tags)}")
     print(f"Tag <-> Suggestion relationships inserted {self.suggestion_tags_count}")
