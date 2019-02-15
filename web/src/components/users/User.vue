@@ -59,6 +59,7 @@
 import SuggestionHeader from '../suggestion/SuggestionHeader';
 import SuggestionItem from '../suggestion/SuggestionItem';
 import SuggestionListPagination from '../suggestion/SuggestionListPagination';
+import { calculateOpenAndResolvedSuggestionCounts } from '../../utils/suggestionHelpers';
 
 import { userActions, userGetters } from '../../store/modules/user/userConsts';
 import { mapUserActions, mapUserGetters } from '../../store/modules/user/userModule';
@@ -174,16 +175,18 @@ export default {
       const paginatedItems = items ? items : this.items;
       // eslint-disable-next-line
       this.paginated_items = paginatedItems && paginatedItems.length > 0 ? paginatedItems.slice(start, end) : []
-      this.calculateOpenAndResolvedSuggestionCounts();
+      this.calculateOpenAndResolvedSuggestionCounts(items);
+      this.calculatePageCountForPagination(items)
     },
     calculatePageCountForPagination() {
       return Math.ceil(this.items.length / this.paginationMaxCount);
     },
-    calculateOpenAndResolvedSuggestionCounts() {
-      if (this.items && this.items.length > 0) {
-        this.openCount = this.items.filter(i => i.status === null).length;
-        this.resolvedCount = this.items.filter(i => i.status !== null).length;
-      }
+    calculateOpenAndResolvedSuggestionCounts(items = null) {
+      const counts = items === null
+        ? calculateOpenAndResolvedSuggestionCounts(this.items)
+        : calculateOpenAndResolvedSuggestionCounts(items);
+      this.openCount = counts && counts.openCount ? counts.openCount : 0;
+      this.resolvedCount = counts && counts.resolvedCount ? counts.resolvedCount : 0;
     },
     closeDropdown() {
       this.showDropdown = false;
