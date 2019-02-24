@@ -105,6 +105,15 @@ export default {
         commit(suggestionMutations.SET_SUGGESTION, result.data);
       }
     },
+    async [suggestionActions.ASSIGN_SUGGESTION_TO_MEETING](
+      { commit },
+      { suggestionId, meetingId }
+    ) {
+      const result = await api.suggestion.assignSuggestionToMeeting(suggestionId, meetingId);
+      if (result && result.code == 202) {
+        commit(suggestionMutations.SET_SUGGESTION, result.data);
+      }
+    },
     [suggestionActions.GET_SUGGESTIONS_SELECTED_SORT]({ commit }) {
       const sortKey = sessionStorage[sessionStorageKeyNames.SUGGESTIONS_SELECTED_SORT];
       if (sortKey) {

@@ -21,7 +21,7 @@
 
 <script>
 import { mapMeetingGetters, mapMeetingActions } from '../../store/modules/meeting/meetingModule.js';
-import { meetingGetters, meetingActions } from '../../store/modules/meeting/meetingConst.js';
+import { meetingGetters, meetingActions } from '../../store/modules/meeting/meetingConsts.js';
 
 // eslint-disable-next-line
 import { getMeetingProgressionCounts, getMeetingProgressionWidths } from '../../utils/meetingHelper.js';
@@ -31,7 +31,8 @@ import { mapAuthenticatedUserGetters } from '../../store/modules/authenticatedUs
 import { authenticatedUserGetters } from '../../store/modules/authenticatedUser/authenticatedUserConsts.js';
 import { mapSuggestionGetters } from '../../store/modules/suggestion/suggestionModule.js';
 import { suggestionGetters } from '../../store/modules/suggestion/suggestionConsts.js';
-import { comparerDesc, suggestionStateStatus } from '../../utils/sortingHelper.js';
+import { comparerDesc } from '../../utils/sortingHelper.js';
+import { suggestionStateStatus } from '../../utils/suggestionHelpers.js';
 
 export default {
   props: {

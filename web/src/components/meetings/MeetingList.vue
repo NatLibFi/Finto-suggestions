@@ -28,7 +28,7 @@ import MeetingListItem from './MeetingListItem';
 import MeetingListPagination from './MeetingListPagination';
 
 import { mapMeetingGetters, mapMeetingActions } from '../../store/modules/meeting/meetingModule.js';
-import { meetingGetters, meetingActions } from '../../store/modules/meeting/meetingConst.js';
+import { meetingGetters, meetingActions } from '../../store/modules/meeting/meetingConsts.js';
 
 import { sortingKeys, comparerDesc, comparerAsc } from '../../utils/sortingHelper.js';
 import { parse, isAfter, isEqual } from 'date-fns';
@@ -42,7 +42,6 @@ export default {
   data: function() {
     return {
       pageCount: 1,
-      // TODO: fix pagination
       paginated_meetings: [],
       futureMeetingCount: 0,
       pastMeetingCount: 0
@@ -82,18 +81,20 @@ export default {
       let futureMeetings = [];
       let pastMeetings = [];
       const today = Date();
-      this.meetings.forEach(meeting => {
-        if (meeting.meeting_date) {
-          if (
-            isAfter(parse(meeting.meeting_date), today) ||
-            isEqual(parse(meeting.meeting_date), today)
-          ) {
-            futureMeetings.push(meeting);
-          } else {
-            pastMeetings.push(meeting);
+      if (this.meetings && this.meetings.length > 0) {
+        this.meetings.forEach(meeting => {
+          if (meeting.meeting_date) {
+            if (
+              isAfter(parse(meeting.meeting_date), today) ||
+              isEqual(parse(meeting.meeting_date), today)
+            ) {
+              futureMeetings.push(meeting);
+            } else {
+              pastMeetings.push(meeting);
+            }
           }
-        }
-      });
+        });
+      }
       this.futureMeetingCount = futureMeetings.length;
       this.pastMeetingCount = pastMeetings.length;
     }

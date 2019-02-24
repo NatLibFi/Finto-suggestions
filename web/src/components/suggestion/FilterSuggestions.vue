@@ -83,7 +83,7 @@ import {
 } from '../../store/modules/suggestion/suggestionModule.js';
 
 import { mapMeetingActions, mapMeetingGetters } from '../../store/modules/meeting/meetingModule.js';
-import { meetingActions, meetingGetters } from '../../store/modules/meeting/meetingConst.js';
+import { meetingActions, meetingGetters } from '../../store/modules/meeting/meetingConsts.js';
 
 import { mapTagActions, mapTagGetters } from '../../store/modules/tag/tagModule.js';
 import { tagActions, tagGetters } from '../../store/modules/tag/tagConst.js';

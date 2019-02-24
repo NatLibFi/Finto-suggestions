@@ -1,43 +1,50 @@
 <template>
-  <div class="assign-user">
-    <a @click="openSearch">
-      Lisää käsittelijä
-    </a>
-    <div class="dropdown-content" v-if="searchOpen" v-on-clickaway="closeSearch">
-      <div class="dropdown-header">Kutsu käyttäjä ehdotukseen</div>
+<div>
+  <span v-if="meetingId && meetingId > 0">–
+    <a @click="goToMeeting(meetingId)"> Kokous {{ meetingId }}</a>
+    <a v-if="isAuthenticated && isAdmin"
+      @click="isOpenDropdown = true"> (muokkaa)</a>
+  </span>
+  <span v-if="!meetingId || meetingId === 0">
+    <a v-if="isAuthenticated && isAdmin"
+      @click="isOpenDropdown = true">Lisää käsite kokoukseen</a>
+  </span>
+  <div class="assign-meeting">
+    <div class="dropdown-content" v-if="isOpenDropdown" v-on-clickaway="closeDropdown">
+      <div class="dropdown-header">Valitse kokous</div>
       <div class="dropdown-filter">
         <input type="text" class="dropdown-filter-input" v-model="searchQuery" />
       </div>
       <div class="dropdown-options">
         <div
-          v-for="user in filteredUsers"
-          :key="user.id"
-          @click="assignUserToSuggestion({ suggestionId: suggestion.id, userId: user.id })"
-          class="user-item">
-          <div v-if="user.name && user.name.length > 0">
-            <div  class="user-image">{{ userNameInitials(user.name) }}</div>
-            <div class="user-name">{{ user.name }}</div>
-          </div>
-          <div v-if="user.name && user.name.length === 0">
-            <div  class="user-image">{{ user.id }}</div>
-            <div class="user-name">Käyttäjä {{ user.id }}</div>
+          v-for="meeting in filteredMeetings"
+          :key="meeting.id"
+          @click="assignToMeeting(meeting.id)"
+          class="meeting-item">
+          <div v-if="meeting.name && meeting.name.length > 0">
+            <div class="meeting-title">{{ meeting.name }}</div>
           </div>
         </div>
       </div>
     </div>
   </div>
+</div>
 </template>
 
 <script>
-import { userNameInitials } from '../../utils/userHelpers';
 import { suggestionActions } from '../../store/modules/suggestion/suggestionConsts';
 import { mapSuggestionActions } from '../../store/modules/suggestion/suggestionModule';
 import {
-  mapUserActions,
-  mapUserGetters,
-  mapUserMutations
-} from '../../store/modules/user/userModule';
-import { userActions, userGetters, userMutations } from '../../store/modules/user/userConsts';
+  mapMeetingActions,
+  mapMeetingGetters,
+  mapMeetingMutations
+} from '../../store/modules/meeting/meetingModule';
+import {
+  meetingActions,
+  meetingGetters,
+  meetingMutations
+} from '../../store/modules/meeting/meetingConsts';
+
 import { directive as onClickaway } from 'vue-clickaway';
 
 export default {
@@ -46,54 +53,58 @@ export default {
     suggestion: {
       type: Object,
       required: true
-    }
+    },
+    meetingId: [String, Number],
+    isAuthenticated: Boolean,
+    isAdmin: Boolean,
+    role: String
   },
   data() {
     return {
-      searchOpen: false,
+      isOpenDropdown: false,
       searchQuery: '',
-      userNameInitials,
-      filteredUsers: []
+      filteredMeetings: []
     };
   },
   computed: {
-    ...mapUserGetters({ users: userGetters.GET_USERS })
+    ...mapMeetingGetters({ meetings: meetingGetters.GET_MEETINGS })
   },
   async created() {
-    // If "admin" in user.roles:
-    await this.getUsers();
-    this.filteredUsers = this.users;
+    await this.getMeetings();
+    this.filteredMeetings = this.meetings;
   },
   mounted() {
     document.body.addEventListener('keyup', e => {
       if (e.keyCode === 27) {
-        this.closeSearch();
+        this.closeDropdown();
       }
     });
   },
   methods: {
     ...mapSuggestionActions({
-      assignUserToSuggestion: suggestionActions.ASSIGN_SUGGESTION_TO_USER
+      assignSuggestionToMeeting: suggestionActions.ASSIGN_SUGGESTION_TO_MEETING
     }),
-    ...mapUserActions({ getUsers: userActions.GET_USERS }),
-    ...mapUserMutations({ setUsers: userMutations.SET_USERS }),
-    toggleSearch() {
-      this.searchOpen = !this.searchOpen;
-    },
+    ...mapMeetingActions({ getMeetings: meetingActions.GET_MEETINGS }),
+    ...mapMeetingMutations({ setMeetings: meetingMutations.SET_MEETINGS }),
     filterResults() {
-      this.getUsers();
-      if (this.searchQuery.length >= 1) {
-        const filteredUsers = this.users.filter(user =>
-          user.name.toLowerCase().includes(this.searchQuery.toLowerCase())
+      if (this.searchQuery.length >= 0 && this.meetings) {
+        this.filteredMeetings = this.meetings.filter(meeting =>
+          meeting.name.toLowerCase().includes(this.searchQuery.toLowerCase())
         );
-        this.setUsers(filteredUsers);
+        this.setMeetings(this.filteredUsers);
       }
+      this.getMeetings();
     },
-    openSearch() {
-      this.searchOpen = true;
+    assignToMeeting(id) {
+      this.assignSuggestionToMeeting({ suggestionId: this.suggestion.id, meetingId: id });
+      this.closeDropdown();
+      this.$router.go();
     },
-    closeSearch() {
-      this.searchOpen = false;
+    goToMeeting(id) {
+      this.$emit('goToMeeting', id);
+    },
+    closeDropdown() {
+      this.isOpenDropdown = false;
     }
   },
   watch: {
@@ -105,18 +116,18 @@ export default {
 </script>
 
 <style scoped>
-.assign-user {
+.assign-meeting {
   position: relative;
   display: inline-block;
 }
-.assign-user a {
+.assign-meeting a {
   font-size: 14px;
   -webkit-user-select: none; /* Safari */
   -moz-user-select: none; /* Firefox */
   -ms-user-select: none; /* IE10+/Edge */
   user-select: none; /* Standard */
 }
-.assign-user a:hover {
+.assign-meeting a:hover {
   cursor: pointer;
   cursor: hand;
 }
@@ -160,35 +171,21 @@ input.dropdown-filter-input {
   max-height: 180px;
   overflow-x: scroll;
 }
-.user-item {
+.meeting-item {
   text-align: left;
   position: relative;
   height: 42px;
   padding: 0 10px;
 }
-.user-item:hover {
+.meeting-item:hover {
   cursor: pointer;
   background-color: #f3fbfa;
 }
-.user-image {
+.meeting-title {
   position: absolute;
-  top: 22%;
-  height: 25px;
-  width: 25px;
-  display: inline-block;
-  border-radius: 35px;
-  line-height: 27px;
-  text-align: center;
-  background-color: #804af2;
-  color: #ffffff;
-  font-size: 10px;
-  font-weight: 800;
-}
-.user-name {
-  position: absolute;
-  top: 22%;
-  margin-left: 40px;
-  padding-top: 2px;
+  top: 50%;
+  transform: translateY(-50%);
+  margin-left: 2px;
   display: inline-block;
   font-style: normal;
   font-weight: bold;

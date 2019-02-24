@@ -24,7 +24,7 @@
 </template>
 
 <script>
-import SuggestionHeader from './SuggestionHeader';
+import SuggestionListHeader from './SuggestionListHeader';
 import SuggestionItem from './SuggestionItem';
 
 import {
@@ -43,7 +43,7 @@ import { sortingKeys } from '../../utils/sortingHelper.js';
 
 export default {
   components: {
-    SuggestionHeader,
+    SuggestionListHeader,
     SuggestionItem,
     SuggestionListPagination
   },
