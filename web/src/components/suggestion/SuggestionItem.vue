@@ -3,7 +3,12 @@
     <div class="item-summary">
       <div class="title">
         <p class="title-row">
-          <span class="item-name">{{ suggestion.preferred_label.fi.value }}</span>
+          <span v-if="suggestion.preferred_label.fi && suggestion.preferred_label.fi.value" class="item-name">
+            {{ suggestion.preferred_label.fi.value }}
+          </span>
+          <span v-else class="item-name">
+            {{ suggestion.preferred_label.fi }}
+          </span>
           <span
             :class="[suggestionTypeToStyleClass[suggestion.suggestion_type], 'tag']">
             {{ suggestionTypeToString[suggestion.suggestion_type] }}

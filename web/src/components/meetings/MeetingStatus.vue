@@ -31,6 +31,7 @@ import { mapAuthenticatedUserGetters } from '../../store/modules/authenticatedUs
 import { authenticatedUserGetters } from '../../store/modules/authenticatedUser/authenticatedUserConsts.js';
 import { mapSuggestionGetters } from '../../store/modules/suggestion/suggestionModule.js';
 import { suggestionGetters } from '../../store/modules/suggestion/suggestionConsts.js';
+import { suggestionStateStatus } from '../../utils/suggestionHelpers.js';
 import { comparerDesc } from '../../utils/sortingHelper.js';
 
 export default {
