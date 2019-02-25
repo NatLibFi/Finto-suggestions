@@ -58,6 +58,22 @@ export default {
         commit(meetingMutations.SET_MEETING, result.data);
       }
     },
+    async [meetingActions.ADD_NEW_MEETING]({ dispatch }, params) {
+      const result = await api.meeting.addNewMeeting(params);
+      if (result && result.code === 201) {
+        dispatch(meetingMutations.SET_MEETING, result.data);
+      } else {
+        this.raiseError();
+      }
+    },
+    async [meetingActions.UPDATE_MEETING]({ commit }, { meetingId, data }) {
+      const result = await api.meeting.updateMeeting(meetingId, data);
+      if (result && result.code === 200) {
+        commit(meetingMutations.SET_MEETING, result.data);
+      } else {
+        this.raiseError();
+      }
+    },
     [meetingActions.GET_MEETINGS_SELECTED_SORT]({ commit }) {
       const sortKey = sessionStorage[sessionStorageKeyNames.MEETING_LIST_SELECTED_SORT];
       if (sortKey) {

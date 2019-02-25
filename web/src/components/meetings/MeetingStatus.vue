@@ -1,6 +1,13 @@
 <template>
   <div class="status-container">
     <h2 v-if="meeting">Kokous {{ meeting.id }} – {{ meeting.name }}</h2>
+    <p>
+      <a
+      @click="openMeetingDialog()"
+      v-if="isAuthenticated && role === userRoles.ADMIN"
+      class="edit-meeting-button">Muokkaa kokousta
+      </a>
+    </p>
     <div class="meeting-status">
       <div class="status-bar">
         <div :style="progressWidth" class="progress-bar"></div>
@@ -16,13 +23,24 @@
         </p>
       </div>
     </div>
+    <centered-dialog
+      @close="isMeetingDialogOpen = false"
+      v-if="isMeetingDialogOpen && isAuthenticated && role === userRoles.ADMIN">
+      <meeting-management
+        @close="isMeetingDialogOpen = false"
+        :isNewMeeting="false"
+        :meetingId="meetingId" />
+    </centered-dialog>
   </div>
 </template>
 
 <script>
+import CenteredDialog from '../common/CenteredDialog';
+import MeetingManagement from './MeetingManagement';
 import { mapMeetingGetters, mapMeetingActions } from '../../store/modules/meeting/meetingModule.js';
 import { meetingGetters, meetingActions } from '../../store/modules/meeting/meetingConst.js';
 
+import { userRoles } from '../../utils/userHelpers.js';
 // eslint-disable-next-line
 import { getMeetingProgressionCounts, getMeetingProgressionWidths } from '../../utils/meetingHelper.js';
 // eslint-disable-next-line
@@ -31,10 +49,13 @@ import { mapAuthenticatedUserGetters } from '../../store/modules/authenticatedUs
 import { authenticatedUserGetters } from '../../store/modules/authenticatedUser/authenticatedUserConsts.js';
 import { mapSuggestionGetters } from '../../store/modules/suggestion/suggestionModule.js';
 import { suggestionGetters } from '../../store/modules/suggestion/suggestionConsts.js';
-import { suggestionStateStatus } from '../../utils/suggestionHelpers.js';
 import { comparerDesc } from '../../utils/sortingHelper.js';
 
 export default {
+  components: {
+    CenteredDialog,
+    MeetingManagement
+  },
   props: {
     meetingId: {
       type: [Number, String],
@@ -53,7 +74,9 @@ export default {
       processed: 0,
       suggestions: 0,
       progression: 0,
-      continueSuggestionHandle: true
+      continueSuggestionHandle: true,
+      isMeetingDialogOpen: false,
+      userRoles
     };
   },
   computed: {
@@ -61,7 +84,8 @@ export default {
       meeting: meetingGetters.GET_MEETING
     }),
     ...mapAuthenticatedUserGetters({
-      isAuthenticated: authenticatedUserGetters.GET_IS_AUTHENTICATED
+      isAuthenticated: authenticatedUserGetters.GET_IS_AUTHENTICATED,
+      role: authenticatedUserGetters.GET_USER_ROLE
     }),
     ...mapSuggestionGetters({
       suggestion_items: suggestionGetters.GET_SUGGESTIONS
@@ -119,6 +143,12 @@ export default {
     checkSuggestionNeededToContinueToHandle() {
       const nextSuggestionId = this.getNextSuggestionIdToHandle();
       this.continueSuggestionHandle = nextSuggestionId != null ? true : false;
+    },
+    openMeetingDialog() {
+      this.isMeetingDialogOpen = true;
+    },
+    closeDialog() {
+      this.isMeetingDialogOpen = false;
     }
   },
   watch: {
@@ -140,39 +170,53 @@ export default {
   width: 100%;
   text-align: left;
 }
+
+.edit-meeting-button {
+  cursor: pointer;
+  cursor: hand;
+  font-size: 14px;
+}
+
 .meeting-status > div {
   font-size: 14px;
   font-weight: 600;
   vertical-align: middle;
   color: #6a6a6a;
 }
+
 .meeting-status .status-bar {
   width: 100%;
   margin-bottom: 4px;
 }
+
 .meeting-status .status-bar .progress-bar,
 .meeting-status .status-bar .progress-background {
   display: inline-block;
   height: 6px;
   background-color: #eeeeee;
 }
+
 .meeting-status .status-bar .progress-bar {
   background-color: #66bea9;
 }
+
 .status-summary {
   position: relative;
   height: 40px;
 }
+
 .status-summary p {
   display: inline-block;
   position: absolute;
   left: 0;
   margin: 0;
 }
+
 .status-summary p.next-suggestion-link {
   left: initial;
   right: 0;
 }
+
 .next-suggestion-link {
   color: #06a798;
   cursor: pointer;
@@ -185,6 +229,7 @@ export default {
     height: initial;
     padding-bottom: 10px;
   }
+
   .status-summary p {
     display: block;
     position: initial;
