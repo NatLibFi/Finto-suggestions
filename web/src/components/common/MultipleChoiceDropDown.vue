@@ -101,6 +101,8 @@ export default {
   margin-bottom: 40px;
   background-color: #ffffff;
   min-width: 200px;
+  max-height: 300px;
+  overflow: scroll;
   z-index: 2;
   text-align: left;
   border: 1px solid #e1e1e1;
