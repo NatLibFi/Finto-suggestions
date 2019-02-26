@@ -118,7 +118,6 @@
       <div v-if="!suggestion.user_id && isAdmin">
         <assign-user :suggestion="suggestion" class="icon-button" />
       </div>
-
       <div v-if="userName && suggestion.user_id">
         <p class="content-title"><strong>Käsittelijä</strong></p>
         <p>{{ userName }}
@@ -194,8 +193,8 @@ p {
 }
 
 a.remove-button {
-  margin-left: 4px;
   font-size: 14px;
+  display: inline-block;
   -webkit-user-select: none; /* Safari */
   -moz-user-select: none; /* Firefox */
   -ms-user-select: none; /* IE10+/Edge */

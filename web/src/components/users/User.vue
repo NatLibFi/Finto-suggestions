@@ -25,7 +25,7 @@
     </div>
 
     <div v-if="paginated_items && paginated_items.length > 0" class="user-suggestions">
-      <suggestion-header
+      <suggestion-list-header
         :openSuggestionCount="openCount || 0"
         :resolvedSuggestionCount="resolvedCount || 0"
         :userPage="true"
@@ -56,7 +56,7 @@
 </template>
 
 <script>
-import SuggestionHeader from '../suggestion/SuggestionHeader';
+import SuggestionListHeader from '../suggestion/SuggestionListHeader';
 import SuggestionItem from '../suggestion/SuggestionItem';
 import SuggestionListPagination from '../suggestion/SuggestionListPagination';
 import { calculateOpenAndResolvedSuggestionCounts } from '../../utils/suggestionHelpers';
@@ -88,7 +88,7 @@ import { directive as onClickaway } from 'vue-clickaway';
 
 export default {
   components: {
-    SuggestionHeader,
+    SuggestionListHeader,
     SuggestionItem,
     SuggestionListPagination,
     SvgIcon,

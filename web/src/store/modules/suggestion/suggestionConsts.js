@@ -42,6 +42,7 @@ export const suggestionActions = {
   GET_SUGGESTION_BY_ID: 'getSuggestionById',
   ASSIGN_SUGGESTION_TO_USER: 'assignSuggestionToUser',
   UNASSIGN_SUGGESTION_FROM_USER: 'unassignSuggestionFromUser',
+  ASSIGN_SUGGESTION_TO_MEETING: 'assignSuggestionToMeeting',
   GET_SUGGESTIONS_SELECTED_SORT: 'getSuggestionsSelectedSort',
   SET_SUGGESTIONS_SELECTED_SORT: 'setSuggestionsSelectedSort',
   GET_SUGGESTIONS_BY_MEETING_ID: 'getSuggestionsByMeetingId',
