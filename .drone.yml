@@ -11,7 +11,7 @@ pipeline:
     dockerfile: ./docker/staging/web/Dockerfile
     when:
       event: push
-      branch: [master, feature/staging-build]
+      branch: [master, fix/fixing-static-file-problem-on-stagging]
   api_staging:
     group: build
     image: plugins/docker
@@ -24,4 +24,4 @@ pipeline:
     dockerfile: ./docker/staging/api/Dockerfile
     when:
       event: push
-      branch: [master, feature/staging-build]
+      branch: [master]

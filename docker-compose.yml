@@ -1,5 +1,16 @@
 version: '3.6'
 services:
+  web:
+    restart: always
+    build:
+      context: .
+      dockerfile: ./docker/develop/web/Dockerfile
+    image: finto-suggestions_web:latest
+    volumes:
+      - ./web:/app
+      - /app/node_modules
+    networks:
+      - network_web
   api:
     restart: always
     build:
@@ -14,17 +25,6 @@ services:
       - network_db
     depends_on:
       - db
-  web:
-    restart: always
-    build:
-      context: .
-      dockerfile: ./docker/develop/web/Dockerfile
-    image: finto-suggestions_web:latest
-    volumes:
-      - ./web:/app
-      - /app/node_modules
-    networks:
-      - network_web
   nginx:
     image: nginx:alpine
     restart: always
