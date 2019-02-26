@@ -2,11 +2,18 @@
   <div class="status-container">
     <h2 v-if="meeting">Kokous {{ meeting.id }} – {{ meeting.name }}</h2>
     <p>
-      <a
-      @click="openMeetingDialog()"
-      v-if="isAuthenticated && role === userRoles.ADMIN"
-      class="edit-meeting-button">Muokkaa kokousta
-      </a>
+      <span v-if="meeting && meeting.meeting_date">
+        {{ dateTimeFormatLabel(meeting.meeting_date, true) }}
+      </span>
+      <span v-if="meeting && !meeting.meeting_date">
+        Ei asetettua päivämäärää
+      </span>
+      <span v-if="isAuthenticated && role === userRoles.ADMIN">
+        <a
+        @click="openMeetingDialog()"
+        class="edit-meeting-button">Muokkaa kokousta
+        </a>
+      </span>
     </p>
     <div class="meeting-status">
       <div class="status-bar">
@@ -49,6 +56,7 @@ import { mapAuthenticatedUserGetters } from '../../store/modules/authenticatedUs
 import { authenticatedUserGetters } from '../../store/modules/authenticatedUser/authenticatedUserConsts.js';
 import { mapSuggestionGetters } from '../../store/modules/suggestion/suggestionModule.js';
 import { suggestionGetters } from '../../store/modules/suggestion/suggestionConsts.js';
+import { dateTimeFormatLabel } from '../../utils/dateHelper';
 import { comparerDesc } from '../../utils/sortingHelper.js';
 
 export default {
@@ -76,7 +84,8 @@ export default {
       progression: 0,
       continueSuggestionHandle: true,
       isMeetingDialogOpen: false,
-      userRoles
+      userRoles,
+      dateTimeFormatLabel
     };
   },
   computed: {
@@ -174,7 +183,6 @@ export default {
 .edit-meeting-button {
   cursor: pointer;
   cursor: hand;
-  font-size: 14px;
 }
 
 .meeting-status > div {
