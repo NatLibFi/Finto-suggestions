@@ -124,7 +124,8 @@ export default {
         .then(() => {
           this.hasSucceeded = true;
           setTimeout(() => {
-            this.$router.go()
+            this.$emit('close');
+            this.hasSucceeded = false;
           }, 2000)
         })
         .catch(() => {
