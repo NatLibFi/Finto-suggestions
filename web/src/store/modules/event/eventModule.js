@@ -34,11 +34,8 @@ export default {
         }
       }
     },
-    async [eventActions.PATCH_EVENT]({ dispatch }, { eventId, suggestionId }) {
-      const response = await api.event.patchEvent(eventId);
-      if (response && response.code === 200) {
-        console.log(response);
-      }
+    async [eventActions.PATCH_EVENT]({ dispatch }, { eventId, data, suggestionId }) {
+      await api.event.patchEvent(eventId, data);
       dispatch(eventActions.GET_EVENTS_BY_SUGGESTION_ID, suggestionId);
     },
     async [eventActions.DELETE_EVENT]({ dispatch }, { eventId, suggestionId }) {

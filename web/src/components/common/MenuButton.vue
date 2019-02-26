@@ -4,8 +4,8 @@
       <svg-icon icon-name="more"><icon-more/></svg-icon>
     </div>
     <div v-if="showDropdown" v-on-clickaway="closeDropdown" class="dropdown">
-      <div v-for="option in options" :key="option.id" class="option">
-        <div @click="option.method">{{ option.title }}</div>
+      <div v-for="option in options" :key="option.id">
+        <div @click="option.method" class="option">{{ option.title }}</div>
       </div>
     </div>
   </div>
@@ -61,24 +61,23 @@ export default {
   background-color: #ffffff;
   border: 1px solid #f0f0f0;
   border-radius: 2px;
+  overflow: hidden;
+  z-index: 4;
 }
 
-.dropdown div {
-  padding: 7px 10px;
+.dropdown .option {
+  padding: 14px 10px;
+  border-bottom: 1px solid #f0f0f0;
 }
 
-.dropdown div:hover {
+.dropdown .option:hover {
   background-color: #f3fbfa;
   cursor: pointer;
   cursor: hand;
 }
 
-.dropdown .option {
-  border-bottom: 1px solid #f0f0f0;
-}
-
 .dropdown .option:last-of-type {
-  border-bottom: 1px solid #f0f0f0;
+  border-bottom: none;
 }
 
 @media (max-width: 700px) {

@@ -1,6 +1,7 @@
 <template>
 <div class="event">
   <div class="event-divider"></div>
+  {{ event.id }}
 
   <div class="event-container">
     <div class="event-header">
@@ -18,12 +19,34 @@
       <div
         v-if="isAuthenticated && (role === userRoles.ADMIN || authenticatedUserId === event.user_id )"
         class="menu-wrapper">
-        <menu-button v-if="type === eventTypes.COMMENT" :options="commentOptions" class="menu" />
-        <menu-button v-if="type === eventTypes.ACTION" :options="actionOptions" class="menu" />
+        <menu-button
+          v-if="type === eventTypes.COMMENT"
+          :options="commentOptions"
+          ref="menu"
+          class="menu" />
+        <menu-button
+          v-if="type === eventTypes.ACTION"
+          :options="actionOptions"
+          ref="menu"
+          class="menu" />
       </div>
     </div>
-    <div v-if="type === eventTypes.COMMENT" class="event-comment">
-      <p>{{ event.text }}</p>
+    <div v-if="type === eventTypes.COMMENT">
+      <div v-if="!isEditable" class="event-comment">
+        <p>{{ event.text }}</p>
+      </div>
+      <div v-if="isEditable" class="edit-comment">
+        <markdown-editor
+          v-model="event.text"
+          ref="markdownEditor"
+          :configs="mdeConfigs">
+        </markdown-editor>
+        <div class="comment-submit">
+          <span @click="saveComment" class="submit-button">
+            Tallenna
+          </span>
+        </div>
+      </div>
     </div>
   </div>
 </div>
@@ -33,6 +56,7 @@
 import MenuButton from '../common/MenuButton';
 import { dateTimeFormatLabel } from '../../utils/dateHelper';
 import { userRoles } from '../../utils/userHelpers';
+import markdownEditor from 'vue-simplemde/src/markdown-editor';
 
 // eslint-disable-next-line
 import { mapAuthenticatedUserGetters } from '../../store/modules/authenticatedUser/authenticatedUserModule.js';
@@ -49,7 +73,8 @@ import { compineEventTextContent } from '../../utils/eventHelper';
 
 export default {
   components: {
-    MenuButton
+    MenuButton,
+    markdownEditor
   },
   props: {
     event: {
@@ -65,6 +90,16 @@ export default {
   },
   data() {
     return {
+      content: '',
+      mdeConfigs: {
+        autofocus: false,
+        hideIcons: ['preview', 'fullscreen', 'side-by-side', 'guide'],
+        indentWithTabs: false,
+        spellChecker: false,
+        status: false,
+        toolbarTips: true
+      },
+      isEditable: false,
       dateTimeFormatLabel,
       compineEventTextContent,
       eventTypes,
@@ -106,6 +141,7 @@ export default {
       getUser: userActions.GET_USER
     }),
     ...mapEventActions({
+      patchEvent: eventActions.PATCH_EVENT,
       deleteEvent: eventActions.DELETE_EVENT
     }),
     fetchUserNameAndInitials() {
@@ -113,8 +149,20 @@ export default {
         this.userNameInitials = userNameInitials(this.user.name);
       }
     },
+    closeMenuDropdown() {
+      this.$refs.menu.closeDropdown()
+    },
     async editComment() {
-      await console.log('edit comment');
+      this.isEditable = true;
+      this.closeMenuDropdown()
+    },
+    saveComment() {
+      this.patchEvent({
+        eventId: this.event.id,
+        data: { text: this.event.text },
+        suggestionId: this.suggestionId
+      });
+      this.isEditable = false;
     },
     async removeEvent() {
       await this.deleteEvent({ eventId: this.event.id, suggestionId: this.suggestionId });
@@ -189,13 +237,6 @@ export default {
   font-weight: 800;
 }
 
-.event-comment {
-  width: 100%;
-  border-top: 1px solid #f5f5f5;
-  padding: 10px 40px;
-  margin: 0;
-}
-
 .tag {
   color: #ffffff;
   font-size: 12px;
@@ -227,6 +268,46 @@ export default {
 .menu {
   position: absolute;
   right: 20px;
+}
+
+.event-comment {
+  width: 100%;
+  border-top: 1px solid #f5f5f5;
+  padding: 10px 40px;
+  margin: 0;
+}
+
+.edit-comment {
+  width: calc(100% - 80px);
+  border-top: 1px solid #f5f5f5;
+  padding: 40px 40px 25px;
+  margin: 0;
+}
+
+.comment-submit {
+  margin: 20px 0 0;
+  text-align: right;
+}
+
+.submit-button {
+  background-color: #06a798;
+  border: none;
+  border-radius: 2px;
+  color: white;
+  padding: 8px 16px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  cursor: hand;
+  transition: background-color 0.1s;
+  margin: 0;
+}
+
+.submit-button:hover {
+  background-color: #44bdb2;
 }
 
 @media (max-width: 700px) {
