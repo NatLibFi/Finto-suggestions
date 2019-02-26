@@ -79,7 +79,7 @@ export default {
       hasFailed: false,
       fi: fi,
       sv: sv
-    }
+    };
   },
   validations: {
     name: {
@@ -104,15 +104,15 @@ export default {
             meeting_date: this.date
           }
         })
-        .then(() => {
-          this.hasSucceeded = true;
-          setTimeout(() => {
-            this.$emit('close');
-          }, 2000)
-        })
-        .catch(() => {
-          this.hasFailed = true;
-        })
+          .then(() => {
+            this.hasSucceeded = true;
+            setTimeout(() => {
+              this.$emit('close');
+            }, 2000);
+          })
+          .catch(() => {
+            this.hasFailed = true;
+          });
       }
     },
     async createNewMeeting() {
@@ -121,23 +121,23 @@ export default {
           name: this.name,
           meeting_date: this.date
         })
-        .then(() => {
-          this.hasSucceeded = true;
-          setTimeout(() => {
-            this.$emit('close');
-            this.hasSucceeded = false;
-          }, 2000)
-        })
-        .catch(() => {
-          this.hasFailed = true;
-          setTimeout(() => {
-            this.hasFailed = false;
-          }, 4000)
-        });
+          .then(() => {
+            this.hasSucceeded = true;
+            setTimeout(() => {
+              this.$emit('close');
+              this.hasSucceeded = false;
+            }, 2000);
+          })
+          .catch(() => {
+            this.hasFailed = true;
+            setTimeout(() => {
+              this.hasFailed = false;
+            }, 4000);
+          });
       }
     }
   }
-}
+};
 </script>
 
 <style>
@@ -173,7 +173,7 @@ export default {
 .input-group {
   position: relative;
   height: 100%;
-  box-sizing : border-box;
+  box-sizing: border-box;
 }
 
 .input-group p {
@@ -187,7 +187,7 @@ export default {
   padding: 7px 6px !important;
   width: 100%;
   font-size: 12px;
-  box-sizing : border-box;
+  box-sizing: border-box;
   overflow: visible;
 }
 

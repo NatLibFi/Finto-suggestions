@@ -16,7 +16,7 @@
         <p class="date-sent">{{ dateTimeFormatLabel(this.event.created) }}</p>
       </div>
       <div
-        v-if="isAuthenticated && (role === userRoles.ADMIN || authenticatedUserId === event.user_id )"
+        v-if="isAuthenticated && (role === userRoles.ADMIN || authedUserId === event.user_id)"
         class="menu-wrapper">
         <menu-button
           v-if="type === eventTypes.COMMENT"
@@ -131,7 +131,7 @@ export default {
       user: userGetters.GET_USER
     }),
     ...mapAuthenticatedUserGetters({
-      authenticatedUserId: authenticatedUserGetters.GET_USER_ID,
+      authedUserId: authenticatedUserGetters.GET_USER_ID,
       role: authenticatedUserGetters.GET_USER_ROLE
     }),
     simplemde() {
@@ -176,6 +176,7 @@ export default {
         suggestionId: this.suggestionId
       });
       this.isEditable = false;
+      this.content = this.simplemde.markdown(this.event.text);
     },
     async removeEvent() {
       await this.deleteEvent({ eventId: this.event.id, suggestionId: this.suggestionId });
@@ -287,6 +288,7 @@ export default {
   border-top: 1px solid #f5f5f5;
   padding: 10px 40px;
   margin: 0;
+  word-break: break-all;
 }
 
 .edit-comment {

@@ -33,14 +33,14 @@ export default {
   data() {
     return {
       showDropdown: false
-    }
+    };
   },
   methods: {
     closeDropdown() {
       this.showDropdown = false;
     }
   }
-}
+};
 </script>
 
 <style scoped>
@@ -81,13 +81,13 @@ export default {
 }
 
 @media (max-width: 700px) {
-.dropdown {
-  width: 210px;
-  font-size: 14px;
-}
+  .dropdown {
+    width: 210px;
+    font-size: 14px;
+  }
 
-.dropdown div {
-  padding: 10px 16px;
-}
+  .dropdown div {
+    padding: 10px 16px;
+  }
 }
 </style>
