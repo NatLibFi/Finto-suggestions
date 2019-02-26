@@ -1,7 +1,8 @@
 <template>
 <div>
   <span v-if="meetingId && meetingId > 0">–
-    <a @click="goToMeeting(meetingId)"> Kokous {{ meetingId }}</a>
+    <a v-if="!meeting" @click="goToMeeting(meetingId)"> Kokous {{ meetingId }}</a>
+    <a v-if="meeting && meeting.name" @click="goToMeeting(meetingId)"> {{ meeting.name }}</a>
     <a v-if="isAuthenticated && isAdmin"
       @click="isOpenDropdown = true"> (muokkaa)</a>
   </span>
@@ -67,10 +68,16 @@ export default {
     };
   },
   computed: {
-    ...mapMeetingGetters({ meetings: meetingGetters.GET_MEETINGS })
+    ...mapMeetingGetters({
+      meetings: meetingGetters.GET_MEETINGS,
+      meeting: meetingGetters.GET_MEETING
+    })
   },
   async created() {
     await this.getMeetings();
+    if (this.meetingId) {
+      await this.getMeeting(this.meetingId);
+    }
     this.filteredMeetings = this.meetings;
   },
   mounted() {
@@ -84,7 +91,10 @@ export default {
     ...mapSuggestionActions({
       assignSuggestionToMeeting: suggestionActions.ASSIGN_SUGGESTION_TO_MEETING
     }),
-    ...mapMeetingActions({ getMeetings: meetingActions.GET_MEETINGS }),
+    ...mapMeetingActions({
+      getMeetings: meetingActions.GET_MEETINGS,
+      getMeeting: meetingActions.GET_MEETING
+    }),
     ...mapMeetingMutations({ setMeetings: meetingMutations.SET_MEETINGS }),
     filterResults() {
       if (this.searchQuery.length >= 0 && this.meetings) {
