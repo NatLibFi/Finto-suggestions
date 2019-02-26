@@ -16,8 +16,8 @@ COPY ./web/. /app/
 RUN npm run build:staging
 
 FROM nginx:stable-alpine
-COPY /app/dist /usr/share/nginx/html
+RUN cp -a /app/dist /usr/share/nginx/html
 
 EXPOSE 8040
 
-CMD ["nginx", "-g", "daemon off;"]
+ENTRYPOINT ["nginx", "-g", "daemon off;"]
