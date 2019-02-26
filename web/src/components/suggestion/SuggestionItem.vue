@@ -47,8 +47,9 @@
       <div class="label">
         <p>
           <strong>#{{ suggestion.id }}</strong>
-          {{ dateTimeFormatLabel(suggestion.created) }} –
-          <span>
+          {{ dateTimeFormatLabel(suggestion.created) }}
+          <span v-if="suggestion.meeting_id">
+            –
             <a @click.stop="goToMeeting(suggestion.meeting_id)">
               Kokous {{ suggestion.meeting_id }}
             </a>
