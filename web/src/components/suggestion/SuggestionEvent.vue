@@ -1,7 +1,6 @@
 <template>
 <div class="event">
   <div class="event-divider"></div>
-  {{ event.id }}
 
   <div class="event-container">
     <div class="event-header">
