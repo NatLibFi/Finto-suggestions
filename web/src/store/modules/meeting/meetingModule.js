@@ -1,5 +1,5 @@
 import Vue from 'vue';
-import { mapActions, mapGetters } from 'vuex';
+import { mapActions, mapGetters, mapMutations } from 'vuex';
 import api from '../../../api';
 import {
   namespace,
@@ -8,12 +8,13 @@ import {
   meetingMutations,
   meetingGetters,
   meetingActions
-} from './meetingConst';
+} from './meetingConsts';
 
 import { comparerAsc } from '../../../utils/sortingHelper';
 
 export const mapMeetingGetters = getters => mapGetters(namespace, getters);
 export const mapMeetingActions = actions => mapActions(namespace, actions);
+export const mapMeetingMutations = mutations => mapMutations(namespace, mutations);
 
 export default {
   namespaced: true,
@@ -30,7 +31,7 @@ export default {
   },
   mutations: {
     [meetingMutations.SET_MEETINGS](state, meetings) {
-      if (meetings.length > 0) {
+      if (meetings && meetings.length > 0) {
         meetings.sort(comparerAsc('meeting_date'));
       }
       Vue.set(state, storeStateNames.ITEMS, meetings);
@@ -56,6 +57,22 @@ export default {
       const result = await api.meeting.getMeeting(meetingId);
       if (result && result.code === 200) {
         commit(meetingMutations.SET_MEETING, result.data);
+      }
+    },
+    async [meetingActions.ADD_NEW_MEETING]({ dispatch }, params) {
+      const result = await api.meeting.addNewMeeting(params);
+      if (result && result.code === 201) {
+        dispatch(meetingMutations.SET_MEETING, result.data);
+      } else {
+        this.raiseError();
+      }
+    },
+    async [meetingActions.UPDATE_MEETING]({ commit }, { meetingId, data }) {
+      const result = await api.meeting.updateMeeting(meetingId, data);
+      if (result && result.code === 200) {
+        commit(meetingMutations.SET_MEETING, result.data);
+      } else {
+        this.raiseError();
       }
     },
     [meetingActions.GET_MEETINGS_SELECTED_SORT]({ commit }) {

@@ -255,14 +255,14 @@ definitions:
   status:
     type: string
     enum:
-      - RECEIVED
-      - READ
-      - REJECTED
-      - ACCEPTED
-      - RETAINED
+      - RECEIVED,
+      - READ,
+      - ACCEPTED,
+      - REJECTED,
+      - RETAINED,
       - ARCHIVED
     description: "Processing state of a particular `Suggestion`."
-    example: RECEIVED
+    example: READ
 
   uri:
     type: string

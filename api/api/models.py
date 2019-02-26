@@ -157,7 +157,7 @@ class Meeting(db.Model, SerializableMixin):
             e.id for e in self.suggestions]  # only ids
 
         serialized['processed'] = Counter(
-            [s.status.name.upper() for s in self.suggestions if s is not None and s.status is not None])
+            [s.status.name.upper() for s in self.suggestions if s is not None and s.status is not 'READ' or 'RECEIVED'])
 
         return serialized
 
@@ -174,7 +174,7 @@ class Suggestion(db.Model, SerializableMixin):
     # meeting: backref
 
     suggestion_type = db.Column(db.Enum(SuggestionTypes))
-    status = db.Column(db.Enum(SuggestionStatusTypes), nullable=True)
+    status = db.Column(db.Enum(SuggestionStatusTypes), nullable=False)
     uri = db.Column(db.String(256))
 
     organization = db.Column(db.String(256))
