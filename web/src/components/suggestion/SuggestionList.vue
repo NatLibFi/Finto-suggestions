@@ -1,6 +1,6 @@
 <template>
 <div class="list-container">
-  <suggestion-header
+  <suggestion-list-header
     :openSuggestionCount="openCount || 0"
     :resolvedSuggestionCount="resolvedCount || 0"
     :meetingSort="meetingSort"

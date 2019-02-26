@@ -25,7 +25,7 @@
     </div>
 
     <div v-if="paginated_items && paginated_items.length > 0" class="user-suggestions">
-      <suggestion-header
+      <suggestion-list-header
         :openSuggestionCount="openCount || 0"
         :resolvedSuggestionCount="resolvedCount || 0"
         :userPage="true"
