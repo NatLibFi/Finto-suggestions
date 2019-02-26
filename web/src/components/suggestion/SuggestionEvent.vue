@@ -31,21 +31,21 @@
       </div>
     </div>
     <div v-if="type === eventTypes.COMMENT">
-      <div v-if="!isEditable" class="event-comment">
-        <p>{{ event.text }}</p>
-      </div>
-      <div v-if="isEditable" class="edit-comment">
-        <markdown-editor
-          v-model="event.text"
-          ref="markdownEditor"
-          :configs="mdeConfigs">
-        </markdown-editor>
-        <div class="comment-submit">
-          <span @click="saveComment" class="submit-button">
-            Tallenna
-          </span>
+        <div v-if="!isEditable" class="event-comment">
+          <p>{{ content }}</p>
         </div>
-      </div>
+        <div v-show="isEditable" class="edit-comment">
+          <markdown-editor
+            v-model="event.text"
+            ref="eventMarkdownEditor"
+            :configs="mdeConfigs">
+          </markdown-editor>
+          <div class="comment-submit">
+            <span @click="saveComment" class="submit-button">
+              Tallenna
+            </span>
+          </div>
+        </div>
     </div>
   </div>
 </div>
@@ -53,9 +53,9 @@
 
 <script>
 import MenuButton from '../common/MenuButton';
+import markdownEditor from 'vue-simplemde/src/markdown-editor';
 import { dateTimeFormatLabel } from '../../utils/dateHelper';
 import { userRoles } from '../../utils/userHelpers';
-import markdownEditor from 'vue-simplemde/src/markdown-editor';
 
 // eslint-disable-next-line
 import { mapAuthenticatedUserGetters } from '../../store/modules/authenticatedUser/authenticatedUserModule.js';
@@ -133,7 +133,15 @@ export default {
     ...mapAuthenticatedUserGetters({
       authenticatedUserId: authenticatedUserGetters.GET_USER_ID,
       role: authenticatedUserGetters.GET_USER_ROLE
-    })
+    }),
+    simplemde() {
+      return this.$refs.eventMarkdownEditor.simplemde;
+    }
+  },
+  mounted() {
+    if (this.simplemde) {
+      this.content = this.simplemde.markdown(this.event.text);
+    }
   },
   methods: {
     ...mapUserActions({
@@ -149,11 +157,17 @@ export default {
       }
     },
     closeMenuDropdown() {
-      this.$refs.menu.closeDropdown()
+      this.$refs.menu.closeDropdown();
     },
     async editComment() {
       this.isEditable = true;
-      this.closeMenuDropdown()
+      this.closeMenuDropdown();
+      if (this.simplemde) {
+        // This ensures that text is displayed:
+        setTimeout(() => {
+          this.simplemde.codemirror.refresh();
+        }, 0);
+      }
     },
     saveComment() {
       this.patchEvent({
@@ -270,7 +284,6 @@ export default {
 }
 
 .event-comment {
-  width: 100%;
   border-top: 1px solid #f5f5f5;
   padding: 10px 40px;
   margin: 0;
@@ -310,13 +323,22 @@ export default {
 }
 
 @media (max-width: 700px) {
-  div.event-header {
+  .event-header {
     padding: 20px;
   }
 
-  div.event-comment {
+  .event-comment {
     padding-left: 20px;
     padding-right: 20px;
   }
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.1s;
+}
+.fade-enter,
+.fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
+  opacity: 0;
 }
 </style>
