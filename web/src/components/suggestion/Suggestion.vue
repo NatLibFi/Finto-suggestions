@@ -28,7 +28,16 @@
     <div v-if="suggestion" class="suggestion-container">
       <div class="suggestion-header">
         <div class="suggestion-header-headline">
-          <h1 class="suggestion-title">{{ suggestion.preferred_label.fi.value }}</h1>
+          <h1
+            v-if="suggestion.preferred_label.fi && suggestion.preferred_label.fi.value"
+            class="suggestion-title">
+            {{ suggestion.preferred_label.fi.value }}
+          </h1>
+          <h1
+            v-if="suggestion.preferred_label.fi && !suggestion.preferred_label.fi.value"
+            class="suggestion-title">
+            {{ suggestion.preferred_label.fi }}
+          </h1>
           <div class="suggestion-header-details">
             <span><strong>#{{ suggestion.id }} </strong></span>
             <span>{{ dateTimeFormatLabel(suggestion.created) }} </span>
