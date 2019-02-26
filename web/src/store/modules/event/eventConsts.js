@@ -15,5 +15,7 @@ export const eventMutations = {
 
 export const eventActions = {
   ADD_NEW_EVENT: 'addNewEvent',
+  PATCH_EVENT: 'patchEvent',
+  DELETE_EVENT: 'deleteEvent',
   GET_EVENTS_BY_SUGGESTION_ID: 'getEventsBySuggestionId'
 };

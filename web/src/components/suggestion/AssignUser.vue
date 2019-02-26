@@ -131,7 +131,6 @@ export default {
   background: #ffffff;
   border: 1px solid #f5f5f5;
   box-sizing: border-box;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
   border-radius: 1px;
   z-index: 10;
 }

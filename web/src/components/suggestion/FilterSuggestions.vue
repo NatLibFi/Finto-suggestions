@@ -246,13 +246,17 @@ export default {
       this.selectedOptionIndex.TAGS = [];
     },
     resetFilters() {
-      this.hasTouchedFilters = false;
       this.selectedOptionIndex = {
         STATUS: 0,
         TAGS: [],
         TYPE: 0,
         MEETING: null
       };
+      this.tagChanged(null);
+      this.meetingChanged(null);
+      this.typeChanged(0);
+      this.stateChanged(0);
+      this.hasTouchedFilters = false;
     },
     closeDropDown() {
       this.isDropDownOpened.STATUS = false;

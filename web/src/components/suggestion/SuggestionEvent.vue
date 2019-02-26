@@ -8,16 +8,21 @@
       <div class="event-info">
         <p class="event-user">
           <span class="user-name">{{ user.name }} </span>
-          <span v-if="type == 'ACTION'">
+          <span v-if="type === eventTypes.ACTION">
             {{ event.text }}
             <span class="tag">{{ event.value }}</span>
           </span>
         </p>
         <p class="date-sent">{{ dateTimeFormatLabel(this.event.created) }}</p>
       </div>
-      <menu-button :options="options" class="menu" />
+      <div
+        v-if="isAuthenticated && (role === userRoles.ADMIN || authenticatedUserId === event.user_id )"
+        class="menu-wrapper">
+        <menu-button v-if="type === eventTypes.COMMENT" :options="commentOptions" class="menu" />
+        <menu-button v-if="type === eventTypes.ACTION" :options="actionOptions" class="menu" />
+      </div>
     </div>
-    <div v-if="type == 'COMMENT'" class="event-comment">
+    <div v-if="type === eventTypes.COMMENT" class="event-comment">
       <p>{{ event.text }}</p>
     </div>
   </div>
@@ -27,7 +32,16 @@
 <script>
 import MenuButton from '../common/MenuButton';
 import { dateTimeFormatLabel } from '../../utils/dateHelper';
+import { userRoles } from '../../utils/userHelpers';
 
+// eslint-disable-next-line
+import { mapAuthenticatedUserGetters } from '../../store/modules/authenticatedUser/authenticatedUserModule.js';
+// eslint-disable-next-line
+import { authenticatedUserGetters } from '../../store/modules/authenticatedUser/authenticatedUserConsts.js';
+
+import { eventTypes } from '../../utils/eventHelper.js';
+import { eventActions } from '../../store/modules/event/eventConsts.js';
+import { mapEventActions } from '../../store/modules/event/eventModule.js';
 import { mapUserGetters, mapUserActions } from '../../store/modules/user/userModule';
 import { userGetters, userActions } from '../../store/modules/user/userConsts';
 import { userNameInitials } from '../../utils/userHelpers';
@@ -45,21 +59,31 @@ export default {
     type: {
       type: String,
       required: true
-    }
+    },
+    suggestionId: [String, Number],
+    isAuthenticated: Boolean
   },
   data() {
     return {
       dateTimeFormatLabel,
       compineEventTextContent,
+      eventTypes,
       userNameInitials: '',
-      options: [
+      userRoles,
+      commentOptions: [
         {
           title: 'Muokkaa kommenttia',
           method: this.editComment
         },
         {
           title: 'Poista kommentti',
-          method: this.deleteComment
+          method: this.removeEvent
+        }
+      ],
+      actionOptions: [
+        {
+          title: 'Poista tapahtuma',
+          method: this.removeEvent
         }
       ]
     };
@@ -71,22 +95,29 @@ export default {
   computed: {
     ...mapUserGetters({
       user: userGetters.GET_USER
+    }),
+    ...mapAuthenticatedUserGetters({
+      authenticatedUserId: authenticatedUserGetters.GET_USER_ID,
+      role: authenticatedUserGetters.GET_USER_ROLE
     })
   },
   methods: {
     ...mapUserActions({
       getUser: userActions.GET_USER
     }),
+    ...mapEventActions({
+      deleteEvent: eventActions.DELETE_EVENT
+    }),
     fetchUserNameAndInitials() {
       if (this.user) {
         this.userNameInitials = userNameInitials(this.user.name);
       }
     },
-    editComment() {
-      console.log('edit comment')
+    async editComment() {
+      await console.log('edit comment');
     },
-    deleteComment() {
-      console.log('delete comment')
+    async removeEvent() {
+      await this.deleteEvent({ eventId: this.event.id, suggestionId: this.suggestionId });
     }
   }
 };
@@ -187,6 +218,10 @@ export default {
 .type-modify {
   background-color: #ff8111;
   border: 2px solid #ff8111;
+}
+
+.menu-wrapper {
+  display: inline;
 }
 
 .menu {

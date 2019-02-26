@@ -119,7 +119,9 @@
       <div v-for="event in events" :key="event.id">
         <suggestion-event
           :event="event"
-          :type="event.event_type" />
+          :type="event.event_type"
+          :suggestionId="suggestionId"
+          :isAuthenticated="isAuthenticated" />
       </div>
     </div>
 
