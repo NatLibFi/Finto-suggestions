@@ -83,10 +83,10 @@ export default {
     filterResults() {
       this.getUsers();
       if (this.searchQuery.length >= 1) {
-        const filteredUsers = this.users.filter(user =>
+        this.filteredUsers = this.users.filter(user =>
           user.name.toLowerCase().includes(this.searchQuery.toLowerCase())
         );
-        this.setUsers(filteredUsers);
+        this.setUsers(this.filteredUsers);
       }
     },
     openSearch() {
