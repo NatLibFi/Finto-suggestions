@@ -20,4 +20,4 @@ COPY --from=build-stage /app/dist /usr/share/nginx/html
 
 EXPOSE 8040
 
-ENTRYPOINT ["nginx", "-g", "daemon off;"]
+CMD ["nginx", "-g", "daemon off;"]
