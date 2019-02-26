@@ -1,8 +1,8 @@
 <template>
 <div>
   <span v-if="meetingId && meetingId > 0">–
-    <a v-if="!meeting" @click="goToMeeting(meetingId)"> Kokous {{ meetingId }}</a>
-    <a v-if="meeting && meeting.name" @click="goToMeeting(meetingId)"> {{ meeting.name }}</a>
+    <a v-if="meeting && !meeting.name" @click="goToMeeting(meetingId)"> Kokous {{ meetingId }}</a>
+    <a v-if="meeting && meeting.name" @click="goToMeeting(meetingId)">{{ meeting.name }}</a>
     <a v-if="isAuthenticated && isAdmin"
       @click="isOpenDropdown = true"> (muokkaa)</a>
   </span>
