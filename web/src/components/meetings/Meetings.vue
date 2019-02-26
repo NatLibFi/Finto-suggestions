@@ -14,23 +14,65 @@
         <br><br>
         Alla näet tulevien ja menneiden YSA-kokouksien asialistat.
       </p>
+      <p>
+        <a
+        @click="openMeetingDialog()"
+        v-if="isAuthenticated && role === userRoles.ADMIN"
+        class="new-meeting-button">Luo uusi kokous
+        </a>
+      </p>
     </div>
   </div>
+  <centered-dialog
+    @close="isMeetingDialogOpen = false"
+    v-if="isMeetingDialogOpen && isAuthenticated && role === userRoles.ADMIN">
+    <meeting-management
+      @close="isMeetingDialogOpen = false"
+      :isNewMeeting="true" />
+  </centered-dialog>
 </div>
 </template>
 
 <script>
 import SvgIcon from '../icons/SvgIcon';
 import IconArrow from '../icons/IconArrow';
+import CenteredDialog from '../common/CenteredDialog';
+import MeetingManagement from './MeetingManagement';
+
+import { userRoles } from '../../utils/userHelpers.js';
+// eslint-disable-next-line
+import { authenticatedUserGetters } from '../../store/modules/authenticatedUser/authenticatedUserConsts.js';
+// eslint-disable-next-line
+import { mapAuthenticatedUserGetters } from '../../store/modules/authenticatedUser/authenticatedUserModule.js';
 
 export default {
   components: {
     SvgIcon,
-    IconArrow
+    IconArrow,
+    CenteredDialog,
+    MeetingManagement
+  },
+  data() {
+    return {
+      isMeetingDialogOpen: false,
+      userRoles
+    };
+  },
+  computed: {
+    ...mapAuthenticatedUserGetters({
+      isAuthenticated: authenticatedUserGetters.GET_IS_AUTHENTICATED,
+      role: authenticatedUserGetters.GET_USER_ROLE
+    })
   },
   methods: {
-    goToHome: function() {
+    goToHome() {
       this.$router.push('/');
+    },
+    openMeetingDialog() {
+      this.isMeetingDialogOpen = true;
+    },
+    closeDialog() {
+      this.isMeetingDialogOpen = false;
     }
   }
 };
@@ -71,6 +113,12 @@ export default {
   background-color: #ffffff;
   border: 2px solid #f5f5f5;
   padding-left: 0; /* reset inital padding for ul tags */
+}
+
+.new-meeting-button {
+  cursor: pointer;
+  cursor: hand;
+  font-size: 14px;
 }
 
 .header-content {

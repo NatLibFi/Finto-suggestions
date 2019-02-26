@@ -3,8 +3,12 @@
     <div class="item-summary">
       <div class="title">
         <p class="title-row">
-          <span v-if="!suggestion.preferred_label.fi.value" class="item-name">{{ suggestion.preferred_label.fi }}</span>
-          <span v-if="suggestion.preferred_label.fi.value" class="item-name">{{ suggestion.preferred_label.fi.value }}</span>
+          <span v-if="suggestion.preferred_label.fi && suggestion.preferred_label.fi.value" class="item-name">
+            {{ suggestion.preferred_label.fi.value }}
+          </span>
+          <span v-else class="item-name">
+            {{ suggestion.preferred_label.fi }}
+          </span>
           <span
             :class="[suggestionTypeToStyleClass[suggestion.suggestion_type], 'tag']">
             {{ suggestionTypeToString[suggestion.suggestion_type] }}
@@ -45,8 +49,9 @@
           <strong>#{{ suggestion.id }}</strong>
           {{ dateTimeFormatLabel(suggestion.created) }}
           <span v-if="suggestion.meeting_id && (meeting && !meeting.name)">
+            –
             <a @click.stop="goToMeeting(suggestion.meeting_id)">
-              – Kokous {{ suggestion.meeting_id }}
+              Kokous {{ suggestion.meeting_id }}
             </a>
           </span>
           <span v-if="meeting && meeting.name">
