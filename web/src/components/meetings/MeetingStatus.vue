@@ -9,6 +9,7 @@
         Ei asetettua päivämäärää
       </span>
       <span v-if="isAuthenticated && role === userRoles.ADMIN">
+        –
         <a
         @click="openMeetingDialog()"
         class="edit-meeting-button">Muokkaa kokousta
