@@ -46,7 +46,7 @@
 import CenteredDialog from '../common/CenteredDialog';
 import MeetingManagement from './MeetingManagement';
 import { mapMeetingGetters, mapMeetingActions } from '../../store/modules/meeting/meetingModule.js';
-import { meetingGetters, meetingActions } from '../../store/modules/meeting/meetingConst.js';
+import { meetingGetters, meetingActions } from '../../store/modules/meeting/meetingConsts.js';
 
 import { userRoles } from '../../utils/userHelpers.js';
 // eslint-disable-next-line
@@ -59,6 +59,7 @@ import { mapSuggestionGetters } from '../../store/modules/suggestion/suggestionM
 import { suggestionGetters } from '../../store/modules/suggestion/suggestionConsts.js';
 import { dateTimeFormatLabel } from '../../utils/dateHelper';
 import { comparerDesc } from '../../utils/sortingHelper.js';
+import { suggestionStateStatus } from '../../utils/suggestionHelpers.js';
 
 export default {
   components: {
@@ -135,7 +136,7 @@ export default {
       let nextSuggestionId = null;
       if (this.suggestion_items && this.suggestion_items.length > 0) {
         const orderedSuggestionList = this.suggestion_items
-          .filter(s => s.status === null)
+          .filter(s => s.status === suggestionStateStatus.READ)
           .sort(comparerDesc('created'));
         if (orderedSuggestionList && orderedSuggestionList.length > 0) {
           nextSuggestionId = orderedSuggestionList[0].id;

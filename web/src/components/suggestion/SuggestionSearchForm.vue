@@ -31,6 +31,12 @@ export default {
   computed: {
     ...mapSuggestionGetters({ filters: suggestionGetters.GET_FILTERS })
   },
+  created() {
+    if(this.filters.length > 0) {
+      const searchFilter = this.filters.find(f => f.type === filterType.SEARCH);
+      this.searchQuery = searchFilter ? searchFilter.value : '';
+    }
+  },
   methods: {
     ...mapSuggestionMutations({ setFilters: suggestionMutations.SET_FILTERS }),
     doSearch() {

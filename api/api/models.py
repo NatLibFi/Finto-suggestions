@@ -157,7 +157,7 @@ class Meeting(db.Model, SerializableMixin):
             e.id for e in self.suggestions]  # only ids
 
         serialized['processed'] = Counter(
-            [s.status.name.upper() for s in self.suggestions if s is not None and s.status is not None])
+            [s.status.name.upper() for s in self.suggestions if s is not None and s.status is not 'READ' or 'RECEIVED'])
 
         return serialized
 
@@ -166,7 +166,7 @@ class Suggestion(db.Model, SerializableMixin):
     __tablename__ = 'suggestions'
     __public__ = ["alternative_labels", "broader_labels", "created", "description", "groups", "id", "created", "modified",
                   "narrower_labels", "organization", "preferred_label", "reason", "related_labels", "status", "suggestion_type",
-                  "uri", "scopeNote", "exactMatches", "neededFor", "meeting_id", "user_id"]
+                  "uri", "scopeNote", "exactMatches", "neededFor", "yse_term", "meeting_id", "user_id"]
 
     id = db.Column(db.Integer, primary_key=True)
     created = db.Column(db.DateTime, index=True, default=datetime.utcnow)
@@ -174,7 +174,7 @@ class Suggestion(db.Model, SerializableMixin):
     # meeting: backref
 
     suggestion_type = db.Column(db.Enum(SuggestionTypes))
-    status = db.Column(db.Enum(SuggestionStatusTypes), nullable=True)
+    status = db.Column(db.Enum(SuggestionStatusTypes), nullable=False)
     uri = db.Column(db.String(256))
 
     organization = db.Column(db.String(256))
@@ -182,7 +182,7 @@ class Suggestion(db.Model, SerializableMixin):
     reason = db.Column(db.Text)
 
     preferred_label = db.Column(db.JSON)
-    alternative_labels = db.Column(db.ARRAY(db.JSON))
+    alternative_labels = db.Column(db.JSON)
 
     broader_labels = db.Column(db.JSON)
     narrower_labels = db.Column(db.JSON)

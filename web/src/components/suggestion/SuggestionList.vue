@@ -1,6 +1,6 @@
 <template>
 <div class="list-container">
-  <suggestion-header
+  <suggestion-list-header
     :openSuggestionCount="openCount || 0"
     :resolvedSuggestionCount="resolvedCount || 0"
     :meetingSort="meetingSort"
@@ -17,15 +17,14 @@
     </transition-group>
   </ul>
   <suggestion-list-pagination
-    v-if="calculatePageCountForPagination() > 1"
-    :pageCount="calculatePageCountForPagination()"
+    :pageCount="paginationPageCount"
     @paginationPageChanged="paginationPageChanged"
   />
 </div>
 </template>
 
 <script>
-import SuggestionHeader from './SuggestionHeader';
+import SuggestionListHeader from './SuggestionListHeader';
 import SuggestionItem from './SuggestionItem';
 
 import {
@@ -39,12 +38,12 @@ import {
 } from '../../store/modules/suggestion/suggestionModule.js';
 
 import SuggestionListPagination from './SuggestionListPagination';
-import { filterType } from '../../utils/suggestionHelpers';
+import { filterType, calculateOpenAndResolvedSuggestionCounts } from '../../utils/suggestionHelpers';
 import { sortingKeys } from '../../utils/sortingHelper.js';
 
 export default {
   components: {
-    SuggestionHeader,
+    SuggestionListHeader,
     SuggestionItem,
     SuggestionListPagination
   },
@@ -58,6 +57,7 @@ export default {
   data() {
     return {
       paginationMaxCount: 10,
+      paginationPageCount: 0,
       openCount: 0,
       resolvedCount: 0,
       paginated_items: [],
@@ -77,6 +77,10 @@ export default {
     await this.getSuggestionsSelectedSortKey();
     await this.getMeetingsSuggestionsSelectedSortKey();
     await this.handleSuggestionFetching();
+
+    if(this.filters.length > 0) {
+      this.filterSuggestions();
+    }
   },
   methods: {
     ...mapSuggestionActions({
@@ -119,31 +123,35 @@ export default {
     getPaginationStaringIndex(pageNumber) {
       return pageNumber > 1 ? this.paginationMaxCount * pageNumber - this.paginationMaxCount : 0;
     },
-    getPaginationEndingIndex(pageNumber) {
+    getPaginationEndingIndex(pageNumber, items) {
       const endIndex = this.paginationMaxCount * pageNumber;
-      return endIndex > this.items.length ? this.items.length : endIndex;
+      return items === null
+        ? endIndex > this.items.length ? this.items.length : endIndex
+        : endIndex > items.length ? items.length : endIndex
     },
     async paginationPageChanged(pageNumber = 1, items = null) {
       const start = this.getPaginationStaringIndex(pageNumber);
-      const end = this.getPaginationEndingIndex(pageNumber);
+      const end = this.getPaginationEndingIndex(pageNumber, items);
       const paginatedItems = items ? items : this.items;
       this.paginated_items =
         paginatedItems && paginatedItems.length > 0 ? paginatedItems.slice(start, end) : [];
-      this.calculateOpenAndResolvedSuggestionCounts();
+      this.calculateOpenAndResolvedSuggestionCounts(items);
+      this.calculatePageCountForPagination(items);
     },
-    calculatePageCountForPagination() {
-      return Math.ceil(this.items.length / this.paginationMaxCount);
+    calculatePageCountForPagination(items = null) {
+      this.paginationPageCount = items === null
+        ? Math.ceil(this.items.length / this.paginationMaxCount)
+        : Math.ceil(items.length / this.paginationMaxCount);
     },
-    calculateOpenAndResolvedSuggestionCounts() {
-      if (this.items && this.items.length > 0) {
-        this.openCount = this.items.filter(i => i.status === null).length;
-        this.resolvedCount = this.items.filter(i => i.status !== null).length;
-      }
-    }
-  },
-  watch: {
-    async filters() {
-      if (this.filters && this.filters.length > 0) {
+    calculateOpenAndResolvedSuggestionCounts(items = null) {
+      const counts = items === null
+        ? calculateOpenAndResolvedSuggestionCounts(this.items)
+        : calculateOpenAndResolvedSuggestionCounts(items);
+      this.openCount = counts && counts.openCount ? counts.openCount : 0;
+      this.resolvedCount = counts && counts.resolvedCount ? counts.resolvedCount : 0;
+    },
+    async filterSuggestions() {
+     if (this.filters && this.filters.length > 0) {
         let items = this.items;
         this.filters.forEach(filter => {
           switch (filter.type) {
@@ -174,12 +182,20 @@ export default {
       } else {
         await this.handleSuggestionFetching();
       }
+    }
+  },
+  watch: {
+    async filters() {
+      this.filterSuggestions();
     },
     async suggestionsSelectedSort() {
       await this.handleSuggestionFetching();
     },
     async meetingSuggestionsSelectedSort() {
       await this.handleSuggestionFetching();
+    },
+    async items() {
+       await this.paginationPageChanged(1, this.items);
     }
   }
 };
