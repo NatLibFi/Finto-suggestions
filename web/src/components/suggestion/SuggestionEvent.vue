@@ -32,7 +32,8 @@
     </div>
     <div v-if="type === eventTypes.COMMENT">
         <div v-if="!isEditable" class="event-comment">
-          <p v-html="$sanitize(content)"></p>
+          <p v-if="content.length > 0" v-html="$sanitize(content)"></p>
+          <p v-if="content.length === 0"><em>Tyhjä kommentti.</em></p>
         </div>
         <div v-show="isEditable" class="edit-comment">
           <markdown-editor
@@ -204,7 +205,7 @@ export default {
 }
 
 .event-header {
-  padding: 20px 40px;
+  padding: 20px 60px 20px 40px;
   position: relative;
 }
 
@@ -327,7 +328,7 @@ export default {
 
 @media (max-width: 700px) {
   .event-header {
-    padding: 20px;
+    padding: 20px 60px 20px 20px;
   }
 
   .event-comment {
