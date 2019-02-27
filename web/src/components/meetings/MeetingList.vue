@@ -43,6 +43,7 @@ export default {
     return {
       pageCount: 1,
       paginated_meetings: [],
+      // TODO: add counters for meetingCounts:
       futureMeetingCount: 0,
       pastMeetingCount: 0
     };

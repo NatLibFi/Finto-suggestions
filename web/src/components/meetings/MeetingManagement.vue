@@ -101,7 +101,7 @@ export default {
           meetingId: this.meetingId,
           data: {
             name: this.$sanitize(this.name),
-            meeting_date: this.$sanitize(this.date)
+            meeting_date: this.date
           }
         })
           .then(() => {
@@ -119,7 +119,7 @@ export default {
       if (!this.$v.$invalid) {
         await this.addNewMeeting({
           name: this.$sanitize(this.name),
-          meeting_date: this.$sanitize(this.date)
+          meeting_date: this.date
         })
           .then(() => {
             this.hasSucceeded = true;

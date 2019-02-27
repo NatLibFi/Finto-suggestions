@@ -95,7 +95,7 @@ export default {
       dateTimeFormatLabel,
       menuOptions: [
         {
-          title: 'Sulje ehdotus',
+          title: 'Poista kokous',
           method: this.removeMeeting
         }
       ]
@@ -120,7 +120,8 @@ export default {
   },
   methods: {
     ...mapMeetingActions({
-      getMeeting: meetingActions.GET_MEETING
+      getMeeting: meetingActions.GET_MEETING,
+      deleteMeeting: meetingActions.DELETE_MEETING
     }),
     goToMeetingList() {
       this.$router.push({
@@ -172,8 +173,9 @@ export default {
     closeDialog() {
       this.isMeetingDialogOpen = false;
     },
-    removeMeeting() {
-      console.log('Ehdotus poistettu?');
+    async removeMeeting() {
+      this.deleteMeeting(this.meetingId);
+      this.$router.push('/meetings');
     }
   },
   watch: {
