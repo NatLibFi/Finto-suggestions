@@ -69,7 +69,7 @@ import { mapEventActions } from '../../store/modules/event/eventModule.js';
 import { mapUserGetters, mapUserActions } from '../../store/modules/user/userModule';
 import { userGetters, userActions } from '../../store/modules/user/userConsts';
 import { userNameInitials } from '../../utils/userHelpers';
-import { compineEventTextContent } from '../../utils/eventHelper';
+import { combineEventTextContent } from '../../utils/eventHelper';
 
 export default {
   components: {
@@ -101,7 +101,7 @@ export default {
       },
       isEditable: false,
       dateTimeFormatLabel,
-      compineEventTextContent,
+      combineEventTextContent,
       eventTypes,
       userNameInitials: '',
       userRoles,
