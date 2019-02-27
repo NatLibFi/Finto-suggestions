@@ -63,13 +63,12 @@ import { mapAuthenticatedUserGetters } from '../../store/modules/authenticatedUs
 // eslint-disable-next-line
 import { authenticatedUserGetters } from '../../store/modules/authenticatedUser/authenticatedUserConsts.js';
 
-import { eventTypes } from '../../utils/eventHelper.js';
+import { combineEventTextContent, eventTypes } from '../../utils/eventHelper';
 import { eventActions } from '../../store/modules/event/eventConsts.js';
 import { mapEventActions } from '../../store/modules/event/eventModule.js';
 import { mapUserGetters, mapUserActions } from '../../store/modules/user/userModule';
 import { userGetters, userActions } from '../../store/modules/user/userConsts';
 import { userNameInitials } from '../../utils/userHelpers';
-import { combineEventTextContent } from '../../utils/eventHelper';
 
 export default {
   components: {
