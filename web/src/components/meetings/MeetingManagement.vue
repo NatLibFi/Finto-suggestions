@@ -58,7 +58,7 @@ import { fi, sv } from 'vuejs-datepicker/dist/locale';
 import { required, minLength } from 'vuelidate/lib/validators';
 
 import { mapMeetingActions } from '../../store/modules/meeting/meetingModule.js';
-import { meetingActions } from '../../store/modules/meeting/meetingConst.js';
+import { meetingActions } from '../../store/modules/meeting/meetingConsts';
 
 export default {
   components: {
