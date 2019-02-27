@@ -107,7 +107,7 @@
         </div>
         <div class="suggestion-header-buttons" v-if="isAuthenticated && role === userRoles.ADMIN">
           <tag-selector :suggestion="suggestion" :userId="userId" />
-          <svg-icon icon-name="more" class="icon-button"><icon-more /></svg-icon>
+          <menu-button :options="menuOptions" name="suggestion-menu" class="menu" ref="menu" />
         </div>
       </div>
 
@@ -151,8 +151,8 @@ import SuggestionEvent from './SuggestionEvent';
 import MeetingStatus from '../meetings/MeetingStatus';
 import MeetingActions from '../meetings/MeetingActions';
 import IconArrow from '../icons/IconArrow';
-import IconMore from '../icons/IconMore';
 import SvgIcon from '../icons/SvgIcon';
+import MenuButton from '../common/MenuButton';
 import AddComment from './AddComment';
 import AssignMeeting from './AssignMeeting';
 
@@ -179,6 +179,7 @@ import { mapEventGetters, mapEventActions } from '../../store/modules/event/even
 import { userActions, userGetters } from '../../store/modules/user/userConsts';
 import { mapUserActions, mapUserGetters } from '../../store/modules/user/userModule';
 
+import { newActionEvent } from '../../utils/tagHelpers';
 import { dateTimeFormatLabel } from '../../utils/dateHelper.js';
 
 // eslint-disable-next-line
@@ -197,8 +198,8 @@ export default {
     MeetingStatus,
     MeetingActions,
     IconArrow,
-    IconMore,
     SvgIcon,
+    MenuButton,
     AddComment,
     AssignMeeting,
     TagSelector
@@ -227,6 +228,20 @@ export default {
         NEXT: 'next',
         PREVIOUS: 'previous'
       },
+      menuOptions: [
+        {
+          title: 'Merkitse vastaanotettuksi',
+          method: this.markAsReadSuggestion
+        },
+        {
+          title: 'Hylkää ehdotus',
+          method: this.rejectSuggestion
+        },
+        {
+          title: 'Arkistoi ehdotus',
+          method: this.archiveSuggestion
+        }
+      ],
       userRoles,
       suggestionStateStatus,
       suggestionStateStatusToString,
@@ -263,10 +278,12 @@ export default {
   methods: {
     ...mapSuggestionActions({
       getSuggestionById: suggestionActions.GET_SUGGESTION_BY_ID,
-      getSuggestionsByMeetingId: suggestionActions.GET_SUGGESTIONS_BY_MEETING_ID
+      getSuggestionsByMeetingId: suggestionActions.GET_SUGGESTIONS_BY_MEETING_ID,
+      setSuggestionArchived: suggestionActions.SET_SUGGESTION_ARCHIVED
     }),
     ...mapEventActions({
-      getEventsBySuggestionId: eventActions.GET_EVENTS_BY_SUGGESTION_ID
+      getEventsBySuggestionId: eventActions.GET_EVENTS_BY_SUGGESTION_ID,
+      addEvent: eventActions.ADD_NEW_EVENT
     }),
     ...mapUserActions({
       getUser: userActions.GET_USER
@@ -364,6 +381,37 @@ export default {
     },
     handleOpenTagSelector() {
       this.openTagSelector ? (this.openTagSelector = false) : (this.openTagSelector = true);
+    },
+    closeMenuDropdown() {
+      this.$refs.menu.closeDropdown();
+    },
+    async createEvent(status) {
+      const event = newActionEvent('käsitteli ehdotuksen.', status, this.userId, this.suggestionId);
+      await this.addEvent(event);
+    },
+    async markAsReadSuggestion() {
+      await this.setSuggestionStatus({
+        suggestionId: this.suggestionId,
+        status: suggestionStateStatus.READ
+      });
+      await this.createEvent(suggestionStateStatus.READ);
+      this.closeMenuDropdown();
+    },
+    async rejectSuggestion() {
+      await this.setSuggestionStatus({
+        suggestionId: this.suggestionId,
+        status: suggestionStateStatus.REJECTED
+      });
+      await this.createEvent(suggestionStateStatus.REJECTED);
+      this.closeMenuDropdown();
+    },
+    async archiveSuggestion() {
+      await this.setSuggestionStatus({
+        suggestionId: this.suggestionId,
+        status: suggestionStateStatus.ARCHIVED
+      });
+      await this.createEvent(suggestionStateStatus.ARCHIVED);
+      this.closeMenuDropdown();
     }
   },
   watch: {
@@ -480,6 +528,10 @@ h1.suggestion-title {
 }
 
 .icon-button {
+  margin-left: 20px;
+}
+
+.menu {
   margin-left: 20px;
 }
 
