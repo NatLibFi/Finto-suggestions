@@ -25,7 +25,7 @@ def upgrade():
     op.add_column('events', sa.Column('sub_type', sa.Enum('STATUS', 'TAG', name='eventactionsubtypes'), nullable=True))
 
     op.execute('ALTER TYPE suggestionstatustypes RENAME TO _suggestionstatustypes')
-    suggestions_status_types = postgresql.ENUM('RECEIVED', 'READ ', 'REJECTED', 'ACCEPTED', 'RETAINED', 'ARCHIVED', name='suggestionstatustypes')
+    suggestions_status_types = postgresql.ENUM('RECEIVED', 'READ', 'REJECTED', 'ACCEPTED', 'RETAINED', 'ARCHIVED', name='suggestionstatustypes')
     suggestions_status_types.create(op.get_bind(), checkfirst=False)
     op.execute('ALTER TABLE suggestions ALTER COLUMN status TYPE suggestionstatustypes USING status::_suggestionstatustypes::text::suggestionstatustypes')
     op.execute('DROP TYPE _suggestionstatustypes')
