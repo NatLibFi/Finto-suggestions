@@ -500,9 +500,6 @@ export default {
   background-color: #ffffff;
   border: 1px solid #e1e1e1;
   border-radius: 2px;
-  -webkit-box-shadow: 6px 8px 17px -6px rgba(80, 80, 80, 0.35);
-  -moz-box-shadow: 6px 8px 17px -6px rgba(80, 80, 80, 0.35);
-  box-shadow: 6px 8px 17px -6px rgba(80, 80, 80, 0.35);
 }
 
 .user-bubble {

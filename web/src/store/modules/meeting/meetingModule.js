@@ -62,7 +62,7 @@ export default {
     async [meetingActions.ADD_NEW_MEETING]({ dispatch }, params) {
       const result = await api.meeting.addNewMeeting(params);
       if (result && result.code === 201) {
-        dispatch(meetingMutations.SET_MEETING, result.data);
+        dispatch(meetingActions.GET_MEETINGS);
       } else {
         this.raiseError();
       }

@@ -27,7 +27,7 @@ def get_events(limit: int = None, offset: int = None, user_id: int = None, sugge
             query = query.limit(limit)
         if offset:
             query = query.offset(offset)
-        return query.all()
+        return query.order_by(Event.created.asc()).all()
 
     return get_all_or_404_custom(filter_func)
 

@@ -133,7 +133,9 @@
       <div v-for="event in events" :key="event.id">
         <suggestion-event
           :event="event"
-          :type="event.event_type" />
+          :type="event.event_type"
+          :suggestionId="suggestionId"
+          :isAuthenticated="isAuthenticated" />
       </div>
     </div>
 
@@ -502,7 +504,7 @@ h1.suggestion-title {
 .tag {
   background-color: #4794a2;
   border: 2px solid #4794a2;
-  padding: 0 6px;
+  padding: 1px 6px 0;
   margin: 4px 4px 0 0;
   border-radius: 2px;
   display: inline-block;

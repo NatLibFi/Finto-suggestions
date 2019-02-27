@@ -83,10 +83,10 @@ export default {
     filterResults() {
       this.getUsers();
       if (this.searchQuery.length >= 1) {
-        const filteredUsers = this.users.filter(user =>
+        this.filteredUsers = this.users.filter(user =>
           user.name.toLowerCase().includes(this.searchQuery.toLowerCase())
         );
-        this.setUsers(filteredUsers);
+        this.setUsers(this.filteredUsers);
       }
     },
     openSearch() {
@@ -130,7 +130,6 @@ export default {
   background: #ffffff;
   border: 1px solid #f5f5f5;
   box-sizing: border-box;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
   border-radius: 1px;
   z-index: 10;
 }

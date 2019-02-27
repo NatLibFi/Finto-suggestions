@@ -79,10 +79,10 @@ export default {
     }),
     async updateUser() {
       const params = {
-        name: this.userName,
-        title: this.userTitle,
-        organization: this.userOrg,
-        imageUrl: this.userImageUrl
+        name: this.$sanitize(this.userName),
+        title: this.$sanitize(this.userTitle),
+        organization: this.$sanitize(this.userOrg),
+        imageUrl: this.$sanitize(this.userImageUrl)
       };
       await this.patchUser(this.userId, params);
     },

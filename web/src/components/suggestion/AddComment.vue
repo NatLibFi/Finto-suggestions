@@ -59,7 +59,7 @@ export default {
       content: '',
       mdeConfigs: {
         autofocus: false,
-        hideIcons: ['preview', 'fullscreen', 'side-by-side', 'guide'],
+        hideIcons: ['preview', 'fullscreen', 'side-by-side', 'guide', 'image'],
         indentWithTabs: false,
         spellChecker: false,
         status: false,
@@ -80,7 +80,7 @@ export default {
     saveNewComment() {
       if (this.isAuthenticated && this.userId > 0 && this.suggestionId > 0) {
         this.addNewEvent({
-          event: newCommentEvent(this.content, this.userId, this.suggestionId),
+          event: newCommentEvent(this.$sanitize(this.content), this.userId, this.suggestionId),
           suggestionId: parseInt(this.suggestionId)
         });
         this.content = '';

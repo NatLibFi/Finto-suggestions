@@ -1,6 +1,8 @@
 <template>
   <div class="filter-suggestions">
-    <h5>Suodata hakutuloksia</h5>
+    <h5>Suodata hakutuloksia
+      <a v-if="hasTouchedFilters" @click="resetFilters()" class="clear-button">Tyhjennä valinnat</a>
+    </h5>
     <div @click="isDropDownOpened.STATUS = !isDropDownOpened.STATUS" class="filter-item">
       <div :class="[isDropDownOpened.STATUS ? 'selected' : '', 'drop-down-button']">
         <span>Käsittelyn tila</span>
@@ -90,8 +92,6 @@ import { tagActions, tagGetters } from '../../store/modules/tag/tagConst.js';
 
 import { handleDropDownSelection } from '../../utils/filterValueHelper.js';
 
-// import { format, parse } from 'date-fns';
-
 export default {
   components: {
     FilterDropDown,
@@ -109,6 +109,7 @@ export default {
       TYPE: 0, // multiple choice
       MEETING: null // no default
     },
+    hasTouchedFilters: false,
     isDropDownOpened: {
       STATUS: false,
       TAG: false,
@@ -170,6 +171,7 @@ export default {
       setFilters: suggestionMutations.SET_FILTERS
     }),
     stateChanged(selected) {
+      this.hasTouchedFilters = true;
       handleDropDownSelection(
         selected === 'NONE' ? null : selected,
         filterType.STATUS,
@@ -179,6 +181,7 @@ export default {
       );
     },
     typeChanged(selected) {
+      this.hasTouchedFilters = true;
       handleDropDownSelection(
         selected === 'NONE' ? null : selected,
         filterType.TYPE,
@@ -192,19 +195,18 @@ export default {
 
       if (this.meetings && this.meetings.length > 0) {
         this.meetings.forEach(meeting => {
-          //TODO: format date better with date-fns
           if (meeting.meeting_date) {
             meetings.push({
-              label: `${meeting.meeting_date.split('T')[0]}`,
+              label: meeting.id + ': ' + meeting.name,
               value: meeting.id
             });
           }
         });
       }
-
       return meetings;
     },
     meetingChanged(selected) {
+      this.hasTouchedFilters = true;
       handleDropDownSelection(
         selected,
         filterType.MEETING,
@@ -223,6 +225,7 @@ export default {
       return tags;
     },
     tagChanged(selected) {
+      this.hasTouchedFilters = true;
       handleDropDownSelection(
         selected,
         filterType.TAG,
@@ -242,6 +245,19 @@ export default {
     resetTags() {
       this.selectedOptionIndex.TAGS = [];
     },
+    resetFilters() {
+      this.selectedOptionIndex = {
+        STATUS: 0,
+        TAGS: [],
+        TYPE: 0,
+        MEETING: null
+      };
+      this.tagChanged(null);
+      this.meetingChanged(null);
+      this.typeChanged(0);
+      this.stateChanged(0);
+      this.hasTouchedFilters = false;
+    },
     closeDropDown() {
       this.isDropDownOpened.STATUS = false;
       this.isDropDownOpened.TAG = false;
@@ -255,6 +271,16 @@ export default {
 <style scoped>
 h5 {
   margin: 0 auto 2px;
+}
+
+.clear-button {
+  font-size: 12px;
+  cursor: pointer;
+  cursor: hand;
+  -webkit-user-select: none; /* Safari */
+  -moz-user-select: none; /* Firefox */
+  -ms-user-select: none; /* IE10+/Edge */
+  user-select: none; /* Standard */
 }
 
 .filter-suggestions {

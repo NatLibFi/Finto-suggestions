@@ -1,8 +1,8 @@
 <template>
 <div>
   <span v-if="meetingId && meetingId > 0">–
-    <a v-if="!meeting" @click="goToMeeting(meetingId)"> Kokous {{ meetingId }}</a>
-    <a v-if="meeting && meeting.name" @click="goToMeeting(meetingId)"> {{ meeting.name }}</a>
+    <a v-if="meeting && !meeting.name" @click="goToMeeting(meetingId)"> Kokous {{ meetingId }}</a>
+    <a v-if="meeting && meeting.name" @click="goToMeeting(meetingId)">{{ meeting.name }}</a>
     <a v-if="isAuthenticated && isAdmin"
       @click="isOpenDropdown = true"> (muokkaa)</a>
   </span>
@@ -97,13 +97,13 @@ export default {
     }),
     ...mapMeetingMutations({ setMeetings: meetingMutations.SET_MEETINGS }),
     filterResults() {
+      this.getMeetings();
       if (this.searchQuery.length >= 0 && this.meetings) {
         this.filteredMeetings = this.meetings.filter(meeting =>
           meeting.name.toLowerCase().includes(this.searchQuery.toLowerCase())
         );
         this.setMeetings(this.filteredUsers);
       }
-      this.getMeetings();
     },
     assignToMeeting(id) {
       this.assignSuggestionToMeeting({ suggestionId: this.suggestion.id, meetingId: id });

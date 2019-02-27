@@ -254,7 +254,6 @@ div.tag-selector-new-tag > p > button:hover {
 
 div.tag-selector-new-tag > p > button:active {
   color: #ababab;
-  box-shadow: 0 2px #8d8d8d;
   transform: translateY(4px);
   outline: none;
 }
@@ -296,7 +295,6 @@ div.tag-selector-new-tag-form-submit > button:hover {
 
 div.tag-selector-new-tag-form-submit > button:active {
   color: #ababab;
-  box-shadow: 0 2px #8d8d8d;
   transform: translateY(4px);
   outline: none;
 }
