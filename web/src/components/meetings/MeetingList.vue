@@ -43,14 +43,13 @@ export default {
     return {
       pageCount: 1,
       paginated_meetings: [],
-      // TODO: add counters for meetingCounts:
       futureMeetingCount: 0,
       pastMeetingCount: 0
     };
   },
   async created() {
     await this.getMeetings();
-    this.calcultePastAndFutureMeetingCounts();
+    this.calculatePastAndFutureMeetingCounts();
     this.getSelectedSortKey();
     this.sortMeetingList();
   },
@@ -69,7 +68,7 @@ export default {
       return 10;
     },
     sortMeetingList() {
-      if (this.selectedSort) {
+      if (this.meetings && this.meetings.length > 0 && this.selectedSort) {
         if (this.selectedSort === sortingKeys.NEWEST_FIRST) {
           this.meetings.sort(comparerDesc('meeting_date'));
         }
@@ -78,7 +77,7 @@ export default {
         }
       }
     },
-    calcultePastAndFutureMeetingCounts() {
+    calculatePastAndFutureMeetingCounts() {
       let futureMeetings = [];
       let pastMeetings = [];
       const today = Date();
@@ -154,7 +153,7 @@ ul {
   transition: opacity 3s;
 }
 .fade-enter,
-.fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
+.fade-leave-to {
   opacity: 0.75;
 }
 </style>
