@@ -32,7 +32,7 @@
     </div>
     <div v-if="type === eventTypes.COMMENT">
         <div v-if="!isEditable" class="event-comment">
-          <p>{{ content }}</p>
+          <p v-html="$sanitize(content)"></p>
         </div>
         <div v-show="isEditable" class="edit-comment">
           <markdown-editor
@@ -92,7 +92,7 @@ export default {
       content: '',
       mdeConfigs: {
         autofocus: false,
-        hideIcons: ['preview', 'fullscreen', 'side-by-side', 'guide'],
+        hideIcons: ['preview', 'fullscreen', 'side-by-side', 'guide', 'image'],
         indentWithTabs: false,
         spellChecker: false,
         status: false,
@@ -172,7 +172,7 @@ export default {
     saveComment() {
       this.patchEvent({
         eventId: this.event.id,
-        data: { text: this.event.text },
+        data: { text: this.$sanitize(this.event.text) },
         suggestionId: this.suggestionId
       });
       this.isEditable = false;
