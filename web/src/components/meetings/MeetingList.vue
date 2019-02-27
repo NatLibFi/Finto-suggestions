@@ -82,6 +82,7 @@ export default {
       let futureMeetings = [];
       let pastMeetings = [];
       const today = Date();
+
       if (this.meetings && this.meetings.length > 0) {
         this.meetings.forEach(meeting => {
           if (meeting.meeting_date) {
@@ -93,6 +94,8 @@ export default {
             } else {
               pastMeetings.push(meeting);
             }
+          } else {
+            pastMeetings.push(meeting);
           }
         });
       }
