@@ -135,7 +135,8 @@ export default {
       role: authenticatedUserGetters.GET_USER_ROLE
     }),
     simplemde() {
-      return this.$refs.eventMarkdownEditor.simplemde;
+      if (this.$refs.eventMarkdownEditor)
+        return this.$refs.eventMarkdownEditor.simplemde;
     }
   },
   mounted() {
