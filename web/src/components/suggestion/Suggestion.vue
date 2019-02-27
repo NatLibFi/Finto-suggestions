@@ -279,7 +279,7 @@ export default {
     ...mapSuggestionActions({
       getSuggestionById: suggestionActions.GET_SUGGESTION_BY_ID,
       getSuggestionsByMeetingId: suggestionActions.GET_SUGGESTIONS_BY_MEETING_ID,
-      setSuggestionArchived: suggestionActions.SET_SUGGESTION_ARCHIVED
+      setSuggestionStatus: suggestionActions.SET_SUGGESTION_STATUS
     }),
     ...mapEventActions({
       getEventsBySuggestionId: eventActions.GET_EVENTS_BY_SUGGESTION_ID,
