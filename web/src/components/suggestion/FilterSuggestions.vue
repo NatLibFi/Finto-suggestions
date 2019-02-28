@@ -90,6 +90,12 @@ import { meetingActions, meetingGetters } from '../../store/modules/meeting/meet
 import { mapTagActions, mapTagGetters } from '../../store/modules/tag/tagModule.js';
 import { tagActions, tagGetters } from '../../store/modules/tag/tagConst.js';
 
+import {
+  suggestionType,
+  suggestionTypeToString,
+  suggestionStateStatus,
+  suggestionStateStatusToString
+} from '../../utils/suggestionHelpers.js';
 import { handleDropDownSelection } from '../../utils/filterValueHelper.js';
 
 export default {
@@ -118,16 +124,32 @@ export default {
     },
     suggestionStateStatuses: [
       {
-        label: 'Käsittelemätön',
+        label: 'Kaikki ehdotukset',
         value: 'NONE'
       },
       {
-        label: 'Hyväksytty',
-        value: 'ACCEPTED'
+        label: suggestionStateStatusToString.RECEIVED,
+        value: suggestionStateStatus.RECEIVED
       },
       {
-        label: 'Hylätty',
-        value: 'REJECTED'
+        label: suggestionStateStatusToString.READ,
+        value: suggestionStateStatus.READ
+      },
+      {
+        label: suggestionStateStatusToString.ACCEPTED,
+        value: suggestionStateStatus.ACCEPTED
+      },
+      {
+        label: suggestionStateStatusToString.REJECTED,
+        value: suggestionStateStatus.REJECTED
+      },
+      {
+        label: suggestionStateStatusToString.RETAINED,
+        value: suggestionStateStatus.RETAINED
+      },
+      {
+        label: suggestionStateStatusToString.ARCHIVED,
+        value: suggestionStateStatus.ARCHIVED
       }
     ],
     suggestionTypes: [
@@ -136,12 +158,12 @@ export default {
         value: 'NONE'
       },
       {
-        label: 'Käsite-ehdotus',
-        value: 'NEW'
+        label: suggestionTypeToString.NEW,
+        value: suggestionType.NEW
       },
       {
-        label: 'Muutosehdotus',
-        value: 'MODIFY'
+        label: suggestionTypeToString.MODIFY,
+        value: suggestionType.MODIFY
       }
     ]
   }),

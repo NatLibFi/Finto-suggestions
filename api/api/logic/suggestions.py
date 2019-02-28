@@ -262,7 +262,7 @@ def get_meeting_suggestions(meeting_id: int) -> str:
 @suggestion_id_validator
 def put_update_suggestion_status(suggestion_id: int, status: str) -> str:
     """
-    Updates suggestion status info (mainly to ACCEPTED or REJECTED)
+    Updates suggestion status info (mainly to ACCEPTED or RETAINED)
     """
 
     if suggestion_id > 0 and len(status) > 0:
