@@ -3,7 +3,7 @@ export const eventTypes = {
   COMMENT: 'COMMENT'
 };
 
-export const compineEventTextContent = (text, value) => {
+export const combineEventTextContent = (text, value) => {
   if (text && text.length > 0 && value && value.length > 0) {
     return `${text} ${value}`;
   }

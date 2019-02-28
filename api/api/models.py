@@ -18,10 +18,11 @@ class EventActionSubTypes(enum.IntEnum):
     STATUS = 0
     TAG = 1
 
+
 class SuggestionStatusTypes(enum.IntEnum):
     RECEIVED = 0,
     READ = 1,
-    ACCEPTED = 2
+    ACCEPTED = 2,
     REJECTED = 3,
     RETAINED = 4,
     ARCHIVED = 5

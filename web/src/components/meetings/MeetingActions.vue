@@ -58,9 +58,7 @@ export default {
   },
   methods: {
     ...mapSuggestionActions({
-      setSuggestionAccepted: suggestionActions.SET_SUGGESTION_ACCEPTED,
-      setSuggestionRejected: suggestionActions.SET_SUGGESTION_REJECTED,
-      setSuggestionRetained: suggestionActions.SET_SUGGESTION_RETAINED
+      setSuggestionStatus: suggestionActions.SET_SUGGESTION_STATUS
     }),
     ...mapAuthenticatedUserActions({
       validateAuthentication: authenticatedUserActions.VALIDATE_AUTHENTICATION
@@ -73,7 +71,7 @@ export default {
       await this.addEvent(event);
     },
     async dismissSuggestion() {
-      await this.setSuggestionRejected({
+      await this.setSuggestionStatus({
         suggestionId: this.suggestionId,
         status: suggestionStateStatus.REJECTED
       });
@@ -81,7 +79,7 @@ export default {
       this.$emit('moveToNextSuggestion');
     },
     async approveSuggestion() {
-      await this.setSuggestionAccepted({
+      await this.setSuggestionStatus({
         suggestionId: this.suggestionId,
         status: suggestionStateStatus.ACCEPTED
       });
@@ -89,7 +87,7 @@ export default {
       this.$emit('moveToNextSuggestion');
     },
     async retainSuggestion() {
-      await this.setSuggestionRetained({
+      await this.setSuggestionStatus({
         suggestionId: this.suggestionId,
         status: suggestionStateStatus.RETAINED
       });
