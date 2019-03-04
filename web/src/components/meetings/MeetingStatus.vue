@@ -174,7 +174,7 @@ export default {
       this.isMeetingDialogOpen = false;
     },
     async removeMeeting() {
-      this.deleteMeeting(this.meetingId);
+      await this.deleteMeeting(this.meetingId);
       this.$router.push('/meetings');
     }
   },

@@ -74,7 +74,7 @@ export default {
     async [meetingActions.DELETE_MEETING]({ commit }, meetingId) {
       const result = await api.meeting.deleteMeeting(meetingId);
       if (result && result.code === 204) {
-        commit(meetingMutations.GET_MEETINGS);
+        await commit(meetingMutations.GET_MEETINGS);
       }
     },
     [meetingActions.GET_MEETINGS_SELECTED_SORT]({ commit }) {

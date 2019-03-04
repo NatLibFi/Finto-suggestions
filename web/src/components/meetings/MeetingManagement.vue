@@ -4,7 +4,7 @@
   <h4 v-if="!isNewMeeting">Muokkaa kokousta {{ meetingId }}</h4>
 
   <div class="input-group">
-    <p>Kokouksen nimi</p>
+    <p><strong>Kokouksen nimi</strong></p>
     <input
       @input="$v.$touch()"
       v-model="name"
@@ -12,7 +12,7 @@
   </div>
 
   <div class="input-group">
-    <p>Kokouksen päivämäärä</p>
+    <p><strong>Kokouksen päivämäärä</strong></p>
     <datepicker
       @input="$v.$touch()"
       v-model="date"
@@ -56,9 +56,10 @@
 import Datepicker from 'vuejs-datepicker';
 import { fi, sv } from 'vuejs-datepicker/dist/locale';
 import { required, minLength } from 'vuelidate/lib/validators';
+import { parse } from 'date-fns';
 
-import { mapMeetingActions } from '../../store/modules/meeting/meetingModule.js';
-import { meetingActions } from '../../store/modules/meeting/meetingConsts.js';
+import { mapMeetingActions, mapMeetingGetters } from '../../store/modules/meeting/meetingModule.js';
+import { meetingActions, meetingGetters } from '../../store/modules/meeting/meetingConsts.js';
 
 export default {
   components: {
@@ -73,8 +74,8 @@ export default {
   },
   data() {
     return {
-      name: '',
-      date: '',
+      nameContent: '',
+      dateContent: '',
       hasSucceeded: false,
       hasFailed: false,
       fi: fi,
@@ -88,6 +89,33 @@ export default {
     },
     date: {
       required
+    }
+  },
+  computed: {
+    ...mapMeetingGetters({ meeting: meetingGetters.GET_MEETING }),
+    name: {
+      get() {
+        return this.nameContent;
+      },
+      set(value) {
+        this.nameContent = value;
+      }
+    },
+    date: {
+      get() {
+        return this.dateContent;
+      },
+      set(value) {
+        this.dateContent = value;
+      }
+    }
+  },
+  created() {
+    if (!this.isNewMeeting) {
+      this.nameContent = this.meeting.name;
+      this.dateContent = this.meeting.meeting_date;
+    } else {
+      this.dateContent = new Date();
     }
   },
   methods: {
@@ -107,7 +135,7 @@ export default {
           .then(() => {
             this.hasSucceeded = true;
             setTimeout(() => {
-              this.$emit('close');
+              this.hasSucceeded = false;
             }, 2000);
           })
           .catch(() => {
@@ -123,6 +151,7 @@ export default {
         })
           .then(() => {
             this.hasSucceeded = true;
+            this.name = '';
             setTimeout(() => {
               this.$emit('close');
               this.hasSucceeded = false;
@@ -132,7 +161,7 @@ export default {
             this.hasFailed = true;
             setTimeout(() => {
               this.hasFailed = false;
-            }, 4000);
+            }, 3000);
           });
       }
     }
