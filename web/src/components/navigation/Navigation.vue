@@ -128,7 +128,6 @@ export default {
 
     this.getUserIdFromStorage();
     this.handleUserFetch();
-    this.handleUserInitialsFetch();
   },
   computed: {
     ...mapAuthenticatedUserGetters({
@@ -230,8 +229,9 @@ export default {
     }
   },
   watch: {
-    name() {
-      this.handleUserInitialsFetch();
+    name: {
+      handler: 'handleUserInitialsFetch',
+      immediate: true
     }
   },
   mounted: function() {
