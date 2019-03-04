@@ -56,7 +56,6 @@
 import Datepicker from 'vuejs-datepicker';
 import { fi, sv } from 'vuejs-datepicker/dist/locale';
 import { required, minLength } from 'vuelidate/lib/validators';
-import { parse } from 'date-fns';
 
 import { mapMeetingActions, mapMeetingGetters } from '../../store/modules/meeting/meetingModule.js';
 import { meetingActions, meetingGetters } from '../../store/modules/meeting/meetingConsts.js';
