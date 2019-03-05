@@ -5,7 +5,7 @@ from sqlalchemy.types import Unicode
 from ..authentication import admin_only
 from .validators import suggestion_parameter_validator, suggestion_id_validator, _error_messagify
 from .common import (create_response, get_one_or_404, get_all_or_404_custom,
-                     create_or_404, delete_or_404, patch_or_404, update_or_404)
+                     create_or_400, delete_or_404, patch_or_404, update_or_404)
 from .utils import SUGGESTION_FILTER_FUNCTIONS, SUGGESTION_SORT_FUNCTIONS
 from ..models import db, Suggestion, Tag, User
 from flask import jsonify
@@ -106,7 +106,7 @@ def post_suggestion() -> str:
 
     :returns: the created suggestion as json
     """
-    created_response = create_or_404(Suggestion, connexion.request.json)
+    created_response = create_or_400(Suggestion, connexion.request.json)
     response = created_response[0]
 
     if response is not None and response['code'] is 201:
