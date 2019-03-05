@@ -73,8 +73,8 @@ export default {
   },
   data() {
     return {
-      nameContent: '',
-      dateContent: '',
+      name: '',
+      date: '',
       hasSucceeded: false,
       hasFailed: false,
       fi: fi,
@@ -91,30 +91,14 @@ export default {
     }
   },
   computed: {
-    ...mapMeetingGetters({ meeting: meetingGetters.GET_MEETING }),
-    name: {
-      get() {
-        return this.nameContent;
-      },
-      set(value) {
-        this.nameContent = value;
-      }
-    },
-    date: {
-      get() {
-        return this.dateContent;
-      },
-      set(value) {
-        this.dateContent = value;
-      }
-    }
+    ...mapMeetingGetters({ meeting: meetingGetters.GET_MEETING })
   },
   created() {
     if (!this.isNewMeeting) {
-      this.nameContent = this.meeting.name;
-      this.dateContent = this.meeting.meeting_date;
+      this.name = this.meeting.name;
+      this.date = this.meeting.meeting_date;
     } else {
-      this.dateContent = new Date();
+      this.date = new Date();
     }
   },
   methods: {
