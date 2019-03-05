@@ -11,7 +11,7 @@
             <span unselectable="on">{{ userInitials }}</span>
           </div>
           <div class="nav-menu-user">
-            <p v-if="user.name && user.name.length > 0">{{ user.name }}</p>
+            <p v-if="name && name.length > 0">{{ name }}</p>
           </div>
           <svg-icon icon-name="triangle"><icon-triangle /></svg-icon>
         </div>
@@ -51,7 +51,7 @@
           <span unselectable="on">{{ userInitials }}</span>
         </div>
         <div class="nav-dropdown-user">
-          <p v-if="user.name && user.name.length > 0">{{ user.name }}</p>
+          <p v-if="name && name.length > 0">{{ name }}</p>
         </div>
       </div>
       <div class="nav-mobile-dropdown-content">
@@ -129,6 +129,7 @@ export default {
     ...mapAuthenticatedUserGetters({
       isAuthenticated: authenticatedUserGetters.GET_IS_AUTHENTICATED,
       userId: authenticatedUserGetters.GET_USER_ID,
+      name: authenticatedUserGetters.GET_USER_NAME,
       // can be shown if login did not succeed:
       error: authenticatedUserGetters.GET_AUTHENTICATE_ERROR
     })
@@ -138,13 +139,14 @@ export default {
     if (this.isAuthenticated) {
       await this.handleTokenRefesh();
     }
-    await this.getUserIdFromStorage();
-    await this.getUser(this.userId);
+    this.getUserIdFromStorage();
+    this.handleUserFetch();
   },
   methods: {
     ...mapAuthenticatedUserActions({
       validateAuthentication: authenticatedUserActions.VALIDATE_AUTHENTICATION,
       revokeAuthentication: authenticatedUserActions.REVOKE_AUTHENTICATION,
+      getUserName: authenticatedUserActions.GET_USER_NAME,
       authenticateLocalUser: authenticatedUserActions.AUTHENTICATE_LOCAL_USER,
       getUserIdFromStorage: authenticatedUserActions.GET_USER_ID_FROM_STORAGE,
       refreshToken: authenticatedUserActions.REFRESH_AUTHORIZATION_TOKEN
@@ -174,7 +176,7 @@ export default {
           await this.authenticateLocalUser(data.loginData);
         }
       }
-      this.handleUserFetch();
+      this.getUser(this.userId);
       this.showLoginDialog = false;
     },
     async signup(data) {
@@ -217,8 +219,13 @@ export default {
     async registerLocalUser(userdata) {
       await api.user.registerLocalUser(userdata);
     },
+    handleUserFetch() {
+      if (parseInt(this.userId) > 0) {
+        this.getUserName(parseInt(this.userId));
+      }
+    },
     handleUserInitialsFetch() {
-      this.userInitials = userNameInitials(this.user.name);
+      this.userInitials = userNameInitials(this.name);
     },
     async handleTokenRefesh() {
       // eslint-disable-next-line no-undef
@@ -229,7 +236,7 @@ export default {
     }
   },
   watch: {
-    user: {
+    name: {
       handler: 'handleUserInitialsFetch',
       immediate: true
     }
@@ -386,11 +393,18 @@ export default {
   top: 55px;
   right: 40px;
   width: 200px;
+  box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  overflow: hidden;
 }
 
 .nav-menu-dropdown div {
   padding: 16px 20px;
   border-bottom: 1px solid #f5f5f5;
+  box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
 }
 
 .nav-menu-dropdown div:last-of-type {
@@ -507,11 +521,11 @@ export default {
   height: 35px;
   width: 35px;
   border-radius: 35px;
-  line-height: 35px;
+  line-height: 36px;
   text-align: center;
   background-color: #804af2;
   color: #ffffff;
-  font-size: 14.5px;
+  font-size: 13px;
   font-weight: 800;
 }
 

@@ -303,14 +303,14 @@ export default {
   border-radius: 2px;
 }
 
-.dropdown div {
-  padding: 10px 16px;
-}
-
-.dropdown div:hover {
+.dropdown:hover {
   background-color: #f3fbfa;
   cursor: pointer;
   cursor: hand;
+}
+
+.dropdown div {
+  padding: 10px 16px;
 }
 
 .user-suggestions {
