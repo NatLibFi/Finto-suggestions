@@ -8,10 +8,12 @@
       <transition name="fade">
         <div v-if="isAuthenticated" class="nav-menu" @click="showDropdown = true">
           <div class="user-bubble">
-            <span unselectable="on">{{ userInitials }}</span>
+            <span v-if="userInitials" unselectable="on">{{ userInitials }}</span>
+            <span v-else unselectable="on">{{ userId }}</span>
           </div>
           <div class="nav-menu-user">
             <p v-if="name && name.length > 0">{{ name }}</p>
+            <p v-else>Käyttäjä {{ userId }}</p>
           </div>
           <svg-icon icon-name="triangle"><icon-triangle /></svg-icon>
         </div>
@@ -52,6 +54,7 @@
         </div>
         <div class="nav-dropdown-user">
           <p v-if="name && name.length > 0">{{ name }}</p>
+          <p v-else>Käyttäjä {{ userId }}</p>
         </div>
       </div>
       <div class="nav-mobile-dropdown-content">
@@ -430,6 +433,8 @@ export default {
   padding: 20px;
   padding-top: 24px;
   border-bottom: 1px solid #f5f5f5;
+  position: relative;
+  height: 60px;
 }
 
 .nav-mobile-dropdown-header .user-bubble {
@@ -437,6 +442,9 @@ export default {
   width: 50px;
   line-height: 50px;
   font-size: 16px;
+  position: absolute;
+  top: 50%;
+  transform: perspective(1px) translateY(-50%);
 }
 
 .nav-mobile-dropdown-header .nav-dropdown-user {
@@ -444,6 +452,10 @@ export default {
   margin-left: 30px;
   font-size: 16px;
   line-height: 16px;
+  position: absolute;
+  left: 60px;
+  top: 50%;
+  transform: perspective(1px) translateY(-50%);
 }
 
 .nav-mobile-dropdown-content div {

@@ -1,7 +1,10 @@
 <template>
   <div class="user">
     <div class="profile-container">
-      <div class="user-name-initials">{{ userNameInitials }}</div>
+      <div class="user-name-initials">
+        <span v-if="userNameInitials">{{ userNameInitials }}</span>
+        <span v-else>{{ userId }}</span>
+      </div>
       <div v-if="user || userId" class="profile">
         <p class="profile-user" v-if="!user.name">
           Käyttäjä {{ userId }}<span v-if="user.role">, {{ userRoleToString[user.role] }}</span>
