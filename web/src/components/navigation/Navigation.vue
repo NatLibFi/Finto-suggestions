@@ -128,7 +128,6 @@ export default {
 
     this.getUserIdFromStorage();
     this.handleUserFetch();
-    this.handleUserInitialsFetch();
   },
   computed: {
     ...mapAuthenticatedUserGetters({
@@ -230,8 +229,9 @@ export default {
     }
   },
   watch: {
-    name() {
-      this.handleUserInitialsFetch();
+    name: {
+      handler: 'handleUserInitialsFetch',
+      immediate: true
     }
   },
   mounted: function() {
@@ -520,7 +520,7 @@ export default {
   transition: opacity 0.4s;
 }
 .fade-enter,
-.fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
+.fade-leave-to {
   opacity: 0;
 }
 

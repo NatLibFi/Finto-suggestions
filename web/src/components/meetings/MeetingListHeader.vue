@@ -44,8 +44,8 @@ export default {
     selectedSortOptionIndex: 1,
     isDropDownOpened: false,
     dropDownOptions: [
-      { label: 'Uusin ensin', value: sortingKeys.NEWEST_FIRST },
-      { label: 'Vanhin ensin', value: sortingKeys.OLDEST_FIRST }
+      { label: 'Ensin luotu ensin', value: sortingKeys.OLDEST_FIRST },
+      { label: 'Viimeiseksi luotu ensin', value: sortingKeys.NEWEST_FIRST }
     ]
   }),
   computed: {

@@ -49,7 +49,7 @@ export default {
   },
   async created() {
     await this.getMeetings();
-    this.calcultePastAndFutureMeetingCounts();
+    this.calculatePastAndFutureMeetingCounts();
     this.getSelectedSortKey();
     this.sortMeetingList();
   },
@@ -68,7 +68,7 @@ export default {
       return 10;
     },
     sortMeetingList() {
-      if (this.selectedSort) {
+      if (this.meetings && this.meetings.length > 0 && this.selectedSort) {
         if (this.selectedSort === sortingKeys.NEWEST_FIRST) {
           this.meetings.sort(comparerDesc('meeting_date'));
         }
@@ -77,10 +77,11 @@ export default {
         }
       }
     },
-    calcultePastAndFutureMeetingCounts() {
+    calculatePastAndFutureMeetingCounts() {
       let futureMeetings = [];
       let pastMeetings = [];
       const today = Date();
+
       if (this.meetings && this.meetings.length > 0) {
         this.meetings.forEach(meeting => {
           if (meeting.meeting_date) {
@@ -92,6 +93,8 @@ export default {
             } else {
               pastMeetings.push(meeting);
             }
+          } else {
+            pastMeetings.push(meeting);
           }
         });
       }
@@ -150,7 +153,7 @@ ul {
   transition: opacity 3s;
 }
 .fade-enter,
-.fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
+.fade-leave-to {
   opacity: 0.75;
 }
 </style>

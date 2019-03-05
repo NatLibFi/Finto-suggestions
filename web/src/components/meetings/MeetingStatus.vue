@@ -16,6 +16,9 @@
         </a>
       </span>
     </p>
+    <div v-if="isAuthenticated && role === userRoles.ADMIN" class="menu-wrapper">
+      <menu-button :options="menuOptions" class="menu" />
+    </div>
     <div class="meeting-status">
       <div class="status-bar">
         <div :style="progressWidth" class="progress-bar"></div>
@@ -45,6 +48,7 @@
 <script>
 import CenteredDialog from '../common/CenteredDialog';
 import MeetingManagement from './MeetingManagement';
+import MenuButton from '../common/MenuButton';
 import { mapMeetingGetters, mapMeetingActions } from '../../store/modules/meeting/meetingModule.js';
 import { meetingGetters, meetingActions } from '../../store/modules/meeting/meetingConsts.js';
 
@@ -64,7 +68,8 @@ import { suggestionStateStatus } from '../../utils/suggestionHelpers.js';
 export default {
   components: {
     CenteredDialog,
-    MeetingManagement
+    MeetingManagement,
+    MenuButton
   },
   props: {
     meetingId: {
@@ -72,7 +77,7 @@ export default {
       required: true
     }
   },
-  data: function() {
+  data() {
     return {
       statusBarWidth: 0,
       progressWidth: {
@@ -87,7 +92,13 @@ export default {
       continueSuggestionHandle: true,
       isMeetingDialogOpen: false,
       userRoles,
-      dateTimeFormatLabel
+      dateTimeFormatLabel,
+      menuOptions: [
+        {
+          title: 'Poista kokous',
+          method: this.removeMeeting
+        }
+      ]
     };
   },
   computed: {
@@ -109,7 +120,8 @@ export default {
   },
   methods: {
     ...mapMeetingActions({
-      getMeeting: meetingActions.GET_MEETING
+      getMeeting: meetingActions.GET_MEETING,
+      deleteMeeting: meetingActions.DELETE_MEETING
     }),
     goToMeetingList() {
       this.$router.push({
@@ -160,6 +172,10 @@ export default {
     },
     closeDialog() {
       this.isMeetingDialogOpen = false;
+    },
+    async removeMeeting() {
+      await this.deleteMeeting(this.meetingId);
+      this.$router.push('/meetings');
     }
   },
   watch: {
@@ -180,6 +196,16 @@ export default {
   position: relative;
   width: 100%;
   text-align: left;
+}
+
+.menu-wrapper {
+  display: inline;
+}
+
+.menu {
+  position: absolute;
+  right: 0;
+  top: 0;
 }
 
 .edit-meeting-button {

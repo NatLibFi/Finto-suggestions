@@ -135,8 +135,9 @@ export default {
       role: authenticatedUserGetters.GET_USER_ROLE
     }),
     simplemde() {
-      if (this.$refs.eventMarkdownEditor)
+      if (this.$refs.eventMarkdownEditor) {
         return this.$refs.eventMarkdownEditor.simplemde;
+      }
     }
   },
   mounted() {
@@ -341,7 +342,7 @@ export default {
   transition: opacity 0.1s;
 }
 .fade-enter,
-.fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
+.fade-leave-to {
   opacity: 0;
 }
 </style>

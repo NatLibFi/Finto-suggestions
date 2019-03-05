@@ -63,16 +63,18 @@ export default {
       const result = await api.meeting.addNewMeeting(params);
       if (result && result.code === 201) {
         dispatch(meetingActions.GET_MEETINGS);
-      } else {
-        this.raiseError();
       }
     },
     async [meetingActions.UPDATE_MEETING]({ commit }, { meetingId, data }) {
       const result = await api.meeting.updateMeeting(meetingId, data);
       if (result && result.code === 200) {
         commit(meetingMutations.SET_MEETING, result.data);
-      } else {
-        this.raiseError();
+      }
+    },
+    async [meetingActions.DELETE_MEETING]({ commit }, meetingId) {
+      const result = await api.meeting.deleteMeeting(meetingId);
+      if (result && result.code === 204) {
+        await commit(meetingMutations.GET_MEETINGS);
       }
     },
     [meetingActions.GET_MEETINGS_SELECTED_SORT]({ commit }) {
