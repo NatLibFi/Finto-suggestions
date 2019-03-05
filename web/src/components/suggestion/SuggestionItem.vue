@@ -56,15 +56,10 @@
         <p>
           <strong>#{{ suggestion.id }}</strong>
           {{ dateTimeFormatLabel(suggestion.created) }}
-          <span v-if="suggestion.meeting_id && (meeting && !meeting.name)">
+          <span v-if="suggestion.meeting_id">
             –
             <a @click.stop="goToMeeting(suggestion.meeting_id)">
               Kokous {{ suggestion.meeting_id }}
-            </a>
-          </span>
-          <span v-if="meeting && meeting.name">
-            <a @click.stop="goToMeeting(meeting.id)">
-              – {{ meeting.name }}
             </a>
           </span>
         </p>
@@ -93,9 +88,6 @@ import {
 import { dateTimeFormatLabel } from '../../utils/dateHelper';
 import { eventTypes } from '../../utils/eventHelper';
 
-import { mapMeetingGetters, mapMeetingActions } from '../../store/modules/meeting/meetingModule.js';
-import { meetingGetters, meetingActions } from '../../store/modules/meeting/meetingConsts.js';
-
 export default {
   components: {
     SvgIcon,
@@ -119,18 +111,7 @@ export default {
     suggestionStateStatus,
     suggestionStateStatusToString
   }),
-  computed: {
-    ...mapMeetingGetters({ meeting: meetingGetters.GET_MEETING })
-  },
-  async created() {
-    if (this.suggestion.meeting_id) {
-      await this.getMeeting(this.suggestion.meeting_id);
-    }
-  },
   methods: {
-    ...mapMeetingActions({
-      getMeeting: meetingActions.GET_MEETING
-    }),
     goToSuggestion() {
       if (!this.meetingId) {
         this.$router.push({
