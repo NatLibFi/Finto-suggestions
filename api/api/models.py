@@ -243,7 +243,7 @@ class Tag(db.Model, SerializableMixin):
 
 class User(db.Model, SerializableMixin):
     __tablename__ = 'users'
-    __public__ = ['id', 'name', 'email', 'role']
+    __public__ = ['id', 'name', 'email', 'role', 'title', 'organization', 'imageUrl']
 
     id = db.Column(db.Integer, primary_key=True)
     created = db.Column(db.DateTime, index=True, default=datetime.utcnow)
