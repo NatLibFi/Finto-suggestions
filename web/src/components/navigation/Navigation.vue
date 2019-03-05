@@ -11,7 +11,7 @@
             <span unselectable="on">{{ userInitials }}</span>
           </div>
           <div class="nav-menu-user">
-            <p v-if="name && name.length > 0">{{ name }}</p>
+            <p v-if="user.name && user.name.length > 0">{{ user.name }}</p>
           </div>
           <svg-icon icon-name="triangle"><icon-triangle /></svg-icon>
         </div>
@@ -38,7 +38,7 @@
 
     <div v-if="showDropdown" v-on-clickaway="closeDropdown" class="nav-menu-dropdown dropdown">
       <div @click="goToProfile">Profiili</div>
-      <div class="disabled">Asetukset</div>
+      <div @click="goToSettings">Asetukset</div>
       <div @click="logOut">Kirjaudu ulos</div>
     </div>
 
@@ -51,12 +51,12 @@
           <span unselectable="on">{{ userInitials }}</span>
         </div>
         <div class="nav-dropdown-user">
-          <p v-if="name && name.length > 0">{{ name }}</p>
+          <p v-if="user.name && user.name.length > 0">{{ user.name }}</p>
         </div>
       </div>
       <div class="nav-mobile-dropdown-content">
         <div @click="goToProfile">Profiili</div>
-        <div class="disabled">Asetukset</div>
+        <div @click="goToSettings">Asetukset</div>
         <div @click="logOut">Kirjaudu ulos</div>
       </div>
     </div>
@@ -89,6 +89,8 @@ import IconMore from '../icons/IconMore';
 import IconTriangle from '../icons/IconTriangle';
 import { directive as onClickaway } from 'vue-clickaway';
 
+import { userActions, userGetters } from '../../store/modules/user/userConsts';
+import { mapUserActions, mapUserGetters } from '../../store/modules/user/userModule';
 // eslint-disable-next-line
 import { mapAuthenticatedUserGetters, mapAuthenticatedUserActions } from '../../store/modules/authenticatedUser/authenticatedUserModule.js';
 // eslint-disable-next-line
@@ -120,32 +122,35 @@ export default {
     showSignupDialog: false,
     showSignupConfirmation: false
   }),
+  computed: {
+    ...mapUserGetters({
+      user: userGetters.GET_USER
+    }),
+    ...mapAuthenticatedUserGetters({
+      isAuthenticated: authenticatedUserGetters.GET_IS_AUTHENTICATED,
+      userId: authenticatedUserGetters.GET_USER_ID,
+      // can be shown if login did not succeed:
+      error: authenticatedUserGetters.GET_AUTHENTICATE_ERROR
+    })
+  },
   async created() {
     await this.validateAuthentication();
     if (this.isAuthenticated) {
       await this.handleTokenRefesh();
     }
-
-    this.getUserIdFromStorage();
-    this.handleUserFetch();
-  },
-  computed: {
-    ...mapAuthenticatedUserGetters({
-      isAuthenticated: authenticatedUserGetters.GET_IS_AUTHENTICATED,
-      userId: authenticatedUserGetters.GET_USER_ID,
-      name: authenticatedUserGetters.GET_USER_NAME,
-      // can be shown if login did not succeed:
-      error: authenticatedUserGetters.GET_AUTHENTICATE_ERROR
-    })
+    await this.getUserIdFromStorage();
+    await this.getUser(this.userId);
   },
   methods: {
     ...mapAuthenticatedUserActions({
       validateAuthentication: authenticatedUserActions.VALIDATE_AUTHENTICATION,
       revokeAuthentication: authenticatedUserActions.REVOKE_AUTHENTICATION,
-      getUserName: authenticatedUserActions.GET_USER_NAME,
       authenticateLocalUser: authenticatedUserActions.AUTHENTICATE_LOCAL_USER,
       getUserIdFromStorage: authenticatedUserActions.GET_USER_ID_FROM_STORAGE,
       refreshToken: authenticatedUserActions.REFRESH_AUTHORIZATION_TOKEN
+    }),
+    ...mapUserActions({
+      getUser: userActions.GET_USER
     }),
     returnToHome() {
       this.$router.push('/');
@@ -212,13 +217,8 @@ export default {
     async registerLocalUser(userdata) {
       await api.user.registerLocalUser(userdata);
     },
-    handleUserFetch() {
-      if (parseInt(this.userId) > 0) {
-        this.getUserName(parseInt(this.userId));
-      }
-    },
     handleUserInitialsFetch() {
-      this.userInitials = userNameInitials(this.name);
+      this.userInitials = userNameInitials(this.user.name);
     },
     async handleTokenRefesh() {
       // eslint-disable-next-line no-undef
@@ -229,7 +229,7 @@ export default {
     }
   },
   watch: {
-    name: {
+    user: {
       handler: 'handleUserInitialsFetch',
       immediate: true
     }
@@ -511,7 +511,7 @@ export default {
   text-align: center;
   background-color: #804af2;
   color: #ffffff;
-  font-size: 14px;
+  font-size: 14.5px;
   font-weight: 800;
 }
 
