@@ -1,7 +1,10 @@
 <template>
   <div class="user">
     <div class="profile-container">
-      <div class="user-name-initials">{{ userNameInitials }}</div>
+      <div class="user-name-initials">
+        <span v-if="userNameInitials">{{ userNameInitials }}</span>
+        <span v-else>{{ userId }}</span>
+      </div>
       <div class="profile">
         <p class="profile-user" v-if="!user.name">
           Käyttäjä {{ userId }}<span v-if="user.role">, {{ userRoleToString[user.role] }}</span>
@@ -14,14 +17,14 @@
           <span v-if="user.organization">{{ user.organization }}</span>
         </p>
       </div>
-      <!--<div v-if="isAuthenticated && loggedInUserId === userId" class="settings">
+      <div v-if="isAuthenticated && loggedInUserId === userId" class="settings">
         <div @click="showDropdown = true">
           <svg-icon icon-name="more"><icon-more/></svg-icon>
         </div>
         <div v-if="showDropdown" v-on-clickaway="closeDropdown" class="dropdown">
-          <div @click="goToSettings">Muokkaa profiiliasi</div>
+          <div @click="goToSettings">Muokkaa profiilia</div>
         </div>
-      </div>-->
+      </div>
     </div>
 
     <div v-if="paginated_items && paginated_items.length > 0" class="user-suggestions">
@@ -127,7 +130,7 @@ export default {
   },
   async created() {
     await this.getUser(this.userId);
-    this.fetchUserNameAndInitials();
+    await this.fetchUserNameAndInitials();
     await this.getSuggestionsByUserId(parseInt(this.userId));
     await this.handleSuggestionFetching();
     await this.getSuggestionsSelectedSortKey();
@@ -303,14 +306,14 @@ export default {
   border-radius: 2px;
 }
 
-.dropdown div {
-  padding: 10px 16px;
-}
-
-.dropdown div:hover {
+.dropdown:hover {
   background-color: #f3fbfa;
   cursor: pointer;
   cursor: hand;
+}
+
+.dropdown div {
+  padding: 10px 16px;
 }
 
 .user-suggestions {

@@ -1,7 +1,7 @@
 import connexion
 from ..authentication import admin_only
 from ..models import db, Meeting, Suggestion
-from .common import (get_one_or_404, get_all_or_404, create_or_404,
+from .common import (get_one_or_404, get_all_or_404, create_or_400,
                      delete_or_404, update_or_404, patch_or_404,
                      create_response)
 
@@ -40,7 +40,7 @@ def post_meeting() -> str:
     :returns: the created meeting as json
     """
 
-    return create_or_404(Meeting, connexion.request.json)
+    return create_or_400(Meeting, connexion.request.json)
 
 
 @admin_only

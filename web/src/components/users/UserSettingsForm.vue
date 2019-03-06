@@ -2,31 +2,33 @@
   <div class="form-container">
     <h5>Muokkaa asetuksiasi</h5>
     <div class="setting-inputs">
-      <!-- TODO: Finish patching functionality (store + api) -->
-      <!-- TODO: Then remove disabled input states  -->
       <div>
         <p>Nimi:</p>
-        <input disabled :value="$v.userName.$model" type="text">
+        <input v-model="userName" type="text">
       </div>
       <div>
-        <p>Nimike/titteli: {{ userTitle }}</p>
-        <input disabled v-model.trim.lazy="$v.userTitle" @input="$v.$touch()" type="text">
+        <p>Nimike/titteli:</p>
+        <input v-model="userTitle" @input="$v.$touch()" type="text">
       </div>
       <div>
-        <p>Organisaatio: {{ userOrg }}</p>
-        <input disabled v-model.trim.lazy="$v.userOrg" @input="$v.$touch()" type="text">
+        <p>Organisaatio:</p>
+        <input v-model="userOrg" @input="$v.$touch()" type="text">
       </div>
-      <div>
-        <p>Profiilikuvan url-osoite: {{ userImageUrl }}</p>
-        <input disabled v-model.trim.lazy="$v.userImageUrl" @input="$v.$touch()" type="url">
-      </div>
+      <!-- <div>
+        <p>Profiilikuvan url-osoite:</p>
+        <input disabled v-model="userImageUrl" @input="$v.$touch()" type="url">
+      </div> -->
     </div>
 
-    <!--<div @click.stop="submitForm" :class="[$v.$invalid ? '' : 'disabled', 'button']">
+    <div @click.stop="submitForm" :class="[$v.$invalid ? 'disabled' : '', 'button']">
       <span class="save">
         Tallenna muutokset
       </span>
-    </div>-->
+    </div>
+    <transition name="fade">
+      <p v-if="hasSucceeded" class="success-message">Muutokset tallennettu.</p>
+      <p v-if="hasFailed" class="failure-message">Muutoksia ei saatu tallennettua.</p>
+    </transition>
   </div>
 </template>
 
@@ -43,9 +45,12 @@ import { required, minLength } from 'vuelidate/lib/validators';
 export default {
   data() {
     return {
+      userName: '',
       userTitle: '',
       userOrg: '',
-      userImageUrl: ''
+      userImageUrl: '',
+      hasSucceeded: false,
+      hasFailed: false
     };
   },
   validations: {
@@ -55,18 +60,27 @@ export default {
     }
   },
   computed: {
-    ...mapAuthenticatedUserGetters({
-      userId: authenticatedUserGetters.GET_USER_ID,
-      isAuthenticated: authenticatedUserGetters.GET_IS_AUTHENTICATED,
-      userName: authenticatedUserGetters.GET_USER_NAME
-    }),
     ...mapUserGetters({
       user: userGetters.GET_USER
+    }),
+    ...mapAuthenticatedUserGetters({
+      userId: authenticatedUserGetters.GET_USER_ID,
+      isAuthenticated: authenticatedUserGetters.GET_IS_AUTHENTICATED
     })
   },
   async created() {
-    this.getUserIdFromStorage();
+    await this.getUserIdFromStorage();
     await this.getUser(this.userId);
+    this.userName = this.user.name;
+    if (this.user.title) {
+      this.userTitle = this.user.title;
+    }
+    if (this.user.organization) {
+      this.userOrg = this.user.organization;
+    }
+    if (this.user.imageUrl) {
+      this.userImageUrl = this.user.imageUrl;
+    }
   },
   methods: {
     ...mapAuthenticatedUserActions({
@@ -79,16 +93,31 @@ export default {
     }),
     async updateUser() {
       const params = {
-        name: this.$sanitize(this.userName),
-        title: this.$sanitize(this.userTitle),
-        organization: this.$sanitize(this.userOrg),
-        imageUrl: this.$sanitize(this.userImageUrl)
+        userId: this.userId,
+        data: {
+          name: this.$sanitize(this.userName),
+          title: this.$sanitize(this.userTitle),
+          organization: this.$sanitize(this.userOrg),
+          imageUrl: this.$sanitize(this.userImageUrl)
+        }
       };
-      await this.patchUser(this.userId, params);
+      await this.patchUser(params)
+        .then(() => {
+          this.hasSucceeded = true;
+          setTimeout(() => {
+            this.hasSucceeded = false;
+          }, 2000);
+        })
+        .catch(() => {
+          this.hasFailed = true;
+          setTimeout(() => {
+            this.hasFailed = false;
+          }, 3000);
+        });
     },
-    submitForm() {
+    async submitForm() {
       if (!this.$v.$invalid) {
-        this.updateUser();
+        await this.updateUser();
       }
     }
   }
@@ -124,7 +153,7 @@ h5 {
 
 .button {
   display: inline-block;
-  margin: 10px 0 0;
+  margin: 10px 20px 0 0;
   padding: 6px 12px;
   font-weight: 600;
   font-size: 13px;
@@ -157,6 +186,17 @@ h5 {
   cursor: default;
 }
 
+.success-message,
+.failure-message {
+  color: #44bdb2;
+  display: inline-block;
+  margin: 10px 0 0;
+}
+
+.failure-message {
+  color: red;
+}
+
 @media (max-width: 700px) {
   .setting-inputs div {
     margin: 6px 0 14px;
@@ -174,5 +214,14 @@ h5 {
   .setting-inputs div input {
     width: 50vw;
   }
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.5s;
+}
+.fade-enter,
+.fade-leave-to {
+  opacity: 0;
 }
 </style>

@@ -1,7 +1,7 @@
 <template>
 <div>
   <navigation />
-  <user-settings :userId="userId"/>
+  <user-settings />
 </div>
 </template>
 
@@ -13,9 +13,6 @@ export default {
   components: {
     Navigation,
     UserSettings
-  },
-  props: {
-    userId: [String, Number]
   }
 };
 </script>

@@ -8,10 +8,12 @@
       <transition name="fade">
         <div v-if="isAuthenticated" class="nav-menu" @click="showDropdown = true">
           <div class="user-bubble">
-            <span unselectable="on">{{ userInitials }}</span>
+            <span v-if="userInitials" unselectable="on">{{ userInitials }}</span>
+            <span v-else unselectable="on">{{ userId }}</span>
           </div>
           <div class="nav-menu-user">
             <p v-if="name && name.length > 0">{{ name }}</p>
+            <p v-else>Käyttäjä {{ userId }}</p>
           </div>
           <svg-icon icon-name="triangle"><icon-triangle /></svg-icon>
         </div>
@@ -38,7 +40,7 @@
 
     <div v-if="showDropdown" v-on-clickaway="closeDropdown" class="nav-menu-dropdown dropdown">
       <div @click="goToProfile">Profiili</div>
-      <div class="disabled">Asetukset</div>
+      <div @click="goToSettings">Asetukset</div>
       <div @click="logOut">Kirjaudu ulos</div>
     </div>
 
@@ -52,11 +54,12 @@
         </div>
         <div class="nav-dropdown-user">
           <p v-if="name && name.length > 0">{{ name }}</p>
+          <p v-else>Käyttäjä {{ userId }}</p>
         </div>
       </div>
       <div class="nav-mobile-dropdown-content">
         <div @click="goToProfile">Profiili</div>
-        <div class="disabled">Asetukset</div>
+        <div @click="goToSettings">Asetukset</div>
         <div @click="logOut">Kirjaudu ulos</div>
       </div>
     </div>
@@ -89,6 +92,8 @@ import IconMore from '../icons/IconMore';
 import IconTriangle from '../icons/IconTriangle';
 import { directive as onClickaway } from 'vue-clickaway';
 
+import { userActions, userGetters } from '../../store/modules/user/userConsts';
+import { mapUserActions, mapUserGetters } from '../../store/modules/user/userModule';
 // eslint-disable-next-line
 import { mapAuthenticatedUserGetters, mapAuthenticatedUserActions } from '../../store/modules/authenticatedUser/authenticatedUserModule.js';
 // eslint-disable-next-line
@@ -120,16 +125,10 @@ export default {
     showSignupDialog: false,
     showSignupConfirmation: false
   }),
-  async created() {
-    await this.validateAuthentication();
-    if (this.isAuthenticated) {
-      await this.handleTokenRefesh();
-    }
-
-    this.getUserIdFromStorage();
-    this.handleUserFetch();
-  },
   computed: {
+    ...mapUserGetters({
+      user: userGetters.GET_USER
+    }),
     ...mapAuthenticatedUserGetters({
       isAuthenticated: authenticatedUserGetters.GET_IS_AUTHENTICATED,
       userId: authenticatedUserGetters.GET_USER_ID,
@@ -137,6 +136,14 @@ export default {
       // can be shown if login did not succeed:
       error: authenticatedUserGetters.GET_AUTHENTICATE_ERROR
     })
+  },
+  async created() {
+    await this.validateAuthentication();
+    if (this.isAuthenticated) {
+      await this.handleTokenRefesh();
+    }
+    this.getUserIdFromStorage();
+    this.handleUserFetch();
   },
   methods: {
     ...mapAuthenticatedUserActions({
@@ -146,6 +153,9 @@ export default {
       authenticateLocalUser: authenticatedUserActions.AUTHENTICATE_LOCAL_USER,
       getUserIdFromStorage: authenticatedUserActions.GET_USER_ID_FROM_STORAGE,
       refreshToken: authenticatedUserActions.REFRESH_AUTHORIZATION_TOKEN
+    }),
+    ...mapUserActions({
+      getUser: userActions.GET_USER
     }),
     returnToHome() {
       this.$router.push('/');
@@ -169,7 +179,7 @@ export default {
           await this.authenticateLocalUser(data.loginData);
         }
       }
-      this.handleUserFetch();
+      this.getUser(this.userId);
       this.showLoginDialog = false;
     },
     async signup(data) {
@@ -386,11 +396,18 @@ export default {
   top: 55px;
   right: 40px;
   width: 200px;
+  box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  overflow: hidden;
 }
 
 .nav-menu-dropdown div {
   padding: 16px 20px;
   border-bottom: 1px solid #f5f5f5;
+  box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
 }
 
 .nav-menu-dropdown div:last-of-type {
@@ -416,6 +433,8 @@ export default {
   padding: 20px;
   padding-top: 24px;
   border-bottom: 1px solid #f5f5f5;
+  position: relative;
+  height: 60px;
 }
 
 .nav-mobile-dropdown-header .user-bubble {
@@ -423,6 +442,9 @@ export default {
   width: 50px;
   line-height: 50px;
   font-size: 16px;
+  position: absolute;
+  top: 50%;
+  transform: perspective(1px) translateY(-50%);
 }
 
 .nav-mobile-dropdown-header .nav-dropdown-user {
@@ -430,6 +452,10 @@ export default {
   margin-left: 30px;
   font-size: 16px;
   line-height: 16px;
+  position: absolute;
+  left: 60px;
+  top: 50%;
+  transform: perspective(1px) translateY(-50%);
 }
 
 .nav-mobile-dropdown-content div {
@@ -507,11 +533,11 @@ export default {
   height: 35px;
   width: 35px;
   border-radius: 35px;
-  line-height: 35px;
+  line-height: 36px;
   text-align: center;
   background-color: #804af2;
   color: #ffffff;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 800;
 }
 

@@ -2,7 +2,7 @@ import connexion
 from ..authentication import authorized
 from .validators import reaction_parameter_validator
 from ..models import Reaction
-from .common import (get_one_or_404, get_all_or_404, create_or_404,
+from .common import (get_one_or_404, get_all_or_404, create_or_400,
                      delete_or_404, update_or_404, patch_or_404)
 
 
@@ -41,7 +41,7 @@ def post_reaction() -> str:
     :returns: the created reaction as json
     """
 
-    return create_or_404(Reaction, connexion.request.json)
+    return create_or_400(Reaction, connexion.request.json)
 
 
 @authorized
