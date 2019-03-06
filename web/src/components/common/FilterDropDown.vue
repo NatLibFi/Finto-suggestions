@@ -78,13 +78,13 @@ export default {
   left: 0;
   background-color: #ffffff;
   min-width: 200px;
+  max-height: 300px;
+  overflow: scroll;
+  margin-bottom: 20px;
   z-index: 2;
   text-align: left;
   border: 1px solid #e1e1e1;
   border-radius: 2px;
-  -webkit-box-shadow: 6px 8px 17px -6px rgba(80, 80, 80, 0.35);
-  -moz-box-shadow: 6px 8px 17px -6px rgba(80, 80, 80, 0.35);
-  box-shadow: 6px 8px 17px -6px rgba(80, 80, 80, 0.35);
 }
 
 .option {
@@ -94,6 +94,7 @@ export default {
   font-weight: 500;
   color: #555555;
   vertical-align: middle;
+  position: relative;
 }
 
 .option:hover {
@@ -104,9 +105,13 @@ export default {
 }
 
 .option p {
+  position: absolute;
+  top: 50%;
+  transform: perspective(1px) translateY(-50%);
   display: inline-block;
   margin: 0;
   text-transform: lowercase;
+  overflow: hidden;
 }
 
 .option p::first-letter {

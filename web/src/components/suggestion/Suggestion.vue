@@ -28,35 +28,50 @@
     <div v-if="suggestion" class="suggestion-container">
       <div class="suggestion-header">
         <div class="suggestion-header-headline">
-          <h1 v-if="!suggestion.preferred_label.fi.value" class="suggestion-title">{{ suggestion.preferred_label.fi }}</h1>
-          <h1 v-if="suggestion.preferred_label.fi.value" class="suggestion-title">{{ suggestion.preferred_label.fi.value }}</h1>
-          <div class="suggestion-header-details">
-            <span><strong>#{{ suggestion.id }} </strong></span>
-            <span>{{ dateTimeFormatLabel(suggestion.created) }} </span>
-            <span v-if="suggestion.meeting_id" @click="goToMeeting(suggestion.meeting_id)">
-              – <a>Kokous {{ suggestion.meeting_id }}</a>
-            </span>
-          </div>
+          <h1
+            v-if="suggestion.preferred_label.fi && suggestion.preferred_label.fi.value"
+            class="suggestion-title">
+            {{ suggestion.preferred_label.fi.value }}
+          </h1>
+          <h1
+            v-if="suggestion.preferred_label.fi && !suggestion.preferred_label.fi.value"
+            class="suggestion-title">
+            {{ suggestion.preferred_label.fi }}
+          </h1>
+          <transition name="fade">
+            <div class="suggestion-header-details">
+              <span><strong>#{{ suggestion.id }} </strong></span>
+              <span>{{ dateTimeFormatLabel(suggestion.created) }} </span>
+              <assign-meeting
+                @closeDropdown="dropdownOpen = false"
+                @goToMeeting="goToMeeting($event)"
+                :suggestion="suggestion"
+                :meetingId="suggestion.meeting_id"
+                :isAuthenticated="isAuthenticated"
+                :isAdmin="role === userRoles.ADMIN"
+                class="assign-meeting" />
+            </div>
+          </transition>
           <div class="tags">
             <span
               v-if="suggestion.suggestion_type === suggestionType.NEW"
-              class="tag type-new">{{
-                suggestionTypeToString[suggestion.suggestion_type]
-              }}
+              class="tag type-new">
+              {{ suggestionTypeToString[suggestion.suggestion_type] }}
             </span>
             <span
               v-if="suggestion.suggestion_type === suggestionType.MODIFY"
-              class="tag type-modify">{{
-                suggestionTypeToString[suggestion.suggestion_type]
-              }}
+              class="tag type-modify">
+              {{ suggestionTypeToString[suggestion.suggestion_type] }}
             </span>
             <span
               v-if="suggestion.status === suggestionStateStatus.RECEIVED"
-              class="tag status-received">{{ suggestionStateStatusToString[suggestionStateStatus.RECEIVED] }}
+              class="tag status-received">
+              {{ suggestionStateStatusToString[suggestionStateStatus.RECEIVED] }}
             </span>
             <span
               v-if="suggestion.status === suggestionStateStatus.READ"
-              class="tag status-received">{{ suggestionStateStatusToString[suggestionStateStatus.READ] }}
+              class="tag status-received">
+              {{ suggestionStateStatusToString[suggestionStateStatus.READ] }}
             </span>
             <span
               v-if="suggestion.status === suggestionStateStatus.ACCEPTED"
@@ -66,19 +81,18 @@
             </span>
             <span
               v-if="suggestion.status === suggestionStateStatus.REJECTED"
-              class="tag status-rejected">{{
-                suggestionStateStatusToString[suggestionStateStatus.REJECTED]
-              }}
+              class="tag status-rejected">
+              {{ suggestionStateStatusToString[suggestionStateStatus.REJECTED] }}
             </span>
             <span
               v-if="suggestion.status === suggestionStateStatus.RETAINED"
-              class="tag status-retained">{{
-                suggestionStateStatusToString[suggestionStateStatus.RETAINED]
-              }}
+              class="tag status-retained">
+              {{ suggestionStateStatusToString[suggestionStateStatus.RETAINED] }}
             </span>
             <span
               v-if="suggestion.status === suggestionStateStatus.ARCHIVED"
-              class="tag status-retained">{{ suggestionStateStatusToString[suggestionStateStatus.ARCHIVED] }}
+              class="tag status-retained">
+              {{ suggestionStateStatusToString[suggestionStateStatus.ARCHIVED] }}
             </span>
             <span
               v-if="suggestion.tags && suggestion.tags.length > 0">
@@ -93,7 +107,7 @@
         </div>
         <div class="suggestion-header-buttons" v-if="isAuthenticated && role === userRoles.ADMIN">
           <tag-selector :suggestion="suggestion" :userId="userId" />
-          <svg-icon icon-name="more" class="icon-button"><icon-more /></svg-icon>
+          <menu-button :options="menuOptions" name="suggestion-menu" class="menu" ref="menu" />
         </div>
       </div>
 
@@ -119,7 +133,9 @@
       <div v-for="event in events" :key="event.id">
         <suggestion-event
           :event="event"
-          :type="event.event_type" />
+          :type="event.event_type"
+          :suggestionId="suggestionId"
+          :isAuthenticated="isAuthenticated" />
       </div>
     </div>
 
@@ -135,9 +151,10 @@ import SuggestionEvent from './SuggestionEvent';
 import MeetingStatus from '../meetings/MeetingStatus';
 import MeetingActions from '../meetings/MeetingActions';
 import IconArrow from '../icons/IconArrow';
-import IconMore from '../icons/IconMore';
 import SvgIcon from '../icons/SvgIcon';
+import MenuButton from '../common/MenuButton';
 import AddComment from './AddComment';
+import AssignMeeting from './AssignMeeting';
 
 import {
   suggestionType,
@@ -162,6 +179,7 @@ import { mapEventGetters, mapEventActions } from '../../store/modules/event/even
 import { userActions, userGetters } from '../../store/modules/user/userConsts';
 import { mapUserActions, mapUserGetters } from '../../store/modules/user/userModule';
 
+import { newActionEvent } from '../../utils/tagHelpers';
 import { dateTimeFormatLabel } from '../../utils/dateHelper.js';
 
 // eslint-disable-next-line
@@ -180,9 +198,10 @@ export default {
     MeetingStatus,
     MeetingActions,
     IconArrow,
-    IconMore,
     SvgIcon,
+    MenuButton,
     AddComment,
+    AssignMeeting,
     TagSelector
   },
   props: {
@@ -195,22 +214,40 @@ export default {
       default: null
     }
   },
-  data: () => ({
-    suggestionTypeToString,
-    dateTimeFormatLabel,
-    userName: '',
-    suggestionType,
-    requestedSuggestionId: null,
-    noNextSuggestions: false,
-    noPreviousSuggestions: false,
-    movingAction: {
-      NEXT: 'next',
-      PREVIOUS: 'previous'
-    },
-    userRoles,
-    suggestionStateStatus,
-    suggestionStateStatusToString
-  }),
+  data() {
+    return {
+      suggestionTypeToString,
+      dateTimeFormatLabel,
+      userName: '',
+      suggestionType,
+      requestedSuggestionId: null,
+      dropdownOpen: false,
+      noNextSuggestions: false,
+      noPreviousSuggestions: false,
+      movingAction: {
+        NEXT: 'next',
+        PREVIOUS: 'previous'
+      },
+      menuOptions: [
+        {
+          title: 'Merkitse vastaanotettuksi',
+          method: this.markAsReadSuggestion
+        },
+        {
+          title: 'Hylkää ehdotus',
+          method: this.rejectSuggestion
+        },
+        {
+          title: 'Arkistoi ehdotus',
+          method: this.archiveSuggestion
+        }
+      ],
+      userRoles,
+      suggestionStateStatus,
+      suggestionStateStatusToString,
+      meetingComponentKey: 0
+    };
+  },
   computed: {
     ...mapSuggestionGetters({
       suggestion: suggestionGetters.GET_SUGGESTION,
@@ -241,10 +278,12 @@ export default {
   methods: {
     ...mapSuggestionActions({
       getSuggestionById: suggestionActions.GET_SUGGESTION_BY_ID,
-      getSuggestionsByMeetingId: suggestionActions.GET_SUGGESTIONS_BY_MEETING_ID
+      getSuggestionsByMeetingId: suggestionActions.GET_SUGGESTIONS_BY_MEETING_ID,
+      setSuggestionStatus: suggestionActions.SET_SUGGESTION_STATUS
     }),
     ...mapEventActions({
-      getEventsBySuggestionId: eventActions.GET_EVENTS_BY_SUGGESTION_ID
+      getEventsBySuggestionId: eventActions.GET_EVENTS_BY_SUGGESTION_ID,
+      addEvent: eventActions.ADD_NEW_EVENT
     }),
     ...mapUserActions({
       getUser: userActions.GET_USER
@@ -269,7 +308,7 @@ export default {
       }
     },
     goToPreviousSuggestion() {
-      this.getNexUsableSuggestionId(this.movingAction.PREVIOUS);
+      this.getNextUsableSuggestionId(this.movingAction.PREVIOUS);
       if (this.requestedSuggestionId) {
         this.$router.push({
           name: 'meeting-suggestion',
@@ -286,7 +325,7 @@ export default {
       if (this.noNextSuggestions) {
         this.$router.push('/meetings/' + this.meetingId);
       } else {
-        this.getNexUsableSuggestionId(this.movingAction.NEXT);
+        this.getNextUsableSuggestionId(this.movingAction.NEXT);
         if (this.requestedSuggestionId) {
           this.$router.push({
             name: 'meeting-suggestion',
@@ -300,7 +339,7 @@ export default {
         }
       }
     },
-    getNexUsableSuggestionId(action) {
+    getNextUsableSuggestionId(action) {
       if (this.suggestions && this.suggestions.length > 0) {
         for (let i = 0; this.suggestions.length > i; i++) {
           if (this.suggestions[i].id === parseInt(this.suggestionId)) {
@@ -342,6 +381,37 @@ export default {
     },
     handleOpenTagSelector() {
       this.openTagSelector ? (this.openTagSelector = false) : (this.openTagSelector = true);
+    },
+    closeMenuDropdown() {
+      this.$refs.menu.closeDropdown();
+    },
+    async createEvent(status) {
+      const event = newActionEvent('käsitteli ehdotuksen.', status, this.userId, this.suggestionId);
+      await this.addEvent(event);
+    },
+    async markAsReadSuggestion() {
+      await this.setSuggestionStatus({
+        suggestionId: this.suggestionId,
+        status: suggestionStateStatus.READ
+      });
+      await this.createEvent(suggestionStateStatus.READ);
+      this.closeMenuDropdown();
+    },
+    async rejectSuggestion() {
+      await this.setSuggestionStatus({
+        suggestionId: this.suggestionId,
+        status: suggestionStateStatus.REJECTED
+      });
+      await this.createEvent(suggestionStateStatus.REJECTED);
+      this.closeMenuDropdown();
+    },
+    async archiveSuggestion() {
+      await this.setSuggestionStatus({
+        suggestionId: this.suggestionId,
+        status: suggestionStateStatus.ARCHIVED
+      });
+      await this.createEvent(suggestionStateStatus.ARCHIVED);
+      this.closeMenuDropdown();
     }
   },
   watch: {
@@ -461,6 +531,10 @@ h1.suggestion-title {
   margin-left: 20px;
 }
 
+.menu {
+  margin-left: 20px;
+}
+
 .suggestion-header-details {
   line-height: 24px;
   font-size: 13px;
@@ -482,7 +556,7 @@ h1.suggestion-title {
 .tag {
   background-color: #4794a2;
   border: 2px solid #4794a2;
-  padding: 0 6px;
+  padding: 1px 6px 0;
   margin: 4px 4px 0 0;
   border-radius: 2px;
   display: inline-block;
@@ -534,6 +608,10 @@ h1.suggestion-title {
   margin-top: 10px;
 }
 
+.assign-meeting {
+  display: inline-block;
+}
+
 @media (max-width: 700px) {
   .meeting-arrow-controls .control span {
     display: none;
@@ -560,5 +638,14 @@ h1.suggestion-title {
     margin-left: 0;
     margin-right: 20px;
   }
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.5s;
+}
+.fade-enter,
+.fade-leave-to {
+  opacity: 0;
 }
 </style>

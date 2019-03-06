@@ -105,6 +105,15 @@ export default {
         commit(suggestionMutations.SET_SUGGESTION, result.data);
       }
     },
+    async [suggestionActions.ASSIGN_SUGGESTION_TO_MEETING](
+      { commit },
+      { suggestionId, meetingId }
+    ) {
+      const result = await api.suggestion.assignSuggestionToMeeting(suggestionId, meetingId);
+      if (result && result.code == 202) {
+        commit(suggestionMutations.SET_SUGGESTION, result.data);
+      }
+    },
     [suggestionActions.GET_SUGGESTIONS_SELECTED_SORT]({ commit }) {
       const sortKey = sessionStorage[sessionStorageKeyNames.SUGGESTIONS_SELECTED_SORT];
       if (sortKey) {
@@ -144,34 +153,7 @@ export default {
         commit(suggestionMutations.SET_MEETING_SUGGESTIONS_SELECTED_STORAGE_SORT, sortKey);
       }
     },
-    async [suggestionActions.SET_SUGGESTION_ACCEPTED]({ dispatch }, params) {
-      try {
-        const response = await api.suggestion.updateSuggestionStatus(
-          params.suggestionId,
-          params.status,
-          params.userId
-        );
-        if (response && response.code == 202) {
-          dispatch(suggestionActions.GET_SUGGESTION_BY_ID, params.suggestionId);
-        }
-      } catch (error) {
-        console.log(`Could not set suggestion state to accepted ${params.suggestionId} , ${error}`);
-      }
-    },
-    async [suggestionActions.SET_SUGGESTION_REJECTED]({ dispatch }, params) {
-      try {
-        const response = await api.suggestion.updateSuggestionStatus(
-          params.suggestionId,
-          params.status
-        );
-        if (response && response.code == 202) {
-          dispatch(suggestionActions.GET_SUGGESTION_BY_ID, params.suggestionId);
-        }
-      } catch (error) {
-        console.log(`Could not set suggestion state to rejected ${params.suggestionId}, ${error}`);
-      }
-    },
-    async [suggestionActions.SET_SUGGESTION_RETAINED]({ dispatch }, params) {
+    async [suggestionActions.SET_SUGGESTION_STATUS]({ dispatch }, params) {
       try {
         const response = await api.suggestion.updateSuggestionStatus(
           params.suggestionId,

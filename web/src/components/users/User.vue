@@ -1,7 +1,10 @@
 <template>
   <div class="user">
     <div class="profile-container">
-      <div class="user-name-initials">{{ userNameInitials }}</div>
+      <div class="user-name-initials">
+        <span v-if="userNameInitials">{{ userNameInitials }}</span>
+        <span v-else>{{ userId }}</span>
+      </div>
       <div class="profile">
         <p class="profile-user" v-if="!user.name">
           Käyttäjä {{ userId }}<span v-if="user.role">, {{ userRoleToString[user.role] }}</span>
@@ -14,18 +17,18 @@
           <span v-if="user.organization">{{ user.organization }}</span>
         </p>
       </div>
-      <!--<div v-if="isAuthenticated && loggedInUserId === userId" class="settings">
+      <div v-if="isAuthenticated && loggedInUserId === userId" class="settings">
         <div @click="showDropdown = true">
           <svg-icon icon-name="more"><icon-more/></svg-icon>
         </div>
         <div v-if="showDropdown" v-on-clickaway="closeDropdown" class="dropdown">
-          <div @click="goToSettings">Muokkaa profiiliasi</div>
+          <div @click="goToSettings">Muokkaa profiilia</div>
         </div>
-      </div>-->
+      </div>
     </div>
 
     <div v-if="paginated_items && paginated_items.length > 0" class="user-suggestions">
-      <suggestion-header
+      <suggestion-list-header
         :openSuggestionCount="openCount || 0"
         :resolvedSuggestionCount="resolvedCount || 0"
         :userPage="true"
@@ -56,7 +59,7 @@
 </template>
 
 <script>
-import SuggestionHeader from '../suggestion/SuggestionHeader';
+import SuggestionListHeader from '../suggestion/SuggestionListHeader';
 import SuggestionItem from '../suggestion/SuggestionItem';
 import SuggestionListPagination from '../suggestion/SuggestionListPagination';
 import { calculateOpenAndResolvedSuggestionCounts } from '../../utils/suggestionHelpers';
@@ -68,7 +71,7 @@ import { userRoleToString } from '../../utils/userMappings.js';
 // eslint-disable-next-line
 import { authenticatedUserGetters } from '../../store/modules/authenticatedUser/authenticatedUserConsts.js';
 // eslint-disable-next-line
-import { mapAuthenticatedUserGetters } from '../../store/modules/authenticatedUser/authenticatedUserModule.js';
+import { mapAuthenticatedUserGetters} from '../../store/modules/authenticatedUser/authenticatedUserModule.js';
 
 import {
   suggestionGetters,
@@ -88,7 +91,7 @@ import { directive as onClickaway } from 'vue-clickaway';
 
 export default {
   components: {
-    SuggestionHeader,
+    SuggestionListHeader,
     SuggestionItem,
     SuggestionListPagination,
     SvgIcon,
@@ -127,7 +130,7 @@ export default {
   },
   async created() {
     await this.getUser(this.userId);
-    this.fetchUserNameAndInitials();
+    await this.fetchUserNameAndInitials();
     await this.getSuggestionsByUserId(parseInt(this.userId));
     await this.handleSuggestionFetching();
     await this.getSuggestionsSelectedSortKey();
@@ -174,17 +177,18 @@ export default {
       const end = this.getPaginationEndingIndex(pageNumber);
       const paginatedItems = items ? items : this.items;
       // eslint-disable-next-line
-      this.paginated_items = paginatedItems && paginatedItems.length > 0 ? paginatedItems.slice(start, end) : []
+      this.paginated_items = paginatedItems && paginatedItems.length > 0 ? paginatedItems.slice(start, end) : [];
       this.calculateOpenAndResolvedSuggestionCounts(items);
-      this.calculatePageCountForPagination(items)
+      this.calculatePageCountForPagination(items);
     },
     calculatePageCountForPagination() {
       return Math.ceil(this.items.length / this.paginationMaxCount);
     },
     calculateOpenAndResolvedSuggestionCounts(items = null) {
-      const counts = items === null
-        ? calculateOpenAndResolvedSuggestionCounts(this.items)
-        : calculateOpenAndResolvedSuggestionCounts(items);
+      const counts =
+        items === null
+          ? calculateOpenAndResolvedSuggestionCounts(this.items)
+          : calculateOpenAndResolvedSuggestionCounts(items);
       this.openCount = counts && counts.openCount ? counts.openCount : 0;
       this.resolvedCount = counts && counts.resolvedCount ? counts.resolvedCount : 0;
     },
@@ -300,19 +304,16 @@ export default {
   background-color: #ffffff;
   border: 1px solid #e1e1e1;
   border-radius: 2px;
-  -webkit-box-shadow: 6px 8px 17px -6px rgba(80, 80, 80, 0.35);
-  -moz-box-shadow: 6px 8px 17px -6px rgba(80, 80, 80, 0.35);
-  box-shadow: 6px 8px 17px -6px rgba(80, 80, 80, 0.35);
+}
+
+.dropdown:hover {
+  background-color: #f3fbfa;
+  cursor: pointer;
+  cursor: hand;
 }
 
 .dropdown div {
   padding: 10px 16px;
-}
-
-.dropdown div:hover {
-  background-color: #f3fbfa;
-  cursor: pointer;
-  cursor: hand;
 }
 
 .user-suggestions {
@@ -394,7 +395,7 @@ ul {
   transition: opacity 3s;
 }
 .fade-enter,
-.fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
+.fade-leave-to {
   opacity: 0.75;
 }
 </style>

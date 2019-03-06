@@ -39,13 +39,14 @@ export default {
       if (response && response.code === 200) {
         commit(userMutations.SET_USERS, response.data);
       }
+    },
+    async [userActions.PATCH_USER]({ commit }, params) {
+      const response = await api.user.patchUser(params.userId, params.data);
+      if (response && response.code === 200) {
+        await commit(userMutations.SET_USER, response.data);
+      } else {
+        throw 'Error in patching user information.';
+      }
     }
-    //,
-    //async [userActions.PATCH_USER]({ commit }, userId, params) {
-    //  const response = await api.user.patchUser(userId, params);
-    //  if (response && response.code === 200) {
-    //    // TODO: fix this to set the change into store
-    //  }
-    //}
   }
 };

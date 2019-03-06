@@ -26,6 +26,9 @@ export const meetingMutations = {
 export const meetingActions = {
   GET_MEETINGS: 'getMeetings',
   GET_MEETING: 'getMeeting',
+  ADD_NEW_MEETING: 'addNewMeeting',
+  UPDATE_MEETING: 'updateMeeting',
+  DELETE_MEETING: 'deleteMeeting',
   GET_MEETINGS_SELECTED_SORT: 'getMeetingsSelectedSort',
   SET_MEETINGS_SELECTED_SORT: 'setMeetingsSelectedSort'
 };

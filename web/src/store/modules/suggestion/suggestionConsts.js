@@ -42,14 +42,13 @@ export const suggestionActions = {
   GET_SUGGESTION_BY_ID: 'getSuggestionById',
   ASSIGN_SUGGESTION_TO_USER: 'assignSuggestionToUser',
   UNASSIGN_SUGGESTION_FROM_USER: 'unassignSuggestionFromUser',
+  ASSIGN_SUGGESTION_TO_MEETING: 'assignSuggestionToMeeting',
   GET_SUGGESTIONS_SELECTED_SORT: 'getSuggestionsSelectedSort',
   SET_SUGGESTIONS_SELECTED_SORT: 'setSuggestionsSelectedSort',
   GET_SUGGESTIONS_BY_MEETING_ID: 'getSuggestionsByMeetingId',
   GET_SORTED_SUGGESTIONS_BY_MEETING_ID: 'getSortedSuggestionsByMeetingId',
   GET_MEETING_SUGGESTIONS_SELECTED_SORT: 'getMeetingSuggestionsSelectedSort',
   SET_MEETING_SUGGESTIONS_SELECTED_SORT: 'setMeetingSuggestionsSelectedSort',
-  SET_SUGGESTION_ACCEPTED: 'setSuggestionAccpeted',
-  SET_SUGGESTION_REJECTED: 'setSuggestionRejected',
-  SET_SUGGESTION_RETAINED: 'setSuggestionRetained',
+  SET_SUGGESTION_STATUS: 'setSuggestionStatus',
   GET_SUGGESTIONS_BY_SEARCH_WORD: 'getSuggestionsBySearchWord'
 };

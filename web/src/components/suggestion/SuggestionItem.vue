@@ -3,35 +3,47 @@
     <div class="item-summary">
       <div class="title">
         <p class="title-row">
-          <span v-if="!suggestion.preferred_label.fi.value" class="item-name">{{ suggestion.preferred_label.fi }}</span>
-          <span v-if="suggestion.preferred_label.fi.value" class="item-name">{{ suggestion.preferred_label.fi.value }}</span>
+          <span
+            v-if="suggestion.preferred_label.fi && suggestion.preferred_label.fi.value"
+            class="item-name">
+            {{ suggestion.preferred_label.fi.value }}
+          </span>
+          <span v-else class="item-name">
+            {{ suggestion.preferred_label.fi }}
+          </span>
           <span
             :class="[suggestionTypeToStyleClass[suggestion.suggestion_type], 'tag']">
             {{ suggestionTypeToString[suggestion.suggestion_type] }}
           </span>
             <span
               v-if="suggestion.status === suggestionStateStatus.RECEIVED"
-              class="tag status-received">{{ suggestionStateStatusToString[suggestionStateStatus.RECEIVED] }}
+              class="tag status-received">
+              {{ suggestionStateStatusToString[suggestionStateStatus.RECEIVED] }}
             </span>
             <span
               v-if="suggestion.status === suggestionStateStatus.READ"
-              class="tag status-received">{{ suggestionStateStatusToString[suggestionStateStatus.READ] }}
+              class="tag status-received">
+              {{ suggestionStateStatusToString[suggestionStateStatus.READ] }}
             </span>
             <span
               v-if="suggestion.status === suggestionStateStatus.ACCEPTED"
-              class="tag status-accepted">{{ suggestionStateStatusToString[suggestionStateStatus.ACCEPTED] }}
+              class="tag status-accepted">
+              {{ suggestionStateStatusToString[suggestionStateStatus.ACCEPTED] }}
             </span>
             <span
               v-if="suggestion.status === suggestionStateStatus.REJECTED"
-              class="tag status-rejected">{{ suggestionStateStatusToString[suggestionStateStatus.REJECTED] }}
+              class="tag status-rejected">
+              {{ suggestionStateStatusToString[suggestionStateStatus.REJECTED] }}
             </span>
             <span
               v-if="suggestion.status === suggestionStateStatus.RETAINED"
-              class="tag status-retained">{{ suggestionStateStatusToString[suggestionStateStatus.RETAINED] }}
+              class="tag status-retained">
+              {{ suggestionStateStatusToString[suggestionStateStatus.RETAINED] }}
             </span>
             <span
               v-if="suggestion.status === suggestionStateStatus.ARCHIVED"
-              class="tag status-retained">{{ suggestionStateStatusToString[suggestionStateStatus.ARCHIVED] }}
+              class="tag status-retained">
+              {{ suggestionStateStatusToString[suggestionStateStatus.ARCHIVED] }}
             </span>
           <span v-if="suggestion.tags.length > 0">
             <span class="tags tag" v-for="tag in suggestion.tags" :key="tag.label">
@@ -45,8 +57,9 @@
           <strong>#{{ suggestion.id }}</strong>
           {{ dateTimeFormatLabel(suggestion.created) }}
           <span v-if="suggestion.meeting_id">
+            –
             <a @click.stop="goToMeeting(suggestion.meeting_id)">
-              – Kokous {{ suggestion.meeting_id }}
+              Kokous {{ suggestion.meeting_id }}
             </a>
           </span>
         </p>

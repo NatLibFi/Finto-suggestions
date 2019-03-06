@@ -5,7 +5,7 @@ from sqlalchemy.types import Unicode
 from ..authentication import admin_only
 from .validators import suggestion_parameter_validator, suggestion_id_validator, _error_messagify
 from .common import (create_response, get_one_or_404, get_all_or_404_custom,
-                     create_or_404, delete_or_404, patch_or_404, update_or_404)
+                     create_or_400, delete_or_404, patch_or_404, update_or_404)
 from .utils import SUGGESTION_FILTER_FUNCTIONS, SUGGESTION_SORT_FUNCTIONS
 from ..models import db, Suggestion, Tag, User
 from flask import jsonify
@@ -106,7 +106,7 @@ def post_suggestion() -> str:
 
     :returns: the created suggestion as json
     """
-    created_response = create_or_404(Suggestion, connexion.request.json)
+    created_response = create_or_400(Suggestion, connexion.request.json)
     response = created_response[0]
 
     if response is not None and response['code'] is 201:
@@ -262,7 +262,7 @@ def get_meeting_suggestions(meeting_id: int) -> str:
 @suggestion_id_validator
 def put_update_suggestion_status(suggestion_id: int, status: str) -> str:
     """
-    Updates suggestion status info (mainly to ACCEPTED or REJECTED)
+    Updates suggestion status info (mainly to ACCEPTED or RETAINED)
     """
 
     if suggestion_id > 0 and len(status) > 0:

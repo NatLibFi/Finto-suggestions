@@ -28,7 +28,7 @@ import SvgIcon from '../icons/SvgIcon';
 import IconTriangle from '../icons/IconTriangle';
 
 import { mapMeetingGetters, mapMeetingActions } from '../../store/modules/meeting/meetingModule.js';
-import { meetingGetters, meetingActions } from '../../store/modules/meeting/meetingConst.js';
+import { meetingGetters, meetingActions } from '../../store/modules/meeting/meetingConsts.js';
 
 export default {
   components: {
@@ -44,8 +44,8 @@ export default {
     selectedSortOptionIndex: 1,
     isDropDownOpened: false,
     dropDownOptions: [
-      { label: 'Uusin ensin', value: sortingKeys.NEWEST_FIRST },
-      { label: 'Vanhin ensin', value: sortingKeys.OLDEST_FIRST }
+      { label: 'Ensin luotu ensin', value: sortingKeys.OLDEST_FIRST },
+      { label: 'Viimeiseksi luotu ensin', value: sortingKeys.NEWEST_FIRST }
     ]
   }),
   computed: {
@@ -144,9 +144,6 @@ export default {
   z-index: 2;
   border: 1px solid #e1e1e1;
   border-radius: 2px;
-  -webkit-box-shadow: 6px 8px 17px -6px rgba(80, 80, 80, 0.35);
-  -moz-box-shadow: 6px 8px 17px -6px rgba(80, 80, 80, 0.35);
-  box-shadow: 6px 8px 17px -6px rgba(80, 80, 80, 0.35);
 }
 
 .option {

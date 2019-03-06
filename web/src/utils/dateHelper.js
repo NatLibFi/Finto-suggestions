@@ -13,9 +13,14 @@ export const hasDatePassed = date => {
 * Formats date format as 'Lähetetty x päivää sitten'
 * or when it's over 30 just sends 'Lähetetty dd.MM.YYYY'
 */
-export const dateTimeFormatLabel = date => {
+export const dateTimeFormatLabel = (date, isMeeting = false) => {
   const whenSended = differenceInDays(parse(new Date()), parse(date));
-  return whenSended > 0 && whenSended < 30
-    ? `Lähetetty ${whenSended} päivää sitten`
-    : `Lähetetty ${format(date, 'DD.MM.YYYY')}`;
+  if (!isMeeting) {
+    return whenSended > 0 && whenSended < 30
+      ? `Lähetetty ${whenSended} päivää sitten`
+      : `Lähetetty ${format(date, 'DD.MM.YYYY')}`;
+  }
+  if (isMeeting) {
+    return format(date, 'DD.MM.YYYY');
+  }
 };

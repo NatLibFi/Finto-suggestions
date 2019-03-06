@@ -12,7 +12,7 @@
         <div
           v-for="user in filteredUsers"
           :key="user.id"
-          v-on:click="assignUserToSuggestion({ suggestionId: suggestion.id, userId: user.id })"
+          @click="assignUserToSuggestion({ suggestionId: suggestion.id, userId: user.id })"
           class="user-item">
           <div v-if="user.name && user.name.length > 0">
             <div  class="user-image">{{ userNameInitials(user.name) }}</div>
@@ -81,13 +81,12 @@ export default {
       this.searchOpen = !this.searchOpen;
     },
     filterResults() {
+      this.getUsers();
       if (this.searchQuery.length >= 1) {
-        const filteredUsers = this.users.filter(user =>
-          user.name.toLowerCase().match(this.searchQuery.toLowerCase())
+        this.filteredUsers = this.users.filter(user =>
+          user.name.toLowerCase().includes(this.searchQuery.toLowerCase())
         );
-        this.setUsers(filteredUsers);
-      } else {
-        this.getUsers();
+        this.setUsers(this.filteredUsers);
       }
     },
     openSearch() {
@@ -131,7 +130,6 @@ export default {
   background: #ffffff;
   border: 1px solid #f5f5f5;
   box-sizing: border-box;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
   border-radius: 1px;
   z-index: 10;
 }

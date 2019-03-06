@@ -255,11 +255,11 @@ definitions:
   status:
     type: string
     enum:
-      - RECEIVED,
-      - READ,
-      - ACCEPTED,
-      - REJECTED,
-      - RETAINED,
+      - RECEIVED
+      - READ
+      - ACCEPTED
+      - REJECTED
+      - RETAINED
       - ARCHIVED
     description: "Processing state of a particular `Suggestion`."
     example: READ

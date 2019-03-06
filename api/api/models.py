@@ -18,10 +18,11 @@ class EventActionSubTypes(enum.IntEnum):
     STATUS = 0
     TAG = 1
 
+
 class SuggestionStatusTypes(enum.IntEnum):
     RECEIVED = 0,
     READ = 1,
-    ACCEPTED = 2
+    ACCEPTED = 2,
     REJECTED = 3,
     RETAINED = 4,
     ARCHIVED = 5
@@ -242,7 +243,7 @@ class Tag(db.Model, SerializableMixin):
 
 class User(db.Model, SerializableMixin):
     __tablename__ = 'users'
-    __public__ = ['id', 'name', 'email', 'role']
+    __public__ = ['id', 'name', 'email', 'role', 'title', 'organization', 'imageUrl']
 
     id = db.Column(db.Integer, primary_key=True)
     created = db.Column(db.DateTime, index=True, default=datetime.utcnow)
