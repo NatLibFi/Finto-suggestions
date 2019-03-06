@@ -6,7 +6,7 @@ steps:
     registry: quay.io
     repo: quay.io/natlibfi/finto-suggestions-web
     tag: staging
-    dockerfile: /drone/src/docker/staging/web/Dockerfile
+    dockerfile: ./docker/staging/web/Dockerfile
     username:
       from_secret: docker_username
     password:
@@ -24,7 +24,7 @@ steps:
     registry: quay.io
     repo: quay.io/natlibfi/finto-suggestions-api
     tag: staging
-    dockerfile: /drone/src/docker/staging/api/Dockerfile
+    dockerfile: ./docker/staging/api/Dockerfile
     username:
       from_secret: docker_username
     password:
