@@ -4,7 +4,8 @@ steps:
   - name: docker
     image: plugins/docker
     settings:
-      tag: staging
+      auto_tag: true
+      auto_tag_suffix: staging
       dockerfile: docker/staging/web/Dockerfile
       username:
         from_secret: docker_username
@@ -23,7 +24,8 @@ steps:
   - name: docker
     image: plugins/docker
     settings:
-      tag: staging
+      auto_tag: true
+      auto_tag_suffix: staging
       dockerfile: docker/staging/api/Dockerfile
       username:
         from_secret: docker_username
