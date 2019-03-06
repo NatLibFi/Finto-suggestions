@@ -4,8 +4,6 @@ steps:
   - name: docker
     image: plugins/docker
     settings:
-      auto_tag: true
-      auto_tag_suffix: staging
       dockerfile: docker/staging/web/Dockerfile
       username:
         from_secret: docker_username
@@ -13,6 +11,7 @@ steps:
         from_secret: docker_password
       registry: quay.io
       repo: quay.io/natlibfi/finto-suggestions-web
+    tag: staging
     when:
       event: push
       branch: [master, fix/backend-performance-fixing]
