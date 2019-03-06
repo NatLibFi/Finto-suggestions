@@ -3,7 +3,7 @@ FROM python:3.7-alpine
 ENV PYTHONUNBUFFERED 1
 ENV TZ "Europe/Helsinki"
 
-COPY ./api /app
+COPY /drone/src/api /app
 WORKDIR /app
 
 # This layer is needed for python postgres support

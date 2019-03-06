@@ -3,7 +3,7 @@ FROM node:10.14.0-alpine as build-stage
 # install simple http server for serving static content
 RUN npm install -g @vue/cli && npm install @vue/cli-service-global
 
-COPY ./web/package*.json /tmp/
+COPY /drone/src/web/package*.json /tmp/
 
 RUN cd /tmp && npm install
 
@@ -11,7 +11,7 @@ WORKDIR /app
 
 RUN cp -a /tmp/node_modules /app/
 
-COPY ./web/. /app/
+COPY /drone/src/web/. /app/
 
 RUN npm run build:staging
 
