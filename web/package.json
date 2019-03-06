@@ -11,6 +11,7 @@
     "docker:build": "docker-compose exec web npm run build"
   },
   "dependencies": {
+    "@vue/cli-service-global": "^3.4.1",
     "axios": "0.18.0",
     "date-fns": "1.29.0",
     "ramda": "^0.25.0",
