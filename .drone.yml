@@ -11,7 +11,8 @@ steps:
         from_secret: docker_password
       registry: quay.io
       repo: quay.io/natlibfi/finto-suggestions-web
-      tags: staging
+      tags:
+        - staging
     when:
       event: push
       branch: [master, fix/backend-performance-fixing]
