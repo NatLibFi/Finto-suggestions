@@ -14,8 +14,7 @@ steps:
       tags: [staging]
     when:
       event: push
-      branch: [master, fix/backend-performance-fixing]
-
+      branch: [master]
 ---
 kind: pipeline
 name: api_staging
@@ -33,4 +32,4 @@ steps:
       tags: [staging]
     when:
       event: push
-      branch: [master, fix/backend-performance-fixing]
+      branch: [master]
