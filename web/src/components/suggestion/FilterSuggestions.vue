@@ -1,6 +1,8 @@
 <template>
   <div class="filter-suggestions">
-    <h5>Suodata hakutuloksia</h5>
+    <h5>Suodata hakutuloksia
+      <a v-if="hasTouchedFilters" @click="resetFilters()" class="clear-button">Tyhjennä valinnat</a>
+    </h5>
     <div @click="isDropDownOpened.STATUS = !isDropDownOpened.STATUS" class="filter-item">
       <div :class="[isDropDownOpened.STATUS ? 'selected' : '', 'drop-down-button']">
         <span>Käsittelyn tila</span>
@@ -72,12 +74,7 @@ import MultipleChoiceDropDown from '../common/MultipleChoiceDropDown';
 import SvgIcon from '../icons/SvgIcon';
 import IconTriangle from '../icons/IconTriangle';
 
-import {
-  suggestionStateStatus,
-  suggestionType,
-  filterType
-} from '../../utils/suggestionMappings.js';
-
+import { filterType } from '../../utils/suggestionHelpers.js';
 import {
   suggestionGetters,
   suggestionMutations
@@ -88,14 +85,18 @@ import {
 } from '../../store/modules/suggestion/suggestionModule.js';
 
 import { mapMeetingActions, mapMeetingGetters } from '../../store/modules/meeting/meetingModule.js';
-import { meetingActions, meetingGetters } from '../../store/modules/meeting/meetingConst.js';
+import { meetingActions, meetingGetters } from '../../store/modules/meeting/meetingConsts.js';
 
 import { mapTagActions, mapTagGetters } from '../../store/modules/tag/tagModule.js';
 import { tagActions, tagGetters } from '../../store/modules/tag/tagConst.js';
 
+import {
+  suggestionType,
+  suggestionTypeToString,
+  suggestionStateStatus,
+  suggestionStateStatusToString
+} from '../../utils/suggestionHelpers.js';
 import { handleDropDownSelection } from '../../utils/filterValueHelper.js';
-
-// import { format, parse } from 'date-fns';
 
 export default {
   components: {
@@ -114,6 +115,7 @@ export default {
       TYPE: 0, // multiple choice
       MEETING: null // no default
     },
+    hasTouchedFilters: false,
     isDropDownOpened: {
       STATUS: false,
       TAG: false,
@@ -122,16 +124,32 @@ export default {
     },
     suggestionStateStatuses: [
       {
-        label: 'Käsittelemätön',
+        label: 'Kaikki ehdotukset',
         value: 'NONE'
       },
       {
-        label: 'Hyväksytty',
-        value: 'ACCEPTED'
+        label: suggestionStateStatusToString.RECEIVED,
+        value: suggestionStateStatus.RECEIVED
       },
       {
-        label: 'Hylätty',
-        value: 'REJECTED'
+        label: suggestionStateStatusToString.READ,
+        value: suggestionStateStatus.READ
+      },
+      {
+        label: suggestionStateStatusToString.ACCEPTED,
+        value: suggestionStateStatus.ACCEPTED
+      },
+      {
+        label: suggestionStateStatusToString.REJECTED,
+        value: suggestionStateStatus.REJECTED
+      },
+      {
+        label: suggestionStateStatusToString.RETAINED,
+        value: suggestionStateStatus.RETAINED
+      },
+      {
+        label: suggestionStateStatusToString.ARCHIVED,
+        value: suggestionStateStatus.ARCHIVED
       }
     ],
     suggestionTypes: [
@@ -140,12 +158,12 @@ export default {
         value: 'NONE'
       },
       {
-        label: 'Käsite-ehdotus',
-        value: 'NEW'
+        label: suggestionTypeToString.NEW,
+        value: suggestionType.NEW
       },
       {
-        label: 'Käsitemuutos',
-        value: 'MODIFY'
+        label: suggestionTypeToString.MODIFY,
+        value: suggestionType.MODIFY
       }
     ]
   }),
@@ -175,6 +193,7 @@ export default {
       setFilters: suggestionMutations.SET_FILTERS
     }),
     stateChanged(selected) {
+      this.hasTouchedFilters = true;
       handleDropDownSelection(
         selected === 'NONE' ? null : selected,
         filterType.STATUS,
@@ -184,6 +203,7 @@ export default {
       );
     },
     typeChanged(selected) {
+      this.hasTouchedFilters = true;
       handleDropDownSelection(
         selected === 'NONE' ? null : selected,
         filterType.TYPE,
@@ -197,19 +217,18 @@ export default {
 
       if (this.meetings && this.meetings.length > 0) {
         this.meetings.forEach(meeting => {
-          //TODO: format date better with date-fns
           if (meeting.meeting_date) {
             meetings.push({
-              label: `${meeting.meeting_date.split('T')[0]}`,
+              label: meeting.id + ': ' + meeting.name,
               value: meeting.id
             });
           }
         });
       }
-
       return meetings;
     },
     meetingChanged(selected) {
+      this.hasTouchedFilters = true;
       handleDropDownSelection(
         selected,
         filterType.MEETING,
@@ -220,8 +239,7 @@ export default {
     },
     mapTagsToDropDown() {
       let tags = [];
-
-      if (this.tags && this.tags.lenght > 0) {
+      if (this.tags && this.tags.length > 0) {
         this.tags.forEach(tag => {
           tags.push({ label: tag.label, value: tag.label });
         });
@@ -229,6 +247,7 @@ export default {
       return tags;
     },
     tagChanged(selected) {
+      this.hasTouchedFilters = true;
       handleDropDownSelection(
         selected,
         filterType.TAG,
@@ -248,6 +267,19 @@ export default {
     resetTags() {
       this.selectedOptionIndex.TAGS = [];
     },
+    resetFilters() {
+      this.selectedOptionIndex = {
+        STATUS: 0,
+        TAGS: [],
+        TYPE: 0,
+        MEETING: null
+      };
+      this.tagChanged(null);
+      this.meetingChanged(null);
+      this.typeChanged(0);
+      this.stateChanged(0);
+      this.hasTouchedFilters = false;
+    },
     closeDropDown() {
       this.isDropDownOpened.STATUS = false;
       this.isDropDownOpened.TAG = false;
@@ -261,6 +293,16 @@ export default {
 <style scoped>
 h5 {
   margin: 0 auto 2px;
+}
+
+.clear-button {
+  font-size: 12px;
+  cursor: pointer;
+  cursor: hand;
+  -webkit-user-select: none; /* Safari */
+  -moz-user-select: none; /* Firefox */
+  -ms-user-select: none; /* IE10+/Edge */
+  user-select: none; /* Standard */
 }
 
 .filter-suggestions {

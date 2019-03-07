@@ -36,10 +36,13 @@ import markdownEditor from 'vue-simplemde/src/markdown-editor';
 
 import { mapEventActions } from '../../store/modules/event/eventModule.js';
 import { eventActions } from '../../store/modules/event/eventConsts.js';
-import { eventTypes } from '../../utils/eventMappings.js';
 
+// eslint-disable-next-line
 import { mapAuthenticatedUserGetters } from '../../store/modules/authenticatedUser/authenticatedUserModule.js';
+// eslint-disable-next-line
 import { authenticatedUserGetters } from '../../store/modules/authenticatedUser/authenticatedUserConsts.js';
+
+import { newCommentEvent } from '../../utils/tagHelpers';
 
 export default {
   props: {
@@ -56,7 +59,7 @@ export default {
       content: '',
       mdeConfigs: {
         autofocus: false,
-        hideIcons: ['preview', 'fullscreen', 'side-by-side', 'guide'],
+        hideIcons: ['preview', 'fullscreen', 'side-by-side', 'guide', 'image'],
         indentWithTabs: false,
         spellChecker: false,
         status: false,
@@ -74,24 +77,14 @@ export default {
     ...mapEventActions({
       addNewEvent: eventActions.ADD_NEW_EVENT
     }),
-    constructEventJsonObject() {
-      if (this.isAuthenticated && this.userId > 0 && this.suggestionId > 0) {
-        return {
-          event_type: eventTypes.COMMENT,
-          text: this.content,
-          user_id: parseInt(this.userId),
-          suggestion_id: parseInt(this.suggestionId)
-        };
-      }
-      return null;
-    },
     saveNewComment() {
-      this.addNewEvent({
-        // TODO: needs to give user some error message because if not logged in cannot add comments
-        event: this.constructEventJsonObject(),
-        suggestionId: parseInt(this.suggestionId)
-      });
-      this.content = '';
+      if (this.isAuthenticated && this.userId > 0 && this.suggestionId > 0) {
+        this.addNewEvent({
+          event: newCommentEvent(this.$sanitize(this.content), this.userId, this.suggestionId),
+          suggestionId: parseInt(this.suggestionId)
+        });
+        this.content = '';
+      }
     }
   }
 };
@@ -156,12 +149,11 @@ export default {
   background-color: #44bdb2;
 }
 
-.disabled
-{
+.disabled {
   pointer-events: none;
   /* for "disabled" effect */
   opacity: 0.5;
-  background: #CCC;
+  background: #cccccc;
 }
 
 @media (max-width: 750px) {
@@ -183,7 +175,8 @@ export default {
 </style>
 
 <style>
-.markdown-editor .CodeMirror, .markdown-editor .CodeMirror-scroll {
+.markdown-editor .CodeMirror,
+.markdown-editor .CodeMirror-scroll {
   min-height: 100px;
 }
 </style>

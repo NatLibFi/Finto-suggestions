@@ -3,11 +3,48 @@
     <div class="item-summary">
       <div class="title">
         <p class="title-row">
-          <span class="item-name">{{ suggestion.preferred_label.fi }}</span>
+          <span
+            v-if="suggestion.preferred_label.fi && suggestion.preferred_label.fi.value"
+            class="item-name">
+            {{ suggestion.preferred_label.fi.value }}
+          </span>
+          <span v-else class="item-name">
+            {{ suggestion.preferred_label.fi }}
+          </span>
           <span
             :class="[suggestionTypeToStyleClass[suggestion.suggestion_type], 'tag']">
             {{ suggestionTypeToString[suggestion.suggestion_type] }}
           </span>
+            <span
+              v-if="suggestion.status === suggestionStateStatus.RECEIVED"
+              class="tag status-received">
+              {{ suggestionStateStatusToString[suggestionStateStatus.RECEIVED] }}
+            </span>
+            <span
+              v-if="suggestion.status === suggestionStateStatus.READ"
+              class="tag status-received">
+              {{ suggestionStateStatusToString[suggestionStateStatus.READ] }}
+            </span>
+            <span
+              v-if="suggestion.status === suggestionStateStatus.ACCEPTED"
+              class="tag status-accepted">
+              {{ suggestionStateStatusToString[suggestionStateStatus.ACCEPTED] }}
+            </span>
+            <span
+              v-if="suggestion.status === suggestionStateStatus.REJECTED"
+              class="tag status-rejected">
+              {{ suggestionStateStatusToString[suggestionStateStatus.REJECTED] }}
+            </span>
+            <span
+              v-if="suggestion.status === suggestionStateStatus.RETAINED"
+              class="tag status-retained">
+              {{ suggestionStateStatusToString[suggestionStateStatus.RETAINED] }}
+            </span>
+            <span
+              v-if="suggestion.status === suggestionStateStatus.ARCHIVED"
+              class="tag status-retained">
+              {{ suggestionStateStatusToString[suggestionStateStatus.ARCHIVED] }}
+            </span>
           <span v-if="suggestion.tags.length > 0">
             <span class="tags tag" v-for="tag in suggestion.tags" :key="tag.label">
               {{ tag.label}}
@@ -18,8 +55,9 @@
       <div class="label">
         <p>
           <strong>#{{ suggestion.id }}</strong>
-          {{ dateTimeFormatLabel(suggestion.created) }} –
-          <span>
+          {{ dateTimeFormatLabel(suggestion.created) }}
+          <span v-if="suggestion.meeting_id">
+            –
             <a @click.stop="goToMeeting(suggestion.meeting_id)">
               Kokous {{ suggestion.meeting_id }}
             </a>
@@ -27,9 +65,13 @@
         </p>
       </div>
     </div>
-    <div class="item-comments" v-if="suggestion.events.filter((event) => event.event_type === eventTypes.COMMENT).length > 0">
+    <div
+      v-if="suggestion.events.filter((event) => event.event_type === eventTypes.COMMENT).length > 0"
+      class="item-comments">
       <svg-icon icon-name="comments"><icon-comments /></svg-icon>
-      <span>{{ suggestion.events.filter((event) => event.event_type === eventTypes.COMMENT).length }}</span>
+      <span>
+        {{ suggestion.events.filter((event) => event.event_type === eventTypes.COMMENT).length }}
+      </span>
     </div>
   </li>
 </template>
@@ -37,9 +79,14 @@
 <script>
 import SvgIcon from '../icons/SvgIcon';
 import IconComments from '../icons/IconComments';
-import { suggestionTypeToStyleClass, suggestionTypeToString } from '../../utils/suggestionMappings';
+import {
+  suggestionTypeToStyleClass,
+  suggestionTypeToString,
+  suggestionStateStatus,
+  suggestionStateStatusToString
+} from '../../utils/suggestionHelpers';
 import { dateTimeFormatLabel } from '../../utils/dateHelper';
-import { eventTypes } from '../../utils/eventMappings';
+import { eventTypes } from '../../utils/eventHelper';
 
 export default {
   components: {
@@ -60,7 +107,9 @@ export default {
     suggestionTypeToStyleClass,
     suggestionTypeToString,
     eventTypes,
-    dateTimeFormatLabel
+    dateTimeFormatLabel,
+    suggestionStateStatus,
+    suggestionStateStatusToString
   }),
   methods: {
     goToSuggestion() {
@@ -89,7 +138,7 @@ export default {
         params: {
           meetingId: id
         }
-      })
+      });
     }
   }
 };
@@ -155,6 +204,36 @@ li.item:hover {
   background-color: #ff8111;
   border: 2px solid #ff8111;
 }
+.status-received {
+  background-color: #1137ff;
+  border: 2px solid #1137ff;
+}
+
+.status-read {
+  background-color: #f5f5f5;
+  border: 2px solid #f5f5f5;
+}
+
+.status-accepted {
+  background-color: #58ba81;
+  border: 2px solid #58ba81;
+}
+
+.status-rejected {
+  background-color: #cc4a4a;
+  border: 2px solid #cc4a4a;
+}
+
+.status-retained {
+  background-color: #f2994a;
+  border: 2px solid #f2994a;
+}
+
+.status-archived {
+  background-color: #ad9d8f;
+  border: 2px solid #ad9d8f;
+}
+
 .label {
   font-size: smaller;
   padding-left: 5px;

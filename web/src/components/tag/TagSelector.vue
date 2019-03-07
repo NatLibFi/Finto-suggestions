@@ -3,28 +3,33 @@
     <button @click="toggleTagSelector">
         <svg-icon icon-name='select-tag'><icon-tag /></svg-icon>
     </button>
-    <div v-if="showTagSelector" class="tag-selector">
+    <div v-if="showTagSelector" v-on-clickaway="toggleTagSelector" class="tag-selector">
       <div class="tag-selector-header">
-        <h4>Hallitse käsitteen tyyppejä</h4>
+        <h4>Hallitse käsitteen tunnisteita</h4>
       </div>
       <!-- TODO: build later search ability for tags in tag selection -->
       <!-- <div class="tag-selector-search">
-        <input type="text" placeholder="Etsi tyyppejä" />
+        <input type="text" placeholder="Etsi tunnisteita" />
       </div> -->
       <div class="tag-selector-tags">
         <ul v-if="tags && tags.length > 0">
           <li class="tag-label" v-for="tag in tags" :key="tag.label">
             {{ normalizeText(tag.label) }}
-            <input type="checkbox" @click="handleTagUpdateToSuggestion(tag.label)" v-model="checkedTags" :id="tag.label" :value="tag.label" />
+            <input 
+              type="checkbox"
+              @click="handleTagUpdateToSuggestion(tag.label)"
+              v-model="checkedTags"
+              :id="tag.label"
+              :value="tag.label" />
           </li>
         </ul>
         <ul v-else>
-          <li>Ei yhtään käsitetyyppiä</li>
+          <li>Ei tunnisteita</li>
         </ul>
       </div>
       <div class="tag-selector-new-tag">
         <p>
-          <button @click="toggleNewTagInputs()">+Uusi tyyppi</button>
+          <button @click="toggleNewTagInputs()">Lisää tunniste</button>
         </p>
       </div>
       <div class="tag-selector-new-tag-form" v-if="showCreateTagInputs">
@@ -44,15 +49,24 @@ import SvgIcon from '../icons/SvgIcon';
 import IconTag from '../icons/IconTag';
 import { mapTagActions, mapTagGetters } from '../../store/modules/tag/tagModule';
 import { tagActions, tagGetters } from '../../store/modules/tag/tagConst';
+import { newActionEvent } from '../../utils/tagHelpers';
+import { directive as onClickaway } from 'vue-clickaway';
 
 export default {
   components: {
     SvgIcon,
     IconTag
   },
+  directives: {
+    onClickaway: onClickaway
+  },
   props: {
     suggestion: {
       type: Object,
+      required: true
+    },
+    userId: {
+      type: [Number, String],
       required: true
     }
   },
@@ -84,15 +98,40 @@ export default {
       return `${firstCharacter}${restOfTheText}`;
     },
     async handleTagUpdateToSuggestion(tagLabel) {
-      if(this.isTagSetToSuggestion(tagLabel)) {
-        await this.removeTagFromSuggestion({suggestionId: this.suggestion.id, tagLabel: tagLabel});
+      if (this.isTagSetToSuggestion(tagLabel)) {
+        const event = newActionEvent(
+          'poisti ehdotuksesta tunnisteen',
+          tagLabel,
+          this.userId,
+          this.suggestion.id
+        );
+        const params = { suggestionId: this.suggestion.id, tagLabel: tagLabel, event: event };
+        await this.removeTagFromSuggestion(params);
       } else {
-        await this.addTagToSuggestion({suggestionId: this.suggestion.id, tagLabel: tagLabel});
+        const event = newActionEvent(
+          'lisäsi ehdotukseen tunnisteen',
+          tagLabel,
+          this.userId,
+          this.suggestion.id
+        );
+        const params = {
+          suggestionId: this.suggestion.id,
+          tagLabel: tagLabel,
+          event: event
+        };
+        await this.addTagToSuggestion(params);
       }
     },
     isTagSetToSuggestion(tagLabel) {
-      if(this.suggestion.tags && this.suggestion.tags.length > 0 && tagLabel && tagLabel.length > 0) {
-        return this.suggestion.tags.find(tag => tag.label === tagLabel.toUpperCase()) ? true : false;
+      if (
+        this.suggestion.tags &&
+        this.suggestion.tags.length > 0 &&
+        tagLabel &&
+        tagLabel.length > 0
+      ) {
+        return this.suggestion.tags.find(tag => tag.label === tagLabel.toUpperCase())
+          ? true
+          : false;
       }
       return false;
     },
@@ -105,8 +144,14 @@ export default {
       this.showCreateTagInputs = !this.showCreateTagInputs;
     },
     async addNewTag() {
-      console.log(this.newTag);
-      await this.addTagToSuggestion({suggestionId: this.suggestion.id, tagLabel: this.newTag})
+      const event = newActionEvent(
+        'lisäsi ehdotukseen tunnisteen',
+        this.newTag,
+        this.userId,
+        this.suggestion.id
+      );
+      const params = { suggestionId: this.suggestion.id, tagLabel: this.newTag, event: event };
+      await this.addTagToSuggestion(params);
       this.toggleNewTagInputs();
       await this.handleUpdateNewTagToPage();
     },
@@ -126,14 +171,15 @@ div.select-tag-box {
 }
 
 div.select-tag-box button {
-  background-color: rgba(0,0,0,0);
+  background-color: rgba(0, 0, 0, 0);
   border-width: 0;
 }
 
 div.tag-selector {
   z-index: 1;
   position: absolute;
-  border: 2px solid #E1E1E1;
+  right: 0;
+  border: 2px solid #e1e1e1;
   min-height: 250px;
   min-width: 280px;
   margin: 0 0 0 0;
@@ -142,7 +188,7 @@ div.tag-selector {
 }
 
 div.tag-selector-header {
-  border-bottom: 1px solid #F5F5F5;
+  border-bottom: 1px solid #f5f5f5;
 }
 
 div.tag-selector-header > h4 {
@@ -164,11 +210,6 @@ div.tag-selector-search > input {
   float: left;
 }
 
-div.tag-selector-tags {
-  border-top: 1px solid #F5F5F5;
-  margin-top: 35px;
-}
-
 div.tag-selector-tags ul {
   list-style-type: none;
   padding-left: 0;
@@ -187,13 +228,13 @@ div.tag-selector-tags li > input {
 }
 
 div.tag-selector-tags li > input::placeholder {
-  color: #BFBFBF;
+  color: #bfbfbf;
 }
 
 div.tag-selector-new-tag {
   text-align: left;
   font-size: 10pt;
-  color: #BFBFBF;
+  color: #06a798;
   padding-left: 10px;
 }
 
@@ -207,13 +248,12 @@ div.tag-selector-new-tag > p > button {
 }
 
 div.tag-selector-new-tag > p > button:hover {
-  color: #ABABAB;
+  color: #21baac;
   outline: none;
 }
 
 div.tag-selector-new-tag > p > button:active {
-  color: #ABABAB;
-  box-shadow: 0 2px #8D8D8D;
+  color: #ababab;
   transform: translateY(4px);
   outline: none;
 }
@@ -236,7 +276,7 @@ div.tag-selector-new-tag-form > .tag-selector-new-tag-form-input {
 div.tag-selector-new-tag-form-submit {
   text-align: left;
   font-size: 10pt;
-  color: #BFBFBF;
+  color: #bfbfbf;
 }
 
 div.tag-selector-new-tag-form-submit > button {
@@ -249,13 +289,12 @@ div.tag-selector-new-tag-form-submit > button {
 }
 
 div.tag-selector-new-tag-form-submit > button:hover {
-  color: #ABABAB;
+  color: #ababab;
   outline: none;
 }
 
 div.tag-selector-new-tag-form-submit > button:active {
-  color: #ABABAB;
-  box-shadow: 0 2px #8D8D8D;
+  color: #ababab;
   transform: translateY(4px);
   outline: none;
 }
@@ -263,6 +302,10 @@ div.tag-selector-new-tag-form-submit > button:active {
 div.tag-selector-new-tag-form-submit > button:focus {
   outline: none;
 }
+
+@media (max-width: 700px) {
+  div.tag-selector {
+    right: initial;
+  }
+}
 </style>
-
-

@@ -1,7 +1,7 @@
 import connexion
 from ..authentication import admin_only
-from ..models import User, db
-from .common import (get_all_or_404, get_one_or_404, create_or_404, delete_or_404, update_or_404, patch_or_404)
+from ..models import User
+from .common import (get_all_or_404, get_one_or_404, create_or_400, delete_or_404, update_or_404, patch_or_404)
 
 import string
 import random
@@ -44,7 +44,7 @@ def post_user() -> str:
     :returns: the created user as json
     """
     msg = "Unable to create a new user. This email already exists."
-    return create_or_404(User, connexion.request.json, error_msg=msg)
+    return create_or_400(User, connexion.request.json, error_msg=msg)
 
 
 @admin_only
@@ -71,7 +71,6 @@ def put_user(user_id: int) -> str:
     return update_or_404(User, user_id, connexion.request.json)
 
 
-@admin_only
 def patch_user(user_id: int) -> str:
     """
     Patches a single user by id.

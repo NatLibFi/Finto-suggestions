@@ -13,17 +13,19 @@
         <div
           @click="filterValueSelected(option, i)"
           :class="[isSelected(option, i) ? 'selected' : '', 'option']">
-          <svg-icon
-            :class="[isSelected(option, i) ? '' : 'hidden-checkmark']"
-            icon-name="check"><icon-check />
-          </svg-icon>
+          <div class="svg-wrapper">
+            <svg-icon
+              :class="[isSelected(option, i) ? '' : 'hidden-checkmark']"
+              icon-name="check"><icon-check />
+            </svg-icon>
+          </div>
           <p>{{ option.label }}</p>
         </div>
       </div>
       <div @click="resetSelections()" class="option reset">
-          <svg-icon
-            icon-name="cross"><icon-cross />
-          </svg-icon>
+        <div class="svg-wrapper">
+          <svg-icon icon-name="cross"><icon-cross /></svg-icon>
+        </div>
         <p>Tyhjennä valinnat</p>
       </div>
     </div>
@@ -96,15 +98,15 @@ export default {
   position: absolute;
   top: 44px;
   left: 0;
+  margin-bottom: 40px;
   background-color: #ffffff;
   min-width: 200px;
+  max-height: 300px;
+  overflow: scroll;
   z-index: 2;
   text-align: left;
   border: 1px solid #e1e1e1;
   border-radius: 2px;
-  -webkit-box-shadow: 6px 8px 17px -6px rgba(80, 80, 80, 0.35);
-  -moz-box-shadow: 6px 8px 17px -6px rgba(80, 80, 80, 0.35);
-  box-shadow: 6px 8px 17px -6px rgba(80, 80, 80, 0.35);
 }
 
 .option {
@@ -123,19 +125,27 @@ export default {
   cursor: hand;
 }
 
-.option p {
-  display: inline-block;
-  margin: 0;
-  text-transform: lowercase;
-}
-
 .option p::first-letter {
   text-transform: uppercase;
 }
 
-.option svg {
+.option .svg-wrapper {
+  display: inline-block;
+  position: relative;
+  vertical-align: middle;
+  width: 35px;
+}
+
+.option .svg-wrapper svg {
   height: 10px;
   margin-right: 5px;
+}
+
+.option p {
+  display: inline-block;
+  margin: 0;
+  text-transform: lowercase;
+  max-width: 200px;
   vertical-align: middle;
 }
 

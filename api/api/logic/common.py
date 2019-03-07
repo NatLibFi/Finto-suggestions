@@ -112,7 +112,7 @@ def get_one_or_404(model: object, primary_key: int) -> str:
     return create_response(None, 404, msg)
 
 
-def create_or_404(model: object, payload: Dict, error_msg: str = None) -> str:
+def create_or_400(model: object, payload: Dict, error_msg: str = None) -> str:
     """
     Creates a new object and commits it to the database.
 
@@ -131,7 +131,7 @@ def create_or_404(model: object, payload: Dict, error_msg: str = None) -> str:
         msg = "Unable to create a new {}".format(str(model.__table__)[:-1])
         if error_msg:
             msg = error_msg
-        return create_response(None, 404, msg)
+        return create_response(None, 400, msg)
 
     return create_response(db_obj.as_dict(), 201)
 

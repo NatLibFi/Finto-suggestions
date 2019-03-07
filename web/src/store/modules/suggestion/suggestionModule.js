@@ -66,6 +66,21 @@ export default {
         commit(suggestionMutations.SET_SUGGESTIONS, result.data);
       }
     },
+    async [suggestionActions.GET_SUGGESTIONS_BY_USER_ID]({ commit }, userId) {
+      const result = await api.suggestion.getSuggestionsByUserId(userId);
+      if (result && result.code == 200) {
+        commit(suggestionMutations.SET_SUGGESTIONS, result.data);
+      }
+    },
+    async [suggestionActions.GET_SORTED_SUGGESTIONS_BY_USER_ID]({ commit }, values) {
+      const result = await api.suggestion.getSortedSuggestionByUserId(
+        values.userId,
+        values.sortValue
+      );
+      if (result && result.code === 200) {
+        commit(suggestionMutations.SET_SUGGESTIONS, result.data);
+      }
+    },
     async [suggestionActions.GET_SORTED_SUGGESTIONS]({ commit }, sortValue) {
       const result = await api.suggestion.getSortedSuggestions(sortValue);
       if (result && result.code == 200) {
@@ -86,6 +101,15 @@ export default {
     },
     async [suggestionActions.UNASSIGN_SUGGESTION_FROM_USER]({ commit }, suggestionId) {
       const result = await api.suggestion.unassignUserFromSuggestion(suggestionId);
+      if (result && result.code == 202) {
+        commit(suggestionMutations.SET_SUGGESTION, result.data);
+      }
+    },
+    async [suggestionActions.ASSIGN_SUGGESTION_TO_MEETING](
+      { commit },
+      { suggestionId, meetingId }
+    ) {
+      const result = await api.suggestion.assignSuggestionToMeeting(suggestionId, meetingId);
       if (result && result.code == 202) {
         commit(suggestionMutations.SET_SUGGESTION, result.data);
       }
@@ -129,21 +153,7 @@ export default {
         commit(suggestionMutations.SET_MEETING_SUGGESTIONS_SELECTED_STORAGE_SORT, sortKey);
       }
     },
-    async [suggestionActions.SET_SUGGESTION_ACCEPTED]({ dispatch }, params) {
-      try {
-        const response = await api.suggestion.updateSuggestionStatus(
-          params.suggestionId,
-          params.status,
-          params.userId
-        );
-        if (response && response.code == 202) {
-          dispatch(suggestionActions.GET_SUGGESTION_BY_ID, params.suggestionId);
-        }
-      } catch (error) {
-        console.log(`Could not set suggestion state to accepted ${params.suggestionId} , ${error}`);
-      }
-    },
-    async [suggestionActions.SET_SUGGESTION_REJECTED]({ dispatch }, params) {
+    async [suggestionActions.SET_SUGGESTION_STATUS]({ dispatch }, params) {
       try {
         const response = await api.suggestion.updateSuggestionStatus(
           params.suggestionId,
@@ -154,6 +164,12 @@ export default {
         }
       } catch (error) {
         console.log(`Could not set suggestion state to rejected ${params.suggestionId}, ${error}`);
+      }
+    },
+    async [suggestionActions.GET_SUGGESTIONS_BY_SEARCH_WORD]({ commit }, searchWord) {
+      const result = await api.suggestion.getSuggestionsBySearchWord(searchWord);
+      if (result && result.code === 200) {
+        commit(suggestionMutations.SET_SUGGESTIONS, result.data);
       }
     }
   }

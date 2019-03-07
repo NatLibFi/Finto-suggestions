@@ -1,19 +1,19 @@
 <template>
   <div class="navigation">
-
     <div class="nav-content">
       <div class="nav-title">
         <img @click="returnToHome" src="./finto-logo.svg" alt="">
         <span @click="returnToHome">Finto – Käsite-ehdotukset</span>
       </div>
-
       <transition name="fade">
         <div v-if="isAuthenticated" class="nav-menu" @click="showDropdown = true">
           <div class="user-bubble">
-            <span unselectable="on">{{ userInitials }}</span>
+            <span v-if="userInitials" unselectable="on">{{ userInitials }}</span>
+            <span v-else unselectable="on">{{ userId }}</span>
           </div>
           <div class="nav-menu-user">
             <p v-if="name && name.length > 0">{{ name }}</p>
+            <p v-else>Käyttäjä {{ userId }}</p>
           </div>
           <svg-icon icon-name="triangle"><icon-triangle /></svg-icon>
         </div>
@@ -36,12 +36,11 @@
           <div @click="showSignupDialog = !showSignupDialog">Luo tunnus</div>
         </div>
       </transition>
-
     </div>
 
     <div v-if="showDropdown" v-on-clickaway="closeDropdown" class="nav-menu-dropdown dropdown">
-      <div class="disabled">Profiili</div>
-      <div class="disabled">Asetukset</div>
+      <div @click="goToProfile">Profiili</div>
+      <div @click="goToSettings">Asetukset</div>
       <div @click="logOut">Kirjaudu ulos</div>
     </div>
 
@@ -54,12 +53,13 @@
           <span unselectable="on">{{ userInitials }}</span>
         </div>
         <div class="nav-dropdown-user">
-          <p>{{ userName }}</p>
+          <p v-if="name && name.length > 0">{{ name }}</p>
+          <p v-else>Käyttäjä {{ userId }}</p>
         </div>
       </div>
       <div class="nav-mobile-dropdown-content">
-        <div class="disabled">Profiili</div>
-        <div class="disabled">Asetukset</div>
+        <div @click="goToProfile">Profiili</div>
+        <div @click="goToSettings">Asetukset</div>
         <div @click="logOut">Kirjaudu ulos</div>
       </div>
     </div>
@@ -92,7 +92,11 @@ import IconMore from '../icons/IconMore';
 import IconTriangle from '../icons/IconTriangle';
 import { directive as onClickaway } from 'vue-clickaway';
 
+import { userActions, userGetters } from '../../store/modules/user/userConsts';
+import { mapUserActions, mapUserGetters } from '../../store/modules/user/userModule';
+// eslint-disable-next-line
 import { mapAuthenticatedUserGetters, mapAuthenticatedUserActions } from '../../store/modules/authenticatedUser/authenticatedUserModule.js';
+// eslint-disable-next-line
 import { authenticatedUserGetters, authenticatedUserActions, storeKeyNames } from '../../store/modules/authenticatedUser/authenticatedUserConsts.js';
 
 import api from '../../api/index.js';
@@ -121,23 +125,25 @@ export default {
     showSignupDialog: false,
     showSignupConfirmation: false
   }),
+  computed: {
+    ...mapUserGetters({
+      user: userGetters.GET_USER
+    }),
+    ...mapAuthenticatedUserGetters({
+      isAuthenticated: authenticatedUserGetters.GET_IS_AUTHENTICATED,
+      userId: authenticatedUserGetters.GET_USER_ID,
+      name: authenticatedUserGetters.GET_USER_NAME,
+      // can be shown if login did not succeed:
+      error: authenticatedUserGetters.GET_AUTHENTICATE_ERROR
+    })
+  },
   async created() {
     await this.validateAuthentication();
     if (this.isAuthenticated) {
       await this.handleTokenRefesh();
     }
-
     this.getUserIdFromStorage();
     this.handleUserFetch();
-    this.handleUserInitialsFetch();
-  },
-  computed: {
-    ...mapAuthenticatedUserGetters({
-      isAuthenticated: authenticatedUserGetters.GET_IS_AUTHENTICATED,
-      userId: authenticatedUserGetters.GET_USER_ID,
-      name: authenticatedUserGetters.GET_USER_NAME,
-      error: authenticatedUserGetters.GET_AUTHENTICATE_ERROR //can be showed if login did not succeed
-    })
   },
   methods: {
     ...mapAuthenticatedUserActions({
@@ -147,6 +153,9 @@ export default {
       authenticateLocalUser: authenticatedUserActions.AUTHENTICATE_LOCAL_USER,
       getUserIdFromStorage: authenticatedUserActions.GET_USER_ID_FROM_STORAGE,
       refreshToken: authenticatedUserActions.REFRESH_AUTHORIZATION_TOKEN
+    }),
+    ...mapUserActions({
+      getUser: userActions.GET_USER
     }),
     returnToHome() {
       this.$router.push('/');
@@ -170,7 +179,7 @@ export default {
           await this.authenticateLocalUser(data.loginData);
         }
       }
-      this.handleUserFetch();
+      this.getUser(this.userId);
       this.showLoginDialog = false;
     },
     async signup(data) {
@@ -182,12 +191,32 @@ export default {
       this.showSignupDialog = false;
       this.showSignupConfirmation = true;
     },
+    goToProfile: function() {
+      this.$router.push({
+        name: 'user',
+        params: {
+          userId: this.userId
+        }
+      });
+      this.showDropdown = false;
+      this.showMobileDropdown = false;
+    },
+    goToSettings: function() {
+      this.$router.push({
+        name: 'settings',
+        params: {
+          userId: this.userId
+        }
+      });
+      this.showDropdown = false;
+      this.showMobileDropdown = false;
+    },
     logOut() {
       this.revokeAuthentication();
       this.closeDropdown();
       this.closeMobileDropdown();
     },
-    async oAuth2Authenticate(provider) {
+    async oAuth2Authenticate() {
       this.$router.push('/github');
     },
     async registerLocalUser(userdata) {
@@ -202,7 +231,9 @@ export default {
       this.userInitials = userNameInitials(this.name);
     },
     async handleTokenRefesh() {
+      // eslint-disable-next-line no-undef
       const access_token = $cookies.get(storeKeyNames.ACCESS_TOKEN);
+      // eslint-disable-next-line no-undef
       const refreshToken = $cookies.get(storeKeyNames.REFRESH_TOKEN);
       await this.refreshToken({ access_token: access_token, refresh_token: refreshToken });
     },
@@ -218,8 +249,9 @@ export default {
     }
   },
   watch: {
-    name() {
-      this.handleUserInitialsFetch();
+    name: {
+      handler: 'handleUserInitialsFetch',
+      immediate: true
     }
   },
   mounted: function() {
@@ -374,11 +406,18 @@ export default {
   top: 55px;
   right: 40px;
   width: 200px;
+  box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  overflow: hidden;
 }
 
 .nav-menu-dropdown div {
   padding: 16px 20px;
   border-bottom: 1px solid #f5f5f5;
+  box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
 }
 
 .nav-menu-dropdown div:last-of-type {
@@ -404,6 +443,8 @@ export default {
   padding: 20px;
   padding-top: 24px;
   border-bottom: 1px solid #f5f5f5;
+  position: relative;
+  height: 60px;
 }
 
 .nav-mobile-dropdown-header .user-bubble {
@@ -411,6 +452,9 @@ export default {
   width: 50px;
   line-height: 50px;
   font-size: 16px;
+  position: absolute;
+  top: 50%;
+  transform: perspective(1px) translateY(-50%);
 }
 
 .nav-mobile-dropdown-header .nav-dropdown-user {
@@ -418,6 +462,10 @@ export default {
   margin-left: 30px;
   font-size: 16px;
   line-height: 16px;
+  position: absolute;
+  left: 60px;
+  top: 50%;
+  transform: perspective(1px) translateY(-50%);
 }
 
 .nav-mobile-dropdown-content div {
@@ -488,9 +536,6 @@ export default {
   background-color: #ffffff;
   border: 1px solid #e1e1e1;
   border-radius: 2px;
-  -webkit-box-shadow: 6px 8px 17px -6px rgba(80, 80, 80, 0.35);
-  -moz-box-shadow: 6px 8px 17px -6px rgba(80, 80, 80, 0.35);
-  box-shadow: 6px 8px 17px -6px rgba(80, 80, 80, 0.35);
 }
 
 .user-bubble {
@@ -498,16 +543,12 @@ export default {
   height: 35px;
   width: 35px;
   border-radius: 35px;
-  line-height: 35px;
+  line-height: 36px;
   text-align: center;
   background-color: #804af2;
   color: #ffffff;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 800;
-}
-
-.disabled {
-  color: #ccc;
 }
 
 .fade-enter-active,
@@ -515,7 +556,12 @@ export default {
   transition: opacity 0.4s;
 }
 .fade-enter,
-.fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
+.fade-leave-to {
   opacity: 0;
+}
+
+.disabled {
+  color: #ccc;
+  cursor: default !important;
 }
 </style>

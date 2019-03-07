@@ -1,10 +1,14 @@
 <template>
   <div class="header-container">
-    <div class="counts">
+    <div v-if="!userPage" class="title">
       <span class="open">{{ openSuggestionCount }} käsittelemätöntä</span>
       <span class="resolved">{{ resolvedSuggestionCount }} käsiteltyä</span>
     </div>
+    <div v-if="userPage" class="title">
+      <span>Käyttäjälle asetut ehdotukset</span>
+    </div>
     <div
+      v-if="!userPage"
       @click="isDropDownOpened = !isDropDownOpened"
       :class="[isDropDownOpened ? 'selected' : '', 'drop-down-button']">
       <span>Järjestä</span>
@@ -45,7 +49,8 @@ export default {
   props: {
     openSuggestionCount: Number,
     resolvedSuggestionCount: Number,
-    meetingSort: Boolean
+    meetingSort: Boolean,
+    userPage: Boolean
   },
   data: () => ({
     selectedSortOptionIndex: 0,
@@ -66,7 +71,7 @@ export default {
     })
   },
   created() {
-    if(this.meetingSort) {
+    if (this.meetingSort) {
       this.getMeetingSuggestionSelectedSort();
     } else {
       this.getSuggestionSelectedSort();
@@ -93,10 +98,18 @@ export default {
       this.isDropDownOpened = false;
     },
     handleSortinDropDownIndex() {
-      if(this.meetingSort) {
-        this.selectedSortOptionIndex = getSelectedSortOptionIndex(this.dropDownOptions, this.meetingSuggestionSelectedSort, 0);
+      if (this.meetingSort) {
+        this.selectedSortOptionIndex = getSelectedSortOptionIndex(
+          this.dropDownOptions,
+          this.meetingSuggestionSelectedSort,
+          0
+        );
       } else {
-        this.selectedSortOptionIndex = getSelectedSortOptionIndex(this.dropDownOptions, this.suggestionSelectedSort, 0);
+        this.selectedSortOptionIndex = getSelectedSortOptionIndex(
+          this.dropDownOptions,
+          this.suggestionSelectedSort,
+          0
+        );
       }
     }
   },
@@ -120,8 +133,9 @@ export default {
   text-align: left;
   background-color: #ffffff;
   border: 2px solid #f5f5f5;
+  height: 36px;
 }
-.counts {
+.title {
   display: inline-block;
   overflow: hidden;
   text-align: left;
@@ -169,9 +183,6 @@ export default {
   z-index: 2;
   border: 1px solid #e1e1e1;
   border-radius: 2px;
-  -webkit-box-shadow: 6px 8px 17px -6px rgba(80, 80, 80, 0.35);
-  -moz-box-shadow: 6px 8px 17px -6px rgba(80, 80, 80, 0.35);
-  box-shadow: 6px 8px 17px -6px rgba(80, 80, 80, 0.35);
 }
 
 .option {
@@ -211,7 +222,7 @@ export default {
     margin: 20px 10vw 0;
   }
 
-  .counts {
+  .title {
     font-size: 12px;
   }
 

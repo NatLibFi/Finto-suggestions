@@ -28,11 +28,10 @@ import MeetingListItem from './MeetingListItem';
 import MeetingListPagination from './MeetingListPagination';
 
 import { mapMeetingGetters, mapMeetingActions } from '../../store/modules/meeting/meetingModule.js';
-import { meetingGetters, meetingActions } from '../../store/modules/meeting/meetingConst.js';
+import { meetingGetters, meetingActions } from '../../store/modules/meeting/meetingConsts.js';
 
 import { sortingKeys, comparerDesc, comparerAsc } from '../../utils/sortingHelper.js';
-import { compareDesc, compareAsc, parse, isAfter, isEqual } from 'date-fns';
-import meeting from '../../api/meeting/meeting';
+import { parse, isAfter, isEqual } from 'date-fns';
 
 export default {
   components: {
@@ -43,15 +42,14 @@ export default {
   data: function() {
     return {
       pageCount: 1,
-      // TODO: fix pagination
       paginated_meetings: [],
       futureMeetingCount: 0,
       pastMeetingCount: 0
-    }
+    };
   },
   async created() {
     await this.getMeetings();
-    this.calcultePastAndFutureMeetingCounts();
+    this.calculatePastAndFutureMeetingCounts();
     this.getSelectedSortKey();
     this.sortMeetingList();
   },
@@ -70,39 +68,44 @@ export default {
       return 10;
     },
     sortMeetingList() {
-      if(this.selectedSort) {
-        if(this.selectedSort === sortingKeys.NEWEST_FIRST) {
+      if (this.meetings && this.meetings.length > 0 && this.selectedSort) {
+        if (this.selectedSort === sortingKeys.NEWEST_FIRST) {
           this.meetings.sort(comparerDesc('meeting_date'));
         }
-        if(this.selectedSort === sortingKeys.OLDEST_FIRST) {
+        if (this.selectedSort === sortingKeys.OLDEST_FIRST) {
           this.meetings.sort(comparerAsc('meeting_date'));
         }
       }
     },
-    calcultePastAndFutureMeetingCounts() {
+    calculatePastAndFutureMeetingCounts() {
       let futureMeetings = [];
       let pastMeetings = [];
       const today = Date();
-      this.meetings.forEach(meeting => {
-        if (meeting.meeting_date) {
-          if (
-            isAfter(parse(meeting.meeting_date), today) ||
-            isEqual(parse(meeting.meeting_date), today)
-          ) {
-            futureMeetings.push(meeting);
+
+      if (this.meetings && this.meetings.length > 0) {
+        this.meetings.forEach(meeting => {
+          if (meeting.meeting_date) {
+            if (
+              isAfter(parse(meeting.meeting_date), today) ||
+              isEqual(parse(meeting.meeting_date), today)
+            ) {
+              futureMeetings.push(meeting);
+            } else {
+              pastMeetings.push(meeting);
+            }
           } else {
             pastMeetings.push(meeting);
           }
-        }
-      });
+        });
+      }
       this.futureMeetingCount = futureMeetings.length;
       this.pastMeetingCount = pastMeetings.length;
     }
   },
   watch: {
     selectedSort() {
-      if(this.selectedSort) {
-        this.sortMeetingList()
+      if (this.selectedSort) {
+        this.sortMeetingList();
       }
     }
   }
@@ -145,10 +148,12 @@ ul {
   }
 }
 
-.fade-enter-active, .fade-leave-active {
+.fade-enter-active,
+.fade-leave-active {
   transition: opacity 3s;
 }
-.fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
+.fade-enter,
+.fade-leave-to {
   opacity: 0.75;
 }
 </style>

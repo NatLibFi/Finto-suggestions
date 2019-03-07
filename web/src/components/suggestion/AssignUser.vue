@@ -9,7 +9,11 @@
         <input type="text" class="dropdown-filter-input" v-model="searchQuery" />
       </div>
       <div class="dropdown-options">
-        <div class="user-item" v-for="user in filteredUsers" :key="user.id" v-on:click="assignUserToSuggestion({ suggestionId: suggestion.id, userId: user.id })">
+        <div
+          v-for="user in filteredUsers"
+          :key="user.id"
+          @click="assignUserToSuggestion({ suggestionId: suggestion.id, userId: user.id })"
+          class="user-item">
           <div v-if="user.name && user.name.length > 0">
             <div  class="user-image">{{ userNameInitials(user.name) }}</div>
             <div class="user-name">{{ user.name }}</div>
@@ -28,12 +32,16 @@
 import { userNameInitials } from '../../utils/userHelpers';
 import { suggestionActions } from '../../store/modules/suggestion/suggestionConsts';
 import { mapSuggestionActions } from '../../store/modules/suggestion/suggestionModule';
-import { mapUserActions, mapUserGetters, mapUserMutations } from '../../store/modules/user/userModule';
+import {
+  mapUserActions,
+  mapUserGetters,
+  mapUserMutations
+} from '../../store/modules/user/userModule';
 import { userActions, userGetters, userMutations } from '../../store/modules/user/userConsts';
 import { directive as onClickaway } from 'vue-clickaway';
 
 export default {
-  directives: {onClickaway: onClickaway},
+  directives: { onClickaway: onClickaway },
   props: {
     suggestion: {
       type: Object,
@@ -46,15 +54,10 @@ export default {
       searchQuery: '',
       userNameInitials,
       filteredUsers: []
-    }
+    };
   },
   computed: {
     ...mapUserGetters({ users: userGetters.GET_USERS })
-  },
-  watch: {
-    searchQuery: function() {
-      this.filterResults()
-    }
   },
   async created() {
     // If "admin" in user.roles:
@@ -66,22 +69,39 @@ export default {
       if (e.keyCode === 27) {
         this.closeSearch();
       }
-    })
+    });
   },
   methods: {
-    ...mapSuggestionActions({ assignUserToSuggestion: suggestionActions.ASSIGN_SUGGESTION_TO_USER }),
+    ...mapSuggestionActions({
+      assignUserToSuggestion: suggestionActions.ASSIGN_SUGGESTION_TO_USER
+    }),
     ...mapUserActions({ getUsers: userActions.GET_USERS }),
+    ...mapUserMutations({ setUsers: userMutations.SET_USERS }),
+    toggleSearch() {
+      this.searchOpen = !this.searchOpen;
+    },
+    filterResults() {
+      this.getUsers();
+      if (this.searchQuery.length >= 1) {
+        this.filteredUsers = this.users.filter(user =>
+          user.name.toLowerCase().includes(this.searchQuery.toLowerCase())
+        );
+        this.setUsers(this.filteredUsers);
+      }
+    },
     openSearch() {
       this.searchOpen = true;
     },
     closeSearch() {
       this.searchOpen = false;
-    },
-    filterResults() {
-      this.filteredUsers = this.users.filter(user => user.name.toLowerCase().includes(this.searchQuery.toLowerCase()));
+    }
+  },
+  watch: {
+    searchQuery() {
+      this.filterResults();
     }
   }
-  };
+};
 </script>
 
 <style scoped>
@@ -107,11 +127,11 @@ export default {
   left: -30%;
   width: 200px;
   height: auto;
-  background: #FFFFFF;
+  background: #ffffff;
   border: 1px solid #f5f5f5;
   box-sizing: border-box;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
   border-radius: 1px;
+  z-index: 10;
 }
 .dropdown-header {
   font-style: normal;
@@ -131,7 +151,7 @@ input.dropdown-filter-input {
   height: 26px;
   left: 10px;
   top: 44px;
-  border: 1px solid #E1E1E1;
+  border: 1px solid #e1e1e1;
   box-sizing: border-box;
   border-radius: 1px;
 }

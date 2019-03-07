@@ -65,10 +65,6 @@ export default {
   border: 2px solid red;
 }
 
-.sorting-options option:hover {
-  box-shadow: 0 0 10px 100px #1882a8 inset;
-}
-
 /* CAUTION: IE hackery ahead */
 .sorting-options select::-ms-expand {
   display: none; /* remove default arrow on ie10 and ie11 */

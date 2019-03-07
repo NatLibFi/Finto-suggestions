@@ -1,7 +1,7 @@
 import connexion
 from ..models import Event, Suggestion, db
 from ..authentication import authorized
-from .common import (get_all_or_404_custom, get_one_or_404, create_or_404, delete_or_404, patch_or_404, update_or_404)
+from .common import (get_all_or_404_custom, get_one_or_404, create_or_400, delete_or_404, patch_or_404, update_or_404)
 from .validators import event_parameter_validator
 from datetime import datetime
 
@@ -27,7 +27,7 @@ def get_events(limit: int = None, offset: int = None, user_id: int = None, sugge
             query = query.limit(limit)
         if offset:
             query = query.offset(offset)
-        return query.all()
+        return query.order_by(Event.created.asc()).all()
 
     return get_all_or_404_custom(filter_func)
 
@@ -55,20 +55,18 @@ def post_event() -> str:
     :returns: the created event as json
     """
 
-    response = create_or_404(Event, connexion.request.json)
-    if response is not None and response[1] is 201:
+    create_event_response = create_or_400(Event, connexion.request.json)
+    if create_event_response is not None and create_event_response[1] is 201:
       try:
         suggestion = Suggestion.query.get(connexion.request.json.get('suggestion_id'))
-        print(suggestion)
         if suggestion is not None:
           suggestion.modified = datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')
-          print(suggestion.modified)
           db.session.add(suggestion)
           db.session.commit()
       except ValueError as ex:
         print('Could not update suggestion modified time' + str(ex))
 
-      return response
+      return create_event_response
 
 @authorized
 @event_parameter_validator

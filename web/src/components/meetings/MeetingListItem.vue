@@ -10,8 +10,14 @@
         <p>
           <strong>#{{ meeting.id }} </strong>
           <span v-if="meeting.meeting_date">
-            <span v-if="!hasDatePassed(formatDate(meeting.meeting_date.split('T')[0], 'DD.MM.YYYY'))">Järjestetään </span>
-            <span v-if="hasDatePassed(formatDate(meeting.meeting_date.split('T')[0], 'DD.MM.YYYY'))">Järjestettiin </span>
+            <span
+              v-if="!hasDatePassed(formatDate(meeting.meeting_date.split('T')[0], 'DD.MM.YYYY'))">
+              Järjestetään
+            </span>
+            <span
+              v-if="hasDatePassed(formatDate(meeting.meeting_date.split('T')[0], 'DD.MM.YYYY'))">
+              Järjestettiin
+            </span>
             {{ formatDate(meeting.meeting_date.split('T')[0], 'DD.MM.YYYY') }}
           </span>
           <span v-if="!meeting.meeting_date">
@@ -35,9 +41,12 @@
 <script>
 import SvgIcon from '../icons/SvgIcon';
 import IconComments from '../icons/IconComments';
-import { formatDate, hasDatePassed } from '../../utils/dateHelper.js';
+import { formatDate, hasDatePassed } from '../../utils/dateHelper';
 
-import { getMeetingProgressionCounts, getMeetingProgressionWidths } from '../../utils/meetingHelper.js';
+import {
+  getMeetingProgressionCounts,
+  getMeetingProgressionWidths
+} from '../../utils/meetingHelper.js';
 
 export default {
   components: {
@@ -53,7 +62,7 @@ export default {
   data() {
     return {
       progressWidth: {
-        width:`${0}%`
+        width: `${0}%`
       },
       backgroundWidth: {
         width: `${100}%`
@@ -63,13 +72,10 @@ export default {
       progression: 0,
       formatDate,
       hasDatePassed
-    }
+    };
   },
   created() {
-    this.handleMeetingProgressionCounts(
-      getMeetingProgressionCounts(
-        this.meeting
-    ));
+    this.handleMeetingProgressionCounts(getMeetingProgressionCounts(this.meeting));
   },
   methods: {
     goToMeetingList() {
@@ -156,8 +162,7 @@ li.item:hover {
   margin-bottom: 4px;
 }
 .item-status .status-bar .progress-bar,
-.item-status .status-bar .progress-background
- {
+.item-status .status-bar .progress-background {
   display: inline-block;
   height: 6px;
   background-color: #eeeeee;

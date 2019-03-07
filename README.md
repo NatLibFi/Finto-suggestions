@@ -41,7 +41,7 @@ http://asciiflow.com/
 ```
 .
 ├── api                     # Backend code (Python, Connexion, Flask etc.)
-│   ├── api                 # API speicfic code, logic and Swagger API definitions
+│   ├── api                 # API specific code, logic and Swagger API definitions
 │   │   ├── logic
 │   │   └── specification
 │   ├── migrations          # Alembic migrations (with Flask-migrate plugin)

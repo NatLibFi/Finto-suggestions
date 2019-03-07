@@ -4,33 +4,51 @@ export const userRoles = {
 };
 
 export const userNameInitials = userName => {
-  if (userName && userName.length > 0) {
-    return createInitials(userName);
+  let initials = '';
+  if (existsAndHasLength(userName)) {
+    const splitArray = userName.split(' ');
+    if (existsAndHasLength(splitArray)) {
+      return createInitials(splitArray);
+    }
   }
-  return '';
+  return initials;
 };
 
-const createInitials = userName => {
-  if (!hasSpaceIn(userName)) {
-    return userName[0].toUpperCase();
+const createInitials = array => {
+  if (hasOnlyOneValidElement(array)) {
+    return createOneInitial(array);
   }
-  let individualNames = userName.split(' ');
-  return handleSpacedUserName([individualNames[0], individualNames[1]]);
+  if (hasTwoValidElements(array)) {
+    return createTwoInitials(array);
+  }
 };
 
-const hasSpaceIn = userName => {
-  if (!(userName.indexOf(' ') > -1)) {
-    return false;
-  }
-  return true;
+const createOneInitial = array => {
+  const string = array[0];
+  const initial = `${string[0].toUpperCase()}`;
+  return initial;
 };
 
-const handleSpacedUserName = names => {
-  let firstName = names[0],
-    secondName = names[1];
-  if (firstName && secondName) {
-    return `${firstName[0].toUpperCase()}${secondName[0].toUpperCase()}`;
+const createTwoInitials = array => {
+  const firstString = array[0];
+  const secondString = array[1];
+  const initials = `${firstString[0].toUpperCase()}${secondString[0].toUpperCase()}`;
+  return initials;
+};
+
+const hasOnlyOneValidElement = array => {
+  return !!(array[0] && !array[1] && array[0].length > 0);
+};
+
+const hasTwoValidElements = array => {
+  return !!(array[0] && array[1] && (array[0].length > 0 && array[1].length > 0));
+};
+
+const existsAndHasLength = variable => {
+  if (variable && variable.length > 0) {
+    return true;
   }
+  return false;
 };
 
 export const emailValidator = email => {

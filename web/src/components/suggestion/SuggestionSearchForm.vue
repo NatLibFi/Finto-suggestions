@@ -22,7 +22,7 @@ import {
 } from '../../store/modules/suggestion/suggestionModule.js';
 
 import { handleSetFilters } from '../../utils/filterValueHelper.js';
-import { filterType } from '../../utils/suggestionMappings.js';
+import { filterType } from '../../utils/suggestionHelpers.js';
 
 export default {
   data: () => ({
@@ -30,6 +30,12 @@ export default {
   }),
   computed: {
     ...mapSuggestionGetters({ filters: suggestionGetters.GET_FILTERS })
+  },
+  created() {
+    if (this.filters.length > 0) {
+      const searchFilter = this.filters.find(f => f.type === filterType.SEARCH);
+      this.searchQuery = searchFilter ? searchFilter.value : '';
+    }
   },
   methods: {
     ...mapSuggestionMutations({ setFilters: suggestionMutations.SET_FILTERS }),
