@@ -18,5 +18,6 @@ export const userMutations = {
 export const userActions = {
   GET_USER: 'getUser',
   PATCH_USER: 'patchUser',
-  GET_USERS: 'getUsers'
+  GET_USERS: 'getUsers',
+  RESET_PASSWORD: 'resetPassword'
 };

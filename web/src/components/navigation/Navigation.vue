@@ -155,7 +155,8 @@ export default {
       refreshToken: authenticatedUserActions.REFRESH_AUTHORIZATION_TOKEN
     }),
     ...mapUserActions({
-      getUser: userActions.GET_USER
+      getUser: userActions.GET_USER,
+      resetPassword: userActions.RESET_PASSWORD
     }),
     returnToHome() {
       this.$router.push('/');
@@ -237,11 +238,10 @@ export default {
       const refreshToken = $cookies.get(storeKeyNames.REFRESH_TOKEN);
       await this.refreshToken({ access_token: access_token, refresh_token: refreshToken });
     },
-    resetPassword(email) {
-      console.log(email);
+    async resetPassword(email) {
       const validEmail = emailValidator(email);
-      if(validEmail) {
-        console.log('do password reset', email);
+      if (validEmail) {
+        await this.resetPassword(email)
       } else {
         //TODO: show some info to user about this
         console.log('email is not valid', email);

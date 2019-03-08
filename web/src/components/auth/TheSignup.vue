@@ -8,10 +8,11 @@
       <svg-icon icon-name="github"><icon-github /></svg-icon>
       <span>Luo tili GitHub-tunnuksilla</span>
     </div>
-    <div @click="signup('google')" class="login-service-button">
+    <!-- TODO: enable this when google login/signup works -->
+    <!-- <div @click="signup('google')" class="login-service-button">
       <svg-icon icon-name="google"><icon-google /></svg-icon>
       <span>Luo tili Google-tunnuksilla</span>
-    </div>
+    </div> -->
   </div>
   <div class="login-own-credentials">
     <h4 v-if="!showOwnCredentialSignup" @click="showOwnCredentialSignup = !showOwnCredentialSignup">

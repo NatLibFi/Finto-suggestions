@@ -47,6 +47,14 @@ export default {
       } else {
         throw 'Error in patching user information.';
       }
+    },
+    async [userActions.RESET_PASSWORD]({}, email) {
+      const response = await api.user.resetPassword(email);
+      if (response && response.code === 201) {
+        return;
+      } else {
+        throw `Could not reset user password that email is ${email}`;
+      }
     }
   }
 };
