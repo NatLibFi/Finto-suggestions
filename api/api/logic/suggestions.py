@@ -10,6 +10,10 @@ from .utils import SUGGESTION_FILTER_FUNCTIONS, SUGGESTION_SORT_FUNCTIONS
 from ..models import db, Suggestion, Tag, User
 from flask import jsonify
 
+from ..tools.profiler import profiler
+
+# Profiler decorator, enable if needed
+# @profiler
 def get_suggestions(limit: int = None, offset: int = None, filters: str = None, search: str = None, sort: str = 'DEFAULT') -> str:
     """
     Returns all suggestions.

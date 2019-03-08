@@ -3,32 +3,33 @@ name: web_staging
 steps:
   - name: docker
     image: plugins/docker
-    registry: quay.io
-    repo: quay.io/natlibfi/finto-suggestions-web
-    tag: staging
-    dockerfile: /docker/staging/web/Dockerfile
-    username:
-      from_secret: docker_username
-    password:
-      from_secret: docker_password
+    settings:
+      dockerfile: docker/staging/web/Dockerfile
+      username:
+        from_secret: docker_username
+      password:
+        from_secret: docker_password
+      registry: quay.io
+      repo: quay.io/natlibfi/finto-suggestions-web
+      tags: [staging]
     when:
       event: push
-      branch: [master, feature/staging-build]
-
+      branch: [master]
 ---
 kind: pipeline
 name: api_staging
 steps:
   - name: docker
     image: plugins/docker
-    registry: quay.io
-    repo: quay.io/natlibfi/finto-suggestions-api
-    tag: staging
-    dockerfile: /docker/staging/api/Dockerfile
-    username:
-      from_secret: docker_username
-    password:
-      from_secret: docker_password
+    settings:
+      dockerfile: docker/staging/api/Dockerfile
+      username:
+        from_secret: docker_username
+      password:
+        from_secret: docker_password
+      registry: quay.io
+      repo: quay.io/natlibfi/finto-suggestions-api
+      tags: [staging]
     when:
       event: push
-      branch: [master, feature/staging-build]
+      branch: [master]

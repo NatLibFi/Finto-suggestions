@@ -94,7 +94,7 @@ class Event(db.Model, SerializableMixin):
     text = db.Column(db.Text)
     value = db.Column(db.Text, nullable=True)
 
-    reactions = db.relationship('Reaction', backref='event')
+    reactions = db.relationship('Reaction', backref='event', lazy='joined')
 
     # user: backref
     # suggestion: backref
@@ -103,7 +103,11 @@ class Event(db.Model, SerializableMixin):
     suggestion_id = db.Column(db.Integer, db.ForeignKey('suggestions.id'))
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
 
-    tags = db.relationship('Tag', secondary='suggestion_tags_association', backref=db.backref('events'))
+    tags = db.relationship(
+      'Tag',
+      secondary='suggestion_tags_association',
+      backref=db.backref('events'),
+      lazy='joined')
 
     def __repr__(self):
         msg = self.text if len(self.text) <= 16 else (self.text[:16] + '...')
@@ -124,7 +128,11 @@ class Reaction(db.Model, SerializableMixin):
     code = db.Column(db.String(32), nullable=False)
 
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
-    user = db.relationship("User", backref=db.backref("user", uselist=False))
+    user = db.relationship(
+      "User",
+      backref=db.backref("user", uselist=False),
+      lazy='joined'
+    )
 
     # suggestion: backref
     # event: backref
@@ -147,7 +155,10 @@ class Meeting(db.Model, SerializableMixin):
     meeting_date = db.Column(db.DateTime, index=True)
 
     suggestions = db.relationship(
-        'Suggestion', backref='meeting')
+        'Suggestion',
+        backref='meeting',
+        lazy='joined'
+    )
 
     def __repr__(self):
         return '<Meeting {}>'.format(self.id)
@@ -194,13 +205,14 @@ class Suggestion(db.Model, SerializableMixin):
     neededFor = db.Column(db.String(500))
     yse_term = db.Column(db.JSON)
 
-    events = db.relationship('Event', backref='suggestion')
-    reactions = db.relationship('Reaction', backref='suggestion')
+    events = db.relationship('Event', backref='suggestion', lazy='joined')
+    reactions = db.relationship('Reaction', backref='suggestion', lazy='joined')
 
     tags = db.relationship('Tag',
                            secondary='suggestion_tags_association',
                            backref=db.backref('suggestions'),
-                           cascade_backrefs=False)
+                           cascade_backrefs=False,
+                           lazy='joined')
 
     meeting_id = db.Column(db.Integer, db.ForeignKey('meetings.id'))
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
@@ -213,8 +225,7 @@ class Suggestion(db.Model, SerializableMixin):
         # relationships (joins) should be expanded carefully
         serialized = super(Suggestion, self).as_dict()
         serialized['events'] = [e.as_dict() for e in self.events]  # only ids
-        serialized['reactions'] = [
-            e.as_dict(strip=strip) for e in self.reactions]
+        serialized['reactions'] = [e.as_dict(strip=strip) for e in self.reactions]
         serialized['tags'] = [e.as_dict(strip=strip) for e in self.tags]
         return serialized
 
@@ -236,8 +247,6 @@ class Tag(db.Model, SerializableMixin):
 
     def as_dict(self, strip=True):
         serialized = super(Tag, self).as_dict()
-        serialized['suggestions'] = [
-            e.id for e in self.suggestions]  # only ids
         return serialized
 
 
@@ -255,7 +264,7 @@ class User(db.Model, SerializableMixin):
     organization = db.Column(db.String(128), nullable=True)
     imageUrl = db.Column(db.Text, nullable=True)
 
-    events = db.relationship('Event', backref='user')
+    events = db.relationship('Event', backref='user', lazy='joined')
 
     @hybrid_property
     def password(self):

@@ -1,7 +1,7 @@
-FROM node:10.14.0-alpine
+FROM node:10.14.0-alpine as build-stage
 
 # install simple http server for serving static content
-RUN npm install -g http-server && npm install -g @vue/cli && npm install @vue/cli-service-global
+RUN npm install -g @vue/cli && npm install @vue/cli-service-global
 
 COPY ./web/package*.json /tmp/
 
@@ -11,10 +11,13 @@ WORKDIR /app
 
 RUN cp -a /tmp/node_modules /app/
 
-COPY ./web/* /app/
+COPY ./web/. /app/
 
-RUN npm run build
+RUN npm run build:staging
+
+FROM nginx:stable-alpine as production-stage
+COPY --from=build-stage /app/dist /usr/share/nginx/html
 
 EXPOSE 8040
 
-ENTRYPOINT [ "http-server", "-p", "8040", "dist" ]
+ENTRYPOINT ["nginx", "-g", "daemon off;"]
