@@ -1,11 +1,11 @@
 import connexion
 from ..authentication import admin_only
-from ..models import User
+from ..models import db, User
 from .common import (get_all_or_404, get_one_or_404, create_or_400, delete_or_404, update_or_404, patch_or_404)
 
 import string
 import random
-import smtplib, ssl, os
+import smtplib, os
 
 
 @admin_only
@@ -89,7 +89,6 @@ def put_reset_password() -> str:
     """
 
     email = connexion.request.json.get('email')
-    print(email)
 
     if email is not None and len(email) > 0:
       user = User.query.filter_by(email=email).first()
@@ -111,7 +110,6 @@ def put_reset_password() -> str:
           return { 'error': str(ex), 'code': 400 }, 400
 
         if password_update_success is True:
-          print('password updated to user')
           send_email(new_password, user.email)
 
     return { 'code': 200 }, 200
@@ -122,16 +120,22 @@ def send_email(password: str, email: str) -> str:
     Method for sending email messages
     """
 
-    server = smtplib.SMTP('localhost', 1025)
+    email_server_address = os.environ.get('EMAIL_SERVER_ADDRESS')
+    email_server_port = os.environ.get('EMAIL_SERVER_PORT')
+    email_server_username = os.environ.get('EMAIL_SERVER_USERNAME')
+    email_server_password = os.environ.get('EMAIL_SERVER_PASSWORD')
+    default_sender = os.environ.get('EMAIL_SERVER_DEFAULT_SENDER_EMAIL')
 
-    #Next, log in to the server
-    # server.login("youremailusername", "password")
+    message = 'Subject: {}\n\n{}'.format('Password reseted', f'Your new password to Finto-Suggestions system is {password}')
 
-    #Send the mail
-    msg = """\
-    Hello!" # The /n separates the message from the headers
-    """
-    server.sendmail("noreply@localhost", email, msg)
-    server.quit()
+    try:
+      mailserver = smtplib.SMTP(email_server_address, email_server_port)
+      mailserver.ehlo()
+      mailserver.starttls()
+      mailserver.login(email_server_username, email_server_password)
+      mailserver.sendmail(default_sender, email, message)
+      mailserver.quit()
+    except Exception as ex:
+      print(str(ex))
 
     return

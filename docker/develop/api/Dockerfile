@@ -16,6 +16,6 @@ RUN apk update \
 RUN pip install pipenv \
   && pipenv install --system
 
-EXPOSE 8050
+EXPOSE 8050 587
 
 ENTRYPOINT ["gunicorn", "-w 8", "-k gthread", "-b :8050", "-t 60", "--keep-alive", "4", "--reload", "--access-logfile", "-", "--error-logfile",  "-", "wsgi:connexion_app"]
