@@ -156,7 +156,7 @@ export default {
     }),
     ...mapUserActions({
       getUser: userActions.GET_USER,
-      resetPassword: userActions.RESET_PASSWORD
+      resetPasswordByEmail: userActions.RESET_PASSWORD
     }),
     returnToHome() {
       this.$router.push('/');
@@ -239,9 +239,10 @@ export default {
       await this.refreshToken({ access_token: access_token, refresh_token: refreshToken });
     },
     async resetPassword(email) {
+      this.showLoginDialog = false;
       const validEmail = emailValidator(email);
       if (validEmail) {
-        await this.resetPassword(email)
+        await this.resetPasswordByEmail(email)
       } else {
         //TODO: show some info to user about this
         console.log('email is not valid', email);

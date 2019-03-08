@@ -112,9 +112,9 @@ def put_reset_password() -> str:
         if password_update_success is True:
           sending_status = send_email(new_password, user.email)
           if sending_status:
-            return { 'code': 200 }, 200
+            return { 'code': 202 }, 202
           else:
-            return { 'code': 404, 'error': 'Could not send email' }, 404
+            return { 'code': 400, 'error': 'Could not send email' }, 404
 
 
 def send_email(password: str, email: str) -> str:
@@ -122,19 +122,34 @@ def send_email(password: str, email: str) -> str:
     Method for sending email messages
     """
 
-    email_server_address = os.environ.get('EMAIL_SERVER_ADDRESS')
-    email_server_port = os.environ.get('EMAIL_SERVER_PORT')
-    default_sender = os.environ.get('EMAIL_SERVER_DEFAULT_SENDER_EMAIL')
+    if email and password:
+      email_server_address = os.environ.get('EMAIL_SERVER_ADDRESS')
+      email_server_port = os.environ.get('EMAIL_SERVER_PORT')
+      default_sender = os.environ.get('EMAIL_SERVER_DEFAULT_SENDER_EMAIL')
+      email_server_username = os.environ.get('EMAIL_SERVER_USERNAME')
+      email_server_password = os.environ.get('EMAIL_SERVER_PASSWORD')
 
-    message = 'Subject: {}\n\n{}'.format('Password reseted', f'Your new password to Finto-Suggestions system is {password}')
+      body = """
+      User password whos email is {} has been reseted. \r\n
+      User new password is {}. \r\n
+      If you did not request this, please contact (add customer support email or something here) \r\n
+      """.format(email, password)
 
-    try:
-      mailserver = smtplib.SMTP(email_server_address, email_server_port)
-      mailserver.ehlo()
-      mailserver.starttls()
-      mailserver.sendmail(default_sender, email, message)
-      mailserver.quit()
-      return True
-    except Exception as ex:
-      print(str(ex))
+      message = 'Subject: {}\n\n{}'.format(
+        'Password reseted on Finto-Suggestion system',
+        body)
+
+      try:
+        mailserver = smtplib.SMTP(email_server_address, email_server_port)
+        mailserver.ehlo()
+        mailserver.starttls()
+
+        if email_server_username and email_server_password:
+          mailserver.login(email_server_username, email_server_password)
+
+        mailserver.sendmail(default_sender, email, message)
+        mailserver.quit()
+        return True
+      except Exception as ex:
+        print(str(ex))
     return False

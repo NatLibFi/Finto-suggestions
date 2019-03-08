@@ -16,7 +16,7 @@
     </div> -->
   </div>
   <div class="login-own-credentials">
-    <h4 v-if="!showOwnCredentialLogin" @click="showOwnCredentialInputs()">
+    <h4 v-if="!showOwnCredentialLogin && !showForgottenPasswordForm" @click="showOwnCredentialInputs()">
       Kirjaudu sisään omilla tunnuksilla
     </h4>
     <div v-if="showOwnCredentialLogin">
@@ -35,7 +35,7 @@
         <span>Unohditko salasanasi?</span>
       </div>
     </div>
-    <div class="forgot-password-input" v-if="showForgottenPsswordForm">
+    <div class="forgot-password-input" v-if="showForgottenPasswordForm">
       <div class="login-input">
         <span>Sähköposti</span>
         <input type="text" v-model="resetEmail">
@@ -65,7 +65,7 @@ export default {
       showOwnCredentialLogin: false,
       email: '',
       password: '',
-      showForgottenPsswordForm: false,
+      showForgottenPasswordForm: false,
       resetEmail: ''
     }
   },
@@ -80,13 +80,14 @@ export default {
     },
     showOwnCredentialInputs() {
       this.showOwnCredentialLogin = true;
-      this.showForgottenPsswordForm = false;
+      this.showForgottenPasswordForm = false;
     },
     showResetPasswordInputs() {
       this.showOwnCredentialLogin = false;
-      this.showForgottenPsswordForm = true;
+      this.showForgottenPasswordForm = true;
     },
     resetPassword() {
+      this.showForgottenPasswordForm = false;
       this.$emit('resetPassword', this.resetEmail);
     }
   }
