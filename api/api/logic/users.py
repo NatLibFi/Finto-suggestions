@@ -110,9 +110,11 @@ def put_reset_password() -> str:
           return { 'error': str(ex), 'code': 400 }, 400
 
         if password_update_success is True:
-          send_email(new_password, user.email)
-
-    return { 'code': 200 }, 200
+          sending_status = send_email(new_password, user.email)
+          if sending_status:
+            return { 'code': 200 }, 200
+          else:
+            return { 'code': 404, 'error': 'Could not send email' }, 404
 
 
 def send_email(password: str, email: str) -> str:
@@ -122,8 +124,6 @@ def send_email(password: str, email: str) -> str:
 
     email_server_address = os.environ.get('EMAIL_SERVER_ADDRESS')
     email_server_port = os.environ.get('EMAIL_SERVER_PORT')
-    email_server_username = os.environ.get('EMAIL_SERVER_USERNAME')
-    email_server_password = os.environ.get('EMAIL_SERVER_PASSWORD')
     default_sender = os.environ.get('EMAIL_SERVER_DEFAULT_SENDER_EMAIL')
 
     message = 'Subject: {}\n\n{}'.format('Password reseted', f'Your new password to Finto-Suggestions system is {password}')
@@ -132,10 +132,9 @@ def send_email(password: str, email: str) -> str:
       mailserver = smtplib.SMTP(email_server_address, email_server_port)
       mailserver.ehlo()
       mailserver.starttls()
-      mailserver.login(email_server_username, email_server_password)
       mailserver.sendmail(default_sender, email, message)
       mailserver.quit()
+      return True
     except Exception as ex:
       print(str(ex))
-
-    return
+    return False
