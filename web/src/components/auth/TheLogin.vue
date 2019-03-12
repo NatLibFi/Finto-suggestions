@@ -15,8 +15,11 @@
       <span>Kirjaudu Google-tunnuksilla</span>
     </div> -->
   </div>
+  <div class="login-forgot-password" @click="showResetPasswordInputs()" v-if="!showForgottenPasswordForm">
+    <span>Unohditko salasanasi?</span>
+  </div>
   <div class="login-own-credentials">
-    <h4 v-if="!showOwnCredentialLogin && !showForgottenPasswordForm" @click="showOwnCredentialInputs()">
+    <h4 v-if="!showOwnCredentialLogin" @click="showOwnCredentialInputs()">
       Kirjaudu sisään omilla tunnuksilla
     </h4>
     <div v-if="showOwnCredentialLogin">
@@ -30,9 +33,6 @@
       </div>
       <div @click="login('local')" class="login-submit">
         <span>Kirjaudu sisään</span>
-      </div>
-      <div class="login-forgot-password" @click="showResetPasswordInputs()">
-        <span>Unohditko salasanasi?</span>
       </div>
     </div>
     <div class="forgot-password-input" v-if="showForgottenPasswordForm">

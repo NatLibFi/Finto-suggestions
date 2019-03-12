@@ -3,9 +3,7 @@
 <div class="login-dialog">
   <h3>Tunnus luotu onnistuneesti</h3>
   <p>Tunnuksesi on luotu!</p>
-  <p>Voit nyt kirjautua sisään. Mikäli unohdit salasanasi, voit vaihtaa sen
-    <span class="changePassword">täältä</span>.
-  </p>
+  <p>Voit nyt kirjautua sisään.</p>
 </div>
 </template>
 
