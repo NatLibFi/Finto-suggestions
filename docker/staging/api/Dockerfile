@@ -18,4 +18,4 @@ RUN pip install pipenv \
 
 EXPOSE 8050
 
-ENTRYPOINT ["gunicorn", "-w 8", "-k gthread", "-b :8050", "-t 60", "--keep-alive", "4", "--access-logfile", "-", "--error-logfile", "-", "wsgi:connexion_app"]
+ENTRYPOINT ["gunicorn", "--config", "gunicorn_config_stagging.conf", "wsgi:connexion_app"]
