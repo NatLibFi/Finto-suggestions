@@ -6,12 +6,14 @@ export const storeStateNames = {
   SEARCH_QUERY: 'searchQuery',
   FILTERS: 'filters',
   SUGGESTIONS_SELECTED_SORT: 'suggestionsSelectedSort',
-  MEETING_SUGGESTIONS_SELECTED_SORT: 'meetingSuggestionsSelectedSort'
+  MEETING_SUGGESTIONS_SELECTED_SORT: 'meetingSuggestionsSelectedSort',
+  FILTERED_ITEMS: 'filteredItems'
 };
 
 export const sessionStorageKeyNames = {
   SUGGESTIONS_SELECTED_SORT: 'suggestionsSelectedSort',
-  MEETING_SUGGESTIONS_SELECTED_SORT: 'meetingSuggestionsSelectedSort'
+  MEETING_SUGGESTIONS_SELECTED_SORT: 'meetingSuggestionsSelectedSort',
+  SELECTED_FILTERS: 'selectedFilters'
 };
 
 export const suggestionGetters = {
@@ -20,7 +22,8 @@ export const suggestionGetters = {
   GET_SEARCH_QUERY: 'getSearchQuery',
   GET_FILTERS: 'getFilters',
   GET_SUGGESTIONS_SELECTED_SORT: 'getSuggestionsSelectedSort',
-  GET_MEETING_SUGGESTIONS_SELECTED_SORT: 'getMeetingSuggestionsSelectedSort'
+  GET_MEETING_SUGGESTIONS_SELECTED_SORT: 'getMeetingSuggestionsSelectedSort',
+  GET_FILTERED_ITEMS: 'getFilteredItems'
 };
 
 export const suggestionMutations = {
@@ -31,7 +34,9 @@ export const suggestionMutations = {
   SET_SUGGESTIONS_SELECTED_SORT: 'setSuggestionsSelectedSort',
   SET_SUGGESTIONS_SELECTED_STORAGE_SORT: 'setSuggestionsSelectedStorageSort',
   SET_MEETING_SUGGESTIONS_SELECTED_SORT: 'setMeetingSuggestionsSelectedSort',
-  SET_MEETING_SUGGESTIONS_SELECTED_STORAGE_SORT: 'setMeetingSuggestionsSelectedStorageSort'
+  SET_MEETING_SUGGESTIONS_SELECTED_STORAGE_SORT: 'setMeetingSuggestionsSelectedStorageSort',
+  SET_FILTERED_ITEMS: 'setFilteredItems',
+  SET_SELECTED_STORAGE_FILTERS: 'setSelectedStorageFilters'
 };
 
 export const suggestionActions = {
@@ -50,5 +55,7 @@ export const suggestionActions = {
   GET_MEETING_SUGGESTIONS_SELECTED_SORT: 'getMeetingSuggestionsSelectedSort',
   SET_MEETING_SUGGESTIONS_SELECTED_SORT: 'setMeetingSuggestionsSelectedSort',
   SET_SUGGESTION_STATUS: 'setSuggestionStatus',
-  GET_SUGGESTIONS_BY_SEARCH_WORD: 'getSuggestionsBySearchWord'
+  GET_SUGGESTIONS_BY_SEARCH_WORD: 'getSuggestionsBySearchWord',
+  GET_SELECTED_FILTERS: 'getSelectedFilters',
+  SET_SELECTED_FILTERS: 'setSelectedFilters'
 };

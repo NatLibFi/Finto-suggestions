@@ -29,12 +29,14 @@ import SuggestionItem from './SuggestionItem';
 
 import {
   suggestionGetters,
-  suggestionActions
+  suggestionActions,
+  suggestionMutations
 } from '../../store/modules/suggestion/suggestionConsts.js';
 
 import {
   mapSuggestionGetters,
-  mapSuggestionActions
+  mapSuggestionActions,
+  mapSuggestionMutations
 } from '../../store/modules/suggestion/suggestionModule.js';
 
 import SuggestionListPagination from './SuggestionListPagination';
@@ -72,7 +74,8 @@ export default {
       items: suggestionGetters.GET_SUGGESTIONS,
       filters: suggestionGetters.GET_FILTERS,
       suggestionsSelectedSort: suggestionGetters.GET_SUGGESTIONS_SELECTED_SORT,
-      meetingSuggestionsSelectedSort: suggestionGetters.GET_MEETING_SUGGESTIONS_SELECTED_SORT
+      meetingSuggestionsSelectedSort: suggestionGetters.GET_MEETING_SUGGESTIONS_SELECTED_SORT,
+      filtered_items: suggestionGetters.GET_FILTERED_ITEMS
     })
   },
   async created() {
@@ -80,6 +83,7 @@ export default {
     await this.getSuggestionsSelectedSortKey();
     await this.getMeetingsSuggestionsSelectedSortKey();
     await this.handleSuggestionFetching();
+    this.getSelectedFilters();
 
     if (this.filters.length > 0) {
       this.filterSuggestions();
@@ -94,7 +98,11 @@ export default {
       getSortedSuggestionsByMeetingId: suggestionActions.GET_SORTED_SUGGESTIONS_BY_MEETING_ID,
       getMeetingsSuggestionsSelectedSortKey:
         suggestionActions.GET_MEETING_SUGGESTIONS_SELECTED_SORT,
-      getSuggestionsBySearchWord: suggestionActions.GET_SUGGESTIONS_BY_SEARCH_WORD
+      getSuggestionsBySearchWord: suggestionActions.GET_SUGGESTIONS_BY_SEARCH_WORD,
+      getSelectedFilters: suggestionActions.GET_SELECTED_FILTERS
+    }),
+    ...mapSuggestionMutations({
+      setFilteredItems: suggestionMutations.SET_FILTERED_ITEMS
     }),
     async handleSuggestionFetching() {
       if (this.meetingId && parseInt(this.meetingId) > 0) {
@@ -102,15 +110,18 @@ export default {
       } else {
         await this.fetchAndSortAllSuggestions();
       }
-      await this.paginationPageChanged();
     },
     async fetchAndSortAllSuggestions() {
       await this.getSuggestionsSelectedSortKey();
       if (this.suggestionsSelectedSort && this.suggestionsSelectedSort !== '') {
         await this.getSortedSuggestions(this.suggestionsSelectedSort);
+        if (this.filters.length > 0) {
+          await this.filterSuggestions();
+        }
       } else {
         await this.getSortedSuggestions(sortingKeys.NEWEST_FIRST);
       }
+      await this.paginationPageChanged();
     },
     async fetchAndSortMeetingSuggestions() {
       await this.getMeetingsSuggestionsSelectedSortKey();
@@ -140,11 +151,23 @@ export default {
     async paginationPageChanged(pageNumber = 1, items = null) {
       const start = this.getPaginationStaringIndex(pageNumber);
       const end = this.getPaginationEndingIndex(pageNumber, items);
-      const paginatedItems = items ? items : this.items;
+
+      let paginatedItems;
+      if(items) {
+        paginatedItems = items;
+        if(this.filters.length > 0) {
+          await this.setFilteredItems(items);
+        }
+      } else if (!items && this.filters.length > 0) {
+        paginatedItems = this.filtered_items;
+      } else {
+        paginatedItems = this.items;
+      }
+
       this.paginated_items =
         paginatedItems && paginatedItems.length > 0 ? paginatedItems.slice(start, end) : [];
-      this.calculateOpenAndResolvedSuggestionCounts(items);
-      this.calculatePageCountForPagination(items);
+      this.calculateOpenAndResolvedSuggestionCounts(paginatedItems);
+      this.calculatePageCountForPagination(paginatedItems);
     },
     calculatePageCountForPagination(items = null) {
       this.paginationPageCount =
@@ -203,9 +226,6 @@ export default {
     },
     async meetingSuggestionsSelectedSort() {
       await this.handleSuggestionFetching();
-    },
-    async items() {
-      await this.paginationPageChanged(1, this.items);
     }
   }
 };

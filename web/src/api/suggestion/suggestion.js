@@ -1,7 +1,7 @@
 import { get, put, post, del, patch } from '../utils';
 import { asciiUriEncoding } from '../helper';
 
-const defaultLimit = 200;
+const defaultLimit = 0;
 
 //TODO: cache limited fetch, because this is really slow
 export default {

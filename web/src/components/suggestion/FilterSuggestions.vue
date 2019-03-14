@@ -190,7 +190,8 @@ export default {
       getTags: tagActions.GET_TAGS
     }),
     ...mapSuggestionMutations({
-      setFilters: suggestionMutations.SET_FILTERS
+      setFilters: suggestionMutations.SET_FILTERS,
+      setCachedFilters: suggestionMutations.SET_SELECTED_STORAGE_FILTERS
     }),
     stateChanged(selected) {
       this.hasTouchedFilters = true;
@@ -199,7 +200,8 @@ export default {
         filterType.STATUS,
         this.suggestionStateStatuses,
         this.filters,
-        this.setFilters
+        this.setFilters,
+        this.setCachedFilters
       );
     },
     typeChanged(selected) {
@@ -209,7 +211,8 @@ export default {
         filterType.TYPE,
         this.suggestionTypes,
         this.filters,
-        this.setFilters
+        this.setFilters,
+        this.setCachedFilters
       );
     },
     mapMeetingsToDropDown() {
@@ -234,7 +237,8 @@ export default {
         filterType.MEETING,
         this.mapMeetingsToDropDown(),
         this.filters,
-        this.setFilters
+        this.setFilters,
+        this.setCachedFilters
       );
     },
     mapTagsToDropDown() {
@@ -253,7 +257,8 @@ export default {
         filterType.TAG,
         this.mapTagsToDropDown(),
         this.filters,
-        this.setFilters
+        this.setFilters,
+        this.setCachedFilters
       );
     },
     addSelectedTagIndex(tagIndex) {

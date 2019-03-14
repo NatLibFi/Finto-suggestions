@@ -21,7 +21,8 @@ export default {
     [storeStateNames.FILTERS]: [],
     [storeStateNames.ITEM]: null,
     [storeStateNames.SUGGESTIONS_SELECTED_SORT]: null,
-    [storeStateNames.MEETING_SUGGESTIONS_SELECTED_SORT]: null
+    [storeStateNames.MEETING_SUGGESTIONS_SELECTED_SORT]: null,
+    [storeStateNames.FILTERED_ITEMS]: []
   },
   getters: {
     [suggestionGetters.GET_SUGGESTIONS]: state => state[storeStateNames.ITEMS],
@@ -31,7 +32,8 @@ export default {
     [suggestionGetters.GET_SUGGESTIONS_SELECTED_SORT]: state =>
       state[storeStateNames.SUGGESTIONS_SELECTED_SORT],
     [suggestionGetters.GET_MEETING_SUGGESTIONS_SELECTED_SORT]: state =>
-      state[storeStateNames.MEETING_SUGGESTIONS_SELECTED_SORT]
+      state[storeStateNames.MEETING_SUGGESTIONS_SELECTED_SORT],
+    [suggestionGetters.GET_FILTERED_ITEMS]: state => state[storeStateNames.FILTERED_ITEMS]
   },
   mutations: {
     [suggestionMutations.SET_SUGGESTIONS](state, suggestions) {
@@ -57,6 +59,12 @@ export default {
     },
     [suggestionMutations.SET_MEETING_SUGGESTIONS_SELECTED_STORAGE_SORT](state, sortKey) {
       Vue.set(sessionStorage, sessionStorageKeyNames.MEETING_SUGGESTIONS_SELECTED_SORT, sortKey);
+    },
+    [suggestionMutations.SET_FILTERED_ITEMS](state, filtered_items) {
+      Vue.set(state, storeStateNames.FILTERED_ITEMS, filtered_items);
+    },
+    [suggestionMutations.SET_SELECTED_STORAGE_FILTERS](state, filters) {
+      Vue.set(sessionStorage, sessionStorageKeyNames.SELECTED_FILTERS, filters);
     }
   },
   actions: {
@@ -142,7 +150,7 @@ export default {
       }
     },
     [suggestionActions.GET_MEETING_SUGGESTIONS_SELECTED_SORT]({ commit }) {
-      const sortKey = sessionStorage[sessionStorage.MEETING_SUGGESTIONS_SELECTED_SORT];
+      const sortKey = sessionStorage[sessionStorageKeyNames.MEETING_SUGGESTIONS_SELECTED_SORT];
       if (sortKey) {
         commit(suggestionMutations.SET_MEETING_SUGGESTIONS_SELECTED_SORT, sortKey);
       }
@@ -170,6 +178,17 @@ export default {
       const result = await api.suggestion.getSuggestionsBySearchWord(searchWord);
       if (result && result.code === 200) {
         commit(suggestionMutations.SET_SUGGESTIONS, result.data);
+      }
+    },
+    [suggestionActions.GET_SELECTED_FILTERS]({ commit }) {
+      const filters = sessionStorage[sessionStorageKeyNames.SELECTED_FILTERS];
+      if (filters) {
+        commit(suggestionMutations.SET_FILTERS, filters);
+      }
+    },
+    [suggestionActions.SET_SELECTED_FILTERS]({ commit }, filters) {
+      if (filters && filters.length > 0) {
+        commit(suggestionMutations.SET_SELECTED_FILTERS, filters);
       }
     }
   }

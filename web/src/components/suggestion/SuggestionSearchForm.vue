@@ -38,10 +38,13 @@ export default {
     }
   },
   methods: {
-    ...mapSuggestionMutations({ setFilters: suggestionMutations.SET_FILTERS }),
+    ...mapSuggestionMutations({
+      setFilters: suggestionMutations.SET_FILTERS,
+      setCachedFilters: suggestionMutations.SET_SELECTED_STORAGE_FILTERS
+    }),
     doSearch() {
       const value = { type: filterType.SEARCH, value: this.searchQuery };
-      handleSetFilters(value, this.filters, this.setFilters);
+      handleSetFilters(value, this.filters, this.setFilters, this.setCachedFilters);
     }
   }
 };
