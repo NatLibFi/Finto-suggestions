@@ -183,12 +183,13 @@ export default {
     [suggestionActions.GET_SELECTED_FILTERS]({ commit }) {
       const filters = sessionStorage[sessionStorageKeyNames.SELECTED_FILTERS];
       if (filters) {
-        commit(suggestionMutations.SET_FILTERS, filters);
+        commit(suggestionMutations.SET_FILTERS, JSON.parse(filters));
       }
     },
     [suggestionActions.SET_SELECTED_FILTERS]({ commit }, filters) {
-      if (filters && filters.length > 0) {
-        commit(suggestionMutations.SET_SELECTED_FILTERS, filters);
+      if (filters) {
+        commit(suggestionMutations.SET_SELECTED_STORAGE_FILTERS, JSON.stringify(filters));
+        commit(suggestionMutations.SET_FILTERS, filters);
       }
     }
   }

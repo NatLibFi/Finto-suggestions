@@ -185,36 +185,45 @@ export default {
     },
     async filterSuggestions() {
       if (this.filters && this.filters.length > 0) {
-        let items = this.items;
-        this.filters.forEach(filter => {
-          switch (filter.type) {
-            case filterType.STATUS:
-              items = items.filter(i => i.status === filter.value);
-              break;
-            case filterType.TAG:
-              items = items.filter(i => {
-                let hasFilterTag = i.tags.findIndex(tag => {
-                  return tag.label == filter.value;
-                });
-                return hasFilterTag != -1;
-              });
-              break;
-            case filterType.TYPE:
-              items = items.filter(i => i.suggestion_type === filter.value);
-              break;
-            case filterType.MEETING:
-              items = items.filter(i => i.meeting_id === filter.value);
-              break;
-            case filterType.SEARCH:
-              this.getSuggestionsBySearchWord(filter.value);
-              items = this.items;
-              break;
+        const searchFilter = this.filters.find(f => f.type === filterType.SEARCH)
+        let items;
+        if (searchFilter) {
+          await this.getSuggestionsBySearchWord(searchFilter.value);
+          items = this.items;
+          if(this.filters.length > 1) {
+            items = this.handleTheResultFiltering(this.items, this.filters)
           }
-        });
+        } else {
+          items = this.handleTheResultFiltering(this.items, this.filters);
+        }
         await this.paginationPageChanged(1, items);
       } else {
         await this.handleSuggestionFetching();
       }
+    },
+    handleTheResultFiltering(items, filters) {
+      filters.forEach(filter => {
+        switch (filter.type) {
+          case filterType.STATUS:
+            items = items.filter(i => i.status === filter.value);
+            break;
+          case filterType.TAG:
+            items = items.filter(i => {
+              let hasFilterTag = i.tags.findIndex(tag => {
+                return tag.label == filter.value;
+              });
+              return hasFilterTag != -1;
+            });
+            break;
+          case filterType.TYPE:
+            items = items.filter(i => i.suggestion_type === filter.value);
+            break;
+          case filterType.MEETING:
+            items = items.filter(i => i.meeting_id === filter.value);
+            break;
+        }
+      });
+      return items;
     }
   },
   watch: {

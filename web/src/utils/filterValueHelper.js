@@ -2,6 +2,7 @@ import { findValueFromDropDownOptions } from './dropDownHelper';
 import { filterType } from './suggestionHelpers';
 
 const removeOldFilterParamFromFilterList = (filters, type) => {
+  console.log(filters, type);
   return filters.filter(f => f.type !== type);
 };
 
@@ -27,7 +28,7 @@ const handleTagFilters = (value, filters) => {
   return filters;
 };
 
-export const handleSetFilters = (value, filters, setFilters, setCachedFilters = null) => {
+export const handleSetFilters = (value, filters, setFilters) => {
   if (value) {
     if (value.type !== filterType.SEARCH && value.type !== filterType.TAG) {
       filters = removeOldFilterParamFromFilterList(filters, value.type);
@@ -41,10 +42,6 @@ export const handleSetFilters = (value, filters, setFilters, setCachedFilters = 
     }
   }
   setFilters(filters);
-
-  if (setCachedFilters) {
-    setCachedFilters(filters);
-  }
 };
 
 export const handleDropDownSelection = (
