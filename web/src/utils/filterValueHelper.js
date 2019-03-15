@@ -2,7 +2,6 @@ import { findValueFromDropDownOptions } from './dropDownHelper';
 import { filterType } from './suggestionHelpers';
 
 const removeOldFilterParamFromFilterList = (filters, type) => {
-  console.log(filters, type);
   return filters.filter(f => f.type !== type);
 };
 

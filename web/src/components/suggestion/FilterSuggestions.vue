@@ -295,7 +295,6 @@ export default {
     markDropDownValuesSelected() {
       if (this.filters.length > 0) {
         this.filters.forEach(f => {
-          console.log(f.type);
           switch(f.type) {
             case filterType.STATUS:
               const statusIndex = findIndexFromDropDownOptionsByValue(f.value, this.suggestionStateStatuses);

@@ -99,13 +99,19 @@ export default {
       getMeetingsSuggestionsSelectedSortKey:
         suggestionActions.GET_MEETING_SUGGESTIONS_SELECTED_SORT,
       getSuggestionsBySearchWord: suggestionActions.GET_SUGGESTIONS_BY_SEARCH_WORD,
-      getSelectedFilters: suggestionActions.GET_SELECTED_FILTERS
+      getSelectedFilters: suggestionActions.GET_SELECTED_FILTERS,
+      setSelectedFilters: suggestionActions.SET_SELECTED_FILTERS
     }),
     ...mapSuggestionMutations({
       setFilteredItems: suggestionMutations.SET_FILTERED_ITEMS
     }),
     async handleSuggestionFetching() {
       if (this.meetingId && parseInt(this.meetingId) > 0) {
+        // notice: clearing all the filters when entering meeting suggestion list
+        if (this.filters.length > 0) {
+          await this.setSelectedFilters([]);
+        }
+
         await this.fetchAndSortMeetingSuggestions();
       } else {
         await this.fetchAndSortAllSuggestions();
@@ -228,7 +234,11 @@ export default {
   },
   watch: {
     async filters() {
-      this.filterSuggestions();
+      if(this.filters.length > 0) {
+        this.filterSuggestions();
+      } else {
+        this.handleSuggestionFetching();
+      }
     },
     async suggestionsSelectedSort() {
       await this.handleSuggestionFetching();
