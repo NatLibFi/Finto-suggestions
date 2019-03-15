@@ -21,13 +21,16 @@ export default {
   state: {
     [storeStateNames.ITEMS]: [],
     [storeStateNames.ITEM]: null,
-    [storeStateNames.MEETINGS_SELECTED_SORT]: null
+    [storeStateNames.MEETINGS_SELECTED_SORT]: null,
+    [storeStateNames.UPDATE_MEETING_SUGGESTIONS_PROGRESS_STATUS]: false
   },
   getters: {
     [meetingGetters.GET_MEETINGS]: state => state[storeStateNames.ITEMS],
     [meetingGetters.GET_MEETING]: state => state[storeStateNames.ITEM],
     [meetingGetters.GET_MEETINGS_SELECTED_SORT]: state =>
-      state[storeStateNames.MEETINGS_SELECTED_SORT]
+      state[storeStateNames.MEETINGS_SELECTED_SORT],
+    [meetingGetters.GET_UPDATE_MEETING_SUGGESTIONS_PROGRESS_STATUS]: state =>
+      state[storeStateNames.UPDATE_MEETING_SUGGESTIONS_PROGRESS_STATUS]
   },
   mutations: {
     [meetingMutations.SET_MEETINGS](state, meetings) {
@@ -44,6 +47,9 @@ export default {
     },
     [meetingMutations.SET_MEETINGS_SELECTED_STORE_SORT](state, sortKey) {
       Vue.set(sessionStorage, sessionStorageKeyNames.MEETING_LIST_SELECTED_SORT, sortKey);
+    },
+    [meetingMutations.SET_UPDATE_MEETING_SUGGESTIONS_PROGRESS_STATUS](state, value) {
+      Vue.set(state, storeStateNames.UPDATE_MEETING_SUGGESTIONS_PROGRESS_STATUS, value);
     }
   },
   actions: {
