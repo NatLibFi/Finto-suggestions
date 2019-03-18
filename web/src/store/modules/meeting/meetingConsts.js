@@ -3,8 +3,7 @@ export const namespace = 'meeting';
 export const storeStateNames = {
   ITEMS: 'items',
   ITEM: 'item',
-  MEETINGS_SELECTED_SORT: 'meetingsSelectedSort',
-  UPDATE_MEETING_SUGGESTIONS_PROGRESS_STATUS: 'updateMeetingSuggestionsProgressStatus'
+  MEETINGS_SELECTED_SORT: 'meetingsSelectedSort'
 };
 
 export const sessionStorageKeyNames = {
@@ -14,16 +13,14 @@ export const sessionStorageKeyNames = {
 export const meetingGetters = {
   GET_MEETINGS: 'getMeetings',
   GET_MEETING: 'getMeeting',
-  GET_MEETINGS_SELECTED_SORT: 'getMeetingsSelectedSort',
-  GET_UPDATE_MEETING_SUGGESTIONS_PROGRESS_STATUS: 'getUpdateMeetingSuggestionsProgressStatus'
+  GET_MEETINGS_SELECTED_SORT: 'getMeetingsSelectedSort'
 };
 
 export const meetingMutations = {
   SET_MEETINGS: 'setMeetings',
   SET_MEETING: 'setMeeting',
   SET_MEETINGS_SELECTED_SORT: 'setSelectedSort',
-  SET_MEETINGS_SELECTED_STORE_SORT: 'setSelectedStoreSort',
-  SET_UPDATE_MEETING_SUGGESTIONS_PROGRESS_STATUS: 'setUpdateMeetingSuggestionsProgressStatus'
+  SET_MEETINGS_SELECTED_STORE_SORT: 'setSelectedStoreSort'
 };
 
 export const meetingActions = {

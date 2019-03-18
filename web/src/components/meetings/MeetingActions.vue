@@ -18,22 +18,16 @@
 <script>
 import AddComment from '../suggestion/AddComment';
 
-import {
-  mapAuthenticatedUserGetters,
-  mapAuthenticatedUserActions
-} from '../../store/modules/authenticatedUser/authenticatedUserModule.js';
-import {
-  authenticatedUserGetters,
-  authenticatedUserActions
-} from '../../store/modules/authenticatedUser/authenticatedUserConsts.js';
+// eslint-disable-next-line
+import { mapAuthenticatedUserGetters, mapAuthenticatedUserActions } from '../../store/modules/authenticatedUser/authenticatedUserModule.js';
+// eslint-disable-next-line
+import { authenticatedUserGetters, authenticatedUserActions } from '../../store/modules/authenticatedUser/authenticatedUserConsts.js';
 import { mapSuggestionActions } from '../../store/modules/suggestion/suggestionModule';
 import { suggestionActions } from '../../store/modules/suggestion/suggestionConsts';
 import { suggestionStateStatus } from '../../utils/suggestionHelpers';
 import { newActionEvent } from '../../utils/tagHelpers';
 import { mapEventActions } from '../../store/modules/event/eventModule';
 import { eventActions } from '../../store/modules/event/eventConsts';
-import { mapMeetingMutations } from '../../store/modules/meeting/meetingModule';
-import { meetingMutations } from '../../store/modules/meeting/meetingConsts';
 
 export default {
   components: {
@@ -72,9 +66,6 @@ export default {
     ...mapEventActions({
       addEvent: eventActions.ADD_NEW_EVENT
     }),
-    ...mapMeetingMutations({
-      setMeetingStatus: meetingMutations.SET_UPDATE_MEETING_SUGGESTIONS_PROGRESS_STATUS
-    }),
     async createEvent(status) {
       const event = newActionEvent('käsitteli ehdotuksen.', status, this.userId, this.suggestionId);
       await this.addEvent(event);
@@ -85,7 +76,6 @@ export default {
         status: suggestionStateStatus.REJECTED
       });
       await this.createEvent(suggestionStateStatus.REJECTED);
-      this.updateMeetingSuggestionStatus();
       this.$emit('moveToNextSuggestion');
     },
     async approveSuggestion() {
@@ -94,7 +84,6 @@ export default {
         status: suggestionStateStatus.ACCEPTED
       });
       await this.createEvent(suggestionStateStatus.ACCEPTED);
-      this.updateMeetingSuggestionStatus();
       this.$emit('moveToNextSuggestion');
     },
     async retainSuggestion() {
@@ -103,11 +92,7 @@ export default {
         status: suggestionStateStatus.RETAINED
       });
       await this.createEvent(suggestionStateStatus.RETAINED);
-      this.updateMeetingSuggestionStatus();
       this.$emit('moveToNextSuggestion');
-    },
-    updateMeetingSuggestionStatus() {
-      this.setMeetingStatus(true);
     }
   }
 };
