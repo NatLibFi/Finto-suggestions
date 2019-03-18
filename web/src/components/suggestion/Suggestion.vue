@@ -289,7 +289,7 @@ export default {
       getUser: userActions.GET_USER
     }),
     goBack() {
-      this.$router.push(`/meetings/${this.meetingId}`);
+      this.$router.go(-1);
     },
     goToMeeting(id) {
       this.$router.push({
