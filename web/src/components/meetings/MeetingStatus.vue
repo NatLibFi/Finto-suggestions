@@ -49,8 +49,8 @@
 import CenteredDialog from '../common/CenteredDialog';
 import MeetingManagement from './MeetingManagement';
 import MenuButton from '../common/MenuButton';
-import { mapMeetingGetters, mapMeetingActions } from '../../store/modules/meeting/meetingModule.js';
-import { meetingGetters, meetingActions } from '../../store/modules/meeting/meetingConsts.js';
+import { mapMeetingGetters, mapMeetingActions, mapMeetingMutations } from '../../store/modules/meeting/meetingModule.js';
+import { meetingGetters, meetingActions, meetingMutations } from '../../store/modules/meeting/meetingConsts.js';
 
 import { userRoles } from '../../utils/userHelpers.js';
 // eslint-disable-next-line
@@ -103,7 +103,8 @@ export default {
   },
   computed: {
     ...mapMeetingGetters({
-      meeting: meetingGetters.GET_MEETING
+      meeting: meetingGetters.GET_MEETING,
+      statusUpdate: meetingGetters.GET_UPDATE_MEETING_SUGGESTIONS_PROGRESS_STATUS
     }),
     ...mapAuthenticatedUserGetters({
       isAuthenticated: authenticatedUserGetters.GET_IS_AUTHENTICATED,
@@ -122,6 +123,9 @@ export default {
     ...mapMeetingActions({
       getMeeting: meetingActions.GET_MEETING,
       deleteMeeting: meetingActions.DELETE_MEETING
+    }),
+    ...mapMeetingMutations({
+      setMeetingStatus: meetingMutations.SET_UPDATE_MEETING_SUGGESTIONS_PROGRESS_STATUS
     }),
     goToMeetingList() {
       this.$router.push({
@@ -176,6 +180,12 @@ export default {
     async removeMeeting() {
       await this.deleteMeeting(this.meetingId);
       this.$router.push('/meetings');
+    },
+    async updateMeetingStatus() {
+      await this.getMeeting(this.meetingId);
+      const counts = getMeetingProgressionCounts(this.meeting);
+      this.handleMeetingProgressionCounts(counts);
+      this.setMeetingStatus(false);
     }
   },
   watch: {
@@ -186,6 +196,11 @@ export default {
     },
     suggestion_items() {
       this.checkSuggestionNeededToContinueToHandle();
+    },
+    async statusUpdate() {
+      if (this.statusUpdate) {
+        await this.updateMeetingStatus();
+      }
     }
   }
 };
