@@ -159,9 +159,9 @@ export default {
       const end = this.getPaginationEndingIndex(pageNumber, items);
 
       let paginatedItems;
-      if(items) {
+      if (items) {
         paginatedItems = items;
-        if(this.filters.length > 0) {
+        if (this.filters.length > 0) {
           await this.setFilteredItems(items);
         }
       } else if (!items && this.filters.length > 0) {
@@ -191,13 +191,13 @@ export default {
     },
     async filterSuggestions() {
       if (this.filters && this.filters.length > 0) {
-        const searchFilter = this.filters.find(f => f.type === filterType.SEARCH)
+        const searchFilter = this.filters.find(f => f.type === filterType.SEARCH);
         let items;
         if (searchFilter) {
           await this.getSuggestionsBySearchWord(searchFilter.value);
           items = this.items;
-          if(this.filters.length > 1) {
-            items = this.handleTheResultFiltering(this.items, this.filters)
+          if (this.filters.length > 1) {
+            items = this.handleTheResultFiltering(this.items, this.filters);
           }
         } else {
           items = this.handleTheResultFiltering(this.items, this.filters);

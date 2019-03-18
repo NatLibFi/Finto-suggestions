@@ -181,7 +181,7 @@ export default {
     })
   },
   async created() {
-    // TODO: meetings not used right now, let's not make fetch if not used, enable this if needed somepoint
+    // TODO: meetings not used right now, let's not make fetch if not used, enable if needed later
     // await this.getMeetings();
     await this.getTags();
     await this.getSelectedFilters();
@@ -295,27 +295,33 @@ export default {
     markDropDownValuesSelected() {
       if (this.filters.length > 0) {
         this.filters.forEach(f => {
-          switch(f.type) {
-            case filterType.STATUS:
-              const statusIndex = findIndexFromDropDownOptionsByValue(f.value, this.suggestionStateStatuses);
+          switch (f.type) {
+            case filterType.STATUS: {
+              const statusIndex = findIndexFromDropDownOptionsByValue(
+                f.value,
+                this.suggestionStateStatuses
+              );
               if (statusIndex !== -1) {
                 this.selectedOptionIndex.STATUS = statusIndex;
               }
               break;
-            case filterType.TAG:
+            }
+            case filterType.TAG: {
               const tagIndex = this.findTagIndexByTagName(f.value);
               if (tagIndex !== -1) {
                 this.addSelectedTagIndex(tagIndex);
               }
               break;
-            case filterType.TYPE:
+            }
+            case filterType.TYPE: {
               const typeIndex = findIndexFromDropDownOptionsByValue(f.value, this.suggestionTypes);
               if (typeIndex !== -1) {
                 this.selectedOptionIndex.TYPE = typeIndex;
               }
               break;
+            }
           }
-        })
+        });
       }
     },
     findTagIndexByTagName(tag) {
