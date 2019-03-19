@@ -11,7 +11,7 @@
     "docker:build": "docker-compose exec web npm run build"
   },
   "dependencies": {
-    "@vue/cli-service-global": "^3.4.1",
+    "@vue/cli-service-global": "^3.5.1",
     "axios": "0.18.0",
     "date-fns": "1.29.0",
     "ramda": "^0.25.0",
@@ -28,14 +28,14 @@
     "vuex": "3.0.1"
   },
   "devDependencies": {
-    "@vue/cli-plugin-babel": "^3.2.2",
-    "@vue/cli-plugin-eslint": "^3.2.2",
-    "@vue/cli-plugin-unit-jest": "^3.4.1",
-    "@vue/cli-service": "^3.2.2",
+    "@vue/cli-plugin-babel": "^3.5.1",
+    "@vue/cli-plugin-eslint": "^3.5.1",
+    "@vue/cli-plugin-unit-jest": "^3.5.1",
+    "@vue/cli-service": "^3.5.1",
     "@vue/eslint-config-prettier": "^3.0.1",
-    "@vue/test-utils": "^1.0.0-beta.28",
+    "@vue/test-utils": "^1.0.0-beta.29",
     "babel-core": "^7.0.0-bridge.0",
-    "babel-jest": "^22.4.4"
+    "babel-jest": "^24.5.0"
   },
   "browserslist": [
     "> 1%",
