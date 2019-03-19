@@ -16,6 +16,6 @@ RUN apk update \
 RUN pip install pipenv \
   && pipenv install --system
 
-EXPOSE 8050
+EXPOSE 8050 587
 
 ENTRYPOINT ["gunicorn", "--config", "gunicorn_config_dev.conf", "wsgi:connexion_app"]

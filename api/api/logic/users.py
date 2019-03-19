@@ -1,7 +1,11 @@
 import connexion
 from ..authentication import admin_only
-from ..models import User
+from ..models import db, User
 from .common import (get_all_or_404, get_one_or_404, create_or_400, delete_or_404, update_or_404, patch_or_404)
+
+import string
+import random
+import smtplib, os
 
 
 @admin_only
@@ -76,3 +80,76 @@ def patch_user(user_id: int) -> str:
     """
 
     return patch_or_404(User, user_id, connexion.request.json)
+
+
+def put_reset_password() -> str:
+    """
+    Reset password by email
+    :returns 200 if success, other return 404
+    """
+
+    email = connexion.request.json.get('email')
+
+    if email is not None and len(email) > 0:
+      user = User.query.filter_by(email=email).first()
+
+      if user is not None:
+        password_length = 8
+        new_password = ''.join(random.choices(string.ascii_uppercase + string.digits, k=password_length))
+        user.password = new_password
+
+        password_update_success = False
+
+        try:
+          db.session.add(user);
+          db.session.commit()
+          password_update_success = True
+        except ValueError as ex:
+          print(str(ex))
+          db.session.rollback()
+          return { 'error': str(ex), 'code': 400 }, 400
+
+        if password_update_success is True:
+          sending_status = send_email(new_password, user.email)
+          if sending_status:
+            return { 'code': 200 }, 200
+          else:
+            return { 'code': 404, 'error': 'Could not send email' }, 404
+
+
+def send_email(password: str, email: str) -> str:
+    """
+    Method for sending email messages
+    """
+
+    if email and password:
+      email_server_address = os.environ.get('EMAIL_SERVER_ADDRESS')
+      email_server_port = os.environ.get('EMAIL_SERVER_PORT')
+      default_sender = os.environ.get('EMAIL_SERVER_DEFAULT_SENDER_EMAIL')
+      email_server_username = os.environ.get('EMAIL_SERVER_USERNAME')
+      email_server_password = os.environ.get('EMAIL_SERVER_PASSWORD')
+
+      body = """
+      User password whos email is {} has been reseted. \r\n
+      User new password is {}. \r\n
+      If you did not request this, please contact (add customer support email or something here) \r\n
+      """.format(email, password)
+
+      message = 'Subject: {}\n\n{}'.format(
+        'Password reseted on Finto-Suggestion system',
+        body)
+
+      try:
+        mailserver = smtplib.SMTP(email_server_address, email_server_port)
+        mailserver.ehlo()
+        mailserver.starttls()
+
+        if email_server_username and email_server_password:
+          mailserver.login(email_server_username, email_server_password)
+
+        mailserver.sendmail(default_sender, email, message)
+        mailserver.quit()
+        return True
+      except Exception as ex:
+        print(str(ex))
+    return False

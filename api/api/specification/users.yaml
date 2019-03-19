@@ -88,3 +88,9 @@ paths:
           description: User deleted
         '404':
           description: No user found
+  /users/reset_password/:
+    put:
+      operationId: api.logic.users.put_reset_password
+      responses:
+        "200":
+          description: "Reset password by email"

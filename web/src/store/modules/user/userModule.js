@@ -47,6 +47,15 @@ export default {
       } else {
         throw 'Error in patching user information.';
       }
+    },
+    // eslint-disable-next-line no-empty-pattern
+    async [userActions.RESET_PASSWORD]({}, email) {
+      const response = await api.user.resetPassword(email);
+      if (response && response.code === 200) {
+        return;
+      } else {
+        throw `Could not reset user password that email is ${email}`;
+      }
     }
   }
 };

@@ -66,7 +66,7 @@
 
     <div v-if="showLoginDialog">
       <centered-dialog @close="closeDialog">
-        <the-login @login="login"/>
+        <the-login @login="login" @resetPassword="resetPassword"/>
       </centered-dialog>
     </div>
     <div v-if="showSignupDialog">
@@ -100,7 +100,7 @@ import { mapAuthenticatedUserGetters, mapAuthenticatedUserActions } from '../../
 import { authenticatedUserGetters, authenticatedUserActions, storeKeyNames } from '../../store/modules/authenticatedUser/authenticatedUserConsts.js';
 
 import api from '../../api/index.js';
-import { userNameInitials } from '../../utils/userHelpers';
+import { userNameInitials, emailValidator } from '../../utils/userHelpers.js';
 
 export default {
   components: {
@@ -155,7 +155,8 @@ export default {
       refreshToken: authenticatedUserActions.REFRESH_AUTHORIZATION_TOKEN
     }),
     ...mapUserActions({
-      getUser: userActions.GET_USER
+      getUser: userActions.GET_USER,
+      resetPasswordByEmail: userActions.RESET_PASSWORD
     }),
     returnToHome() {
       this.$router.push('/');
@@ -237,6 +238,16 @@ export default {
       // eslint-disable-next-line no-undef
       const refreshToken = $cookies.get(storeKeyNames.REFRESH_TOKEN);
       await this.refreshToken({ access_token: access_token, refresh_token: refreshToken });
+    },
+    async resetPassword(email) {
+      this.showLoginDialog = false;
+      const validEmail = emailValidator(email);
+      if (validEmail) {
+        await this.resetPasswordByEmail(email)
+      } else {
+        //TODO: show some info to user about this
+        console.log('email is not valid', email);
+      }
     }
   },
   watch: {

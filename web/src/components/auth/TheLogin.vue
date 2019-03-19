@@ -15,11 +15,14 @@
       <span>Kirjaudu Google-tunnuksilla</span>
     </div> -->
   </div>
+  <div class="login-forgot-password" @click="showResetPasswordInputs()" v-if="!showForgottenPasswordForm">
+    <span>Unohditko salasanasi?</span>
+  </div>
   <div class="login-own-credentials">
-    <h4 v-if="!showOwnCredentialLogin" @click="showOwnCredentialLogin = !showOwnCredentialLogin">
+    <h4 v-if="!showOwnCredentialLogin" @click="showOwnCredentialInputs()">
       Kirjaudu sisään omilla tunnuksilla
     </h4>
-    <div v-if="showOwnCredentialLogin" class="login-inputs">
+    <div v-if="showOwnCredentialLogin">
       <div class="login-input">
         <span>Sähköposti</span>
         <input type="text" v-model="email">
@@ -31,8 +34,14 @@
       <div @click="login('local')" class="login-submit">
         <span>Kirjaudu sisään</span>
       </div>
-      <div class="login-forgot-password">
-        <span>Unohditko salasanasi?</span>
+    </div>
+    <div class="forgot-password-input" v-if="showForgottenPasswordForm">
+      <div class="login-input">
+        <span>Sähköposti</span>
+        <input type="text" v-model="resetEmail">
+      </div>
+      <div @click="resetPassword()" class="login-submit">
+        <span>Tilaa uusi salasana</span>
       </div>
     </div>
   </div>
@@ -55,8 +64,10 @@ export default {
       baseUrl: process.env.BASE_URL,
       showOwnCredentialLogin: false,
       email: '',
-      password: ''
-    };
+      password: '',
+      showForgottenPasswordForm: false,
+      resetEmail: ''
+    }
   },
   methods: {
     login(service) {
@@ -66,6 +77,18 @@ export default {
     },
     gatherLoginData() {
       return { email: this.email, password: this.password };
+    },
+    showOwnCredentialInputs() {
+      this.showOwnCredentialLogin = true;
+      this.showForgottenPasswordForm = false;
+    },
+    showResetPasswordInputs() {
+      this.showOwnCredentialLogin = false;
+      this.showForgottenPasswordForm = true;
+    },
+    resetPassword() {
+      this.showForgottenPasswordForm = false;
+      this.$emit('resetPassword', this.resetEmail);
     }
   }
 };
