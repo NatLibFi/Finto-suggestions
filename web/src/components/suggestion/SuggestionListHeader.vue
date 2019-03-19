@@ -1,8 +1,16 @@
 <template>
   <div class="header-container">
     <div v-if="!userPage" class="title">
-      <span class="open">{{ openSuggestionCount }} käsittelemätöntä</span>
-      <span class="resolved">{{ resolvedSuggestionCount }} käsiteltyä</span>
+      <span class="open suggestion-status-clickable" @click="showOpenSuggestions()">
+        <span v-if="openSuggestionClicked">
+          <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAABYSURBVDhPYxjSgBNKkwXsgfghEHOBeSQCkObXUJpkQDvNhAIEr2ZQQIACxA7MwwR4NcMASDNIEbohRGmGAXRDSNIMAzBDSqE0SZphgCyb0QFFyZSegIEBAAoOE00pE/Y/AAAAAElFTkSuQmCC">
+        </span>
+        {{ openSuggestionCount }} käsittelemätöntä</span>
+      <span class="resolved suggestion-status-clickable" @click="showResolvedSuggestions()">
+        <span v-if="resolvedSuggestionsClicked">
+          <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAABYSURBVDhPYxjSgBNKkwXsgfghEHOBeSQCkObXUJpkQDvNhAIEr2ZQQIACxA7MwwR4NcMASDNIEbohRGmGAXRDSNIMAzBDSqE0SZphgCyb0QFFyZSegIEBAAoOE00pE/Y/AAAAAElFTkSuQmCC">
+        </span>
+        {{ resolvedSuggestionCount }} käsiteltyä</span>
     </div>
     <div v-if="userPage" class="title">
       <span>Käyttäjälle asetut ehdotukset</span>
@@ -62,7 +70,9 @@ export default {
       { label: 'Vähiten kommentoitu', value: sortingKeys.LEAST_COMMENTS },
       { label: 'Viimeksi päivitetty', value: sortingKeys.LAST_UPDATED },
       { label: 'Eniten reaktiota', value: sortingKeys.MOST_REACTIONS }
-    ]
+    ],
+    openSuggestionClicked: false,
+    resolvedSuggestionsClicked: false
   }),
   computed: {
     ...mapSuggestionGetters({
@@ -110,6 +120,26 @@ export default {
           this.suggestionSelectedSort,
           0
         );
+      }
+    },
+    showOpenSuggestions() {
+      if (!this.openSuggestionClicked) {
+        this.openSuggestionClicked = true;
+        this.resolvedSuggestionsClicked = false;
+        this.$emit('showOpenSuggestions');
+      } else {
+        this.openSuggestionClicked = false;
+        this.$emit('showAllSuggestions');
+      }
+    },
+    showResolvedSuggestions() {
+      if(!this.resolvedSuggestionsClicked) {
+        this.openSuggestionClicked = false;
+        this.resolvedSuggestionsClicked = true;
+        this.$emit('showResolvedSuggestions');
+      } else {
+        this.resolvedSuggestionsClicked = false;
+        this.$emit('showAllSuggestions');
       }
     }
   },
@@ -214,6 +244,17 @@ export default {
 
 .hidden-checkmark {
   opacity: 0;
+}
+
+.suggestion-status-clickable {
+  cursor: pointer;
+  cursor: hand;
+}
+
+.suggestion-status-clicked {
+  font-weight: bold;
+  /* text-decoration: underline; */
+  text-transform:uppercase
 }
 
 @media (max-width: 700px) {

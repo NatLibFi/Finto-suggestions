@@ -57,5 +57,7 @@ export const suggestionActions = {
   SET_SUGGESTION_STATUS: 'setSuggestionStatus',
   GET_SUGGESTIONS_BY_SEARCH_WORD: 'getSuggestionsBySearchWord',
   GET_SELECTED_FILTERS: 'getSelectedFilters',
-  SET_SELECTED_FILTERS: 'setSelectedFilters'
+  SET_SELECTED_FILTERS: 'setSelectedFilters',
+  GET_OPEN_SUGGESTIONS: 'getOpenSuggestions',
+  GET_RESOLVED_SUGGESTIONS: 'getResolvedSuggestions'
 };

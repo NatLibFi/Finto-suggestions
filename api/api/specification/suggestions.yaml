@@ -234,3 +234,19 @@ paths:
       responses:
         "202":
           description: Updates suggestion status
+  /suggestions/open:
+    get:
+      operationId: api.logic.suggestions.get_open_suggestions
+      responses:
+        "200":
+          description: Get all open status suggestions
+        "400":
+          description: Filtering open suggestions failed
+  /suggestions/resolved:
+    get:
+      operationId: api.logic.suggestions.get_resolved_suggestions
+      responses:
+        "200":
+          description: Get all resolved status suggestions
+        "400":
+          description: Filtering resolved suggestions failed
