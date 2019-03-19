@@ -77,11 +77,11 @@ import IconTriangle from '../icons/IconTriangle';
 import { filterType } from '../../utils/suggestionHelpers.js';
 import {
   suggestionGetters,
-  suggestionMutations
+  suggestionActions
 } from '../../store/modules/suggestion/suggestionConsts.js';
 import {
   mapSuggestionGetters,
-  mapSuggestionMutations
+  mapSuggestionActions
 } from '../../store/modules/suggestion/suggestionModule.js';
 
 import { mapMeetingActions, mapMeetingGetters } from '../../store/modules/meeting/meetingModule.js';
@@ -96,7 +96,9 @@ import {
   suggestionStateStatus,
   suggestionStateStatusToString
 } from '../../utils/suggestionHelpers.js';
+
 import { handleDropDownSelection } from '../../utils/filterValueHelper.js';
+import { findIndexFromDropDownOptionsByValue } from '../../utils//dropDownHelper';
 
 export default {
   components: {
@@ -178,9 +180,12 @@ export default {
       filters: suggestionGetters.GET_FILTERS
     })
   },
-  created() {
-    this.getMeetings();
-    this.getTags();
+  async created() {
+    // TODO: meetings not used right now, let's not make fetch if not used, enable if needed later
+    // await this.getMeetings();
+    await this.getTags();
+    await this.getSelectedFilters();
+    this.markDropDownValuesSelected();
   },
   methods: {
     ...mapMeetingActions({
@@ -189,8 +194,9 @@ export default {
     ...mapTagActions({
       getTags: tagActions.GET_TAGS
     }),
-    ...mapSuggestionMutations({
-      setFilters: suggestionMutations.SET_FILTERS
+    ...mapSuggestionActions({
+      setFilters: suggestionActions.SET_SELECTED_FILTERS,
+      getSelectedFilters: suggestionActions.GET_SELECTED_FILTERS
     }),
     stateChanged(selected) {
       this.hasTouchedFilters = true;
@@ -285,6 +291,46 @@ export default {
       this.isDropDownOpened.TAG = false;
       this.isDropDownOpened.TYPE = false;
       this.isDropDownOpened.MEETING = false;
+    },
+    markDropDownValuesSelected() {
+      if (this.filters.length > 0) {
+        this.filters.forEach(f => {
+          switch (f.type) {
+            case filterType.STATUS: {
+              const statusIndex = findIndexFromDropDownOptionsByValue(
+                f.value,
+                this.suggestionStateStatuses
+              );
+              if (statusIndex !== -1) {
+                this.selectedOptionIndex.STATUS = statusIndex;
+              }
+              break;
+            }
+            case filterType.TAG: {
+              const tagIndex = this.findTagIndexByTagName(f.value);
+              if (tagIndex !== -1) {
+                this.addSelectedTagIndex(tagIndex);
+              }
+              break;
+            }
+            case filterType.TYPE: {
+              const typeIndex = findIndexFromDropDownOptionsByValue(f.value, this.suggestionTypes);
+              if (typeIndex !== -1) {
+                this.selectedOptionIndex.TYPE = typeIndex;
+              }
+              break;
+            }
+          }
+        });
+      }
+    },
+    findTagIndexByTagName(tag) {
+      const tags = this.mapTagsToDropDown();
+      if (tags.length > 0) {
+        const selectedTag = tags.find(t => t.value === tag);
+        return tags.indexOf(selectedTag);
+      }
+      return -1;
     }
   }
 };

@@ -29,12 +29,14 @@ import SuggestionItem from './SuggestionItem';
 
 import {
   suggestionGetters,
-  suggestionActions
+  suggestionActions,
+  suggestionMutations
 } from '../../store/modules/suggestion/suggestionConsts.js';
 
 import {
   mapSuggestionGetters,
-  mapSuggestionActions
+  mapSuggestionActions,
+  mapSuggestionMutations
 } from '../../store/modules/suggestion/suggestionModule.js';
 
 import SuggestionListPagination from './SuggestionListPagination';
@@ -72,7 +74,8 @@ export default {
       items: suggestionGetters.GET_SUGGESTIONS,
       filters: suggestionGetters.GET_FILTERS,
       suggestionsSelectedSort: suggestionGetters.GET_SUGGESTIONS_SELECTED_SORT,
-      meetingSuggestionsSelectedSort: suggestionGetters.GET_MEETING_SUGGESTIONS_SELECTED_SORT
+      meetingSuggestionsSelectedSort: suggestionGetters.GET_MEETING_SUGGESTIONS_SELECTED_SORT,
+      filtered_items: suggestionGetters.GET_FILTERED_ITEMS
     })
   },
   async created() {
@@ -80,6 +83,7 @@ export default {
     await this.getSuggestionsSelectedSortKey();
     await this.getMeetingsSuggestionsSelectedSortKey();
     await this.handleSuggestionFetching();
+    this.getSelectedFilters();
 
     if (this.filters.length > 0) {
       this.filterSuggestions();
@@ -94,23 +98,36 @@ export default {
       getSortedSuggestionsByMeetingId: suggestionActions.GET_SORTED_SUGGESTIONS_BY_MEETING_ID,
       getMeetingsSuggestionsSelectedSortKey:
         suggestionActions.GET_MEETING_SUGGESTIONS_SELECTED_SORT,
-      getSuggestionsBySearchWord: suggestionActions.GET_SUGGESTIONS_BY_SEARCH_WORD
+      getSuggestionsBySearchWord: suggestionActions.GET_SUGGESTIONS_BY_SEARCH_WORD,
+      getSelectedFilters: suggestionActions.GET_SELECTED_FILTERS,
+      setSelectedFilters: suggestionActions.SET_SELECTED_FILTERS
+    }),
+    ...mapSuggestionMutations({
+      setFilteredItems: suggestionMutations.SET_FILTERED_ITEMS
     }),
     async handleSuggestionFetching() {
       if (this.meetingId && parseInt(this.meetingId) > 0) {
+        // notice: clearing all the filters when entering meeting suggestion list
+        if (this.filters.length > 0) {
+          await this.setSelectedFilters([]);
+        }
+
         await this.fetchAndSortMeetingSuggestions();
       } else {
         await this.fetchAndSortAllSuggestions();
       }
-      await this.paginationPageChanged();
     },
     async fetchAndSortAllSuggestions() {
       await this.getSuggestionsSelectedSortKey();
       if (this.suggestionsSelectedSort && this.suggestionsSelectedSort !== '') {
         await this.getSortedSuggestions(this.suggestionsSelectedSort);
+        if (this.filters.length > 0) {
+          await this.filterSuggestions();
+        }
       } else {
         await this.getSortedSuggestions(sortingKeys.NEWEST_FIRST);
       }
+      await this.paginationPageChanged();
     },
     async fetchAndSortMeetingSuggestions() {
       await this.getMeetingsSuggestionsSelectedSortKey();
@@ -140,11 +157,23 @@ export default {
     async paginationPageChanged(pageNumber = 1, items = null) {
       const start = this.getPaginationStaringIndex(pageNumber);
       const end = this.getPaginationEndingIndex(pageNumber, items);
-      const paginatedItems = items ? items : this.items;
+
+      let paginatedItems;
+      if (items) {
+        paginatedItems = items;
+        if (this.filters.length > 0) {
+          await this.setFilteredItems(items);
+        }
+      } else if (!items && this.filters.length > 0) {
+        paginatedItems = this.filtered_items;
+      } else {
+        paginatedItems = this.items;
+      }
+
       this.paginated_items =
         paginatedItems && paginatedItems.length > 0 ? paginatedItems.slice(start, end) : [];
-      this.calculateOpenAndResolvedSuggestionCounts(items);
-      this.calculatePageCountForPagination(items);
+      this.calculateOpenAndResolvedSuggestionCounts(paginatedItems);
+      this.calculatePageCountForPagination(paginatedItems);
     },
     calculatePageCountForPagination(items = null) {
       this.paginationPageCount =
@@ -162,50 +191,60 @@ export default {
     },
     async filterSuggestions() {
       if (this.filters && this.filters.length > 0) {
-        let items = this.items;
-        this.filters.forEach(filter => {
-          switch (filter.type) {
-            case filterType.STATUS:
-              items = items.filter(i => i.status === filter.value);
-              break;
-            case filterType.TAG:
-              items = items.filter(i => {
-                let hasFilterTag = i.tags.findIndex(tag => {
-                  return tag.label == filter.value;
-                });
-                return hasFilterTag != -1;
-              });
-              break;
-            case filterType.TYPE:
-              items = items.filter(i => i.suggestion_type === filter.value);
-              break;
-            case filterType.MEETING:
-              items = items.filter(i => i.meeting_id === filter.value);
-              break;
-            case filterType.SEARCH:
-              this.getSuggestionsBySearchWord(filter.value);
-              items = this.items;
-              break;
+        const searchFilter = this.filters.find(f => f.type === filterType.SEARCH);
+        let items;
+        if (searchFilter) {
+          await this.getSuggestionsBySearchWord(searchFilter.value);
+          items = this.items;
+          if (this.filters.length > 1) {
+            items = this.handleTheResultFiltering(this.items, this.filters);
           }
-        });
+        } else {
+          items = this.handleTheResultFiltering(this.items, this.filters);
+        }
         await this.paginationPageChanged(1, items);
       } else {
         await this.handleSuggestionFetching();
       }
+    },
+    handleTheResultFiltering(items, filters) {
+      filters.forEach(filter => {
+        switch (filter.type) {
+          case filterType.STATUS:
+            items = items.filter(i => i.status === filter.value);
+            break;
+          case filterType.TAG:
+            items = items.filter(i => {
+              let hasFilterTag = i.tags.findIndex(tag => {
+                return tag.label == filter.value;
+              });
+              return hasFilterTag != -1;
+            });
+            break;
+          case filterType.TYPE:
+            items = items.filter(i => i.suggestion_type === filter.value);
+            break;
+          case filterType.MEETING:
+            items = items.filter(i => i.meeting_id === filter.value);
+            break;
+        }
+      });
+      return items;
     }
   },
   watch: {
     async filters() {
-      this.filterSuggestions();
+      if(this.filters.length > 0) {
+        this.filterSuggestions();
+      } else {
+        this.handleSuggestionFetching();
+      }
     },
     async suggestionsSelectedSort() {
       await this.handleSuggestionFetching();
     },
     async meetingSuggestionsSelectedSort() {
       await this.handleSuggestionFetching();
-    },
-    async items() {
-      await this.paginationPageChanged(1, this.items);
     }
   }
 };

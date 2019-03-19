@@ -13,12 +13,12 @@
 <script>
 import {
   suggestionGetters,
-  suggestionMutations
+  suggestionActions
 } from '../../store/modules/suggestion/suggestionConsts.js';
 
 import {
   mapSuggestionGetters,
-  mapSuggestionMutations
+  mapSuggestionActions
 } from '../../store/modules/suggestion/suggestionModule.js';
 
 import { handleSetFilters } from '../../utils/filterValueHelper.js';
@@ -29,16 +29,22 @@ export default {
     searchQuery: ''
   }),
   computed: {
-    ...mapSuggestionGetters({ filters: suggestionGetters.GET_FILTERS })
+    ...mapSuggestionGetters({
+      filters: suggestionGetters.GET_FILTERS
+    })
   },
-  created() {
+  async created() {
+    await this.getSelectedFilters();
     if (this.filters.length > 0) {
       const searchFilter = this.filters.find(f => f.type === filterType.SEARCH);
       this.searchQuery = searchFilter ? searchFilter.value : '';
     }
   },
   methods: {
-    ...mapSuggestionMutations({ setFilters: suggestionMutations.SET_FILTERS }),
+    ...mapSuggestionActions({
+      setFilters: suggestionActions.SET_SELECTED_FILTERS,
+      getSelectedFilters: suggestionActions.GET_SELECTED_FILTERS
+    }),
     doSearch() {
       const value = { type: filterType.SEARCH, value: this.searchQuery };
       handleSetFilters(value, this.filters, this.setFilters);
