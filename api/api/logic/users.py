@@ -85,7 +85,7 @@ def patch_user(user_id: int) -> str:
 def put_reset_password() -> str:
     """
     Reset password by email
-    :returns 202 if success, other return 401
+    :returns 200 if success, other return 404
     """
 
     email = connexion.request.json.get('email')
@@ -112,9 +112,9 @@ def put_reset_password() -> str:
         if password_update_success is True:
           sending_status = send_email(new_password, user.email)
           if sending_status:
-            return { 'code': 202 }, 202
+            return { 'code': 200 }, 200
           else:
-            return { 'code': 400, 'error': 'Could not send email' }, 404
+            return { 'code': 404, 'error': 'Could not send email' }, 404
 
 
 def send_email(password: str, email: str) -> str:

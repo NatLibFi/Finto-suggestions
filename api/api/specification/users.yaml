@@ -92,5 +92,5 @@ paths:
     put:
       operationId: api.logic.users.put_reset_password
       responses:
-        "202":
+        "200":
           description: "Reset password by email"
