@@ -124,7 +124,7 @@ def post_suggestion() -> str:
         return jsonify(response['data']), 201
 
     else:
-        return {'error': 'Could not create suggestion.'}, 404
+        return {'error': 'Could not create suggestion.'}, 400
 
 
 @admin_only
