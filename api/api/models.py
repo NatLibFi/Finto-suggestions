@@ -186,7 +186,7 @@ class Suggestion(db.Model, SerializableMixin):
     # meeting: backref
 
     suggestion_type = db.Column(db.Enum(SuggestionTypes))
-    status = db.Column(db.Enum(SuggestionStatusTypes), nullable=False)
+    status = db.Column(db.Enum(SuggestionStatusTypes), nullable=True)
     uri = db.Column(db.String(256))
 
     organization = db.Column(db.String(256))

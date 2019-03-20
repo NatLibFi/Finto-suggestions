@@ -1,8 +1,14 @@
 <template>
   <div class="header-container">
     <div v-if="!userPage" class="title">
-      <span class="open">{{ openSuggestionCount }} käsittelemätöntä</span>
-      <span class="resolved">{{ resolvedSuggestionCount }} käsiteltyä</span>
+      <span
+        :class="['open', openSuggestionClicked ? 'toggled' : '']"
+        @click="showOpenSuggestions()">
+        {{ openSuggestionCount }} käsittelemätöntä</span>
+      <span
+        :class="['resolved', resolvedSuggestionsClicked ? 'toggled' : '']"
+        @click="showResolvedSuggestions()">
+        {{ resolvedSuggestionCount }} käsiteltyä</span>
     </div>
     <div v-if="userPage" class="title">
       <span>Käyttäjälle asetut ehdotukset</span>
@@ -62,7 +68,9 @@ export default {
       { label: 'Vähiten kommentoitu', value: sortingKeys.LEAST_COMMENTS },
       { label: 'Viimeksi päivitetty', value: sortingKeys.LAST_UPDATED },
       { label: 'Eniten reaktiota', value: sortingKeys.MOST_REACTIONS }
-    ]
+    ],
+    openSuggestionClicked: false,
+    resolvedSuggestionsClicked: false
   }),
   computed: {
     ...mapSuggestionGetters({
@@ -111,6 +119,26 @@ export default {
           0
         );
       }
+    },
+    showOpenSuggestions() {
+      if (!this.openSuggestionClicked) {
+        this.openSuggestionClicked = true;
+        this.resolvedSuggestionsClicked = false;
+        this.$emit('showOpenSuggestions');
+      } else {
+        this.openSuggestionClicked = false;
+        this.$emit('showAllSuggestions');
+      }
+    },
+    showResolvedSuggestions() {
+      if (!this.resolvedSuggestionsClicked) {
+        this.openSuggestionClicked = false;
+        this.resolvedSuggestionsClicked = true;
+        this.$emit('showResolvedSuggestions');
+      } else {
+        this.resolvedSuggestionsClicked = false;
+        this.$emit('showAllSuggestions');
+      }
     }
   },
   watch: {
@@ -143,16 +171,26 @@ export default {
   font-size: 13px;
   font-weight: 600;
   vertical-align: middle;
+  min-width: 25%;
+  cursor: pointer;
+  cursor: hand;
+  -webkit-user-select: none; /* Safari */
+  -moz-user-select: none; /* Firefox */
+  -ms-user-select: none; /* IE10+/Edge */
+  user-select: none; /* Standard */
 }
 .open {
-  min-width: 25%;
-  color: #06a798;
   padding-right: 10px;
 }
+
 .resolved {
-  min-width: 25%;
   color: #a4a4a4;
 }
+
+.toggled {
+  color: #06a798;
+}
+
 .drop-down-button {
   position: absolute;
   top: 54%;
@@ -214,6 +252,11 @@ export default {
 
 .hidden-checkmark {
   opacity: 0;
+}
+
+.suggestion-status-clicked {
+  font-weight: bold;
+  text-transform: uppercase;
 }
 
 @media (max-width: 700px) {

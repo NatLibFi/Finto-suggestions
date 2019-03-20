@@ -246,7 +246,7 @@ export default {
       this.showLoginDialog = false;
       const validEmail = emailValidator(email);
       if (validEmail) {
-        await this.resetPasswordByEmail(email)
+        await this.resetPasswordByEmail(email);
       } else {
         //TODO: show some info to user about this
         console.log('email is not valid', email);

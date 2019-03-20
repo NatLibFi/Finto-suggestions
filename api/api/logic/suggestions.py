@@ -124,7 +124,7 @@ def post_suggestion() -> str:
         return jsonify(response['data']), 201
 
     else:
-        return {'error': 'Could not create suggestion.'}, 404
+        return {'error': 'Could not create suggestion.'}, 400
 
 
 @admin_only
@@ -280,3 +280,29 @@ def put_update_suggestion_status(suggestion_id: int, status: str) -> str:
             db.session.rollback()
             print(str(ex))
             return { 'error': str(ex) }, 400
+
+
+def get_open_suggestions() -> str:
+    """
+    Get open status suggestions from db
+    """
+    try:
+      open_suggestions = Suggestion.query.filter(Suggestion.status.notin_(['ACCEPTED', 'REJECTED', 'RETAINED', 'ARCHIVED'])).all()
+      serialized_objects = [o.as_dict() for o in open_suggestions]
+      return { 'data': serialized_objects, 'code': 200 }, 200
+    except Exception as ex:
+      print(str(ex))
+      return { 'code': 404, 'error': str(ex) }, 404
+
+
+def get_resolved_suggestions() -> str:
+    """
+    Get open status suggestions from db
+    """
+    try:
+      resolved_suggestions = Suggestion.query.filter(Suggestion.status.in_(['ACCEPTED', 'REJECTED', 'RETAINED', 'ARCHIVED'])).all()
+      serialized_objects = [o.as_dict() for o in resolved_suggestions]
+      return { 'data': serialized_objects, 'code': 200 }, 200
+    except Exception as ex:
+      print(str(ex))
+      return { 'code': 404, 'error': str(ex) }, 404
