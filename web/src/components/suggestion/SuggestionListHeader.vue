@@ -1,15 +1,11 @@
 <template>
   <div class="header-container">
     <div v-if="!userPage" class="title">
-      <span class="open suggestion-status-clickable" @click="showOpenSuggestions()">
-        <span v-if="openSuggestionClicked">
-          <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAABYSURBVDhPYxjSgBNKkwXsgfghEHOBeSQCkObXUJpkQDvNhAIEr2ZQQIACxA7MwwR4NcMASDNIEbohRGmGAXRDSNIMAzBDSqE0SZphgCyb0QFFyZSegIEBAAoOE00pE/Y/AAAAAElFTkSuQmCC">
-        </span>
+      <span :class="['open', openSuggestionClicked ? 'toggled' : '']" @click="showOpenSuggestions()">
         {{ openSuggestionCount }} käsittelemätöntä</span>
-      <span class="resolved suggestion-status-clickable" @click="showResolvedSuggestions()">
-        <span v-if="resolvedSuggestionsClicked">
-          <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAABYSURBVDhPYxjSgBNKkwXsgfghEHOBeSQCkObXUJpkQDvNhAIEr2ZQQIACxA7MwwR4NcMASDNIEbohRGmGAXRDSNIMAzBDSqE0SZphgCyb0QFFyZSegIEBAAoOE00pE/Y/AAAAAElFTkSuQmCC">
-        </span>
+      <span
+        :class="['resolved', resolvedSuggestionsClicked ? 'toggled' : '']"
+        @click="showResolvedSuggestions()">
         {{ resolvedSuggestionCount }} käsiteltyä</span>
     </div>
     <div v-if="userPage" class="title">
@@ -173,16 +169,26 @@ export default {
   font-size: 13px;
   font-weight: 600;
   vertical-align: middle;
+  min-width: 25%;
+  cursor: pointer;
+  cursor: hand;
+  -webkit-user-select: none; /* Safari */
+  -moz-user-select: none; /* Firefox */
+  -ms-user-select: none; /* IE10+/Edge */
+  user-select: none; /* Standard */
 }
 .open {
-  min-width: 25%;
-  color: #06a798;
   padding-right: 10px;
 }
+
 .resolved {
-  min-width: 25%;
   color: #a4a4a4;
 }
+
+.toggled {
+  color: #06a798;
+}
+
 .drop-down-button {
   position: absolute;
   top: 54%;
@@ -246,15 +252,9 @@ export default {
   opacity: 0;
 }
 
-.suggestion-status-clickable {
-  cursor: pointer;
-  cursor: hand;
-}
-
 .suggestion-status-clicked {
   font-weight: bold;
-  /* text-decoration: underline; */
-  text-transform:uppercase
+  text-transform: uppercase;
 }
 
 @media (max-width: 700px) {
