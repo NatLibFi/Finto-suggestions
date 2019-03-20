@@ -1,7 +1,9 @@
 <template>
   <div class="header-container">
     <div v-if="!userPage" class="title">
-      <span :class="['open', openSuggestionClicked ? 'toggled' : '']" @click="showOpenSuggestions()">
+      <span
+        :class="['open', openSuggestionClicked ? 'toggled' : '']"
+        @click="showOpenSuggestions()">
         {{ openSuggestionCount }} käsittelemätöntä</span>
       <span
         :class="['resolved', resolvedSuggestionsClicked ? 'toggled' : '']"
@@ -129,7 +131,7 @@ export default {
       }
     },
     showResolvedSuggestions() {
-      if(!this.resolvedSuggestionsClicked) {
+      if (!this.resolvedSuggestionsClicked) {
         this.openSuggestionClicked = false;
         this.resolvedSuggestionsClicked = true;
         this.$emit('showResolvedSuggestions');

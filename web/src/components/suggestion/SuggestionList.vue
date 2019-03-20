@@ -251,7 +251,7 @@ export default {
   },
   watch: {
     async filters() {
-      if(this.filters.length > 0) {
+      if (this.filters.length > 0) {
         this.filterSuggestions();
       } else {
         this.handleSuggestionFetching();

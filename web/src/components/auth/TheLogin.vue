@@ -15,7 +15,10 @@
       <span>Kirjaudu Google-tunnuksilla</span>
     </div> -->
   </div>
-  <div class="login-forgot-password" @click="showResetPasswordInputs()" v-if="!showForgottenPasswordForm">
+  <div
+    class="login-forgot-password"
+    @click="showResetPasswordInputs()"
+    v-if="!showForgottenPasswordForm">
     <span>Unohditko salasanasi?</span>
   </div>
   <div class="login-own-credentials">
@@ -67,7 +70,7 @@ export default {
       password: '',
       showForgottenPasswordForm: false,
       resetEmail: ''
-    }
+    };
   },
   methods: {
     login(service) {
