@@ -131,6 +131,7 @@ def create_or_400(model: object, payload: Dict, error_msg: str = None) -> str:
         msg = "Unable to create a new {}".format(str(model.__table__)[:-1])
         if error_msg:
             msg = error_msg
+        db.session.rollback()
         return create_response(None, 400, msg)
 
     return create_response(db_obj.as_dict(), 201)
@@ -140,7 +141,7 @@ def delete_or_404(model: object, primary_key: int) -> str:
     """
     Deletes an object by primary_key from the database.
 
-    :param model: sqlalchemy database object (column) to delete from 
+    :param model: sqlalchemy database object (column) to delete from
     :param primary_key: primary_key
     :returns: 204, No Content on success, 404 on error
     """
