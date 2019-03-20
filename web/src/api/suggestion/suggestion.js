@@ -28,5 +28,7 @@ export default {
   addTagToSuggestion: (suggestionId, tag) =>
     post({ resource: `/suggestions/${suggestionId}/tags`, data: { tags: [tag] } }),
   removeTagFromSuggestion: (suggestionId, tag) =>
-    del({ resource: `/suggestions/${suggestionId}/tags`, data: { tags: [tag] } })
+    del({ resource: `/suggestions/${suggestionId}/tags`, data: { tags: [tag] } }),
+  getOpenSuggestions: () => get({ resource: '/suggestions/open' }),
+  getResolvedSuggestions: () => get({ resource: '/suggestions/resolved' })
 };

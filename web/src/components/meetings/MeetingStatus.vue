@@ -49,21 +49,24 @@
 import CenteredDialog from '../common/CenteredDialog';
 import MeetingManagement from './MeetingManagement';
 import MenuButton from '../common/MenuButton';
-import { mapMeetingGetters, mapMeetingActions, mapMeetingMutations } from '../../store/modules/meeting/meetingModule.js';
-import { meetingGetters, meetingActions, meetingMutations } from '../../store/modules/meeting/meetingConsts.js';
 
-import { userRoles } from '../../utils/userHelpers.js';
 // eslint-disable-next-line
-import { getMeetingProgressionCounts, getMeetingProgressionWidths } from '../../utils/meetingHelper.js';
+import { mapMeetingGetters, mapMeetingActions, mapMeetingMutations } from '../../store/modules/meeting/meetingModule.js';
+// eslint-disable-next-line
+import { meetingGetters, meetingActions, meetingMutations } from '../../store/modules/meeting/meetingConsts.js';
 // eslint-disable-next-line
 import { mapAuthenticatedUserGetters } from '../../store/modules/authenticatedUser/authenticatedUserModule.js';
 // eslint-disable-next-line
 import { authenticatedUserGetters } from '../../store/modules/authenticatedUser/authenticatedUserConsts.js';
 import { mapSuggestionGetters } from '../../store/modules/suggestion/suggestionModule.js';
 import { suggestionGetters } from '../../store/modules/suggestion/suggestionConsts.js';
+
+// eslint-disable-next-line
+import { getMeetingProgressionCounts, getMeetingProgressionWidths } from '../../utils/meetingHelper.js';
+import { suggestionStateStatus } from '../../utils/suggestionHelpers.js';
 import { dateTimeFormatLabel } from '../../utils/dateHelper';
 import { comparerDesc } from '../../utils/sortingHelper.js';
-import { suggestionStateStatus } from '../../utils/suggestionHelpers.js';
+import { userRoles } from '../../utils/userHelpers.js';
 
 export default {
   components: {

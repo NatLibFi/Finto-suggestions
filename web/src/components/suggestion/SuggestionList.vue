@@ -4,7 +4,11 @@
     :openSuggestionCount="openCount || 0"
     :resolvedSuggestionCount="resolvedCount || 0"
     :meetingSort="meetingSort"
-    class="header" />
+    class="header"
+    @showOpenSuggestions="fetchOpenSuggestions"
+    @showResolvedSuggestions="fetchResolvedSuggestions"
+    @showAllSuggestions="handleSuggestionFetching"
+  />
   <ul class="list">
     <transition-group name="fade">
       <suggestion-item
@@ -100,7 +104,9 @@ export default {
         suggestionActions.GET_MEETING_SUGGESTIONS_SELECTED_SORT,
       getSuggestionsBySearchWord: suggestionActions.GET_SUGGESTIONS_BY_SEARCH_WORD,
       getSelectedFilters: suggestionActions.GET_SELECTED_FILTERS,
-      setSelectedFilters: suggestionActions.SET_SELECTED_FILTERS
+      setSelectedFilters: suggestionActions.SET_SELECTED_FILTERS,
+      getOpenSuggestions: suggestionActions.GET_OPEN_SUGGESTIONS,
+      getResolvedSuggestions: suggestionActions.GET_RESOLVED_SUGGESTIONS
     }),
     ...mapSuggestionMutations({
       setFilteredItems: suggestionMutations.SET_FILTERED_ITEMS
@@ -111,7 +117,6 @@ export default {
         if (this.filters.length > 0) {
           await this.setSelectedFilters([]);
         }
-
         await this.fetchAndSortMeetingSuggestions();
       } else {
         await this.fetchAndSortAllSuggestions();
@@ -154,7 +159,7 @@ export default {
           ? items.length
           : endIndex;
     },
-    async paginationPageChanged(pageNumber = 1, items = null) {
+    async paginationPageChanged(pageNumber = 1, items = null, refreshSuggestionsCount = true) {
       const start = this.getPaginationStaringIndex(pageNumber);
       const end = this.getPaginationEndingIndex(pageNumber, items);
 
@@ -172,7 +177,11 @@ export default {
 
       this.paginated_items =
         paginatedItems && paginatedItems.length > 0 ? paginatedItems.slice(start, end) : [];
-      this.calculateOpenAndResolvedSuggestionCounts(paginatedItems);
+
+      if (refreshSuggestionsCount) {
+        this.calculateOpenAndResolvedSuggestionCounts(paginatedItems);
+      }
+
       this.calculatePageCountForPagination(paginatedItems);
     },
     calculatePageCountForPagination(items = null) {
@@ -230,11 +239,19 @@ export default {
         }
       });
       return items;
+    },
+    async fetchOpenSuggestions() {
+      await this.getOpenSuggestions();
+      await this.paginationPageChanged(1, this.items, false);
+    },
+    async fetchResolvedSuggestions() {
+      await this.getResolvedSuggestions();
+      await this.paginationPageChanged(1, this.items, false);
     }
   },
   watch: {
     async filters() {
-      if(this.filters.length > 0) {
+      if (this.filters.length > 0) {
         this.filterSuggestions();
       } else {
         this.handleSuggestionFetching();

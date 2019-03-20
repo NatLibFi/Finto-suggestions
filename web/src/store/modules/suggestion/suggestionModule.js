@@ -191,6 +191,18 @@ export default {
         commit(suggestionMutations.SET_SELECTED_STORAGE_FILTERS, JSON.stringify(filters));
         commit(suggestionMutations.SET_FILTERS, filters);
       }
+    },
+    async [suggestionActions.GET_OPEN_SUGGESTIONS]({ commit }) {
+      const result = await api.suggestion.getOpenSuggestions();
+      if (result && result.code === 200) {
+        commit(suggestionMutations.SET_SUGGESTIONS, result.data);
+      }
+    },
+    async [suggestionActions.GET_RESOLVED_SUGGESTIONS]({ commit }) {
+      const result = await api.suggestion.getResolvedSuggestions();
+      if (result && result.code === 200) {
+        commit(suggestionMutations.SET_SUGGESTIONS, result.data);
+      }
     }
   }
 };
