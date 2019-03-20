@@ -34,7 +34,7 @@ paths:
           schema:
             $ref: '#/definitions/UserResponse'
         "400":
-          description: Error if cannot create new usert
+          description: Error if cannot create new user
 
   /users/{user_id}:
     parameters:
