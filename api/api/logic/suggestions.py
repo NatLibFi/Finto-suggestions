@@ -110,7 +110,11 @@ def post_suggestion() -> str:
 
     :returns: the created suggestion as json
     """
-    created_response = create_or_400(Suggestion, connexion.request.json)
+
+    payload_dict = connexion.request.json
+    payload_dict['status'] = 'RECEIVED'
+
+    created_response = create_or_400(Suggestion, payload_dict)
     response = created_response[0]
 
     if response is not None and response['code'] is 201:
