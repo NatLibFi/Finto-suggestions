@@ -66,7 +66,11 @@
 
     <div v-if="showLoginDialog">
       <centered-dialog @close="closeDialog">
-        <the-login @login="login" @resetPassword="resetPassword"/>
+        <the-login
+          :showResetPasswordForm="showResetPasswordForm"
+          @login="login"
+          @resetPassword="resetPassword"
+        />
       </centered-dialog>
     </div>
     <div v-if="showSignupDialog">
@@ -76,7 +80,11 @@
     </div>
     <div v-if="showSignupConfirmation">
       <centered-dialog @close="closeDialog">
-        <the-signup-confirmation/>
+        <the-signup-confirmation
+          :signupSucceeded="signupSucceeded"
+          :errorMessage="signupError"
+          @openResetPasswordForm="openResetPasswordForm"
+        />
       </centered-dialog>
     </div>
   </div>
@@ -99,7 +107,6 @@ import { mapAuthenticatedUserGetters, mapAuthenticatedUserActions } from '../../
 // eslint-disable-next-line
 import { authenticatedUserGetters, authenticatedUserActions, storeKeyNames } from '../../store/modules/authenticatedUser/authenticatedUserConsts.js';
 
-import api from '../../api/index.js';
 import { userNameInitials, emailValidator } from '../../utils/userHelpers.js';
 
 export default {
@@ -123,7 +130,10 @@ export default {
     showMobileDropdown: false,
     showLoginDialog: false,
     showSignupDialog: false,
-    showSignupConfirmation: false
+    showSignupConfirmation: false,
+    signupSucceeded: true,
+    signupError: '',
+    showResetPasswordForm: false
   }),
   computed: {
     ...mapUserGetters({
@@ -140,7 +150,7 @@ export default {
   async created() {
     await this.validateAuthentication();
     if (this.isAuthenticated) {
-      await this.handleTokenRefesh();
+      await this.refreshToken();
     }
     this.getUserIdFromStorage();
     this.handleUserFetch();
@@ -156,7 +166,8 @@ export default {
     }),
     ...mapUserActions({
       getUser: userActions.GET_USER,
-      resetPasswordByEmail: userActions.RESET_PASSWORD
+      resetPasswordByEmail: userActions.RESET_PASSWORD,
+      registerLocalUser: userActions.CREATE_USER
     }),
     returnToHome() {
       this.$router.push('/');
@@ -187,7 +198,9 @@ export default {
       if (data && data.service !== 'local') {
         await this.oAuth2Authenticate(data.service);
       } else {
-        await this.registerLocalUser(data.userdata);
+        const createdUserResponse = await this.registerLocalUser(data.userdata);
+        this.signupSucceeded = createdUserResponse.succeed;
+        this.signupError = createdUserResponse.error;
       }
       this.showSignupDialog = false;
       this.showSignupConfirmation = true;
@@ -221,9 +234,6 @@ export default {
     async oAuth2Authenticate() {
       this.$router.push('/github');
     },
-    async registerLocalUser(userdata) {
-      await api.user.registerLocalUser(userdata);
-    },
     handleUserFetch() {
       if (parseInt(this.userId) > 0) {
         this.getUserName(parseInt(this.userId));
@@ -231,13 +241,6 @@ export default {
     },
     handleUserInitialsFetch() {
       this.userInitials = userNameInitials(this.name);
-    },
-    async handleTokenRefesh() {
-      // eslint-disable-next-line no-undef
-      const access_token = $cookies.get(storeKeyNames.ACCESS_TOKEN);
-      // eslint-disable-next-line no-undef
-      const refreshToken = $cookies.get(storeKeyNames.REFRESH_TOKEN);
-      await this.refreshToken({ access_token: access_token, refresh_token: refreshToken });
     },
     async resetPassword(email) {
       this.showLoginDialog = false;
@@ -248,6 +251,11 @@ export default {
         //TODO: show some info to user about this
         console.log('email is not valid', email);
       }
+    },
+    openResetPasswordForm() {
+      this.showSignupConfirmation = false;
+      this.showResetPasswordForm = true;
+      this.showLoginDialog = true;
     }
   },
   watch: {

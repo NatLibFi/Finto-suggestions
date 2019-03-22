@@ -19,5 +19,6 @@ export const userActions = {
   GET_USER: 'getUser',
   PATCH_USER: 'patchUser',
   GET_USERS: 'getUsers',
-  RESET_PASSWORD: 'resetPassword'
+  RESET_PASSWORD: 'resetPassword',
+  CREATE_USER: 'createUser'
 };

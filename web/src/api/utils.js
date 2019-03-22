@@ -28,13 +28,14 @@ const execute = async (method, resource, data, useRefreshToken) => {
       Authorization: AuthHeaderValue
     }
   })
-    .then(req => {
-      return req.data;
+    .then(request => {
+      return request.data;
     })
     .catch(error => {
       /* eslint-disable-next-line */
       // TODO: needs to decide where errors are going to logged but for now just printing them to console
       console.log(error);
+      return error.response.data;
     });
 };
 
