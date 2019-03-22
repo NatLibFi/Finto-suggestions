@@ -63,7 +63,10 @@ export default {
       if (response && response.code === 201) {
         return { succeed: true, error: '' };
       } else {
-        return { succeed: false, error: `Järjestelmä ei voinut luoda uutta käyttäjää. Jos ongelma jatkuu ole yhteydessä järjestelmän ylläpitäjään.` };
+        return {
+          succeed: false,
+          error: `Emme saaneet luotua käyttäjää. Jos ongelma jatkuu, ota yhteyttä ylläpitäjään.`
+        };
       }
     }
   }
