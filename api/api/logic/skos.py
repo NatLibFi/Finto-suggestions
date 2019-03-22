@@ -49,15 +49,21 @@ def suggestionToTriple(suggestion, graph = None):
       g.add((URIRef(group.uri), skos.member, URIRef(uri)))
 
     #Ehdotettu yläkäsite YSOssa (LT) : broadMatch (missing from parser)
+    # example: [{value: "peruna", uri: "http://www.yso.fi/onto/yso/p13407"}, {value: "perunajauho", uri: "http://www.yso.fi/onto/yso/p6710"}]
     # for broader_labels
 
     #Tarkoitusta täsmentävä selite : note
+    # "peruna on tärkeä aihe kansakunnassa"
     # for scopeNote from suggestion.scopeNote:
 
     #Vaihtoehtoiset termit ja ilmaisut : altLabel
+    # [{value: "peruna"}, {value: "perunajauho"}]
     # for alt_label in suggestion.alternative_labels:
 
     #Alakäsitteet (ST) : narrowMatch (missing from parser)
+    # example: [{value: "peruna", uri: "http://www.yso.fi/onto/yso/p13407"}, {value: "perunajauho", uri: "http://www.yso.fi/onto/yso/p6710"}]
 
     #Assosiatiiviset (RT) : relatedMatch (missing from parser)
+    # example: [{value: "peruna", uri: "http://www.yso.fi/onto/yso/p13407"}, {value: "perunajauho", uri: "http://www.yso.fi/onto/yso/p6710"}]
+
 
