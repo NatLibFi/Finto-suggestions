@@ -12,7 +12,7 @@
             <span v-else unselectable="on">{{ userId }}</span>
           </div>
           <div class="nav-menu-user">
-            <p v-if="name && name.length > 0">{{ name }}</p>
+            <p v-if="user && user.name && user.name.length > 0">{{ user.name }}</p>
             <p v-else>Käyttäjä {{ userId }}</p>
           </div>
           <svg-icon icon-name="triangle"><icon-triangle /></svg-icon>
@@ -53,7 +53,7 @@
           <span unselectable="on">{{ userInitials }}</span>
         </div>
         <div class="nav-dropdown-user">
-          <p v-if="name && name.length > 0">{{ name }}</p>
+          <p v-if="user && user.name && name.length > 0">{{ user.name }}</p>
           <p v-else>Käyttäjä {{ userId }}</p>
         </div>
       </div>
@@ -142,7 +142,6 @@ export default {
     ...mapAuthenticatedUserGetters({
       isAuthenticated: authenticatedUserGetters.GET_IS_AUTHENTICATED,
       userId: authenticatedUserGetters.GET_USER_ID,
-      name: authenticatedUserGetters.GET_USER_NAME,
       // can be shown if login did not succeed:
       error: authenticatedUserGetters.GET_AUTHENTICATE_ERROR
     })
@@ -153,13 +152,13 @@ export default {
       await this.refreshToken();
     }
     this.getUserIdFromStorage();
-    this.handleUserFetch();
+    await this.handleUserFetch();
+    this.handleUserInitialsFetch();
   },
   methods: {
     ...mapAuthenticatedUserActions({
       validateAuthentication: authenticatedUserActions.VALIDATE_AUTHENTICATION,
       revokeAuthentication: authenticatedUserActions.REVOKE_AUTHENTICATION,
-      getUserName: authenticatedUserActions.GET_USER_NAME,
       authenticateLocalUser: authenticatedUserActions.AUTHENTICATE_LOCAL_USER,
       getUserIdFromStorage: authenticatedUserActions.GET_USER_ID_FROM_STORAGE,
       refreshToken: authenticatedUserActions.REFRESH_AUTHORIZATION_TOKEN
@@ -234,13 +233,17 @@ export default {
     async oAuth2Authenticate() {
       this.$router.push('/github');
     },
-    handleUserFetch() {
+    async registerLocalUser(userdata) {
+      await api.user.registerLocalUser(userdata);
+    },
+    async handleUserFetch() {
       if (parseInt(this.userId) > 0) {
-        this.getUserName(parseInt(this.userId));
+        await this.getUser(this.userId);
+        this.handleUserInitialsFetch();
       }
     },
     handleUserInitialsFetch() {
-      this.userInitials = userNameInitials(this.name);
+      this.userInitials = userNameInitials(this.user.name);
     },
     async resetPassword(email) {
       this.showLoginDialog = false;
@@ -259,7 +262,7 @@ export default {
     }
   },
   watch: {
-    name: {
+    user: {
       handler: 'handleUserInitialsFetch',
       immediate: true
     }

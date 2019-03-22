@@ -76,6 +76,11 @@ export default {
         this.userNameInitials = userNameInitials(this.user.name);
       }
     }
+  },
+  watch: {
+    user() {
+      this.fetchUserNameAndInitials();
+    }
   }
 };
 </script>
