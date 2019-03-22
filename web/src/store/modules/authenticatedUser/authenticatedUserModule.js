@@ -131,7 +131,10 @@ export default {
       const access_token = $cookies.get(storeKeyNames.ACCESS_TOKEN);
       // eslint-disable-next-line no-undef
       const refreshToken = $cookies.get(storeKeyNames.REFRESH_TOKEN);
-      const response = await api.authenticate.refreshAuthenticationToken({ access_token: access_token, refresh_token: refreshToken });
+      const response = await api.authenticate.refreshAuthenticationToken({
+        access_token: access_token,
+        refresh_token: refreshToken
+      });
       if (response && response.code === 200) {
         // eslint-disable-next-line no-undef
         $cookies.set(storeKeyNames.ACCESS_TOKEN, response.access_token);
