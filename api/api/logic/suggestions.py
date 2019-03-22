@@ -1,6 +1,6 @@
 import os
 import connexion
-from sqlalchemy import or_, func
+from sqlalchemy import or_, func, and_
 from sqlalchemy.types import Unicode
 from ..authentication import admin_only
 from .validators import suggestion_parameter_validator, suggestion_id_validator, _error_messagify
@@ -9,6 +9,8 @@ from .common import (create_response, get_one_or_404, get_all_or_404_custom,
 from .utils import SUGGESTION_FILTER_FUNCTIONS, SUGGESTION_SORT_FUNCTIONS
 from ..models import db, Suggestion, Tag, User
 from flask import jsonify
+from rdflib import Graph, URIRef, Literal, Namespace, RDF
+from rdflib.namespace import SKOS
 
 from ..tools.profiler import profiler
 
@@ -285,6 +287,7 @@ def put_update_suggestion_status(suggestion_id: int, status: str) -> str:
 def get_open_suggestions() -> str:
     """
     Get open status suggestions from db
+    :returns: Suggestions list of open suggestions
     """
     try:
       open_suggestions = Suggestion.query.filter(Suggestion.status.notin_(['ACCEPTED', 'REJECTED', 'RETAINED', 'ARCHIVED'])).all()
@@ -298,6 +301,7 @@ def get_open_suggestions() -> str:
 def get_resolved_suggestions() -> str:
     """
     Get open status suggestions from db
+    :returns: Suggestions list of resolved suggestions
     """
     try:
       resolved_suggestions = Suggestion.query.filter(Suggestion.status.in_(['ACCEPTED', 'REJECTED', 'RETAINED', 'ARCHIVED'])).all()
@@ -306,3 +310,30 @@ def get_resolved_suggestions() -> str:
     except Exception as ex:
       print(str(ex))
       return { 'code': 404, 'error': str(ex) }, 404
+
+
+def get_open_suggestions_skos() -> str:
+    """
+    Get open status suggestions from db
+    :returns: Suggestions list of open suggestions in skos format
+    """
+    try:
+      open_suggestions = Suggestion.query.filter(and_(Suggestion.status.notin_(['ACCEPTED', 'REJECTED', 'RETAINED', 'ARCHIVED']), Suggestion.yse_term == None)).all()
+      serialized_objects = [o.as_dict() for o in open_suggestions]
+      return { 'data': serialized_objects, 'code': 200 }, 200
+    except Exception as ex:
+      print(str(ex))
+      return { 'code': 404, 'error': str(ex) }, 404
+
+
+def get_suggestion_skos(suggestion_id: int) -> str:
+    """
+    Returns a suggestion by id in skos format.
+
+    :param id: Suggestion id
+    :returns: A single suggestion object as json
+    """
+
+    # suggestion = Suggestion.query.filter_by(id=suggestion_id).first()
+
+    return { 'data': '' }, 200

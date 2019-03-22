@@ -120,6 +120,8 @@ class GithubDataParser:
     body = GithubBodyModel()
 
     if 'CONCEPT' in body_str or 'GEO' in body_str:
+      if 'GEO' in body_str:
+        body.isGeo = True
       body.type = 'NEW'
       splitted_body_strings = body_str.split("####")
       for section in splitted_body_strings:
@@ -209,6 +211,9 @@ class GithubDataParser:
 
     for label in json_item["labels"]:
       suggestion_model.tags.append(label["name"])
+
+    if suggestion_model.body.isGeo:
+      suggestion_model.tags.append('maantieteellinen')
 
     return suggestion_model
 

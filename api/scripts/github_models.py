@@ -3,6 +3,7 @@
 class GithubBodyModel(object):
   def __init__(self):
     self.type = ''
+    self.isGeo = False,
     self.preferred_labels = {}
     self.alternative_labels = ''
     self.related = []
@@ -11,7 +12,7 @@ class GithubBodyModel(object):
     self.scopeNote = ''
     self.groups = []
     self.organization = ''
-    self.yse_term = {}
+    self.yse_term = {},
 
 class GithubMeetingModel(object):
   def __init__(self, name, created_date):
