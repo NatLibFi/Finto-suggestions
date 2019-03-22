@@ -26,6 +26,7 @@
       Kirjaudu sisään omilla tunnuksilla
     </h4>
     <div v-if="showOwnCredentialLogin">
+      <h3>Kirjaudu omilla tunnuksillasi</h3>
       <div class="login-input">
         <span>Sähköposti</span>
         <input type="text" v-model="email">
@@ -39,6 +40,7 @@
       </div>
     </div>
     <div class="forgot-password-input" v-if="showForgottenPasswordForm">
+      <h3>Tilaa uusi salasana</h3>
       <div class="login-input">
         <span>Sähköposti</span>
         <input type="text" v-model="resetEmail">
@@ -62,6 +64,12 @@ export default {
     IconGithub,
     IconGoogle
   },
+  props: {
+    showResetPasswordForm: {
+      type: Boolean,
+      default: false
+    }
+  },
   data() {
     return {
       baseUrl: process.env.BASE_URL,
@@ -71,6 +79,11 @@ export default {
       showForgottenPasswordForm: false,
       resetEmail: ''
     };
+  },
+  created() {
+    if (this.showResetPasswordForm) {
+      this.showResetPasswordInputs();
+    }
   },
   methods: {
     login(service) {

@@ -56,6 +56,15 @@ export default {
       } else {
         throw `Could not reset user password that email is ${email}`;
       }
+    },
+    // eslint-disable-next-line no-empty-pattern
+    async [userActions.CREATE_USER]({}, userData) {
+      const response = await api.user.registerLocalUser(userData);
+      if (response && response.code === 201) {
+        return { succeed: true, error: '' };
+      } else {
+        return { succeed: false, error: `Järjestelmä ei voinut luoda uutta käyttäjää. Jos ongelma jatkuu ole yhteydessä järjestelmän ylläpitäjään.` };
+      }
     }
   }
 };
