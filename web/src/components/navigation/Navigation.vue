@@ -107,6 +107,9 @@ import { mapAuthenticatedUserGetters, mapAuthenticatedUserActions } from '../../
 // eslint-disable-next-line
 import { authenticatedUserGetters, authenticatedUserActions, storeKeyNames } from '../../store/modules/authenticatedUser/authenticatedUserConsts.js';
 
+import { suggestionActions } from '../../store/modules/suggestion/suggestionConsts.js';
+import { mapSuggestionActions } from '../../store/modules/suggestion/suggestionModule.js';
+
 import { userNameInitials, emailValidator } from '../../utils/userHelpers.js';
 
 export default {
@@ -169,8 +172,12 @@ export default {
       resetPasswordByEmail: userActions.RESET_PASSWORD,
       registerLocalUser: userActions.CREATE_USER
     }),
-    returnToHome() {
+    ...mapSuggestionActions({
+      setSelectedFilters: suggestionActions.SET_SELECTED_FILTERS
+    }),
+    async returnToHome() {
       this.$router.push('/');
+      await this.setSelectedFilters([]);
     },
     closeDropdown() {
       this.showDropdown = false;
