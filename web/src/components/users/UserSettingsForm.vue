@@ -114,7 +114,7 @@ export default {
             this.hasFailed = false;
           }, 3000);
         });
-        await this.updateShowingUserData();
+      await this.updateShowingUserData();
     },
     async submitForm() {
       if (!this.$v.$invalid) {
