@@ -253,7 +253,6 @@ export default {
       }
     },
     openResetPasswordForm() {
-      console.log("open sesame!");
       this.showSignupConfirmation = false;
       this.showResetPasswordForm = true;
       this.showLoginDialog = true;

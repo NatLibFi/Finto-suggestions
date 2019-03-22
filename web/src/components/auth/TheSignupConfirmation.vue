@@ -9,7 +9,10 @@
   <div v-else>
     <h3>Tunnuksesi luomisessa tuli virhe</h3>
     <p>{{ errorMessage }}</p>
-    <p>Jos unohdit salasanan, voit nollata sen <span class="changePassword" @click="showResetPasswordForm()">täältä</span>.</p>
+    <p>
+      Jos unohdit salasanan, voit nollata sen
+      <span class="changePassword" @click="showResetPasswordForm()">täältä</span>.
+    </p>
   </div>
 </div>
 </template>
