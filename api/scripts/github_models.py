@@ -13,6 +13,9 @@ class GithubBodyModel(object):
     self.groups = []
     self.organization = ''
     self.yse_term = {},
+    self.narrower_labels = []
+    self.related_labels = []
+    self.broader_labels = []
 
 class GithubMeetingModel(object):
   def __init__(self, name, created_date):

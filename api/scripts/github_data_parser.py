@@ -24,7 +24,7 @@ class GithubDataParser:
       splitted_parsed_value = splitted_values[1].replace('[', '').replace(']', '').split('(')
       body.preferred_labels['fi'] = {
         'value': splitted_parsed_value[0].strip(),
-        'url': splitted_parsed_value[1].replace(')', '').strip()
+        'uri': splitted_parsed_value[1].replace(')', '').strip()
       }
 
   def __parse_alternative_labels(self, value):
@@ -112,9 +112,22 @@ class GithubDataParser:
     splitted_yse_term_value = splitted_value[1].split(']')
     yse_term = {
       'value': splitted_yse_term_value[0].replace('[','').replace(']','').replace('*','').replace(':','') .strip(),
-      'url': splitted_yse_term_value[1].replace('(','').replace(')','').strip()
+      'uri': splitted_yse_term_value[1].replace('(','').replace(')','').strip()
     }
     return yse_term
+
+  def __parse_to_json_labels(self, value):
+    values = []
+    splitted_value = value.split('\n')
+
+    for value in splitted_value:
+      if '[' in value:
+        splitted_labels = value.split('[')[1].split(']')
+        values.append({
+          'value': splitted_labels[0].strip(),
+          'uri': splitted_labels[1].replace('(').replace(')').strip()
+        })
+    return values
 
   def __parse_body_strings(self, body_str):
     body = GithubBodyModel()
@@ -147,6 +160,12 @@ class GithubDataParser:
           body.organization = self.__parse_organization(section)
         if 'Termiehdotus Fintossa' in section:
           body.yse_term = self.__parse_yse_term(section)
+        if 'Ehdotettu yläkäsite YSOssa (LT)' in section:
+          body.broader_labels = self.__parse_to_json_labels(section)
+        if 'Alakäsitteet (RT)' in section:
+          body.narrower_labels = self.__parse_to_json_labels(section)
+        if 'Assosiatiiviset (RT)' in section:
+          body.related_labels = self.__parse_to_json_labels(section)
 
     else:
       body.type = 'MODIFY'
