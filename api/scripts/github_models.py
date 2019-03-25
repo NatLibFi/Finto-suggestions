@@ -3,7 +3,6 @@
 class GithubBodyModel(object):
   def __init__(self):
     self.type = ''
-    self.isGeo = False,
     self.preferred_labels = {}
     self.alternative_labels = ''
     self.related = []

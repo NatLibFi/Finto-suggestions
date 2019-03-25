@@ -133,8 +133,6 @@ class GithubDataParser:
     body = GithubBodyModel()
 
     if 'CONCEPT' in body_str or 'GEO' in body_str:
-      if 'GEO' in body_str:
-        body.isGeo = True
       body.type = 'NEW'
       splitted_body_strings = body_str.split("####")
       for section in splitted_body_strings:
@@ -166,8 +164,7 @@ class GithubDataParser:
           body.narrower_labels = self.__parse_to_json_labels(section)
         if 'Assosiatiiviset (RT)' in section:
           body.related_labels = self.__parse_to_json_labels(section)
-
-    else:
+    elif 'Muutos olemassa olevaan käsitteeseen' in body_str:
       body.type = 'MODIFY'
       splitted_body_strings = body_str.split("####")
       for section in splitted_body_strings:
@@ -177,10 +174,8 @@ class GithubDataParser:
           body.description = self.__parse_description(section)
         if 'Perustelut ehdotukselle' in section:
           self.__parse_reason(section, body)
-          continue
         if 'Ehdottajan organisaatio' in section:
           body.organization = self.__parse_organization(section)
-
     return body
 
   def __parse_meeting(self, meeting):
@@ -217,6 +212,12 @@ class GithubDataParser:
     personal_token = os.environ.get('GITHUB_PERSONAL_TOKEN')
     return requests.get(f'https://api.github.com/repos/Finto-ehdotus/YSE/issues?per_page=100&state=all&page={page}', auth=(user, personal_token))
 
+  def __fetch_data_from_github_by_id(self, id):
+    user = os.environ.get('GITHUB_USERNAME')
+    personal_token = os.environ.get('GITHUB_PERSONAL_TOKEN')
+    return requests.get(f'https://api.github.com/repos/Finto-ehdotus/YSE/issues/{id}', auth=(user, personal_token))
+
+
   def __map_reponse(self, json_item):
     suggestion_model = GithubIssueModel(
       json_item["title"],
@@ -231,9 +232,6 @@ class GithubDataParser:
     for label in json_item["labels"]:
       suggestion_model.tags.append(label["name"])
 
-    if suggestion_model.body.isGeo:
-      suggestion_model.tags.append('maantieteellinen')
-
     return suggestion_model
 
   def __parse_count_from_response_headers(self, headers):
@@ -242,29 +240,34 @@ class GithubDataParser:
     return 0
 
   ### public methods
-  def handle_response(self, arg_loop_count):
+  def handle_response(self, arg_loop_count, id = None):
     models = []
 
-    loop_count = 0
-    if arg_loop_count is not None and arg_loop_count > 0:
-      loop_count = arg_loop_count
-    else:
-      response = self.__fetch_data_from_github()
-      loop_count = self.__parse_count_from_response_headers(response.headers)
-
-    i = 1
-    while i <= loop_count:
-      if self.last_request_completed == False:
-        response = self.__fetch_data_from_github(i)
-        if len(response.json()) > 0:
-          print(f"Issue batch fetch {i}/{loop_count}")
-          i+= 1
-          for json_item in response.json():
-            model = self.__map_reponse(json_item)
-            models.append(model)
-        else:
-          self.last_request_completed = True
+    if id is None:
+      loop_count = 0
+      if arg_loop_count is not None and arg_loop_count > 0:
+        loop_count = arg_loop_count
       else:
-        break
+        response = self.__fetch_data_from_github()
+        loop_count = self.__parse_count_from_response_headers(response.headers)
+
+      i = 1
+      while i <= loop_count:
+        if self.last_request_completed == False:
+          response = self.__fetch_data_from_github(i)
+          if len(response.json()) > 0:
+            print(f"Issue batch fetch {i}/{loop_count}")
+            i+= 1
+            for json_item in response.json():
+              model = self.__map_reponse(json_item)
+              models.append(model)
+          else:
+            self.last_request_completed = True
+        else:
+          break
+    else:
+      response = self.__fetch_data_from_github_by_id(id)
+      model = self.__map_reponse(response.json())
+      models.append(model)
 
     return models
