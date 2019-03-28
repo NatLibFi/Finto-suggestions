@@ -48,7 +48,7 @@ def suggestionToTriple(suggestion, graph = None):
     for group in suggestion.group:
       g.add((URIRef(group.uri), skos.member, URIRef(uri)))
 
-    #Ehdotettu yläkäsite YSOssa (LT) : broadMatch (missing from parser)
+    #Ehdotettu yläkäsite YSOssa (LT) : broadMatch (missing from parser, ok now)
     # example: [{value: "peruna", uri: "http://www.yso.fi/onto/yso/p13407"}, {value: "perunajauho", uri: "http://www.yso.fi/onto/yso/p6710"}]
     # for broader_labels
 
@@ -60,10 +60,10 @@ def suggestionToTriple(suggestion, graph = None):
     # [{value: "peruna"}, {value: "perunajauho"}]
     # for alt_label in suggestion.alternative_labels:
 
-    #Alakäsitteet (ST) : narrowMatch (missing from parser)
+    #Alakäsitteet (ST) : narrowMatch (missing from parser, ok now)
     # example: [{value: "peruna", uri: "http://www.yso.fi/onto/yso/p13407"}, {value: "perunajauho", uri: "http://www.yso.fi/onto/yso/p6710"}]
 
-    #Assosiatiiviset (RT) : relatedMatch (missing from parser)
+    #Assosiatiiviset (RT) : relatedMatch (missing from parser, ok now)
     # example: [{value: "peruna", uri: "http://www.yso.fi/onto/yso/p13407"}, {value: "perunajauho", uri: "http://www.yso.fi/onto/yso/p6710"}]
 
 

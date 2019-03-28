@@ -125,7 +125,7 @@ class GithubDataParser:
         splitted_labels = value.split('[')[1].split(']')
         values.append({
           'value': splitted_labels[0].strip(),
-          'uri': splitted_labels[1].replace('(').replace(')').strip()
+          'uri': splitted_labels[1].replace('(', '').replace(')', '').strip()
         })
     return values
 
@@ -164,7 +164,7 @@ class GithubDataParser:
           body.narrower_labels = self.__parse_to_json_labels(section)
         if 'Assosiatiiviset (RT)' in section:
           body.related_labels = self.__parse_to_json_labels(section)
-    elif 'Muutos olemassa olevaan käsitteeseen' in body_str:
+    else:
       body.type = 'MODIFY'
       splitted_body_strings = body_str.split("####")
       for section in splitted_body_strings:
