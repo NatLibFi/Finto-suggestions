@@ -15,6 +15,9 @@ class GithubBodyModel(object):
     self.narrower_labels = []
     self.related_labels = []
     self.broader_labels = []
+    self.created_date = None
+    self.modified_date = None
+    self.voyager_id = 0
 
 class GithubMeetingModel(object):
   def __init__(self, name, created_date):

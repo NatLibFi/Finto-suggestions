@@ -23,9 +23,8 @@ if __name__ == '__main__':
 
   arg_loop_count = parse_args()
   # if you wanna debug single issue
-  # models = parser.handle_response(arg_loop_count, {id})
+  # models = parser.handle_response(arg_loop_count, {id_number})
   models = parser.handle_response(arg_loop_count)
-  print(models, models[0].tags)
   print("Models to handle: ", len(models))
   print("Map models data to db business objects and insert data to database")
   db_importer = DBInserter(db)

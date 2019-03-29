@@ -1,5 +1,5 @@
 from api.models import Suggestion, Tag, Meeting, SuggestionTag, Event, EventTypes
-from datetime import datetime
+import datetime
 
 class DBInserter:
 
@@ -27,8 +27,12 @@ class DBInserter:
 
   def __map_suggestion_bo(self, model):
     suggesiton_bo = Suggestion()
-    suggesiton_bo.created = model.created
-    suggesiton_bo.modified = model.modified
+    if int(model.body.voyager_id) > 0:
+      suggesiton_bo.created =  datetime.datetime.strptime(model.body.created_date, '%d.%m.%Y')
+      suggesiton_bo.modified = datetime.datetime.strptime(model.body.modified_date, '%d.%m.%Y')
+    else:
+      suggesiton_bo.created = model.created
+      suggesiton_bo.modified = model.modified
     suggesiton_bo.suggestion_type = model.body.type
     suggesiton_bo.status = model.status
     suggesiton_bo.organization = model.body.organization

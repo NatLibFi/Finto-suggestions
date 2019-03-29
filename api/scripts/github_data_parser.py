@@ -109,7 +109,7 @@ class GithubDataParser:
 
   def __parse_yse_term(self, value):
     splitted_value = value.split('Termiehdotus Fintossa')
-    splitted_yse_term_value = splitted_value[1].split(']')
+    splitted_yse_term_value = splitted_value[1].split('\n')[0].split(']')
     yse_term = {
       'value': splitted_yse_term_value[0].replace('[','').replace(']','').replace('*','').replace(':','') .strip(),
       'uri': splitted_yse_term_value[1].replace('(','').replace(')','').strip()
@@ -123,11 +123,42 @@ class GithubDataParser:
     for value in splitted_value:
       if '[' in value:
         splitted_labels = value.split('[')[1].split(']')
-        values.append({
-          'value': splitted_labels[0].strip(),
-          'uri': splitted_labels[1].replace('(', '').replace(')', '').strip()
-        })
+        if len(splitted_labels) > 1:
+          values.append({
+            'value': splitted_labels[0].strip(),
+            'uri': splitted_labels[1].replace('(', '').replace(')', '').strip()
+          })
+        elif len(splitted_labels) == 1:
+          values.append({
+            'value': splitted_labels[0].strip()
+          })
     return values
+
+  def __parse_created_datetime(self, value, body):
+    if 'Luontipäivämäärä' in value:
+      splitted_value = value.split('Luontipäivämäärä');
+      date_value = splitted_value[1].replace(':','').replace('*','')
+      splitted_date_value = date_value.split('\n')
+      body.created_date = splitted_date_value[0].strip()
+
+  def __parse_modified_datetime(self, value, body):
+    if 'Muokkauspäivämäärä' in value:
+      splitted_value = value.split('Muokkauspäivämäärä');
+      date_value = splitted_value[1].replace(':','').replace('*','')
+      splitted_date_value = date_value.split('\n')
+
+      if ',' in splitted_date_value[0]:
+        splitted_modified_date = splitted_date_value[0].split(',')
+        body.modified_date = splitted_modified_date.pop().strip()
+      else:
+        body.modified_date = splitted_date_value[0].strip()
+
+  def __parse_voyager_id(self, value, body):
+    if 'Voyager-id' in value:
+      splitted_values = value.split('Voyager-id')
+      raw_value = splitted_values[1].split('\n')[0]
+      voyager_id_value = raw_value.replace(':','').replace('*','').strip()
+      body.voyager_id = voyager_id_value
 
   def __parse_body_strings(self, body_str):
     body = GithubBodyModel()
@@ -164,6 +195,22 @@ class GithubDataParser:
           body.narrower_labels = self.__parse_to_json_labels(section)
         if 'Assosiatiiviset (RT)' in section:
           body.related_labels = self.__parse_to_json_labels(section)
+    elif 'Voyager-id' in body_str:
+      body.type = 'NEW'
+      splitted_body_strings = body_str.split("####")
+      for section in splitted_body_strings:
+        if 'Ehdotettu termi suomeksi' in section:
+          self.__parse_preferred_labels(section, body)
+        if 'Ehdotetut temaattiset ryhmät (YSA-ryhmät)' in section:
+          self.__parse_groups(section, body)
+        if 'Luontipäivämäärä' in section:
+          self.__parse_created_datetime(section, body)
+        if 'Muokkauspäivämäärä' in section:
+          self.__parse_modified_datetime(section, body)
+        if 'Voyager-id' in section:
+          self.__parse_voyager_id(section, body)
+        if 'Termiehdotus Fintossa' in section:
+          body.yse_term = self.__parse_yse_term(section)
     else:
       body.type = 'MODIFY'
       splitted_body_strings = body_str.split("####")
