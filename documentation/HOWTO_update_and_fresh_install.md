@@ -67,6 +67,7 @@ Example: 'UPDATE SET ROLE = 'ADMIN' WHERE user.id = 123'
 1. Create new branch for new enviroment
 2. Create new sections for enviroment in the drone config and new tags
 3. Create new blank stack where this will be hosted
+4. Create new github app for enivroment
 
 ### Make branch ready to drone to build
 
@@ -94,6 +95,15 @@ To this run correctly GITHUB_USERNAME and GITHUB_PERSONAL_TOKEN environments nee
 1. Open api service container console
 2. Run this command 'python -m scripts.prod_data_import', this should fetch all the issues made in issue tracker and upload them to suggestion system database
 3. When its completed, close console and you can chec on frontend page is everything correctly imported
+
+### Create new github app for enivroment
+
+Go to github developer options <https://github.com/settings/developers>
+Under OAuth apps, click Register a new application
+
+Application name has used namin convention as _{environment}
+Homepage url: should be the main startpoint of page example: <https://ehdotus.dev.finto.fi>
+Authorization callback URL: this should be the url that github will redirect and it always have to be on enviroment domain /auth/redirect/github. This can be also founded in enviroments so in case where domain is <ehdotus.dev.finto.fi> the redirect url is <https://ehdotus.dev.finto.fi/auth/redirect/github>. Register application. When registered copy the client id and client secret to new system enviroments for api.
 
 ### Links
 
