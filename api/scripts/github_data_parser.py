@@ -136,14 +136,14 @@ class GithubDataParser:
 
   def __parse_created_datetime(self, value, body):
     if 'Luontipäivämäärä' in value:
-      splitted_value = value.split('Luontipäivämäärä');
+      splitted_value = value.split('Luontipäivämäärä')
       date_value = splitted_value[1].replace(':','').replace('*','')
       splitted_date_value = date_value.split('\n')
       body.created_date = splitted_date_value[0].strip()
 
   def __parse_modified_datetime(self, value, body):
     if 'Muokkauspäivämäärä' in value:
-      splitted_value = value.split('Muokkauspäivämäärä');
+      splitted_value = value.split('Muokkauspäivämäärä')
       date_value = splitted_value[1].replace(':','').replace('*','')
       splitted_date_value = date_value.split('\n')
 
