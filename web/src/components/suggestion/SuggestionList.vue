@@ -65,7 +65,7 @@ export default {
   },
   data() {
     return {
-      paginationMaxCount: 10,
+      paginationMaxCount: 15,
       paginationPageCount: 0,
       openCount: 0,
       resolvedCount: 0,
