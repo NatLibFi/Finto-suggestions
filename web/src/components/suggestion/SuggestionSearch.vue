@@ -37,13 +37,13 @@ export default {
   data() {
     return {
       isShown: false,
-      welcomeSummary: `Tämä palvelu on YSA/YSO -käsite-ehdotuksille ja niiden etenemisen 
+      welcomeSummary: `Tämä palvelu on YSA/YSO -käsite-ehdotuksille ja niiden etenemisen
         seuraamiselle.`,
-      welcomeExplanation: `Voit selata ja kommentoida ehdotuksia täällä. Ehdotusten selaaminen
+      welcomeExplanation: `Voit selata ja kommentoida ehdotuksia tässä palvelussa. Ehdotusten selaaminen
         onnistuu ilman käyttäjätunnuksia, mutta kommentointi edellyttää tunnuksen luomista.
-        Voit osoittaa tukesi ehdotukselle kommentoimalla sitä. Halutessasi voit nopeuttaa ehdotuksen
+        Voit osoittaa tukesi ehdotukselle kommentoimalla sitä ja voit halutessasi nopeuttaa ehdotuksen
         käsittelyä jättämällä ehdotuksen kommenttikenttään täsmennyksiä ja lisätietoja.
-        Uusien käsite-ehdotuksien tekeminen onnistuu Fintossa.`
+        Uusien käsite-ehdotuksien tekeminen onnistuu Finto-palvelussa.`
     };
   },
   methods: {
@@ -58,6 +58,10 @@ export default {
 </script>
 
 <style scoped>
+h3 {
+  text-align: left;
+  padding-bottom: 6px;
+}
 .search-container {
   width: 60vw;
   margin: 20px 20vw 0;
@@ -69,6 +73,10 @@ export default {
 }
 .welcome-text {
   text-align: left;
+  font-size: 14.5px;
+}
+.button {
+  white-space: nowrap;
 }
 .button:hover {
   cursor: pointer;
