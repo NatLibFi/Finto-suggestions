@@ -242,7 +242,7 @@ li.item:hover {
   position: absolute;
   top: 50%;
   right: 30px;
-  transform: perspective(1px) translateY(-50%);
+  transform: perspective(1px) translateY(calc(-50% - 0.5px));
   vertical-align: middle;
   height: 24px;
   color: #a4a4a4;

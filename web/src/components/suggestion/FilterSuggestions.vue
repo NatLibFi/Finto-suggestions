@@ -377,7 +377,7 @@ h5 {
   position: absolute;
   top: 53.5%;
   left: 14px;
-  transform: perspective(1px) translateY(-56%);
+  transform: perspective(1px) translateY(calc(-56% - 0.5px));
   overflow: hidden;
   font-size: 13px;
   font-weight: 600;
@@ -395,7 +395,7 @@ h5 {
   position: absolute;
   top: 66%;
   right: 16px;
-  transform: perspective(1px) translateY(-50%);
+  transform: perspective(1px) translateY(calc(-50% - 0.5px));
   display: inline-block;
   height: 16px;
   margin: 0 0 -4px 2px;

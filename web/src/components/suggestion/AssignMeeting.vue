@@ -194,7 +194,7 @@ input.dropdown-filter-input {
 .meeting-title {
   position: absolute;
   top: 50%;
-  transform: translateY(-50%);
+  transform: translateY(calc(-50% - 0.5px));
   margin-left: 2px;
   display: inline-block;
   font-style: normal;

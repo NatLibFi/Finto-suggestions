@@ -107,7 +107,7 @@ export default {
 .option p {
   position: absolute;
   top: 50%;
-  transform: perspective(1px) translateY(-50%);
+  transform: perspective(1px) translateY(calc(-50% - 0.5px));
   display: inline-block;
   margin: 0;
   text-transform: lowercase;

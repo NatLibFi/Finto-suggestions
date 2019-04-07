@@ -161,7 +161,7 @@ h5 {
   position: absolute;
   top: 50%;
   left: 50%;
-  transform: perspective(1px) translate(-50%, -50%);
+  transform: perspective(1px) translate(-50%, calc(-50% - 0.5px));
 }
 
 @media (max-width: 900px) {

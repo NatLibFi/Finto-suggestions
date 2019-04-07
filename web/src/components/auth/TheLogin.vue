@@ -144,7 +144,7 @@ export default {
   position: absolute;
   left: 20px;
   top: 50%;
-  transform: perspective(1px) translateY(-50%);
+  transform: perspective(1px) translateY(calc(-50% - 0.5px));
   display: inline-block;
 }
 
@@ -152,7 +152,7 @@ export default {
   position: absolute;
   right: 22px;
   top: 50%;
-  transform: perspective(1px) translateY(-50%);
+  transform: perspective(1px) translateY(calc(-50% - 0.5px));
 }
 
 .login-own-credentials {

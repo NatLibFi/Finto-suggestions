@@ -195,7 +195,7 @@ export default {
   position: absolute;
   top: 54%;
   right: 19px;
-  transform: perspective(1px) translateY(-50%);
+  transform: perspective(1px) translateY(calc(-50% - 0.5px));
   overflow: hidden;
   text-align: right;
   font-size: 13px;
