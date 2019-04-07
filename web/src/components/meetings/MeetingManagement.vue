@@ -148,6 +148,17 @@ export default {
           });
       }
     }
+  },
+  mounted: function() {
+    document.addEventListener('keydown', e => {
+      if (e.keyCode == 13) {
+        if (this.isNewMeeting) {
+          this.createNewMeeting();
+        } else {
+          this.editMeeting();
+        }
+      }
+    });
   }
 };
 </script>

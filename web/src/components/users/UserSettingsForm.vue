@@ -124,6 +124,13 @@ export default {
     async updateShowingUserData() {
       await this.getUser(this.userId);
     }
+  },
+  mounted: function() {
+    document.addEventListener('keydown', e => {
+      if (e.keyCode == 13) {
+        this.submitForm();
+      }
+    });
   }
 };
 </script>
