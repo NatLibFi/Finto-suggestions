@@ -15,7 +15,8 @@
     </div> -->
   </div>
   <div class="login-own-credentials">
-    <h4 v-if="!showOwnCredentialLogin && !showForgottenPasswordForm" @click="showOwnCredentialInputs()">
+    <h4 v-if="!showOwnCredentialLogin && !showForgottenPasswordForm"
+      @click="showOwnCredentialInputs()">
       Kirjaudu sisään omilla tunnuksilla
     </h4>
     <div v-if="showOwnCredentialLogin && !showForgottenPasswordForm">

@@ -100,7 +100,6 @@ import IconMore from '../icons/IconMore';
 import IconTriangle from '../icons/IconTriangle';
 import { directive as onClickaway } from 'vue-clickaway';
 
-import api from '../../api';
 import { userActions, userGetters } from '../../store/modules/user/userConsts';
 import { mapUserActions, mapUserGetters } from '../../store/modules/user/userModule';
 // eslint-disable-next-line

@@ -16,7 +16,8 @@
         <p class="date-sent">{{ dateTimeFormatLabel(this.event.created) }}</p>
       </div>
       <div
-        v-if="isAuthenticated && (role === userRoles.ADMIN || parseInt(authedUserId) === event.user_id)"
+        v-if="isAuthenticated
+          && (role === userRoles.ADMIN || parseInt(authedUserId) === event.user_id)"
         class="menu-wrapper">
         <menu-button
           v-if="type === eventTypes.COMMENT"
