@@ -101,7 +101,7 @@ def put_reset_password() -> str:
         password_update_success = False
 
         try:
-          db.session.add(user);
+          db.session.add(user)
           db.session.commit()
           password_update_success = True
         except ValueError as ex:

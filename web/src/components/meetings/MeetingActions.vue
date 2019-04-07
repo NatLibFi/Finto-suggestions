@@ -1,5 +1,5 @@
 <template>
-  <div v-if="isAuthenticated" class="actions-container">
+  <div v-if="isAuthenticated && role === userRoles.ADMIN" class="actions-container">
     <add-comment v-if="events && events.length > 1" :userId="userId" :suggestionId="suggestionId" />
     <div class="action-buttons">
       <span class="button move-to-next-meeting">
@@ -34,6 +34,7 @@ import { mapEventActions } from '../../store/modules/event/eventModule';
 import { eventActions } from '../../store/modules/event/eventConsts';
 import { mapMeetingMutations } from '../../store/modules/meeting/meetingModule';
 import { meetingMutations } from '../../store/modules/meeting/meetingConsts';
+import { userRoles } from '../../utils/userHelpers';
 
 export default {
   components: {
@@ -54,9 +55,15 @@ export default {
       required: false
     }
   },
+  data() {
+    return {
+      userRoles
+    };
+  },
   computed: {
     ...mapAuthenticatedUserGetters({
-      isAuthenticated: authenticatedUserGetters.GET_IS_AUTHENTICATED
+      isAuthenticated: authenticatedUserGetters.GET_IS_AUTHENTICATED,
+      role: authenticatedUserGetters.GET_USER_ROLE
     })
   },
   created() {

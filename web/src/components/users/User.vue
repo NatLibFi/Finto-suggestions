@@ -249,7 +249,7 @@ export default {
   position: absolute;
   top: 50%;
   left: initial;
-  transform: perspective(1px) translateY(-50%);
+  transform: perspective(1px) translateY(calc(-50% - 0.5px));
   display: inline-block;
   height: 50px;
   width: 50px;
@@ -271,7 +271,7 @@ export default {
   position: absolute;
   top: 50%;
   left: 120px;
-  transform: perspective(1px) translateY(-50%);
+  transform: perspective(1px) translateY(calc(-50% - 0.5px));
 }
 
 .profile-user {
@@ -355,7 +355,7 @@ ul {
   line-height: 100%;
   position: absolute;
   top: 50%;
-  transform: perspective(1px) translateY(-50%);
+  transform: perspective(1px) translateY(calc(-50% - 0.5px));
 }
 
 @media (max-width: 700px) {

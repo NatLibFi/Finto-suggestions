@@ -53,7 +53,7 @@
           <span unselectable="on">{{ userInitials }}</span>
         </div>
         <div class="nav-dropdown-user">
-          <p v-if="user && user.name && name.length > 0">{{ user.name }}</p>
+          <p v-if="user && user.name && user.name.length > 0">{{ user.name }}</p>
           <p v-else>Käyttäjä {{ userId }}</p>
         </div>
       </div>
@@ -190,7 +190,9 @@ export default {
           await this.authenticateLocalUser(data.loginData);
         }
       }
-      this.getUser(this.userId);
+      if (this.userId) {
+        this.getUser(this.userId);
+      }
       this.showLoginDialog = false;
     },
     async signup(data) {
@@ -198,7 +200,7 @@ export default {
         await this.oAuth2Authenticate(data.service);
       } else {
         const createdUserResponse = await this.registerLocalUser(data.userdata);
-        this.signupSucceeded = createdUserResponse.succeed;
+        this.signupSucceeded = createdUserResponse.success;
         this.signupError = createdUserResponse.error;
       }
       this.showSignupDialog = false;
@@ -232,9 +234,6 @@ export default {
     },
     async oAuth2Authenticate() {
       this.$router.push('/github');
-    },
-    async registerLocalUser(userdata) {
-      await api.user.registerLocalUser(userdata);
     },
     async handleUserFetch() {
       if (parseInt(this.userId) > 0) {
@@ -299,7 +298,7 @@ export default {
   position: absolute;
   top: 50%;
   left: 40px;
-  transform: perspective(1px) translateY(-50%);
+  transform: perspective(1px) translateY(calc(-50% - 0.5px));
   height: 60px;
   line-height: 60px;
   width: 45%;
@@ -309,7 +308,7 @@ export default {
   position: absolute;
   top: 51%;
   left: 0;
-  transform: perspective(1px) translateY(-50%);
+  transform: perspective(1px) translateY(calc(-50% - 0.5px));
 }
 
 .nav-title img:hover,
@@ -324,7 +323,7 @@ export default {
   position: absolute;
   top: 56%;
   left: 90px;
-  transform: perspective(1px) translateY(-50%);
+  transform: perspective(1px) translateY(calc(-50% - 0.5px));
   font-weight: 600;
 }
 
@@ -333,7 +332,7 @@ export default {
   position: absolute;
   top: 50%;
   right: 40px;
-  transform: perspective(1px) translateY(-47%);
+  transform: perspective(1px) translateY(calc(-47% - 0.5px));
   height: 60px;
   line-height: 60px;
   width: 45%;
@@ -365,7 +364,7 @@ export default {
   padding: 0 40px 0 20px;
   top: 52%;
   height: 100%;
-  transform: perspective(1px) translateY(-50%);
+  transform: perspective(1px) translateY(calc(-50% - 0.5px));
   color: #1ea195;
   font-weight: 600;
   font-size: 15px;
@@ -376,7 +375,7 @@ export default {
 .nav-menu .user-bubble {
   position: relative;
   top: 50%;
-  transform: perspective(1px) translateY(-50%);
+  transform: perspective(1px) translateY(calc(-50% - 0.5px));
   overflow: hidden;
 }
 
@@ -400,14 +399,14 @@ export default {
   right: 0;
   padding-right: 40px;
   top: 50%;
-  transform: perspective(1px) translateY(-50%);
+  transform: perspective(1px) translateY(calc(-50% - 0.5px));
   height: 100%;
 }
 
 .nav-menu-mobile svg {
   position: relative;
   top: 55%;
-  transform: perspective(1px) translateY(-50%);
+  transform: perspective(1px) translateY(calc(-50% - 0.5px));
   display: inline-block;
   margin: 0 0 -8px 10px;
   background-size: 24px 24px;
@@ -467,7 +466,7 @@ export default {
   font-size: 16px;
   position: absolute;
   top: 50%;
-  transform: perspective(1px) translateY(-50%);
+  transform: perspective(1px) translateY(calc(-50% - 0.5px));
 }
 
 .nav-mobile-dropdown-header .nav-dropdown-user {
@@ -478,7 +477,7 @@ export default {
   position: absolute;
   left: 60px;
   top: 50%;
-  transform: perspective(1px) translateY(-50%);
+  transform: perspective(1px) translateY(calc(-50% - 0.5px));
 }
 
 .nav-mobile-dropdown-content div {

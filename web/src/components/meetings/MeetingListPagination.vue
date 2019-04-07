@@ -51,7 +51,7 @@ ul.paginate {
   position: absolute;
   top: 50%;
   left: 50%;
-  transform: translate(-50%, -50%);
+  transform: translate(-50%, calc(-50% - 0.5px));
   padding: 0;
   margin: 0;
 }

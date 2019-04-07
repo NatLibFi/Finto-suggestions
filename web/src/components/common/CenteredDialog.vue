@@ -68,7 +68,7 @@ a {
   position: fixed;
   top: 50%;
   left: 50%;
-  transform: translate(-50%, -50%);
+  transform: translate(-50%, calc(-50% - 0.5px));
   max-height: calc(100% - 80px);
   width: 380px;
   overflow-y: auto;

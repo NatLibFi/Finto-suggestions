@@ -64,10 +64,10 @@ export default {
     dropDownOptions: [
       { label: 'Uusin ensin', value: sortingKeys.NEWEST_FIRST },
       { label: 'Vanhin ensin', value: sortingKeys.OLDEST_FIRST },
-      { label: 'Eniten kommentoitu', value: sortingKeys.MOST_COMMENTS },
-      { label: 'Vähiten kommentoitu', value: sortingKeys.LEAST_COMMENTS },
-      { label: 'Viimeksi päivitetty', value: sortingKeys.LAST_UPDATED },
-      { label: 'Eniten reaktiota', value: sortingKeys.MOST_REACTIONS }
+      // { label: 'Eniten kommentoitu', value: sortingKeys.MOST_COMMENTS },
+      // { label: 'Vähiten kommentoitu', value: sortingKeys.LEAST_COMMENTS },
+      // { label: 'Eniten reaktiota', value: sortingKeys.MOST_REACTIONS },
+      { label: 'Viimeksi päivitetty', value: sortingKeys.LAST_UPDATED }
     ],
     openSuggestionClicked: false,
     resolvedSuggestionsClicked: false
@@ -195,7 +195,7 @@ export default {
   position: absolute;
   top: 54%;
   right: 19px;
-  transform: perspective(1px) translateY(-50%);
+  transform: perspective(1px) translateY(calc(-50% - 0.5px));
   overflow: hidden;
   text-align: right;
   font-size: 13px;

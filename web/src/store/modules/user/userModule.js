@@ -61,9 +61,14 @@ export default {
     async [userActions.CREATE_USER]({}, userData) {
       const response = await api.user.registerLocalUser(userData);
       if (response && response.code === 201) {
-        return { succeed: true, error: '' };
+        return { success: true, error: '' };
       } else {
-        return { succeed: false, error: `Järjestelmä ei voinut luoda uutta käyttäjää. Jos ongelma jatkuu ole yhteydessä järjestelmän ylläpitäjään.` };
+        return {
+          success: false,
+          error: `Emme saaneet luotua uutta käyttäjää. Sinulla saattaa olla jo
+                  käyttäjä luotuna tällä sähköpostiosoitteella.
+                  Jos ongelma jatkuu, ole yhteydessä järjestelmän ylläpitäjään.`
+        };
       }
     }
   }
