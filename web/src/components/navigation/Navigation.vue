@@ -191,7 +191,9 @@ export default {
           await this.authenticateLocalUser(data.loginData);
         }
       }
-      this.getUser(this.userId);
+      if (this.userId) {
+        this.getUser(this.userId);
+      }
       this.showLoginDialog = false;
     },
     async signup(data) {
