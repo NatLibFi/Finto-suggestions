@@ -53,7 +53,7 @@
           <span unselectable="on">{{ userInitials }}</span>
         </div>
         <div class="nav-dropdown-user">
-          <p v-if="user && user.name && name.length > 0">{{ user.name }}</p>
+          <p v-if="user && user.name && user.name.length > 0">{{ user.name }}</p>
           <p v-else>Käyttäjä {{ userId }}</p>
         </div>
       </div>
