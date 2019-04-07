@@ -3,7 +3,12 @@
     <div class="content">
       <h3>YSE - YSAn ja YSOn käsite-ehdotukset</h3>
       <div class="welcome-text">
-        <p>{{ welcomeText }}</p>
+        <p>
+          {{ welcomeSummary }}
+          <a @click="toggleWelcomeText" v-if="!isShown" class="button">Lue lisää</a>
+          <a @click="toggleWelcomeText" v-if="isShown" class="button">Piilota</a>
+        </p>
+        <p v-if="isShown">{{ welcomeExplanation }}</p>
         <p class="meetings-link">
           <strong>
             Voit tarkastella tulevia YSO-kokouksia <a @click="goToMeetings()">täällä</a>.
@@ -31,17 +36,22 @@ export default {
   },
   data() {
     return {
-      welcomeText: `Tämä palvelu on YSA/YSO -käsite-ehdotuksille ja niiden etenemisen seuraamiselle.
-        Voit selata ja kommentoida ehdotuksia täällä. Ehdotusten selaaminen onnistuu ilman
-        käyttäjätunnuksia, mutta kommentointi edellyttää tunnuksen luomista. Voit osoittaa
-        tukesi ehdotukselle kommentoimalla sitä. Halutessasi voit nopeuttaa ehdotuksen
+      isShown: false,
+      welcomeSummary: `Tämä palvelu on YSA/YSO -käsite-ehdotuksille ja niiden etenemisen 
+        seuraamiselle.`,
+      welcomeExplanation: `Voit selata ja kommentoida ehdotuksia täällä. Ehdotusten selaaminen
+        onnistuu ilman käyttäjätunnuksia, mutta kommentointi edellyttää tunnuksen luomista.
+        Voit osoittaa tukesi ehdotukselle kommentoimalla sitä. Halutessasi voit nopeuttaa ehdotuksen
         käsittelyä jättämällä ehdotuksen kommenttikenttään täsmennyksiä ja lisätietoja.
         Uusien käsite-ehdotuksien tekeminen onnistuu Fintossa.`
     };
   },
   methods: {
-    goToMeetings: function() {
+    goToMeetings() {
       this.$router.push('/meetings');
+    },
+    toggleWelcomeText() {
+      this.isShown = !this.isShown;
     }
   }
 };
@@ -59,6 +69,10 @@ export default {
 }
 .welcome-text {
   text-align: left;
+}
+.button:hover {
+  cursor: pointer;
+  cursor: hand;
 }
 .meetings-link a:hover {
   cursor: pointer;
