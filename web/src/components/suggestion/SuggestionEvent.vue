@@ -7,7 +7,7 @@
       <div class="event-user-initials">{{ userNameInitials }}</div>
       <div class="event-info">
         <p class="event-user">
-          <span class="user-name">{{ user.name }} </span>
+          <span class="user-name">{{ userName }}</span>
           <span v-if="type === eventTypes.ACTION">
             {{ event.text }}
             <span class="tag">{{ event.value }}</span>
@@ -16,7 +16,7 @@
         <p class="date-sent">{{ dateTimeFormatLabel(this.event.created) }}</p>
       </div>
       <div
-        v-if="isAuthenticated && (role === userRoles.ADMIN || authedUserId === event.user_id)"
+        v-if="isAuthenticated && (role === userRoles.ADMIN || parseInt(authedUserId) === event.user_id)"
         class="menu-wrapper">
         <menu-button
           v-if="type === eventTypes.COMMENT"
@@ -102,6 +102,7 @@ export default {
       dateTimeFormatLabel,
       combineEventTextContent,
       eventTypes,
+      userName: '',
       userNameInitials: '',
       userRoles,
       commentOptions: [
@@ -153,8 +154,9 @@ export default {
       patchEvent: eventActions.PATCH_EVENT,
       deleteEvent: eventActions.DELETE_EVENT
     }),
-    fetchUserNameAndInitials() {
+    async fetchUserNameAndInitials() {
       if (this.user) {
+        this.userName = this.user.name;
         this.userNameInitials = userNameInitials(this.user.name);
       }
     },
