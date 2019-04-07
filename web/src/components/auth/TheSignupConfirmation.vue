@@ -10,7 +10,7 @@
     <h3>Tunnuksesi luomisessa tuli virhe</h3>
     <p>{{ errorMessage }}</p>
     <p>
-      Jos unohdit salasanan, voit nollata sen
+      Jos unohdit salasanasi, voit nollata sen
       <span class="changePassword" @click="showResetPasswordForm()">täältä</span>.
     </p>
   </div>
@@ -40,7 +40,7 @@ export default {
 
 <style scoped>
 .login-dialog {
-  padding-top: 20px;
+  padding: 20px;
   overflow: none;
 }
 

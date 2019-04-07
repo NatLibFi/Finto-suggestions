@@ -73,7 +73,7 @@ export default {
 
 <style scoped>
 .login-dialog {
-  padding-top: 20px;
+  padding: 20px;
   overflow: none;
 }
 

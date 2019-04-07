@@ -100,6 +100,7 @@ import IconMore from '../icons/IconMore';
 import IconTriangle from '../icons/IconTriangle';
 import { directive as onClickaway } from 'vue-clickaway';
 
+import api from '../../api';
 import { userActions, userGetters } from '../../store/modules/user/userConsts';
 import { mapUserActions, mapUserGetters } from '../../store/modules/user/userModule';
 // eslint-disable-next-line
@@ -198,7 +199,7 @@ export default {
         await this.oAuth2Authenticate(data.service);
       } else {
         const createdUserResponse = await this.registerLocalUser(data.userdata);
-        this.signupSucceeded = createdUserResponse.succeed;
+        this.signupSucceeded = createdUserResponse.success;
         this.signupError = createdUserResponse.error;
       }
       this.showSignupDialog = false;
@@ -232,9 +233,6 @@ export default {
     },
     async oAuth2Authenticate() {
       this.$router.push('/github');
-    },
-    async registerLocalUser(userdata) {
-      await api.user.registerLocalUser(userdata);
     },
     async handleUserFetch() {
       if (parseInt(this.userId) > 0) {
