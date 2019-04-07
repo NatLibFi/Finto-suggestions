@@ -1,10 +1,9 @@
 <template>
 <div class="login-dialog">
-  <h3>Kirjaudu sisään</h3>
-  <p>Voit kirjautua sisään Github-tunnuksilla</p>
+  <h3 v-if="!showForgottenPasswordForm">Kirjaudu sisään</h3>
   <!-- TODO: uncomment this when google oauth2 is ready -->
   <!-- <p>Voit kirjautua sisään Github- ja Google-tunnuksilla</p> -->
-  <div class="login-services">
+  <div v-if="!showForgottenPasswordForm" class="login-services">
     <div @click="login('github')" class="login-service-button">
       <svg-icon icon-name="github"><icon-github /></svg-icon>
       <span>Kirjaudu GitHub-tunnuksilla</span>
@@ -15,17 +14,11 @@
       <span>Kirjaudu Google-tunnuksilla</span>
     </div> -->
   </div>
-  <div
-    class="login-forgot-password"
-    @click="showResetPasswordInputs()"
-    v-if="!showForgottenPasswordForm">
-    <span>Unohditko salasanasi?</span>
-  </div>
   <div class="login-own-credentials">
-    <h4 v-if="!showOwnCredentialLogin" @click="showOwnCredentialInputs()">
+    <h4 v-if="!showOwnCredentialLogin && !showForgottenPasswordForm" @click="showOwnCredentialInputs()">
       Kirjaudu sisään omilla tunnuksilla
     </h4>
-    <div v-if="showOwnCredentialLogin">
+    <div v-if="showOwnCredentialLogin && !showForgottenPasswordForm">
       <h3>Kirjaudu omilla tunnuksillasi</h3>
       <div class="login-input">
         <span>Sähköposti</span>
@@ -38,6 +31,12 @@
       <div @click="login('local')" class="login-submit">
         <span>Kirjaudu sisään</span>
       </div>
+    </div>
+    <div
+      class="login-forgot-password"
+      @click="showResetPasswordInputs()"
+      v-if="!showForgottenPasswordForm">
+      <span>Unohditko salasanasi?</span>
     </div>
     <div class="forgot-password-input" v-if="showForgottenPasswordForm">
       <h3>Tilaa uusi salasana</h3>
