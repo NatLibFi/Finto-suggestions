@@ -277,4 +277,23 @@ export default {
     padding: 12px 6px 11px;
   }
 }
+@media (max-width: 420px) {
+  .header-container {
+    height: 70px;
+  }
+
+  .title {
+    position: initial;
+    display: block;
+    height: 40px;
+  }
+
+  .drop-down-button {
+    position: initial;
+    display: block;
+    text-align: left;
+    height: 40px;
+    margin-left: 20px;
+  }
+}
 </style>
