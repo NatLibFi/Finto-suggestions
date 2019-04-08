@@ -130,13 +130,13 @@ def send_email(password: str, email: str) -> str:
       email_server_password = os.environ.get('EMAIL_SERVER_PASSWORD')
 
       body = """
-      User password whos email is {} has been reseted. \r\n
-      User new password is {}. \r\n
-      If you did not request this, please contact (add customer support email or something here) \r\n
+      The password for the user {} has been reset. \r\n
+      Your new password is: {} \r\n
+      If you are not the one who requested this, please contact the Finto admins. \r\n
       """.format(email, password)
 
       message = 'Subject: {}\n\n{}'.format(
-        'Password reseted on Finto-Suggestion system',
+        'Finto Suggestions: your password has been reset',
         body)
 
       try:
