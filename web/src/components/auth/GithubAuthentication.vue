@@ -1,5 +1,12 @@
 <template>
-<div></div>
+<div>
+  <p v-if="!hasFailed">
+    Kirjaudutaan sisään GitHub-tunnuksilla...
+  </p>
+  <p v-if="hasFailed">
+    Kirjautuminen epäonnistui. Palataan takaisin ehdotusalustalle.
+  </p>
+</div>
 </template>
 
 <script>
@@ -11,7 +18,8 @@ import { authenticatedUserActions, authenticatedUserGetters } from '../../store/
 
 export default {
   data: () => ({
-    code: ''
+    code: '',
+    hasFailed: false
   }),
   computed: {
     ...mapAuthenticatedUserGetters({
@@ -36,7 +44,14 @@ export default {
     },
     async callAuthenticate() {
       if (this.code && this.code.length > 0) {
-        await this.authenticate({ code: this.code });
+        await this.authenticate({ code: this.code })
+        .catch(() => {
+          this.hasFailed = true;
+          setTimeout(() => {
+            this.hasFailed = false;
+            this.goToFrontPage();
+          }, 2000);
+        });
       }
     },
     goToFrontPage() {
@@ -48,10 +63,7 @@ export default {
       await this.callAuthenticate();
     },
     isAuthenticated() {
-      this.goToFrontPage();
-    },
-    error() {
-      this.goToFrontPage();
+      router.go(-1);
     }
   }
 };
