@@ -230,7 +230,6 @@ export default {
       this.revokeAuthentication();
       this.closeDropdown();
       this.closeMobileDropdown();
-      this.$router.push('/');
     },
     async oAuth2Authenticate() {
       this.$router.push('/github');
