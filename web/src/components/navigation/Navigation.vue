@@ -6,14 +6,14 @@
         <span @click="returnToHome">Finto – Käsite-ehdotukset</span>
       </div>
       <transition name="fade">
-        <div v-if="isAuthenticated" class="nav-menu" @click="showDropdown = true">
+        <div v-if="isAuthenticated && userName" class="nav-menu" @click="showDropdown = true">
           <div class="user-bubble">
             <span v-if="userInitials" unselectable="on">{{ userInitials }}</span>
             <span v-else unselectable="on">{{ userId }}</span>
           </div>
           <div class="nav-menu-user">
-            <p v-if="user && user.name && user.name.length > 0">{{ user.name }}</p>
-            <p v-else>Käyttäjä {{ userId }}</p>
+            <p v-if="userName && userName.length > 0">{{ userName }}</p>
+            <p v-if="userName && userName.length === 0">Käyttäjä {{ userId }}</p>
           </div>
           <svg-icon icon-name="triangle"><icon-triangle /></svg-icon>
         </div>
@@ -26,7 +26,7 @@
       </transition>
       <transition name="fade">
         <!-- Mobile menu shown below screen width of 700px -->
-        <div v-if="isAuthenticated" class="nav-menu-mobile" @click="showMobileDropdown = true">
+        <div v-if="isAuthenticated && userName" class="nav-menu-mobile" @click="showMobileDropdown = true">
           <svg-icon icon-name="more"><icon-more/></svg-icon>
         </div>
       </transition>
@@ -53,8 +53,8 @@
           <span unselectable="on">{{ userInitials }}</span>
         </div>
         <div class="nav-dropdown-user">
-          <p v-if="user && user.name && user.name.length > 0">{{ user.name }}</p>
-          <p v-else>Käyttäjä {{ userId }}</p>
+          <p v-if="userName && userName.length > 0">{{ userName }}</p>
+          <p v-if="userName && userName.length === 0">Käyttäjä {{ userId }}</p>
         </div>
       </div>
       <div class="nav-mobile-dropdown-content">
@@ -100,12 +100,12 @@ import IconMore from '../icons/IconMore';
 import IconTriangle from '../icons/IconTriangle';
 import { directive as onClickaway } from 'vue-clickaway';
 
-import { userActions, userGetters } from '../../store/modules/user/userConsts';
-import { mapUserActions, mapUserGetters } from '../../store/modules/user/userModule';
+import { userActions } from '../../store/modules/user/userConsts';
+import { mapUserActions } from '../../store/modules/user/userModule';
 // eslint-disable-next-line
 import { mapAuthenticatedUserGetters, mapAuthenticatedUserActions } from '../../store/modules/authenticatedUser/authenticatedUserModule.js';
 // eslint-disable-next-line
-import { authenticatedUserGetters, authenticatedUserActions, storeKeyNames } from '../../store/modules/authenticatedUser/authenticatedUserConsts.js';
+import { authenticatedUserGetters, authenticatedUserActions, storeKeyNames, authenticatedUserMutations } from '../../store/modules/authenticatedUser/authenticatedUserConsts.js';
 
 import { userNameInitials, emailValidator } from '../../utils/userHelpers.js';
 
@@ -136,12 +136,10 @@ export default {
     showResetPasswordForm: false
   }),
   computed: {
-    ...mapUserGetters({
-      user: userGetters.GET_USER
-    }),
     ...mapAuthenticatedUserGetters({
       isAuthenticated: authenticatedUserGetters.GET_IS_AUTHENTICATED,
       userId: authenticatedUserGetters.GET_USER_ID,
+      userName: authenticatedUserGetters.GET_USER_NAME,
       // can be shown if login did not succeed:
       error: authenticatedUserGetters.GET_AUTHENTICATE_ERROR
     })
@@ -150,10 +148,9 @@ export default {
     await this.validateAuthentication();
     if (this.isAuthenticated) {
       await this.refreshToken();
+      await this.getUserIdFromStorage();
+      await this.handleUserFetch();
     }
-    this.getUserIdFromStorage();
-    await this.handleUserFetch();
-    this.handleUserInitialsFetch();
   },
   methods: {
     ...mapAuthenticatedUserActions({
@@ -161,10 +158,10 @@ export default {
       revokeAuthentication: authenticatedUserActions.REVOKE_AUTHENTICATION,
       authenticateLocalUser: authenticatedUserActions.AUTHENTICATE_LOCAL_USER,
       getUserIdFromStorage: authenticatedUserActions.GET_USER_ID_FROM_STORAGE,
-      refreshToken: authenticatedUserActions.REFRESH_AUTHORIZATION_TOKEN
+      refreshToken: authenticatedUserActions.REFRESH_AUTHORIZATION_TOKEN,
+      getUserName: authenticatedUserActions.GET_USER_NAME
     }),
     ...mapUserActions({
-      getUser: userActions.GET_USER,
       resetPasswordByEmail: userActions.RESET_PASSWORD,
       registerLocalUser: userActions.CREATE_USER
     }),
@@ -191,7 +188,7 @@ export default {
         }
       }
       if (this.userId) {
-        this.getUser(this.userId);
+        this.getUserName(this.userId);
       }
       this.showLoginDialog = false;
     },
@@ -236,12 +233,12 @@ export default {
     },
     async handleUserFetch() {
       if (parseInt(this.userId) > 0) {
-        await this.getUser(this.userId);
+        this.getUserName(this.userId);
         this.handleUserInitialsFetch();
       }
     },
     handleUserInitialsFetch() {
-      this.userInitials = userNameInitials(this.user.name);
+      this.userInitials = userNameInitials(this.userName);
     },
     async resetPassword(email) {
       this.showLoginDialog = false;
@@ -260,8 +257,8 @@ export default {
     }
   },
   watch: {
-    user: {
-      handler: 'handleUserInitialsFetch',
+    userName: {
+      handler: 'handleUserFetch',
       immediate: true
     }
   },
