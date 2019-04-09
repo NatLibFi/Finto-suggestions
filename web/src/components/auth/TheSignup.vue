@@ -86,6 +86,13 @@ export default {
         this.$emit('signup', data);
       }
     }
+  },
+  mounted: function() {
+    document.addEventListener('keydown', e => {
+      if (e.keyCode == 13 && this.showOwnCredentialSignup) {
+        this.signup('local');
+      }
+    });
   }
 };
 </script>

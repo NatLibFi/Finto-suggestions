@@ -141,10 +141,19 @@ export default {
       if (!this.$v.resetEmail.$invalid) {
         this.showForgottenPasswordForm = false;
         this.$emit('resetPassword', this.resetEmail);
-      } else {
-        console.log('ei onnistunut');
       }
     }
+  },
+  mounted: function() {
+    document.addEventListener('keydown', e => {
+      if (e.keyCode == 13) {
+        if (this.showForgottenPasswordForm) {
+          this.resetPassword();
+        } else {
+          this.login('local');
+        }
+      }
+    });
   }
 };
 </script>
