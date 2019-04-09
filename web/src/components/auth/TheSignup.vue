@@ -30,8 +30,11 @@
       <div class="login-input">
         <span>Salasana</span>
         <input type="password" v-model="password">
+        <p class="hint">Salasanan tulee olla 6 merkkiä tai pitempi.</p>
       </div>
-      <div @click="signup('local')" class="login-submit">
+      <div
+        @click="signup('local')"
+        :class="[!$v.$invalid ? '' : 'disabled', 'login-submit']">
         <span>Luo tili</span>
       </div>
     </div>
@@ -43,6 +46,8 @@
 import SvgIcon from '../icons/SvgIcon';
 import IconGithub from '../icons/IconGithub';
 import IconGoogle from '../icons/IconGoogle';
+
+import { required, minLength, email } from 'vuelidate/lib/validators';
 
 export default {
   components: {
@@ -56,6 +61,20 @@ export default {
     email: '',
     password: ''
   }),
+  validations: {
+    name: {
+      required
+    },
+    email: {
+      required,
+      minLength: minLength(3),
+      email
+    },
+    password: {
+      required,
+      minLength: minLength(5)
+    }
+  },
   methods: {
     gatherLocalSignupData() {
       return { name: this.name, email: this.email, password: this.password };
@@ -63,8 +82,9 @@ export default {
     signup(service) {
       const userdata = service === 'local' ? this.gatherLocalSignupData() : null;
       let data = { service, userdata };
-
-      this.$emit('signup', data);
+      if (!this.$v.$invalid) {
+        this.$emit('signup', data);
+      }
     }
   }
 };
@@ -190,6 +210,19 @@ export default {
 
 .login-forgot-password span:hover {
   color: #21baac;
+}
+
+.disabled,
+.disabled:hover {
+  background-color: #dddddd;
+  border-color: #dddddd;
+  cursor: default;
+}
+
+.hint {
+  color: #444444;
+  font-size: 12px;
+  margin-top: 5px;
 }
 
 @media (max-width: 750px) {

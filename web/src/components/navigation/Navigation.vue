@@ -26,7 +26,10 @@
       </transition>
       <transition name="fade">
         <!-- Mobile menu shown below screen width of 700px -->
-        <div v-if="isAuthenticated && userName" class="nav-menu-mobile" @click="showMobileDropdown = true">
+        <div
+          v-if="isAuthenticated && userName"
+          class="nav-menu-mobile"
+          @click="showMobileDropdown = true">
           <svg-icon icon-name="more"><icon-more/></svg-icon>
         </div>
       </transition>
@@ -68,6 +71,7 @@
       <centered-dialog @close="closeDialog">
         <the-login
           :showResetPasswordForm="showResetPasswordForm"
+          :showLocalLoginError="showLocalLoginError"
           @login="login"
           @resetPassword="resetPassword"
         />
@@ -133,7 +137,8 @@ export default {
     showSignupConfirmation: false,
     signupSucceeded: true,
     signupError: '',
-    showResetPasswordForm: false
+    showResetPasswordForm: false,
+    showLocalLoginError: false
   }),
   computed: {
     ...mapAuthenticatedUserGetters({
@@ -178,19 +183,25 @@ export default {
       this.showLoginDialog = false;
       this.showSignupDialog = false;
       this.showSignupConfirmation = false;
+      this.showLocalLoginError = false;
     },
     async login(data) {
       if (data) {
         if (data.service !== '' && data.service !== 'local') {
-          await this.oAuth2Authenticate(data.service);
+          await this.oAuth2Authenticate(data.service)
         } else {
-          await this.authenticateLocalUser(data.loginData);
+          await this.authenticateLocalUser(data.loginData)
+            .then(() => {
+              if (this.userId) {
+                this.getUserName(this.userId);
+                this.showLoginDialog = false;
+              }
+            })
+            .catch(() => {
+              this.showLocalLoginError = true;
+            });
         }
       }
-      if (this.userId) {
-        this.getUserName(this.userId);
-      }
-      this.showLoginDialog = false;
     },
     async signup(data) {
       if (data && data.service !== 'local') {

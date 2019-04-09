@@ -118,6 +118,7 @@ export default {
         $cookies.set(storeKeyNames.REFRESH_TOKEN, response.refresh_token);
       } else {
         commit(authenticatedUserMutations.SET_AUTHENTICATION, false);
+        throw `Login failed.`;
       }
     },
     [authenticatedUserActions.GET_USER_ID_FROM_STORAGE]({ commit }) {
