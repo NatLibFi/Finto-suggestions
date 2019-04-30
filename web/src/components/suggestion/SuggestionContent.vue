@@ -120,11 +120,13 @@
       </div>
       <div v-if="userName && suggestion.user_id">
         <p class="content-title"><strong>Käsittelijä</strong></p>
-        <p>{{ userName }}
+        <p>
+          {{ userName }}
           <a
             v-if="isAuthenticated && isAdmin"
             @click="unassignUserFromSuggestion(suggestion.id, suggestion.user_id)"
-            class="remove-button">
+            class="remove-button"
+          >
             Poista käsittelijä ehdotuksesta
           </a>
         </p>

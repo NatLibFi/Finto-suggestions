@@ -1,64 +1,69 @@
 <template>
-<div class="login-dialog">
-  <h3 v-if="!showForgottenPasswordForm">Kirjaudu sisään</h3>
-  <!-- TODO: uncomment this when google oauth2 is ready -->
-  <!-- <p>Voit kirjautua sisään Github- ja Google-tunnuksilla</p> -->
-  <div v-if="!showForgottenPasswordForm" class="login-services">
-    <div @click="login('github')" class="login-service-button">
-      <svg-icon icon-name="github"><icon-github /></svg-icon>
-      <span class="normal">Kirjaudu GitHub-tunnuksilla</span>
-      <span class="mobile">GitHub-tunnukset</span>
-    </div>
+  <div class="login-dialog">
+    <h3 v-if="!showForgottenPasswordForm">Kirjaudu sisään</h3>
     <!-- TODO: uncomment this when google oauth2 is ready -->
-    <!-- <div @click="login('google')" class="login-service-button">
-      <svg-icon icon-name="google"><icon-google /></svg-icon>
-      <span>Kirjaudu Google-tunnuksilla</span>
-    </div> -->
-  </div>
-  <div class="login-own-credentials">
-    <h4 v-if="!showOwnCredentialLogin && !showForgottenPasswordForm"
-      @click="showOwnCredentialInputs()">
-      Kirjaudu sisään omilla tunnuksilla
-    </h4>
-    <div v-if="showOwnCredentialLogin">
-      <h5>Kirjaudu omilla tunnuksillasi</h5>
-      <div class="login-input">
-        <span>Sähköposti</span>
-        <input type="text" v-model="email">
+    <!-- <p>Voit kirjautua sisään Github- ja Google-tunnuksilla</p> -->
+    <div v-if="!showForgottenPasswordForm" class="login-services">
+      <div @click="login('github')" class="login-service-button">
+        <svg-icon icon-name="github"><icon-github /></svg-icon>
+        <span class="normal">Kirjaudu GitHub-tunnuksilla</span>
+        <span class="mobile">GitHub-tunnukset</span>
       </div>
-      <div class="login-input">
-        <span>Salasana</span>
-        <input type="password" v-model="password">
+      <!-- TODO: uncomment this when google oauth2 is ready -->
+      <!-- <div @click="login('google')" class="login-service-button">
+        <svg-icon icon-name="google"><icon-google /></svg-icon>
+        <span>Kirjaudu Google-tunnuksilla</span>
+      </div> -->
+    </div>
+    <div class="login-own-credentials">
+      <h4
+        v-if="!showOwnCredentialLogin && !showForgottenPasswordForm"
+        @click="showOwnCredentialInputs()"
+      >
+        Kirjaudu sisään omilla tunnuksilla
+      </h4>
+      <div v-if="showOwnCredentialLogin">
+        <h5>Kirjaudu omilla tunnuksillasi</h5>
+        <div class="login-input">
+          <span>Sähköposti</span>
+          <input type="text" v-model="email" />
+        </div>
+        <div class="login-input">
+          <span>Salasana</span>
+          <input type="password" v-model="password" />
+        </div>
+        <transition name="fade">
+          <p v-if="showLocalLoginError" class="error">Väärä sähköposti tai salasana.</p>
+        </transition>
+        <div
+          @click="login('local')"
+          :class="[!$v.email.$invalid && !$v.password.$invalid ? '' : 'disabled', 'login-submit']"
+        >
+          <span>Kirjaudu sisään</span>
+        </div>
       </div>
-      <transition name="fade">
-        <p v-if="showLocalLoginError" class="error">Väärä sähköposti tai salasana.</p>
-      </transition>
       <div
-        @click="login('local')"
-        :class="[!$v.email.$invalid && !$v.password.$invalid ? '' : 'disabled', 'login-submit']">
-        <span>Kirjaudu sisään</span>
+        class="login-forgot-password"
+        @click="showResetPasswordInputs()"
+        v-if="!showForgottenPasswordForm"
+      >
+        <span>Unohditko salasanasi?</span>
       </div>
-    </div>
-    <div
-      class="login-forgot-password"
-      @click="showResetPasswordInputs()"
-      v-if="!showForgottenPasswordForm">
-      <span>Unohditko salasanasi?</span>
-    </div>
-    <div class="forgot-password-input" v-if="showForgottenPasswordForm">
-      <h5>Tilaa uusi salasana</h5>
-      <div class="login-input">
-        <span>Sähköposti</span>
-        <input type="text" v-model="resetEmail">
-      </div>
-      <div
-        @click="resetPassword()"
-        :class="[!$v.resetEmail.$invalid ? '' : 'disabled', 'login-submit']">
-        <span>Tilaa uusi salasana</span>
+      <div class="forgot-password-input" v-if="showForgottenPasswordForm">
+        <h5>Tilaa uusi salasana</h5>
+        <div class="login-input">
+          <span>Sähköposti</span>
+          <input type="text" v-model="resetEmail" />
+        </div>
+        <div
+          @click="resetPassword()"
+          :class="[!$v.resetEmail.$invalid ? '' : 'disabled', 'login-submit']"
+        >
+          <span>Tilaa uusi salasana</span>
+        </div>
       </div>
     </div>
   </div>
-</div>
 </template>
 
 <script>
@@ -139,7 +144,6 @@ export default {
     },
     resetPassword() {
       if (!this.$v.resetEmail.$invalid) {
-        this.showForgottenPasswordForm = false;
         this.$emit('resetPassword', this.resetEmail);
       }
     }
@@ -157,7 +161,6 @@ export default {
   }
 };
 </script>
-
 
 <style scoped>
 .login-dialog {

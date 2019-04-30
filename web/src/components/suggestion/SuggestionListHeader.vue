@@ -3,12 +3,16 @@
     <div v-if="!userPage" class="title">
       <span
         :class="['open', openSuggestionClicked ? 'toggled' : '']"
-        @click="showOpenSuggestions()">
-        {{ openSuggestionCount }} käsittelemätöntä</span>
+        @click="showOpenSuggestions()"
+      >
+        {{ openSuggestionCount }} käsittelemätöntä
+      </span>
       <span
         :class="['resolved', resolvedSuggestionsClicked ? 'toggled' : '']"
-        @click="showResolvedSuggestions()">
-        {{ resolvedSuggestionCount }} käsiteltyä</span>
+        @click="showResolvedSuggestions()"
+      >
+        {{ resolvedSuggestionCount }} käsiteltyä
+      </span>
     </div>
     <div v-if="userPage" class="title">
       <span>Käyttäjälle asetut ehdotukset</span>
@@ -16,7 +20,8 @@
     <div
       v-if="!userPage"
       @click="isDropDownOpened = !isDropDownOpened"
-      :class="[isDropDownOpened ? 'selected' : '', 'drop-down-button']">
+      :class="[isDropDownOpened ? 'selected' : '', 'drop-down-button']"
+    >
       <span>Järjestä</span>
       <svg-icon icon-name="triangle"><icon-triangle /></svg-icon>
     </div>
@@ -26,7 +31,8 @@
       :dropDownOptions="dropDownOptions"
       @setSelectedSort="setSelectedSort"
       @refreshSelectedIndex="selectedSortOptionIndex = $event"
-      @closeDropDown="closeDropDown"/>
+      @closeDropDown="closeDropDown"
+    />
   </div>
 </template>
 

@@ -13,13 +13,14 @@
           v-for="user in filteredUsers"
           :key="user.id"
           @click="assignUserToSuggestion({ suggestionId: suggestion.id, userId: user.id })"
-          class="user-item">
+          class="user-item"
+        >
           <div v-if="user.name && user.name.length > 0">
-            <div  class="user-image">{{ userNameInitials(user.name) }}</div>
+            <div class="user-image">{{ userNameInitials(user.name) }}</div>
             <div class="user-name">{{ user.name }}</div>
           </div>
           <div v-if="user.name && user.name.length === 0">
-            <div  class="user-image">{{ user.id }}</div>
+            <div class="user-image">{{ user.id }}</div>
             <div class="user-name">Käyttäjä {{ user.id }}</div>
           </div>
         </div>

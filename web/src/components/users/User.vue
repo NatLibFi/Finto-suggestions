@@ -19,7 +19,7 @@
       </div>
       <div v-if="isAuthenticated && loggedInUserId === userId" class="settings">
         <div @click="showDropdown = true">
-          <svg-icon icon-name="more"><icon-more/></svg-icon>
+          <svg-icon icon-name="more"><icon-more /></svg-icon>
         </div>
         <div v-if="showDropdown" v-on-clickaway="closeDropdown" class="dropdown">
           <div @click="goToSettings">Muokkaa profiilia</div>
@@ -32,7 +32,8 @@
         :openSuggestionCount="openCount || 0"
         :resolvedSuggestionCount="resolvedCount || 0"
         :userPage="true"
-        class="header" />
+        class="header"
+      />
       <ul class="list">
         <transition-group name="fade">
           <suggestion-item
@@ -40,7 +41,7 @@
             v-for="item in paginated_items"
             :key="item.id"
             :suggestion="item"
-            />
+          />
         </transition-group>
       </ul>
       <suggestion-list-pagination
@@ -52,8 +53,9 @@
 
     <div
       v-if="paginated_items && paginated_items.length === 0"
-      class="no-user-suggestions-container">
-        <p>Käyttäjälle ei ole asetettu käsitteitä.</p>
+      class="no-user-suggestions-container"
+    >
+      <p>Käyttäjälle ei ole asetettu käsitteitä.</p>
     </div>
   </div>
 </template>
@@ -231,7 +233,6 @@ export default {
   }
 };
 </script>
-
 
 <style scoped>
 .profile-container {

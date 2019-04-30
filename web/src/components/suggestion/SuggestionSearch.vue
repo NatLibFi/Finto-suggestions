@@ -39,11 +39,11 @@ export default {
       isShown: false,
       welcomeSummary: `Tämä palvelu on YSA/YSO -käsite-ehdotuksille ja niiden etenemisen
         seuraamiselle.`,
-      welcomeExplanation: `Voit selata ja kommentoida ehdotuksia tässä palvelussa. Ehdotusten selaaminen
-        onnistuu ilman käyttäjätunnuksia, mutta kommentointi edellyttää tunnuksen luomista.
-        Voit osoittaa tukesi ehdotukselle kommentoimalla sitä ja voit halutessasi nopeuttaa ehdotuksen
-        käsittelyä jättämällä ehdotuksen kommenttikenttään täsmennyksiä ja lisätietoja.
-        Uusien käsite-ehdotuksien tekeminen onnistuu Finto-palvelussa.`
+      welcomeExplanation: `Voit selata ja kommentoida ehdotuksia tässä palvelussa. Ehdotusten
+        selaaminen onnistuu ilman käyttäjätunnuksia, mutta kommentointi edellyttää tunnuksen
+        luomista. Voit osoittaa tukesi ehdotukselle kommentoimalla sitä ja voit halutessasi
+        nopeuttaa ehdotuksen käsittelyä jättämällä ehdotuksen kommenttikenttään täsmennyksiä
+        ja lisätietoja. Uusien käsite-ehdotuksien tekeminen onnistuu Finto-palvelussa.`
     };
   },
   methods: {

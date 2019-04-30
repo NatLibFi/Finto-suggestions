@@ -1,23 +1,22 @@
 <template>
-<div>
-  <div class="meeting-container">
-    <div class="arrow-button">
-      <a @click="goToMeetings" unselectable="on">
-        <svg-icon icon-name="arrow"><icon-arrow /></svg-icon>
-        Takaisin kokouslistaukseen
-      </a>
-    </div>
-    <div class="meeting-header">
-      <div class="content">
-        <meeting-status :meetingId="meetingId" />
-        <suggestion-search-form />
-        <filter-suggestions :isMeeting="true"/>
+  <div>
+    <div class="meeting-container">
+      <div class="arrow-button">
+        <a @click="goToMeetings" unselectable="on">
+          <svg-icon icon-name="arrow"><icon-arrow /></svg-icon>
+          Takaisin kokouslistaukseen
+        </a>
+      </div>
+      <div class="meeting-header">
+        <div class="content">
+          <meeting-status :meetingId="meetingId" />
+          <suggestion-search-form />
+          <filter-suggestions :isMeeting="true" />
+        </div>
       </div>
     </div>
-
+    <suggestion-list :meetingId="meetingId" />
   </div>
-  <suggestion-list :meetingId="meetingId" />
-</div>
 </template>
 
 <script>

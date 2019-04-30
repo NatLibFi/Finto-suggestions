@@ -1,7 +1,7 @@
 <template>
   <div class="select-tag-box">
     <button @click="toggleTagSelector">
-        <svg-icon icon-name='select-tag'><icon-tag /></svg-icon>
+      <svg-icon icon-name="select-tag"><icon-tag /></svg-icon>
     </button>
     <div v-if="showTagSelector" v-on-clickaway="toggleTagSelector" class="tag-selector">
       <div class="tag-selector-header">
@@ -15,12 +15,13 @@
         <ul v-if="tags && tags.length > 0">
           <li class="tag-label" v-for="tag in tags" :key="tag.label">
             {{ normalizeText(tag.label) }}
-            <input 
+            <input
               type="checkbox"
               @click="handleTagUpdateToSuggestion(tag.label)"
               v-model="checkedTags"
               :id="tag.label"
-              :value="tag.label" />
+              :value="tag.label"
+            />
           </li>
         </ul>
         <ul v-else>

@@ -1,13 +1,12 @@
 <template>
-    <div id="template">
-      <div id="dialog-overlay" @click="close">
+  <div id="template">
+    <div id="dialog-overlay" @click="close"></div>
+    <div id="dialog-modal">
+      <div id="dialog-close" @click="close">
+        <svg-icon icon-name="cross"><icon-cross /></svg-icon>
       </div>
-      <div id="dialog-modal">
-        <div id="dialog-close" @click="close">
-            <svg-icon icon-name="cross"><icon-cross /></svg-icon>
-        </div>
-        <slot></slot>
-      </div>
+      <slot></slot>
+    </div>
   </div>
 </template>
 

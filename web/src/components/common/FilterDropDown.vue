@@ -1,8 +1,5 @@
 <template>
-  <div
-    v-if="isOpened"
-    class="drop-down-options empty-options"
-    v-on-clickaway="closeDropDown">
+  <div v-if="isOpened" class="drop-down-options empty-options" v-on-clickaway="closeDropDown">
     <div v-if="dropDownOptions.length == 0">
       <div class="option" style="padding-left: 16px;">
         <span>{{ noOptionsMessage }}</span>
@@ -12,10 +9,10 @@
       <div v-for="(option, i) in dropDownOptions" :key="option.id">
         <div
           @click="filterValueSelected(option, i)"
-          :class="[i == selectedIndex ? 'selected' : '', 'option']">
-          <svg-icon
-            :class="[i == selectedIndex ? '' : 'hidden-checkmark']"
-            icon-name="check"><icon-check />
+          :class="[i == selectedIndex ? 'selected' : '', 'option']"
+        >
+          <svg-icon :class="[i == selectedIndex ? '' : 'hidden-checkmark']" icon-name="check">
+            <icon-check />
           </svg-icon>
           <p>{{ option.label }}</p>
         </div>
