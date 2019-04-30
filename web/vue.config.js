@@ -1,6 +1,7 @@
 module.exports = {
   devServer: {
     port: 8040,
+    public: '0.0.0.0:8040',
     watchOptions: {
       poll: 1000
     }
