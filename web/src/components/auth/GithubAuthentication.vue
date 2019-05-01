@@ -1,12 +1,12 @@
 <template>
-<div>
-  <p v-if="!hasFailed">
-    Kirjaudutaan sisään GitHub-tunnuksilla...
-  </p>
-  <p v-if="hasFailed">
-    Kirjautuminen epäonnistui. Palataan takaisin ehdotusalustalle.
-  </p>
-</div>
+  <div>
+    <p v-if="!hasFailed">
+      Kirjaudutaan sisään GitHub-tunnuksilla...
+    </p>
+    <p v-if="hasFailed">
+      Kirjautuminen epäonnistui. Palataan takaisin ehdotusalustalle.
+    </p>
+  </div>
 </template>
 
 <script>
@@ -44,8 +44,7 @@ export default {
     },
     async callAuthenticate() {
       if (this.code && this.code.length > 0) {
-        await this.authenticate({ code: this.code })
-        .catch(() => {
+        await this.authenticate({ code: this.code }).catch(() => {
           this.hasFailed = true;
           setTimeout(() => {
             this.hasFailed = false;
@@ -63,7 +62,7 @@ export default {
       await this.callAuthenticate();
     },
     isAuthenticated() {
-      router.go(-1);
+      router.push('/');
     }
   }
 };
