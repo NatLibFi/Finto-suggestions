@@ -1,45 +1,46 @@
 <template>
-<!-- Using 'login' as a catch-all term for signups and logins -->
-<div class="login-dialog">
-  <h3>Luo tunnus</h3>
-  <p>Voit luoda tilin Github- ja Google-tunnuksilla</p>
-  <div class="login-services">
-    <div @click="signup('github')" class="login-service-button">
-      <svg-icon icon-name="github"><icon-github /></svg-icon>
-      <span>Luo tili GitHub-tunnuksilla</span>
+  <!-- Using 'login' as a catch-all term for signups and logins -->
+  <div class="login-dialog">
+    <h3>Luo tunnus</h3>
+    <p>Voit luoda tilin Github- ja Google-tunnuksilla</p>
+    <div class="login-services">
+      <div @click="signup('github')" class="login-service-button">
+        <svg-icon icon-name="github"><icon-github /></svg-icon>
+        <span>Luo tili GitHub-tunnuksilla</span>
+      </div>
+      <!-- TODO: enable this when google login/signup works -->
+      <!-- <div @click="signup('google')" class="login-service-button">
+        <svg-icon icon-name="google"><icon-google /></svg-icon>
+        <span>Luo tili Google-tunnuksilla</span>
+      </div> -->
     </div>
-    <!-- TODO: enable this when google login/signup works -->
-    <!-- <div @click="signup('google')" class="login-service-button">
-      <svg-icon icon-name="google"><icon-google /></svg-icon>
-      <span>Luo tili Google-tunnuksilla</span>
-    </div> -->
-  </div>
-  <div class="login-own-credentials">
-    <h4 v-if="!showOwnCredentialSignup" @click="showOwnCredentialSignup = !showOwnCredentialSignup">
-      Luo tili omilla tunnuksilla
-    </h4>
-    <div v-if="showOwnCredentialSignup" class="login-inputs">
-      <div class="login-input">
-        <span>Nimi</span>
-        <input type="text" v-model="name">
-      </div>
-      <div class="login-input">
-        <span>Sähköposti</span>
-        <input type="text" v-model="email">
-      </div>
-      <div class="login-input">
-        <span>Salasana</span>
-        <input type="password" v-model="password">
-        <p class="hint">Salasanan tulee olla 6 merkkiä tai pitempi.</p>
-      </div>
-      <div
-        @click="signup('local')"
-        :class="[!$v.$invalid ? '' : 'disabled', 'login-submit']">
-        <span>Luo tili</span>
+    <div class="login-own-credentials">
+      <h4
+        v-if="!showOwnCredentialSignup"
+        @click="showOwnCredentialSignup = !showOwnCredentialSignup"
+      >
+        Luo tili omilla tunnuksilla
+      </h4>
+      <div v-if="showOwnCredentialSignup" class="login-inputs">
+        <div class="login-input">
+          <span>Nimi</span>
+          <input type="text" v-model="name" />
+        </div>
+        <div class="login-input">
+          <span>Sähköposti</span>
+          <input type="text" v-model="email" />
+        </div>
+        <div class="login-input">
+          <span>Salasana</span>
+          <input type="password" v-model="password" />
+          <p class="hint">Salasanan tulee olla 6 merkkiä tai pitempi.</p>
+        </div>
+        <div @click="signup('local')" :class="[!$v.$invalid ? '' : 'disabled', 'login-submit']">
+          <span>Luo tili</span>
+        </div>
       </div>
     </div>
   </div>
-</div>
 </template>
 
 <script>
@@ -82,7 +83,11 @@ export default {
     signup(service) {
       const userdata = service === 'local' ? this.gatherLocalSignupData() : null;
       let data = { service, userdata };
-      if (!this.$v.$invalid) {
+      if (service === 'local') {
+        if (!this.$v.$invalid) {
+          this.$emit('signup', data);
+        }
+      } else {
         this.$emit('signup', data);
       }
     }
@@ -96,7 +101,6 @@ export default {
   }
 };
 </script>
-
 
 <style scoped>
 .login-dialog {

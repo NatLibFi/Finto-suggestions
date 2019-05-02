@@ -2,7 +2,7 @@
   <div class="navigation">
     <div class="nav-content">
       <div class="nav-title">
-        <img @click="returnToHome" src="./finto-logo.svg" alt="">
+        <img @click="returnToHome" src="./finto-logo.svg" alt="" />
         <span @click="returnToHome">Finto – Käsite-ehdotukset</span>
       </div>
       <transition name="fade">
@@ -29,8 +29,9 @@
         <div
           v-if="isAuthenticated && userName"
           class="nav-menu-mobile"
-          @click="showMobileDropdown = true">
-          <svg-icon icon-name="more"><icon-more/></svg-icon>
+          @click="showMobileDropdown = true"
+        >
+          <svg-icon icon-name="more"><icon-more /></svg-icon>
         </div>
       </transition>
       <transition name="fade">
@@ -50,7 +51,8 @@
     <div
       v-if="showMobileDropdown"
       v-on-clickaway="closeMobileDropdown"
-      class="nav-mobile-dropdown dropdown">
+      class="nav-mobile-dropdown dropdown"
+    >
       <div class="nav-mobile-dropdown-header">
         <div class="user-bubble">
           <span unselectable="on">{{ userInitials }}</span>
@@ -79,7 +81,7 @@
     </div>
     <div v-if="showSignupDialog">
       <centered-dialog @close="closeDialog">
-        <the-signup @signup="signup"/>
+        <the-signup @signup="signup" />
       </centered-dialog>
     </div>
     <div v-if="showSignupConfirmation">
@@ -111,7 +113,7 @@ import { mapAuthenticatedUserGetters, mapAuthenticatedUserActions } from '../../
 // eslint-disable-next-line
 import { authenticatedUserGetters, authenticatedUserActions, storeKeyNames, authenticatedUserMutations } from '../../store/modules/authenticatedUser/authenticatedUserConsts.js';
 
-import { userNameInitials, emailValidator } from '../../utils/userHelpers.js';
+import { userNameInitials } from '../../utils/userHelpers.js';
 
 export default {
   components: {
@@ -188,7 +190,7 @@ export default {
     async login(data) {
       if (data) {
         if (data.service !== '' && data.service !== 'local') {
-          await this.oAuth2Authenticate(data.service)
+          await this.oAuth2Authenticate(data.service);
         } else {
           await this.authenticateLocalUser(data.loginData)
             .then(() => {
@@ -252,14 +254,12 @@ export default {
       this.userInitials = userNameInitials(this.userName);
     },
     async resetPassword(email) {
-      this.showLoginDialog = false;
-      const validEmail = emailValidator(email);
-      if (validEmail) {
-        await this.resetPasswordByEmail(email);
-      } else {
-        //TODO: show some info to user about this
-        console.log('email is not valid', email);
-      }
+      await this.resetPasswordByEmail(email)
+        .then(() => {
+        })
+        .catch(() => {
+          console.log('Resetting failed.');
+        });
     },
     openResetPasswordForm() {
       this.showSignupConfirmation = false;

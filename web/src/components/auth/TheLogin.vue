@@ -50,7 +50,7 @@
         <span>Unohditko salasanasi?</span>
       </div>
       <div class="forgot-password-input" v-if="showForgottenPasswordForm">
-        <h5>Tilaa uusi salasana</h5>
+        <h4>Tilaa uusi salasana</h4>
         <div class="login-input">
           <span>Sähköposti</span>
           <input type="text" v-model="resetEmail" />
@@ -61,6 +61,9 @@
         >
           <span>Tilaa uusi salasana</span>
         </div>
+        <transition name="fade">
+          <p v-if="showResetPasswordSuccess" class="success">Uusi salasana lähetetty.</p>
+        </transition>
       </div>
     </div>
   </div>
@@ -96,6 +99,7 @@ export default {
       email: '',
       password: '',
       showForgottenPasswordForm: false,
+      showResetPasswordSuccess: false,
       resetEmail: '',
       hasFailedLogin: false
     };
@@ -145,6 +149,7 @@ export default {
     resetPassword() {
       if (!this.$v.resetEmail.$invalid) {
         this.$emit('resetPassword', this.resetEmail);
+        this.showResetPasswordSuccess = true;
       }
     }
   },
@@ -291,6 +296,11 @@ export default {
   color: #21baac;
 }
 
+.forgot-password-input h4,
+.forgot-password-input h4:hover {
+  color: initial;
+}
+
 .disabled,
 .disabled:hover {
   background-color: #dddddd;
@@ -300,6 +310,11 @@ export default {
 
 .error {
   color: red;
+  font-size: 12px;
+}
+
+.success {
+  color: #44bdb2;
   font-size: 12px;
 }
 

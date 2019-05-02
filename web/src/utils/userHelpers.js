@@ -50,13 +50,3 @@ const existsAndHasLength = variable => {
   }
   return false;
 };
-
-export const emailValidator = email => {
-  let validEmail = false;
-  if (email && email.length > 0) {
-    // eslint-disable-next-line
-    const emailRegExp = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,24}))$/;
-    validEmail = emailRegExp.test(email);
-  }
-  return validEmail;
-};

@@ -43,7 +43,7 @@ def post_user() -> str:
 
     :returns: the created user as json
     """
-    msg = "Unable to create a new user. This email already exists."
+    msg = "Unable to create a new user."
     return create_or_400(User, connexion.request.json, error_msg=msg)
 
 
@@ -147,7 +147,7 @@ def send_email(password: str, email: str) -> str:
         if email_server_username and email_server_password:
           mailserver.login(email_server_username, email_server_password)
 
-        mailserver.sendmail(default_sender, email, message)
+        mailserver.sendmail(default_sender, [email], message)
         mailserver.quit()
         return True
       except Exception as ex:
