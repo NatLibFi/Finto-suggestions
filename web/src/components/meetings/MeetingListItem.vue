@@ -11,11 +11,13 @@
           <strong>#{{ meeting.id }} </strong>
           <span v-if="meeting.meeting_date">
             <span
-              v-if="!hasDatePassed(formatDate(meeting.meeting_date.split('T')[0], 'DD.MM.YYYY'))">
+              v-if="!hasDatePassed(formatDate(meeting.meeting_date.split('T')[0], 'DD.MM.YYYY'))"
+            >
               Järjestetään
             </span>
             <span
-              v-if="hasDatePassed(formatDate(meeting.meeting_date.split('T')[0], 'DD.MM.YYYY'))">
+              v-if="hasDatePassed(formatDate(meeting.meeting_date.split('T')[0], 'DD.MM.YYYY'))"
+            >
               Järjestettiin
             </span>
             {{ formatDate(meeting.meeting_date.split('T')[0], 'DD.MM.YYYY') }}

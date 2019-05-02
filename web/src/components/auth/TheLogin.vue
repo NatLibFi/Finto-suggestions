@@ -1,62 +1,80 @@
 <template>
-<div class="login-dialog">
-  <h3 v-if="!showForgottenPasswordForm">Kirjaudu sisään</h3>
-  <!-- TODO: uncomment this when google oauth2 is ready -->
-  <!-- <p>Voit kirjautua sisään Github- ja Google-tunnuksilla</p> -->
-  <div v-if="!showForgottenPasswordForm" class="login-services">
-    <div @click="login('github')" class="login-service-button">
-      <svg-icon icon-name="github"><icon-github /></svg-icon>
-      <span>Kirjaudu GitHub-tunnuksilla</span>
-    </div>
+  <div class="login-dialog">
+    <h3 v-if="!showForgottenPasswordForm">Kirjaudu sisään</h3>
     <!-- TODO: uncomment this when google oauth2 is ready -->
-    <!-- <div @click="login('google')" class="login-service-button">
-      <svg-icon icon-name="google"><icon-google /></svg-icon>
-      <span>Kirjaudu Google-tunnuksilla</span>
-    </div> -->
+    <!-- <p>Voit kirjautua sisään Github- ja Google-tunnuksilla</p> -->
+    <div v-if="!showForgottenPasswordForm" class="login-services">
+      <div @click="login('github')" class="login-service-button">
+        <svg-icon icon-name="github"><icon-github /></svg-icon>
+        <span class="normal">Kirjaudu GitHub-tunnuksilla</span>
+        <span class="mobile">GitHub-tunnukset</span>
+      </div>
+      <!-- TODO: uncomment this when google oauth2 is ready -->
+      <!-- <div @click="login('google')" class="login-service-button">
+        <svg-icon icon-name="google"><icon-google /></svg-icon>
+        <span>Kirjaudu Google-tunnuksilla</span>
+      </div> -->
+    </div>
+    <div class="login-own-credentials">
+      <h4
+        v-if="!showOwnCredentialLogin && !showForgottenPasswordForm"
+        @click="showOwnCredentialInputs()"
+      >
+        Kirjaudu sisään omilla tunnuksilla
+      </h4>
+      <div v-if="showOwnCredentialLogin">
+        <h5>Kirjaudu omilla tunnuksillasi</h5>
+        <div class="login-input">
+          <span>Sähköposti</span>
+          <input type="text" v-model="email" />
+        </div>
+        <div class="login-input">
+          <span>Salasana</span>
+          <input type="password" v-model="password" />
+        </div>
+        <transition name="fade">
+          <p v-if="showLocalLoginError" class="error">Väärä sähköposti tai salasana.</p>
+        </transition>
+        <div
+          @click="login('local')"
+          :class="[!$v.email.$invalid && !$v.password.$invalid ? '' : 'disabled', 'login-submit']"
+        >
+          <span>Kirjaudu sisään</span>
+        </div>
+      </div>
+      <div
+        class="login-forgot-password"
+        @click="showResetPasswordInputs()"
+        v-if="!showForgottenPasswordForm"
+      >
+        <span>Unohditko salasanasi?</span>
+      </div>
+      <div class="forgot-password-input" v-if="showForgottenPasswordForm">
+        <h4>Tilaa uusi salasana</h4>
+        <div class="login-input">
+          <span>Sähköposti</span>
+          <input type="text" v-model="resetEmail" />
+        </div>
+        <div
+          @click="resetPassword()"
+          :class="[!$v.resetEmail.$invalid ? '' : 'disabled', 'login-submit']"
+        >
+          <span>Tilaa uusi salasana</span>
+        </div>
+        <transition name="fade">
+          <p v-if="showResetPasswordSuccess" class="success">Uusi salasana lähetetty.</p>
+        </transition>
+      </div>
+    </div>
   </div>
-  <div class="login-own-credentials">
-    <h4 v-if="!showOwnCredentialLogin && !showForgottenPasswordForm"
-      @click="showOwnCredentialInputs()">
-      Kirjaudu sisään omilla tunnuksilla
-    </h4>
-    <div v-if="showOwnCredentialLogin && !showForgottenPasswordForm">
-      <h3>Kirjaudu omilla tunnuksillasi</h3>
-      <div class="login-input">
-        <span>Sähköposti</span>
-        <input type="text" v-model="email">
-      </div>
-      <div class="login-input">
-        <span>Salasana</span>
-        <input type="password" v-model="password">
-      </div>
-      <div @click="login('local')" class="login-submit">
-        <span>Kirjaudu sisään</span>
-      </div>
-    </div>
-    <div
-      class="login-forgot-password"
-      @click="showResetPasswordInputs()"
-      v-if="!showForgottenPasswordForm">
-      <span>Unohditko salasanasi?</span>
-    </div>
-    <div class="forgot-password-input" v-if="showForgottenPasswordForm">
-      <h3>Tilaa uusi salasana</h3>
-      <div class="login-input">
-        <span>Sähköposti</span>
-        <input type="text" v-model="resetEmail">
-      </div>
-      <div @click="resetPassword()" class="login-submit">
-        <span>Tilaa uusi salasana</span>
-      </div>
-    </div>
-  </div>
-</div>
 </template>
 
 <script>
 import SvgIcon from '../icons/SvgIcon';
 import IconGithub from '../icons/IconGithub';
 import IconGoogle from '../icons/IconGoogle';
+
+import { required, minLength, email } from 'vuelidate/lib/validators';
 
 export default {
   components: {
@@ -68,6 +86,10 @@ export default {
     showResetPasswordForm: {
       type: Boolean,
       default: false
+    },
+    showLocalLoginError: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
@@ -77,8 +99,26 @@ export default {
       email: '',
       password: '',
       showForgottenPasswordForm: false,
-      resetEmail: ''
+      showResetPasswordSuccess: false,
+      resetEmail: '',
+      hasFailedLogin: false
     };
+  },
+  validations: {
+    email: {
+      required,
+      minLength: minLength(3),
+      email
+    },
+    password: {
+      required,
+      minLength: minLength(6)
+    },
+    resetEmail: {
+      required,
+      minLength: minLength(3),
+      email
+    }
   },
   created() {
     if (this.showResetPasswordForm) {
@@ -89,7 +129,11 @@ export default {
     login(service) {
       const loginData = service === 'local' ? this.gatherLoginData() : null;
       const data = { service, loginData };
-      this.$emit('login', data);
+      if (!this.$v.email.$invalid && !this.$v.password.$invalid && service === 'local') {
+        this.$emit('login', data);
+      } else {
+        this.$emit('login', data);
+      }
     },
     gatherLoginData() {
       return { email: this.email, password: this.password };
@@ -103,13 +147,25 @@ export default {
       this.showForgottenPasswordForm = true;
     },
     resetPassword() {
-      this.showForgottenPasswordForm = false;
-      this.$emit('resetPassword', this.resetEmail);
+      if (!this.$v.resetEmail.$invalid) {
+        this.$emit('resetPassword', this.resetEmail);
+        this.showResetPasswordSuccess = true;
+      }
     }
+  },
+  mounted: function() {
+    document.addEventListener('keydown', e => {
+      if (e.keyCode == 13) {
+        if (this.showForgottenPasswordForm) {
+          this.resetPassword();
+        } else {
+          this.login('local');
+        }
+      }
+    });
   }
 };
 </script>
-
 
 <style scoped>
 .login-dialog {
@@ -142,17 +198,21 @@ export default {
 
 .login-service-button svg {
   position: absolute;
-  left: 20px;
-  top: 50%;
+  left: 15px;
+  top: 49%;
   transform: perspective(1px) translateY(calc(-50% - 0.5px));
   display: inline-block;
 }
 
 .login-service-button span {
   position: absolute;
-  right: 22px;
+  right: 20px;
   top: 50%;
   transform: perspective(1px) translateY(calc(-50% - 0.5px));
+}
+
+.login-service-button span.mobile {
+  display: none;
 }
 
 .login-own-credentials {
@@ -209,6 +269,10 @@ export default {
   cursor: pointer;
   cursor: hand;
   transition: all 0.1s;
+  -webkit-user-select: none; /* Safari */
+  -moz-user-select: none; /* Firefox */
+  -ms-user-select: none; /* IE10+/Edge */
+  user-select: none; /* Standard */
 }
 
 .login-submit:hover {
@@ -232,6 +296,28 @@ export default {
   color: #21baac;
 }
 
+.forgot-password-input h4,
+.forgot-password-input h4:hover {
+  color: initial;
+}
+
+.disabled,
+.disabled:hover {
+  background-color: #dddddd;
+  border-color: #dddddd;
+  cursor: default;
+}
+
+.error {
+  color: red;
+  font-size: 12px;
+}
+
+.success {
+  color: #44bdb2;
+  font-size: 12px;
+}
+
 @media (max-width: 750px) {
   .login-service-button {
     margin: 10px 6%;
@@ -245,5 +331,23 @@ export default {
   .login-submit {
     margin: 10px 6%;
   }
+}
+
+@media (max-width: 420px) {
+  .login-service-button span.normal {
+    display: none;
+  }
+  .login-service-button span.mobile {
+    display: initial;
+  }
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.5s;
+}
+.fade-enter,
+.fade-leave-to {
+  opacity: 0;
 }
 </style>

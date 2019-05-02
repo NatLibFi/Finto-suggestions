@@ -10,9 +10,8 @@
       </span>
       <span v-if="isAuthenticated && role === userRoles.ADMIN">
         –
-        <a
-        @click="openMeetingDialog()"
-        class="edit-meeting-button">Muokkaa kokousta
+        <a @click="openMeetingDialog()" class="edit-meeting-button">
+          Muokkaa kokousta
         </a>
       </span>
     </p>
@@ -27,20 +26,27 @@
       <div class="status-summary">
         <p>{{ processed }}/{{ suggestions }} ehdotusta käsitelty ({{ progression }}%)</p>
         <p
-          v-if="['meeting-suggestion-list']
-            .includes($route.name) && isAuthenticated && continueSuggestionHandle"
-          class="next-suggestion-link" @click="goToNextSuggestion()">
+          v-if="
+            ['meeting-suggestion-list'].includes($route.name) &&
+              isAuthenticated &&
+              continueSuggestionHandle
+          "
+          class="next-suggestion-link"
+          @click="goToNextSuggestion()"
+        >
           Jatka käsittelyä
         </p>
       </div>
     </div>
     <centered-dialog
       @close="isMeetingDialogOpen = false"
-      v-if="isMeetingDialogOpen && isAuthenticated && role === userRoles.ADMIN">
+      v-if="isMeetingDialogOpen && isAuthenticated && role === userRoles.ADMIN"
+    >
       <meeting-management
         @close="isMeetingDialogOpen = false"
         :isNewMeeting="false"
-        :meetingId="meetingId" />
+        :meetingId="meetingId"
+      />
     </centered-dialog>
   </div>
 </template>

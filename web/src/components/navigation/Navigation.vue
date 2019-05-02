@@ -2,18 +2,18 @@
   <div class="navigation">
     <div class="nav-content">
       <div class="nav-title">
-        <img @click="returnToHome" src="./finto-logo.svg" alt="">
+        <img @click="returnToHome" src="./finto-logo.svg" alt="" />
         <span @click="returnToHome">Finto – Käsite-ehdotukset</span>
       </div>
       <transition name="fade">
-        <div v-if="isAuthenticated" class="nav-menu" @click="showDropdown = true">
+        <div v-if="isAuthenticated && userName" class="nav-menu" @click="showDropdown = true">
           <div class="user-bubble">
             <span v-if="userInitials" unselectable="on">{{ userInitials }}</span>
             <span v-else unselectable="on">{{ userId }}</span>
           </div>
           <div class="nav-menu-user">
-            <p v-if="user && user.name && user.name.length > 0">{{ user.name }}</p>
-            <p v-else>Käyttäjä {{ userId }}</p>
+            <p v-if="userName && userName.length > 0">{{ userName }}</p>
+            <p v-if="userName && userName.length === 0">Käyttäjä {{ userId }}</p>
           </div>
           <svg-icon icon-name="triangle"><icon-triangle /></svg-icon>
         </div>
@@ -26,8 +26,12 @@
       </transition>
       <transition name="fade">
         <!-- Mobile menu shown below screen width of 700px -->
-        <div v-if="isAuthenticated" class="nav-menu-mobile" @click="showMobileDropdown = true">
-          <svg-icon icon-name="more"><icon-more/></svg-icon>
+        <div
+          v-if="isAuthenticated && userName"
+          class="nav-menu-mobile"
+          @click="showMobileDropdown = true"
+        >
+          <svg-icon icon-name="more"><icon-more /></svg-icon>
         </div>
       </transition>
       <transition name="fade">
@@ -47,14 +51,15 @@
     <div
       v-if="showMobileDropdown"
       v-on-clickaway="closeMobileDropdown"
-      class="nav-mobile-dropdown dropdown">
+      class="nav-mobile-dropdown dropdown"
+    >
       <div class="nav-mobile-dropdown-header">
         <div class="user-bubble">
           <span unselectable="on">{{ userInitials }}</span>
         </div>
         <div class="nav-dropdown-user">
-          <p v-if="user && user.name && user.name.length > 0">{{ user.name }}</p>
-          <p v-else>Käyttäjä {{ userId }}</p>
+          <p v-if="userName && userName.length > 0">{{ userName }}</p>
+          <p v-if="userName && userName.length === 0">Käyttäjä {{ userId }}</p>
         </div>
       </div>
       <div class="nav-mobile-dropdown-content">
@@ -68,6 +73,7 @@
       <centered-dialog @close="closeDialog">
         <the-login
           :showResetPasswordForm="showResetPasswordForm"
+          :showLocalLoginError="showLocalLoginError"
           @login="login"
           @resetPassword="resetPassword"
         />
@@ -75,7 +81,7 @@
     </div>
     <div v-if="showSignupDialog">
       <centered-dialog @close="closeDialog">
-        <the-signup @signup="signup"/>
+        <the-signup @signup="signup" />
       </centered-dialog>
     </div>
     <div v-if="showSignupConfirmation">
@@ -100,14 +106,14 @@ import IconMore from '../icons/IconMore';
 import IconTriangle from '../icons/IconTriangle';
 import { directive as onClickaway } from 'vue-clickaway';
 
-import { userActions, userGetters } from '../../store/modules/user/userConsts';
-import { mapUserActions, mapUserGetters } from '../../store/modules/user/userModule';
+import { userActions } from '../../store/modules/user/userConsts';
+import { mapUserActions } from '../../store/modules/user/userModule';
 // eslint-disable-next-line
 import { mapAuthenticatedUserGetters, mapAuthenticatedUserActions } from '../../store/modules/authenticatedUser/authenticatedUserModule.js';
 // eslint-disable-next-line
-import { authenticatedUserGetters, authenticatedUserActions, storeKeyNames } from '../../store/modules/authenticatedUser/authenticatedUserConsts.js';
+import { authenticatedUserGetters, authenticatedUserActions, storeKeyNames, authenticatedUserMutations } from '../../store/modules/authenticatedUser/authenticatedUserConsts.js';
 
-import { userNameInitials, emailValidator } from '../../utils/userHelpers.js';
+import { userNameInitials } from '../../utils/userHelpers.js';
 
 export default {
   components: {
@@ -133,15 +139,14 @@ export default {
     showSignupConfirmation: false,
     signupSucceeded: true,
     signupError: '',
-    showResetPasswordForm: false
+    showResetPasswordForm: false,
+    showLocalLoginError: false
   }),
   computed: {
-    ...mapUserGetters({
-      user: userGetters.GET_USER
-    }),
     ...mapAuthenticatedUserGetters({
       isAuthenticated: authenticatedUserGetters.GET_IS_AUTHENTICATED,
       userId: authenticatedUserGetters.GET_USER_ID,
+      userName: authenticatedUserGetters.GET_USER_NAME,
       // can be shown if login did not succeed:
       error: authenticatedUserGetters.GET_AUTHENTICATE_ERROR
     })
@@ -150,10 +155,9 @@ export default {
     await this.validateAuthentication();
     if (this.isAuthenticated) {
       await this.refreshToken();
+      await this.getUserIdFromStorage();
+      await this.handleUserFetch();
     }
-    this.getUserIdFromStorage();
-    await this.handleUserFetch();
-    this.handleUserInitialsFetch();
   },
   methods: {
     ...mapAuthenticatedUserActions({
@@ -161,10 +165,10 @@ export default {
       revokeAuthentication: authenticatedUserActions.REVOKE_AUTHENTICATION,
       authenticateLocalUser: authenticatedUserActions.AUTHENTICATE_LOCAL_USER,
       getUserIdFromStorage: authenticatedUserActions.GET_USER_ID_FROM_STORAGE,
-      refreshToken: authenticatedUserActions.REFRESH_AUTHORIZATION_TOKEN
+      refreshToken: authenticatedUserActions.REFRESH_AUTHORIZATION_TOKEN,
+      getUserName: authenticatedUserActions.GET_USER_NAME
     }),
     ...mapUserActions({
-      getUser: userActions.GET_USER,
       resetPasswordByEmail: userActions.RESET_PASSWORD,
       registerLocalUser: userActions.CREATE_USER
     }),
@@ -181,19 +185,25 @@ export default {
       this.showLoginDialog = false;
       this.showSignupDialog = false;
       this.showSignupConfirmation = false;
+      this.showLocalLoginError = false;
     },
     async login(data) {
       if (data) {
         if (data.service !== '' && data.service !== 'local') {
           await this.oAuth2Authenticate(data.service);
         } else {
-          await this.authenticateLocalUser(data.loginData);
+          await this.authenticateLocalUser(data.loginData)
+            .then(() => {
+              if (this.userId) {
+                this.getUserName(this.userId);
+                this.showLoginDialog = false;
+              }
+            })
+            .catch(() => {
+              this.showLocalLoginError = true;
+            });
         }
       }
-      if (this.userId) {
-        this.getUser(this.userId);
-      }
-      this.showLoginDialog = false;
     },
     async signup(data) {
       if (data && data.service !== 'local') {
@@ -230,29 +240,26 @@ export default {
       this.revokeAuthentication();
       this.closeDropdown();
       this.closeMobileDropdown();
-      this.$router.push('/');
     },
     async oAuth2Authenticate() {
       this.$router.push('/github');
     },
     async handleUserFetch() {
       if (parseInt(this.userId) > 0) {
-        await this.getUser(this.userId);
+        this.getUserName(this.userId);
         this.handleUserInitialsFetch();
       }
     },
     handleUserInitialsFetch() {
-      this.userInitials = userNameInitials(this.user.name);
+      this.userInitials = userNameInitials(this.userName);
     },
     async resetPassword(email) {
-      this.showLoginDialog = false;
-      const validEmail = emailValidator(email);
-      if (validEmail) {
-        await this.resetPasswordByEmail(email);
-      } else {
-        //TODO: show some info to user about this
-        console.log('email is not valid', email);
-      }
+      await this.resetPasswordByEmail(email)
+        .then(() => {
+        })
+        .catch(() => {
+          console.log('Resetting failed.');
+        });
     },
     openResetPasswordForm() {
       this.showSignupConfirmation = false;
@@ -261,8 +268,8 @@ export default {
     }
   },
   watch: {
-    user: {
-      handler: 'handleUserInitialsFetch',
+    userName: {
+      handler: 'handleUserFetch',
       immediate: true
     }
   },

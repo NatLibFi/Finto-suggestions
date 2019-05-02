@@ -1,55 +1,54 @@
 <template>
-<div class="container">
-  <h4 v-if="isNewMeeting">Luo uusi kokous</h4>
-  <h4 v-if="!isNewMeeting">Muokkaa kokousta {{ meetingId }}</h4>
+  <div class="container">
+    <h4 v-if="isNewMeeting">Luo uusi kokous</h4>
+    <h4 v-if="!isNewMeeting">Muokkaa kokousta {{ meetingId }}</h4>
 
-  <div class="input-group">
-    <p><strong>Kokouksen nimi</strong></p>
-    <input
-      @input="$v.$touch()"
-      v-model="name"
-      type="text">
+    <div class="input-group">
+      <p><strong>Kokouksen nimi</strong></p>
+      <input @input="$v.$touch()" v-model="name" type="text" />
+    </div>
+
+    <div class="input-group">
+      <p><strong>Kokouksen päivämäärä</strong></p>
+      <datepicker
+        @input="$v.$touch()"
+        v-model="date"
+        :inline="true"
+        :monday-first="true"
+        :full-month-name="true"
+        :language="fi"
+        :bootstrap-styling="true"
+      />
+    </div>
+
+    <div
+      v-if="isNewMeeting"
+      @click.stop="createNewMeeting()"
+      :class="[!$v.$invalid ? '' : 'disabled', 'button']"
+    >
+      <span v-if="isNewMeeting" class="save">
+        Luo kokous
+      </span>
+    </div>
+    <transition v-if="isNewMeeting" name="fade">
+      <p v-if="hasSucceeded" class="success-message">Kokous luotu!</p>
+      <p v-if="hasFailed" class="failure-message">Kokousta ei saatu luotua.</p>
+    </transition>
+
+    <div
+      v-if="!isNewMeeting"
+      @click.stop="editMeeting()"
+      :class="[!$v.$invalid ? '' : 'disabled', 'button']"
+    >
+      <span v-if="!isNewMeeting" class="save">
+        Tallenna muutokset
+      </span>
+    </div>
+    <transition v-if="!isNewMeeting" name="fade">
+      <p v-if="hasSucceeded" class="success-message">Muutokset tallennettu.</p>
+      <p v-if="hasFailed" class="failure-message">Muutos ei onnistunut.</p>
+    </transition>
   </div>
-
-  <div class="input-group">
-    <p><strong>Kokouksen päivämäärä</strong></p>
-    <datepicker
-      @input="$v.$touch()"
-      v-model="date"
-      :inline="true"
-      :monday-first="true"
-      :full-month-name="true"
-      :language="fi"
-      :bootstrap-styling="true" />
-  </div>
-
-  <div
-    v-if="isNewMeeting"
-    @click.stop="createNewMeeting()"
-    :class="[!$v.$invalid ? '' : 'disabled', 'button']">
-    <span v-if="isNewMeeting" class="save">
-      Luo kokous
-    </span>
-  </div>
-  <transition v-if="isNewMeeting" name="fade">
-    <p v-if="hasSucceeded" class="success-message">Kokous luotu!</p>
-    <p v-if="hasFailed" class="failure-message">Kokousta ei saatu luotua.</p>
-  </transition>
-
-  <div
-    v-if="!isNewMeeting"
-    @click.stop="editMeeting()"
-    :class="[!$v.$invalid ? '' : 'disabled', 'button']">
-    <span v-if="!isNewMeeting" class="save">
-      Tallenna muutokset
-    </span>
-  </div>
-  <transition v-if="!isNewMeeting" name="fade">
-    <p v-if="hasSucceeded" class="success-message">Muutokset tallennettu.</p>
-    <p v-if="hasFailed" class="failure-message">Muutos ei onnistunut.</p>
-  </transition>
-
-</div>
 </template>
 
 <script>

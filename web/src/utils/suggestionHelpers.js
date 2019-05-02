@@ -40,9 +40,9 @@ export const filterType = {
 };
 
 /*
-* Helper method to calculate on place open and resolved count from suggestions
-* Return null if items count is empty
-*/
+ * Helper method to calculate on place open and resolved count from suggestions
+ * Return null if items count is empty
+ */
 export const calculateOpenAndResolvedSuggestionCounts = items => {
   if (items && items.length > 0) {
     const openCount = items.filter(

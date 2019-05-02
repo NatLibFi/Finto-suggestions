@@ -1,7 +1,7 @@
 <template>
   <div class="button-container">
     <div @click="showDropdown = true" class="menu-button">
-      <svg-icon icon-name="more"><icon-more/></svg-icon>
+      <svg-icon icon-name="more"><icon-more /></svg-icon>
     </div>
     <div v-if="showDropdown" v-on-clickaway="closeDropdown" class="dropdown">
       <div v-for="option in options" :key="option.id">

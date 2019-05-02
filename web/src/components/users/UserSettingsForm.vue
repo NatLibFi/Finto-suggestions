@@ -4,15 +4,15 @@
     <div class="setting-inputs">
       <div>
         <p>Nimi:</p>
-        <input v-model="userName" type="text">
+        <input v-model="userName" type="text" />
       </div>
       <div>
         <p>Nimike/titteli:</p>
-        <input v-model="userTitle" @input="$v.$touch()" type="text">
+        <input v-model="userTitle" @input="$v.$touch()" type="text" />
       </div>
       <div>
         <p>Organisaatio:</p>
-        <input v-model="userOrg" @input="$v.$touch()" type="text">
+        <input v-model="userOrg" @input="$v.$touch()" type="text" />
       </div>
       <!-- <div>
         <p>Profiilikuvan url-osoite:</p>

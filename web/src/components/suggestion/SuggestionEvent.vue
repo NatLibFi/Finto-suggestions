@@ -1,46 +1,48 @@
 <template>
-<div class="event">
-  <div class="event-divider"></div>
+  <div class="event">
+    <div class="event-divider"></div>
 
-  <div class="event-container">
-    <div class="event-header">
-      <div class="event-user-initials">{{ userNameInitials }}</div>
-      <div class="event-info">
-        <p class="event-user">
-          <span class="user-name">{{ userName }}</span>
-          <span v-if="type === eventTypes.ACTION">
-            {{ event.text }}
-            <span class="tag">{{ event.value }}</span>
-          </span>
-        </p>
-        <p class="date-sent">{{ dateTimeFormatLabel(this.event.created) }}</p>
+    <div class="event-container">
+      <div class="event-header">
+        <div class="event-user-initials">{{ userNameInitials }}</div>
+        <div class="event-info">
+          <p class="event-user">
+            <span class="user-name">{{ userName }}</span>
+            <span v-if="type === eventTypes.ACTION">
+              {{ event.text }}
+              <span class="tag">{{ event.value }}</span>
+            </span>
+          </p>
+          <p class="date-sent">{{ dateTimeFormatLabel(this.event.created) }}</p>
+        </div>
+        <div
+          v-if="
+            isAuthenticated &&
+              (role === userRoles.ADMIN || parseInt(authedUserId) === event.user_id)
+          "
+          class="menu-wrapper"
+        >
+          <menu-button
+            v-if="type === eventTypes.COMMENT"
+            :options="commentOptions"
+            ref="menu"
+            class="menu"
+          />
+          <menu-button
+            v-if="type === eventTypes.ACTION"
+            :options="actionOptions"
+            ref="menu"
+            class="menu"
+          />
+        </div>
       </div>
-      <div
-        v-if="isAuthenticated
-          && (role === userRoles.ADMIN || parseInt(authedUserId) === event.user_id)"
-        class="menu-wrapper">
-        <menu-button
-          v-if="type === eventTypes.COMMENT"
-          :options="commentOptions"
-          ref="menu"
-          class="menu" />
-        <menu-button
-          v-if="type === eventTypes.ACTION"
-          :options="actionOptions"
-          ref="menu"
-          class="menu" />
-      </div>
-    </div>
-    <div v-if="type === eventTypes.COMMENT">
+      <div v-if="type === eventTypes.COMMENT">
         <div v-if="!isEditable" class="event-comment">
           <p v-if="content.length > 0" v-html="$sanitize(content)"></p>
           <p v-if="content.length === 0"><em>Tyhjä kommentti.</em></p>
         </div>
         <div v-show="isEditable" class="edit-comment">
-          <markdown-editor
-            v-model="event.text"
-            ref="eventMarkdownEditor"
-            :configs="mdeConfigs">
+          <markdown-editor v-model="event.text" ref="eventMarkdownEditor" :configs="mdeConfigs">
           </markdown-editor>
           <div class="comment-submit">
             <span @click="saveComment" class="submit-button">
@@ -48,9 +50,9 @@
             </span>
           </div>
         </div>
+      </div>
     </div>
   </div>
-</div>
 </template>
 
 <script>

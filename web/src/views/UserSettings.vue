@@ -1,8 +1,8 @@
 <template>
-<div>
-  <navigation />
-  <user-settings />
-</div>
+  <div>
+    <navigation />
+    <user-settings />
+  </div>
 </template>
 
 <script>

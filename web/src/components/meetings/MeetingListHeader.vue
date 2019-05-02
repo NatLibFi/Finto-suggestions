@@ -6,7 +6,8 @@
     </div>
     <div
       @click="isDropDownOpened = !isDropDownOpened"
-      :class="[isDropDownOpened ? 'selected' : '', 'drop-down-button']">
+      :class="[isDropDownOpened ? 'selected' : '', 'drop-down-button']"
+    >
       <span>Järjestä</span>
       <svg-icon icon-name="triangle"><icon-triangle /></svg-icon>
     </div>
@@ -16,7 +17,8 @@
       :dropDownOptions="dropDownOptions"
       @setSelectedSort="setSelectedSort"
       @refreshSelectedIndex="selectedSortOptionIndex = $event"
-      @closeDropDown="closeDropDown"/>
+      @closeDropDown="closeDropDown"
+    />
   </div>
 </template>
 

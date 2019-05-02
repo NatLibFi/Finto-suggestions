@@ -1,35 +1,37 @@
 <template>
-<div>
-  <span v-if="meetingId && meetingId > 0">–
-    <a v-if="meeting && !meeting.name" @click="goToMeeting(meetingId)"> Kokous {{ meetingId }}</a>
-    <a v-if="meeting && meeting.name" @click="goToMeeting(meetingId)">{{ meeting.name }}</a>
-    <a v-if="isAuthenticated && isAdmin"
-      @click="isOpenDropdown = true"> (muokkaa)</a>
-  </span>
-  <span v-if="!meetingId || meetingId === 0">
-    <a v-if="isAuthenticated && isAdmin"
-      @click="isOpenDropdown = true">Lisää käsite kokoukseen</a>
-  </span>
-  <div class="assign-meeting">
-    <div class="dropdown-content" v-if="isOpenDropdown" v-on-clickaway="closeDropdown">
-      <div class="dropdown-header">Valitse kokous</div>
-      <div class="dropdown-filter">
-        <input type="text" class="dropdown-filter-input" v-model="searchQuery" />
-      </div>
-      <div class="dropdown-options">
-        <div
-          v-for="meeting in filteredMeetings"
-          :key="meeting.id"
-          @click="assignToMeeting(meeting.id)"
-          class="meeting-item">
-          <div v-if="meeting.name && meeting.name.length > 0">
-            <div class="meeting-title">{{ meeting.name }}</div>
+  <div>
+    <span v-if="meetingId && meetingId > 0">
+      –
+      <a v-if="meeting && !meeting.name" @click="goToMeeting(meetingId)"> Kokous {{ meetingId }}</a>
+      <a v-if="meeting && meeting.name" @click="goToMeeting(meetingId)">{{ meeting.name }}</a>
+      <a v-if="isAuthenticated && isAdmin" @click="isOpenDropdown = true"> (muokkaa)</a>
+    </span>
+    <span v-if="!meetingId || meetingId === 0">
+      <a v-if="isAuthenticated && isAdmin" @click="isOpenDropdown = true">
+        Lisää käsite kokoukseen
+      </a>
+    </span>
+    <div class="assign-meeting">
+      <div class="dropdown-content" v-if="isOpenDropdown" v-on-clickaway="closeDropdown">
+        <div class="dropdown-header">Valitse kokous</div>
+        <div class="dropdown-filter">
+          <input type="text" class="dropdown-filter-input" v-model="searchQuery" />
+        </div>
+        <div class="dropdown-options">
+          <div
+            v-for="meeting in filteredMeetings"
+            :key="meeting.id"
+            @click="assignToMeeting(meeting.id)"
+            class="meeting-item"
+          >
+            <div v-if="meeting.name && meeting.name.length > 0">
+              <div class="meeting-title">{{ meeting.name }}</div>
+            </div>
           </div>
         </div>
       </div>
     </div>
   </div>
-</div>
 </template>
 
 <script>
