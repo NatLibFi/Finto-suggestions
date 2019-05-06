@@ -15,7 +15,6 @@ import {
   suggestionGetters,
   suggestionActions
 } from '../../store/modules/suggestion/suggestionConsts.js';
-
 import {
   mapSuggestionGetters,
   mapSuggestionActions
@@ -30,7 +29,8 @@ export default {
   }),
   computed: {
     ...mapSuggestionGetters({
-      filters: suggestionGetters.GET_FILTERS
+      filters: suggestionGetters.GET_FILTERS,
+      isSuggestionListDirty: suggestionGetters.GET_DIRTYNESS
     })
   },
   async created() {
@@ -48,6 +48,13 @@ export default {
     doSearch() {
       const value = { type: filterType.SEARCH, value: this.searchQuery };
       handleSetFilters(value, this.filters, this.setFilters);
+    }
+  },
+  watch: {
+    isSuggestionListDirty() {
+      if (!this.isSuggestionListDirty) {
+        this.searchQuery = '';
+      }
     }
   }
 };

@@ -107,8 +107,10 @@ import { mapAuthenticatedUserGetters, mapAuthenticatedUserActions } from '../../
 // eslint-disable-next-line
 import { authenticatedUserGetters, authenticatedUserActions, storeKeyNames } from '../../store/modules/authenticatedUser/authenticatedUserConsts.js';
 
-import { suggestionActions } from '../../store/modules/suggestion/suggestionConsts.js';
-import { mapSuggestionActions } from '../../store/modules/suggestion/suggestionModule.js';
+// eslint-disable-next-line
+import { suggestionActions, suggestionMutations } from '../../store/modules/suggestion/suggestionConsts.js';
+// eslint-disable-next-line
+import { mapSuggestionActions, mapSuggestionMutations } from '../../store/modules/suggestion/suggestionModule.js';
 
 import { userNameInitials, emailValidator } from '../../utils/userHelpers.js';
 
@@ -173,11 +175,13 @@ export default {
       registerLocalUser: userActions.CREATE_USER
     }),
     ...mapSuggestionActions({
-      setSelectedFilters: suggestionActions.SET_SELECTED_FILTERS
+      setSelectedFilters: suggestionActions.SET_SELECTED_FILTERS,
+      resetSuggestionListing: suggestionActions.RESET_SUGGESTION_LISTING
     }),
     async returnToHome() {
       this.$router.push('/');
       await this.setSelectedFilters([]);
+      await this.resetSuggestionListing();
     },
     closeDropdown() {
       this.showDropdown = false;

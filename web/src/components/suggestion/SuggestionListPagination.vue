@@ -1,6 +1,7 @@
 <template>
-<div v-if="pageCount" class="paginate-container">
+<div class="paginate-container">
   <paginate
+    v-if="pageCount"
     v-model="page"
     :page-count="pageCount"
     :click-handler="changePageHandler"

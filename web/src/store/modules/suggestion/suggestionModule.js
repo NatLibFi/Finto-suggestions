@@ -22,7 +22,8 @@ export default {
     [storeStateNames.ITEM]: null,
     [storeStateNames.SUGGESTIONS_SELECTED_SORT]: null,
     [storeStateNames.MEETING_SUGGESTIONS_SELECTED_SORT]: null,
-    [storeStateNames.FILTERED_ITEMS]: []
+    [storeStateNames.FILTERED_ITEMS]: [],
+    [storeStateNames.IS_DIRTY]: false
   },
   getters: {
     [suggestionGetters.GET_SUGGESTIONS]: state => state[storeStateNames.ITEMS],
@@ -33,7 +34,8 @@ export default {
       state[storeStateNames.SUGGESTIONS_SELECTED_SORT],
     [suggestionGetters.GET_MEETING_SUGGESTIONS_SELECTED_SORT]: state =>
       state[storeStateNames.MEETING_SUGGESTIONS_SELECTED_SORT],
-    [suggestionGetters.GET_FILTERED_ITEMS]: state => state[storeStateNames.FILTERED_ITEMS]
+    [suggestionGetters.GET_FILTERED_ITEMS]: state => state[storeStateNames.FILTERED_ITEMS],
+    [suggestionGetters.GET_DIRTYNESS]: state => state[storeStateNames.IS_DIRTY]
   },
   mutations: {
     [suggestionMutations.SET_SUGGESTIONS](state, suggestions) {
@@ -65,6 +67,12 @@ export default {
     },
     [suggestionMutations.SET_SELECTED_STORAGE_FILTERS](state, filters) {
       Vue.set(sessionStorage, sessionStorageKeyNames.SELECTED_FILTERS, filters);
+    },
+    [suggestionMutations.SET_DIRTYNESS_TO_TRUE](state) {
+      Vue.set(state, storeStateNames.IS_DIRTY, true);
+    },
+    [suggestionMutations.SET_DIRTYNESS_TO_FALSE](state) {
+      Vue.set(state, storeStateNames.IS_DIRTY, false);
     }
   },
   actions: {
@@ -178,6 +186,7 @@ export default {
       const result = await api.suggestion.getSuggestionsBySearchWord(searchWord);
       if (result && result.code === 200) {
         commit(suggestionMutations.SET_SUGGESTIONS, result.data);
+        commit(suggestionMutations.SET_DIRTYNESS_TO_TRUE);
       }
     },
     [suggestionActions.GET_SELECTED_FILTERS]({ commit }) {
@@ -202,6 +211,16 @@ export default {
       const result = await api.suggestion.getResolvedSuggestions();
       if (result && result.code === 200) {
         commit(suggestionMutations.SET_SUGGESTIONS, result.data);
+      }
+    },
+    async [suggestionActions.RESET_SUGGESTION_LISTING]({ commit }) {
+      const result = await api.suggestion.getSuggestions();
+      if (result && result.code === 200) {
+        commit(suggestionMutations.SET_SUGGESTIONS_SELECTED_STORAGE_SORT, 'CREATED_DESC');
+        commit(suggestionMutations.SET_SUGGESTIONS, result.data);
+        commit(suggestionMutations.SET_SELECTED_STORAGE_FILTERS, []);
+        commit(suggestionMutations.SET_FILTERS, []);
+        commit(suggestionMutations.SET_DIRTYNESS_TO_FALSE);
       }
     }
   }
