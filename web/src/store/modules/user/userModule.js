@@ -53,19 +53,19 @@ export default {
       const response = await api.user.resetPassword(email);
       if (response && response.code === 200) {
         return;
-      } else {
-        throw `Could not reset user password that email is ${email}`;
       }
     },
     // eslint-disable-next-line no-empty-pattern
     async [userActions.CREATE_USER]({}, userData) {
       const response = await api.user.registerLocalUser(userData);
       if (response && response.code === 201) {
-        return { succeed: true, error: '' };
+        return { success: true, error: '' };
       } else {
         return {
-          succeed: false,
-          error: `Emme saaneet luotua käyttäjää. Jos ongelma jatkuu, ota yhteyttä ylläpitäjään.`
+          success: false,
+          error: `Emme saaneet luotua uutta käyttäjää. Sinulla saattaa olla jo
+                  käyttäjä luotuna tällä sähköpostiosoitteella.
+                  Jos ongelma jatkuu, ole yhteydessä järjestelmän ylläpitäjään.`
         };
       }
     }

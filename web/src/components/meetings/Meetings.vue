@@ -1,36 +1,38 @@
 <template>
-<div class="meetings">
-  <div class="arrow-button">
-    <a @click="goToHome" unselectable="on">
-      <svg-icon icon-name="arrow"><icon-arrow /></svg-icon>
-      Takaisin etusivulle
-    </a>
-  </div>
-  <div class="meetings-header">
-    <div class="header-content">
-      <h3>Ehdotuksia käsittelevät kokoukset</h3>
-      <p>
-        YSA- ja YSO-käsite-ehdotuksia käsitellään neljä kertaa vuodessa YSA-kokouksissa.
-        <br><br>
-        Alla näet tulevien ja menneiden YSA-kokouksien asialistat.
-      </p>
-      <p>
-        <a
-        @click="openMeetingDialog()"
-        v-if="isAuthenticated && role === userRoles.ADMIN"
-        class="new-meeting-button">Luo uusi kokous
-        </a>
-      </p>
+  <div class="meetings">
+    <div class="arrow-button">
+      <a @click="goToHome" unselectable="on">
+        <svg-icon icon-name="arrow"><icon-arrow /></svg-icon>
+        Takaisin etusivulle
+      </a>
     </div>
-  </div>
-  <centered-dialog
-    @close="isMeetingDialogOpen = false"
-    v-if="isMeetingDialogOpen && isAuthenticated && role === userRoles.ADMIN">
-    <meeting-management
+    <div class="meetings-header">
+      <div class="header-content">
+        <h3>Ehdotuksia käsittelevät kokoukset</h3>
+        <p>
+          YSA- ja YSO-käsite-ehdotuksia käsitellään neljä kertaa vuodessa YSA-kokouksissa.
+          <br />
+          <br />
+          Alla näet tulevien ja menneiden YSA-kokouksien asialistat.
+        </p>
+        <p>
+          <a
+            @click="openMeetingDialog()"
+            v-if="isAuthenticated && role === userRoles.ADMIN"
+            class="new-meeting-button"
+          >
+            Luo uusi kokous
+          </a>
+        </p>
+      </div>
+    </div>
+    <centered-dialog
       @close="isMeetingDialogOpen = false"
-      :isNewMeeting="true" />
-  </centered-dialog>
-</div>
+      v-if="isMeetingDialogOpen && isAuthenticated && role === userRoles.ADMIN"
+    >
+      <meeting-management @close="isMeetingDialogOpen = false" :isNewMeeting="true" />
+    </centered-dialog>
+  </div>
 </template>
 
 <script>

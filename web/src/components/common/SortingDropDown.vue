@@ -1,15 +1,12 @@
 <template>
-  <div
-    v-if="isOpened"
-    class="drop-down-options"
-    v-on-clickaway="closeDropDown">
+  <div v-if="isOpened" class="drop-down-options" v-on-clickaway="closeDropDown">
     <div v-for="(option, i) in dropDownOptions" :key="option.id">
       <div
         @click="sortValueSelected(option, i)"
-        :class="[i == selectedIndex ? 'selected' : '', 'option']">
-        <svg-icon
-          :class="[i == selectedIndex ? '' : 'hidden-checkmark']"
-          icon-name="check"><icon-check />
+        :class="[i == selectedIndex ? 'selected' : '', 'option']"
+      >
+        <svg-icon :class="[i == selectedIndex ? '' : 'hidden-checkmark']" icon-name="check">
+          <icon-check />
         </svg-icon>
         <span>{{ option.label }}</span>
       </div>

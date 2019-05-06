@@ -1,6 +1,7 @@
 <template>
   <div class="filter-suggestions">
-    <h5>Suodata hakutuloksia
+    <h5>
+      Suodata hakutuloksia
       <a
         v-if="hasTouchedFilters && isSuggestionListDirty"
         @click="resetFilters()"
@@ -20,11 +21,10 @@
         :noOptionsMessage="'Ei valittavia käsittelyn tiloja.'"
         @applyFilter="stateChanged($event)"
         @refreshSelectedIndex="selectedOptionIndex.STATUS = $event"
-        @closeDropDown="closeDropDown" />
+        @closeDropDown="closeDropDown"
+      />
     </div>
-    <div
-      @click="isDropDownOpened.TAG = !isDropDownOpened.TAG"
-      class="filter-item">
+    <div @click="isDropDownOpened.TAG = !isDropDownOpened.TAG" class="filter-item">
       <div :class="[isDropDownOpened.TAG ? 'selected' : '', 'drop-down-button']">
         <span>Tunniste</span>
         <svg-icon icon-name="triangle"><icon-triangle /></svg-icon>
@@ -37,7 +37,8 @@
         @applyFilter="tagChanged($event)"
         @addToSelectedIndexes="addSelectedTagIndex($event)"
         @resetTags="resetTags()"
-        @closeDropDown="closeDropDown" />
+        @closeDropDown="closeDropDown"
+      />
     </div>
     <div @click="isDropDownOpened.TYPE = !isDropDownOpened.TYPE" class="filter-item">
       <div :class="[isDropDownOpened.TYPE ? 'selected' : '', 'drop-down-button']">
@@ -51,11 +52,14 @@
         :noOptionsMessage="'Käsitetyyppejä ei valittavissa.'"
         @applyFilter="typeChanged($event)"
         @refreshSelectedIndex="selectedOptionIndex.TYPE = $event"
-        @closeDropDown="closeDropDown" />
+        @closeDropDown="closeDropDown"
+      />
     </div>
-    <div v-if="mapMeetingsToDropDown().length > 0"
+    <div
+      v-if="mapMeetingsToDropDown().length > 0"
       @click="isDropDownOpened.MEETING = !isDropDownOpened.MEETING"
-      class="filter-item">
+      class="filter-item"
+    >
       <div :class="[isDropDownOpened.MEETING ? 'selected' : '', 'drop-down-button']">
         <span>Kokous</span>
         <svg-icon icon-name="triangle"><icon-triangle /></svg-icon>
@@ -68,7 +72,8 @@
         :noOptionsMessage="'Kokouksia ei valittavissa.'"
         @applyFilter="meetingChanged($event)"
         @refreshSelectedIndex="selectedOptionIndex.MEETING = $event"
-        @closeDropDown="closeDropDown" />
+        @closeDropDown="closeDropDown"
+      />
     </div>
   </div>
 </template>
@@ -383,7 +388,7 @@ h5 {
   position: absolute;
   top: 53.5%;
   left: 14px;
-  transform: perspective(1px) translateY(-56%);
+  transform: perspective(1px) translateY(calc(-56% - 0.5px));
   overflow: hidden;
   font-size: 13px;
   font-weight: 600;
@@ -401,7 +406,7 @@ h5 {
   position: absolute;
   top: 66%;
   right: 16px;
-  transform: perspective(1px) translateY(-50%);
+  transform: perspective(1px) translateY(calc(-50% - 0.5px));
   display: inline-block;
   height: 16px;
   margin: 0 0 -4px 2px;

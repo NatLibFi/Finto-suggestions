@@ -3,12 +3,16 @@
     <div v-if="!userPage" class="title">
       <span
         :class="['open', openSuggestionClicked && isSuggestionListDirty ? 'toggled' : '']"
-        @click="showOpenSuggestions()">
-        {{ openSuggestionCount }} käsittelemätöntä</span>
+        @click="showOpenSuggestions()"
+      >
+        {{ openSuggestionCount }} käsittelemätöntä
+      </span>
       <span
         :class="['resolved', resolvedSuggestionsClicked && isSuggestionListDirty ? 'toggled' : '']"
-        @click="showResolvedSuggestions()">
-        {{ resolvedSuggestionCount }} käsiteltyä</span>
+        @click="showResolvedSuggestions()"
+      >
+        {{ resolvedSuggestionCount }} käsiteltyä
+      </span>
     </div>
     <div v-if="userPage" class="title">
       <span>Käyttäjälle asetut ehdotukset</span>
@@ -16,7 +20,8 @@
     <div
       v-if="!userPage"
       @click="isDropDownOpened = !isDropDownOpened"
-      :class="[isDropDownOpened ? 'selected' : '', 'drop-down-button']">
+      :class="[isDropDownOpened ? 'selected' : '', 'drop-down-button']"
+    >
       <span>Järjestä</span>
       <svg-icon icon-name="triangle"><icon-triangle /></svg-icon>
     </div>
@@ -26,7 +31,8 @@
       :dropDownOptions="dropDownOptions"
       @setSelectedSort="setSelectedSort"
       @refreshSelectedIndex="selectedSortOptionIndex = $event"
-      @closeDropDown="closeDropDown"/>
+      @closeDropDown="closeDropDown"
+    />
   </div>
 </template>
 
@@ -66,10 +72,10 @@ export default {
     dropDownOptions: [
       { label: 'Uusin ensin', value: sortingKeys.NEWEST_FIRST },
       { label: 'Vanhin ensin', value: sortingKeys.OLDEST_FIRST },
-      { label: 'Eniten kommentoitu', value: sortingKeys.MOST_COMMENTS },
-      { label: 'Vähiten kommentoitu', value: sortingKeys.LEAST_COMMENTS },
-      { label: 'Viimeksi päivitetty', value: sortingKeys.LAST_UPDATED },
-      { label: 'Eniten reaktiota', value: sortingKeys.MOST_REACTIONS }
+      // { label: 'Eniten kommentoitu', value: sortingKeys.MOST_COMMENTS },
+      // { label: 'Vähiten kommentoitu', value: sortingKeys.LEAST_COMMENTS },
+      // { label: 'Eniten reaktiota', value: sortingKeys.MOST_REACTIONS },
+      { label: 'Viimeksi päivitetty', value: sortingKeys.LAST_UPDATED }
     ],
     openSuggestionClicked: false,
     resolvedSuggestionsClicked: false
@@ -204,7 +210,7 @@ export default {
   position: absolute;
   top: 54%;
   right: 19px;
-  transform: perspective(1px) translateY(-50%);
+  transform: perspective(1px) translateY(calc(-50% - 0.5px));
   overflow: hidden;
   text-align: right;
   font-size: 13px;
@@ -284,6 +290,25 @@ export default {
 
   .option {
     padding: 12px 6px 11px;
+  }
+}
+@media (max-width: 420px) {
+  .header-container {
+    height: 70px;
+  }
+
+  .title {
+    position: initial;
+    display: block;
+    height: 40px;
+  }
+
+  .drop-down-button {
+    position: initial;
+    display: block;
+    text-align: left;
+    height: 40px;
+    margin-left: 20px;
   }
 }
 </style>

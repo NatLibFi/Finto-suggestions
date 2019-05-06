@@ -1,13 +1,12 @@
 <template>
-    <div id="template">
-      <div id="dialog-overlay" @click="close">
+  <div id="template">
+    <div id="dialog-overlay" @click="close"></div>
+    <div id="dialog-modal">
+      <div id="dialog-close" @click="close">
+        <svg-icon icon-name="cross"><icon-cross /></svg-icon>
       </div>
-      <div id="dialog-modal">
-        <div id="dialog-close" @click="close">
-            <svg-icon icon-name="cross"><icon-cross /></svg-icon>
-        </div>
-        <slot></slot>
-      </div>
+      <slot></slot>
+    </div>
   </div>
 </template>
 
@@ -68,7 +67,7 @@ a {
   position: fixed;
   top: 50%;
   left: 50%;
-  transform: translate(-50%, -50%);
+  transform: translate(-50%, calc(-50% - 0.5px));
   max-height: calc(100% - 80px);
   width: 380px;
   overflow-y: auto;

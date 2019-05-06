@@ -1,18 +1,18 @@
 <template>
-<div v-if="pageCount" class="paginate-container">
-  <paginate
-    v-model="page"
-    :page-count="pageCount"
-    :click-handler="changePageHandler"
-    :prev-text="'«'"
-    :next-text="'»'"
-    :container-class="'paginate'"
-    :page-class="'paginate-item'"
-    :next-class="'paginate-item next'"
-    :prev-class="'paginate-item prev'"
+  <div v-if="pageCount" class="paginate-container">
+    <paginate
+      v-model="page"
+      :page-count="pageCount"
+      :click-handler="changePageHandler"
+      :prev-text="'«'"
+      :next-text="'»'"
+      :container-class="'paginate'"
+      :page-class="'paginate-item'"
+      :next-class="'paginate-item next'"
+      :prev-class="'paginate-item prev'"
     >
-  </paginate>
-</div>
+    </paginate>
+  </div>
 </template>
 
 <script>
@@ -51,7 +51,7 @@ ul.paginate {
   position: absolute;
   top: 50%;
   left: 50%;
-  transform: translate(-50%, -50%);
+  transform: translate(-50%, calc(-50% - 0.5px));
   padding: 0;
   margin: 0;
 }

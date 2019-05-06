@@ -1,20 +1,20 @@
 <template>
-<!-- Using 'login' as a catch-all term for signups and logins -->
-<div class="login-dialog">
-  <div v-if="signupSucceeded">
-    <h3>Tunnus luotu onnistuneesti</h3>
-    <p>Tunnuksesi on luotu!</p>
-    <p>Voit nyt kirjautua sisään.</p>
+  <!-- Using 'login' as a catch-all term for signups and logins -->
+  <div class="login-dialog">
+    <div v-if="signupSucceeded">
+      <h3>Tunnus luotu onnistuneesti</h3>
+      <p>Tunnuksesi on luotu!</p>
+      <p>Voit nyt kirjautua sisään.</p>
+    </div>
+    <div v-else>
+      <h3>Tunnuksesi luomisessa tuli virhe</h3>
+      <p>{{ errorMessage }}</p>
+      <p>
+        Jos unohdit salasanasi, voit nollata sen
+        <span class="changePassword" @click="showResetPasswordForm()">täältä</span>.
+      </p>
+    </div>
   </div>
-  <div v-else>
-    <h3>Tunnuksesi luomisessa tuli virhe</h3>
-    <p>{{ errorMessage }}</p>
-    <p>
-      Jos unohdit salasanan, voit nollata sen
-      <span class="changePassword" @click="showResetPasswordForm()">täältä</span>.
-    </p>
-  </div>
-</div>
 </template>
 
 <script>
@@ -37,10 +37,9 @@ export default {
 };
 </script>
 
-
 <style scoped>
 .login-dialog {
-  padding-top: 20px;
+  padding: 20px;
   overflow: none;
 }
 

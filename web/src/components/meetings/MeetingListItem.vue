@@ -11,11 +11,13 @@
           <strong>#{{ meeting.id }} </strong>
           <span v-if="meeting.meeting_date">
             <span
-              v-if="!hasDatePassed(formatDate(meeting.meeting_date.split('T')[0], 'DD.MM.YYYY'))">
+              v-if="!hasDatePassed(formatDate(meeting.meeting_date.split('T')[0], 'DD.MM.YYYY'))"
+            >
               Järjestetään
             </span>
             <span
-              v-if="hasDatePassed(formatDate(meeting.meeting_date.split('T')[0], 'DD.MM.YYYY'))">
+              v-if="hasDatePassed(formatDate(meeting.meeting_date.split('T')[0], 'DD.MM.YYYY'))"
+            >
               Järjestettiin
             </span>
             {{ formatDate(meeting.meeting_date.split('T')[0], 'DD.MM.YYYY') }}
@@ -147,7 +149,7 @@ li.item:hover {
   position: absolute;
   top: 42%;
   right: 30px;
-  transform: perspective(1px) translateY(-50%);
+  transform: perspective(1px) translateY(calc(-50% - 0.5px));
   vertical-align: middle;
   height: 24px;
   color: #6a6a6a;

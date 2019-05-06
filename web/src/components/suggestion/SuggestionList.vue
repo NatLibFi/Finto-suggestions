@@ -1,31 +1,30 @@
 <template>
-<div class="list-container">
-  <suggestion-list-header
-    :openSuggestionCount="openCount || 0"
-    :resolvedSuggestionCount="resolvedCount || 0"
-    :meetingSort="meetingSort"
-    class="header"
-    @showOpenSuggestions="fetchOpenSuggestions"
-    @showResolvedSuggestions="fetchResolvedSuggestions"
-    @showAllSuggestions="handleSuggestionFetching"
-  />
-  <p>SuggestionList is dirty: {{ isSuggestionListDirty }}</p>
-  <ul class="list">
-    <transition-group name="fade">
-      <suggestion-item
-        class="item"
-        v-for="item in paginated_items"
-        :key="item.id"
-        :suggestion="item"
-        :meetingId="meetingId"
+  <div class="list-container">
+    <suggestion-list-header
+      :openSuggestionCount="openCount || 0"
+      :resolvedSuggestionCount="resolvedCount || 0"
+      :meetingSort="meetingSort"
+      class="header"
+      @showOpenSuggestions="fetchOpenSuggestions"
+      @showResolvedSuggestions="fetchResolvedSuggestions"
+      @showAllSuggestions="handleSuggestionFetching"
+    />
+    <ul class="list">
+      <transition-group name="fade">
+        <suggestion-item
+          class="item"
+          v-for="item in paginated_items"
+          :key="item.id"
+          :suggestion="item"
+          :meetingId="meetingId"
         />
-    </transition-group>
-  </ul>
-  <suggestion-list-pagination
-    :pageCount="paginationPageCount"
-    @paginationPageChanged="paginationPageChanged"
-  />
-</div>
+      </transition-group>
+    </ul>
+    <suggestion-list-pagination
+      :pageCount="paginationPageCount"
+      @paginationPageChanged="paginationPageChanged"
+    />
+  </div>
 </template>
 
 <script>
@@ -66,7 +65,7 @@ export default {
   },
   data() {
     return {
-      paginationMaxCount: 10,
+      paginationMaxCount: 15,
       paginationPageCount: 0,
       openCount: 0,
       resolvedCount: 0,
@@ -159,8 +158,8 @@ export default {
           ? this.items.length
           : endIndex
         : endIndex > items.length
-          ? items.length
-          : endIndex;
+        ? items.length
+        : endIndex;
     },
     async paginationPageChanged(pageNumber = 1, items = null, refreshSuggestionsCount = true) {
       const start = this.getPaginationStaringIndex(pageNumber);

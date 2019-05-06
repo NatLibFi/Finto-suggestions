@@ -1,8 +1,8 @@
 <template>
-<div>
-  <navigation />
-  <user :userId="userId" />
-</div>
+  <div>
+    <navigation />
+    <user :userId="userId" />
+  </div>
 </template>
 
 <script>

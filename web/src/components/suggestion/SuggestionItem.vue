@@ -5,49 +5,52 @@
         <p class="title-row">
           <span
             v-if="suggestion.preferred_label.fi && suggestion.preferred_label.fi.value"
-            class="item-name">
+            class="item-name"
+          >
             {{ suggestion.preferred_label.fi.value }}
           </span>
           <span v-else class="item-name">
             {{ suggestion.preferred_label.fi }}
           </span>
-          <span
-            :class="[suggestionTypeToStyleClass[suggestion.suggestion_type], 'tag']">
+          <span :class="[suggestionTypeToStyleClass[suggestion.suggestion_type], 'tag']">
             {{ suggestionTypeToString[suggestion.suggestion_type] }}
           </span>
-            <span
-              v-if="suggestion.status === suggestionStateStatus.RECEIVED"
-              class="tag status-received">
-              {{ suggestionStateStatusToString[suggestionStateStatus.RECEIVED] }}
-            </span>
-            <span
-              v-if="suggestion.status === suggestionStateStatus.READ"
-              class="tag status-received">
-              {{ suggestionStateStatusToString[suggestionStateStatus.READ] }}
-            </span>
-            <span
-              v-if="suggestion.status === suggestionStateStatus.ACCEPTED"
-              class="tag status-accepted">
-              {{ suggestionStateStatusToString[suggestionStateStatus.ACCEPTED] }}
-            </span>
-            <span
-              v-if="suggestion.status === suggestionStateStatus.REJECTED"
-              class="tag status-rejected">
-              {{ suggestionStateStatusToString[suggestionStateStatus.REJECTED] }}
-            </span>
-            <span
-              v-if="suggestion.status === suggestionStateStatus.RETAINED"
-              class="tag status-retained">
-              {{ suggestionStateStatusToString[suggestionStateStatus.RETAINED] }}
-            </span>
-            <span
-              v-if="suggestion.status === suggestionStateStatus.ARCHIVED"
-              class="tag status-retained">
-              {{ suggestionStateStatusToString[suggestionStateStatus.ARCHIVED] }}
-            </span>
+          <span
+            v-if="suggestion.status === suggestionStateStatus.RECEIVED"
+            class="tag status-received"
+          >
+            {{ suggestionStateStatusToString[suggestionStateStatus.RECEIVED] }}
+          </span>
+          <span v-if="suggestion.status === suggestionStateStatus.READ" class="tag status-received">
+            {{ suggestionStateStatusToString[suggestionStateStatus.READ] }}
+          </span>
+          <span
+            v-if="suggestion.status === suggestionStateStatus.ACCEPTED"
+            class="tag status-accepted"
+          >
+            {{ suggestionStateStatusToString[suggestionStateStatus.ACCEPTED] }}
+          </span>
+          <span
+            v-if="suggestion.status === suggestionStateStatus.REJECTED"
+            class="tag status-rejected"
+          >
+            {{ suggestionStateStatusToString[suggestionStateStatus.REJECTED] }}
+          </span>
+          <span
+            v-if="suggestion.status === suggestionStateStatus.RETAINED"
+            class="tag status-retained"
+          >
+            {{ suggestionStateStatusToString[suggestionStateStatus.RETAINED] }}
+          </span>
+          <span
+            v-if="suggestion.status === suggestionStateStatus.ARCHIVED"
+            class="tag status-retained"
+          >
+            {{ suggestionStateStatusToString[suggestionStateStatus.ARCHIVED] }}
+          </span>
           <span v-if="suggestion.tags.length > 0">
             <span class="tags tag" v-for="tag in suggestion.tags" :key="tag.label">
-              {{ tag.label}}
+              {{ tag.label }}
             </span>
           </span>
         </p>
@@ -66,11 +69,12 @@
       </div>
     </div>
     <div
-      v-if="suggestion.events.filter((event) => event.event_type === eventTypes.COMMENT).length > 0"
-      class="item-comments">
+      v-if="suggestion.events.filter(event => event.event_type === eventTypes.COMMENT).length > 0"
+      class="item-comments"
+    >
       <svg-icon icon-name="comments"><icon-comments /></svg-icon>
       <span>
-        {{ suggestion.events.filter((event) => event.event_type === eventTypes.COMMENT).length }}
+        {{ suggestion.events.filter(event => event.event_type === eventTypes.COMMENT).length }}
       </span>
     </div>
   </li>
@@ -242,7 +246,7 @@ li.item:hover {
   position: absolute;
   top: 50%;
   right: 30px;
-  transform: perspective(1px) translateY(-50%);
+  transform: perspective(1px) translateY(calc(-50% - 0.5px));
   vertical-align: middle;
   height: 24px;
   color: #a4a4a4;

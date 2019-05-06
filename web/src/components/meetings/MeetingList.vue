@@ -1,25 +1,17 @@
 <template>
-<div class="list-container">
-  <meeting-list-header
-    :futureMeetingCount="futureMeetingCount"
-    :pastMeetingCount="pastMeetingCount"
-    class="header"
-  />
-  <ul :class="['list', pageCount > 1 ? 'with-pagionation' : '']">
-    <transition-group name="fade">
-      <meeting-list-item
-        class="item"
-        v-for="item in meetings"
-        :key="item.id"
-        :meeting="item"
-        />
-    </transition-group>
-  </ul>
-  <meeting-list-pagination
-    v-if="pageCount > 1"
-    :pageCount="pageCount"
-  />
-</div>
+  <div class="list-container">
+    <meeting-list-header
+      :futureMeetingCount="futureMeetingCount"
+      :pastMeetingCount="pastMeetingCount"
+      class="header"
+    />
+    <ul :class="['list', pageCount > 1 ? 'with-pagionation' : '']">
+      <transition-group name="fade">
+        <meeting-list-item class="item" v-for="item in meetings" :key="item.id" :meeting="item" />
+      </transition-group>
+    </ul>
+    <meeting-list-pagination v-if="pageCount > 1" :pageCount="pageCount" />
+  </div>
 </template>
 
 <script>
