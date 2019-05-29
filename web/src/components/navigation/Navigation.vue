@@ -109,9 +109,11 @@ import { directive as onClickaway } from 'vue-clickaway';
 import { userActions } from '../../store/modules/user/userConsts';
 import { mapUserActions } from '../../store/modules/user/userModule';
 // eslint-disable-next-line
-import { mapAuthenticatedUserGetters, mapAuthenticatedUserActions } from '../../store/modules/authenticatedUser/authenticatedUserModule.js';
+import { mapAuthenticatedUserGetters, mapAuthenticatedUserActions } from '../../store/modules/authenticatedUser/authenticatedUserModule';
 // eslint-disable-next-line
-import { authenticatedUserGetters, authenticatedUserActions, storeKeyNames, authenticatedUserMutations } from '../../store/modules/authenticatedUser/authenticatedUserConsts.js';
+import { authenticatedUserGetters, authenticatedUserActions, storeKeyNames, authenticatedUserMutations } from '../../store/modules/authenticatedUser/authenticatedUserConsts';
+import { mapSuggestionActions } from '../../store/modules/suggestion/suggestionModule';
+import { suggestionActions } from '../../store/modules/suggestion/suggestionConsts';
 
 import { userNameInitials } from '../../utils/userHelpers.js';
 
@@ -172,8 +174,14 @@ export default {
       resetPasswordByEmail: userActions.RESET_PASSWORD,
       registerLocalUser: userActions.CREATE_USER
     }),
-    returnToHome() {
+    ...mapSuggestionActions({
+      setSelectedFilters: suggestionActions.SET_SELECTED_FILTERS,
+      resetSuggestionListing: suggestionActions.RESET_SUGGESTION_LISTING
+    }),
+    async returnToHome() {
       this.$router.push('/');
+      await this.setSelectedFilters([]);
+      await this.resetSuggestionListing();
     },
     closeDropdown() {
       this.showDropdown = false;

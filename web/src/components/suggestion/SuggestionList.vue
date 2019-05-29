@@ -79,7 +79,8 @@ export default {
       filters: suggestionGetters.GET_FILTERS,
       suggestionsSelectedSort: suggestionGetters.GET_SUGGESTIONS_SELECTED_SORT,
       meetingSuggestionsSelectedSort: suggestionGetters.GET_MEETING_SUGGESTIONS_SELECTED_SORT,
-      filtered_items: suggestionGetters.GET_FILTERED_ITEMS
+      filtered_items: suggestionGetters.GET_FILTERED_ITEMS,
+      isSuggestionListDirty: suggestionGetters.GET_DIRTYNESS
     })
   },
   async created() {
@@ -109,7 +110,8 @@ export default {
       getResolvedSuggestions: suggestionActions.GET_RESOLVED_SUGGESTIONS
     }),
     ...mapSuggestionMutations({
-      setFilteredItems: suggestionMutations.SET_FILTERED_ITEMS
+      setFilteredItems: suggestionMutations.SET_FILTERED_ITEMS,
+      setDirtynessToTrue: suggestionMutations.SET_DIRTYNESS_TO_TRUE
     }),
     async handleSuggestionFetching() {
       if (this.meetingId && parseInt(this.meetingId) > 0) {
@@ -275,15 +277,17 @@ export default {
 
 ul {
   list-style: none;
+  min-height: 760px;
 }
 
 .list {
   text-align: left;
   background-color: #ffffff;
   border: 2px solid #f5f5f5;
+  border-bottom: none;
   border-top: none;
   width: 60vw;
-  margin: 0 20vw 20px;
+  margin: 0 20vw;
   padding-left: 0; /* reset inital padding for ul tags */
 }
 

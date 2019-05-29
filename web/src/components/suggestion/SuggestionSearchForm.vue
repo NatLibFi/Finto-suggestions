@@ -25,7 +25,6 @@ import {
   suggestionGetters,
   suggestionActions
 } from '../../store/modules/suggestion/suggestionConsts.js';
-
 import {
   mapSuggestionGetters,
   mapSuggestionActions
@@ -44,7 +43,8 @@ export default {
   }),
   computed: {
     ...mapSuggestionGetters({
-      filters: suggestionGetters.GET_FILTERS
+      filters: suggestionGetters.GET_FILTERS,
+      isSuggestionListDirty: suggestionGetters.GET_DIRTYNESS
     })
   },
   async created() {
@@ -74,6 +74,13 @@ export default {
         this.doSearch();
       }
     });
+  },
+  watch: {
+    isSuggestionListDirty() {
+      if (!this.isSuggestionListDirty) {
+        this.searchQuery = '';
+      }
+    }
   }
 };
 /* eslint-disable */

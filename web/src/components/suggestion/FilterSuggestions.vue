@@ -2,7 +2,12 @@
   <div class="filter-suggestions">
     <h5>
       Suodata hakutuloksia
-      <a v-if="hasTouchedFilters" @click="resetFilters()" class="clear-button">Tyhjennä valinnat</a>
+      <a
+        v-if="hasTouchedFilters && isSuggestionListDirty"
+        @click="resetFilters()"
+        class="clear-button">
+        Tyhjennä valinnat
+      </a>
     </h5>
     <div @click="isDropDownOpened.STATUS = !isDropDownOpened.STATUS" class="filter-item">
       <div :class="[isDropDownOpened.STATUS ? 'selected' : '', 'drop-down-button']">
@@ -182,7 +187,8 @@ export default {
       tags: tagGetters.GET_TAGS
     }),
     ...mapSuggestionGetters({
-      filters: suggestionGetters.GET_FILTERS
+      filters: suggestionGetters.GET_FILTERS,
+      isSuggestionListDirty: suggestionGetters.GET_DIRTYNESS
     })
   },
   async created() {

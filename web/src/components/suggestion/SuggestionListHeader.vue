@@ -2,7 +2,7 @@
   <div class="header-container">
     <div v-if="!userPage" class="title">
       <span
-        :class="['open', openSuggestionClicked ? 'toggled' : '']"
+        :class="['open', openSuggestionClicked && isSuggestionListDirty ? 'toggled' : '']"
         @click="showOpenSuggestions()"
       >
         {{ openSuggestionCount }} käsittelemätöntä
@@ -45,11 +45,13 @@ import IconTriangle from '../icons/IconTriangle';
 
 import {
   mapSuggestionGetters,
-  mapSuggestionActions
+  mapSuggestionActions,
+  mapSuggestionMutations
 } from '../../store/modules/suggestion/suggestionModule.js';
 import {
   suggestionGetters,
-  suggestionActions
+  suggestionActions,
+  suggestionMutations
 } from '../../store/modules/suggestion/suggestionConsts.js';
 
 export default {
@@ -80,7 +82,8 @@ export default {
   computed: {
     ...mapSuggestionGetters({
       suggestionSelectedSort: suggestionGetters.GET_SUGGESTIONS_SELECTED_SORT,
-      meetingSuggestionSelectedSort: suggestionGetters.GET_MEETING_SUGGESTIONS_SELECTED_SORT
+      meetingSuggestionSelectedSort: suggestionGetters.GET_MEETING_SUGGESTIONS_SELECTED_SORT,
+      isSuggestionListDirty: suggestionGetters.GET_DIRTYNESS
     })
   },
   created() {
@@ -97,6 +100,10 @@ export default {
       setMeetingSuggestionSelectedSort: suggestionActions.SET_MEETING_SUGGESTIONS_SELECTED_SORT,
       getSuggestionSelectedSort: suggestionActions.GET_SUGGESTIONS_SELECTED_SORT,
       getMeetingSuggestionSelectedSort: suggestionActions.GET_MEETING_SUGGESTIONS_SELECTED_SORT
+    }),
+    ...mapSuggestionMutations({
+      setDirtynessToTrue: suggestionMutations.SET_DIRTYNESS_TO_TRUE,
+      setDirtynessToFalse: suggestionMutations.SET_DIRTYNESS_TO_FALSE
     }),
     setSelectedSort(selectedSort) {
       if (this.meetingSort) {
@@ -126,6 +133,7 @@ export default {
       }
     },
     showOpenSuggestions() {
+      this.setDirtynessToTrue();
       if (!this.openSuggestionClicked) {
         this.openSuggestionClicked = true;
         this.resolvedSuggestionsClicked = false;
@@ -136,6 +144,7 @@ export default {
       }
     },
     showResolvedSuggestions() {
+      this.setDirtynessToTrue();
       if (!this.resolvedSuggestionsClicked) {
         this.openSuggestionClicked = false;
         this.resolvedSuggestionsClicked = true;
