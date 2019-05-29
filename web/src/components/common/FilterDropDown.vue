@@ -28,6 +28,15 @@ import SvgIcon from '../icons/SvgIcon';
 import IconCheck from '../icons/IconCheck';
 import { directive as onClickaway } from 'vue-clickaway';
 
+import {
+  mapSuggestionGetters,
+  mapSuggestionMutations
+} from '../../store/modules/suggestion/suggestionModule.js';
+import {
+  suggestionGetters,
+  suggestionMutations
+} from '../../store/modules/suggestion/suggestionConsts.js';
+
 export default {
   components: {
     SvgIcon,
@@ -43,7 +52,11 @@ export default {
     noOptionsMessage: String
   },
   methods: {
+    ...mapSuggestionMutations({
+      setDirtynessToTrue: suggestionMutations.SET_DIRTYNESS_TO_TRUE
+    }),
     filterValueSelected(option, index) {
+      this.setDirtynessToTrue();
       this.handleDropDownSelectedIndicator(index);
 
       if (option && option.value !== '') {
