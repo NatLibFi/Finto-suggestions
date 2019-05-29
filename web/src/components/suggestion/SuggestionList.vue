@@ -89,7 +89,7 @@ export default {
     await this.handleSuggestionFetching();
     this.getSelectedFilters();
 
-    if (this.filters.length > 0) {
+    if (this.filters && this.filters.length > 0) {
       this.filterSuggestions();
     }
   },
@@ -114,7 +114,7 @@ export default {
     async handleSuggestionFetching() {
       if (this.meetingId && parseInt(this.meetingId) > 0) {
         // notice: clearing all the filters when entering meeting suggestion list
-        if (this.filters.length > 0) {
+        if (this.filters && this.filters.length > 0) {
           await this.setSelectedFilters([]);
         }
         await this.fetchAndSortMeetingSuggestions();
@@ -126,7 +126,7 @@ export default {
       await this.getSuggestionsSelectedSortKey();
       if (this.suggestionsSelectedSort && this.suggestionsSelectedSort !== '') {
         await this.getSortedSuggestions(this.suggestionsSelectedSort);
-        if (this.filters.length > 0) {
+        if (this.filters && this.filters.length > 0) {
           await this.filterSuggestions();
         }
       } else {
@@ -166,7 +166,7 @@ export default {
       let paginatedItems;
       if (items) {
         paginatedItems = items;
-        if (this.filters.length > 0) {
+        if (this.filters && this.filters.length > 0) {
           await this.setFilteredItems(items);
         }
       } else if (!items && this.filters.length > 0) {
@@ -205,7 +205,7 @@ export default {
         if (searchFilter) {
           await this.getSuggestionsBySearchWord(searchFilter.value);
           items = this.items;
-          if (this.filters.length > 1) {
+          if (this.filters && this.filters.length > 1) {
             items = this.handleTheResultFiltering(this.items, this.filters);
           }
         } else {
