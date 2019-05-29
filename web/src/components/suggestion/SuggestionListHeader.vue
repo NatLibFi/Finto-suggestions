@@ -8,7 +8,7 @@
         {{ openSuggestionCount }} käsittelemätöntä
       </span>
       <span
-        :class="['resolved', resolvedSuggestionsClicked ? 'toggled' : '']"
+        :class="[resolvedSuggestionsClicked ? 'toggled' : '']"
         @click="showResolvedSuggestions()"
       >
         {{ resolvedSuggestionCount }} käsiteltyä
@@ -72,7 +72,6 @@ export default {
       { label: 'Vanhin ensin', value: sortingKeys.OLDEST_FIRST },
       // { label: 'Eniten kommentoitu', value: sortingKeys.MOST_COMMENTS },
       // { label: 'Vähiten kommentoitu', value: sortingKeys.LEAST_COMMENTS },
-      // { label: 'Eniten reaktiota', value: sortingKeys.MOST_REACTIONS },
       { label: 'Viimeksi päivitetty', value: sortingKeys.LAST_UPDATED }
     ],
     openSuggestionClicked: false,
@@ -176,6 +175,7 @@ export default {
   padding: 12px 20px 10px;
   font-size: 13px;
   font-weight: 600;
+  color: #a4a4a4;
   vertical-align: middle;
   min-width: 25%;
   cursor: pointer;
@@ -187,10 +187,6 @@ export default {
 }
 .open {
   padding-right: 10px;
-}
-
-.resolved {
-  color: #a4a4a4;
 }
 
 .toggled {

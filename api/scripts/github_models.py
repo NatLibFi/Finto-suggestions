@@ -4,13 +4,17 @@ class GithubBodyModel(object):
   def __init__(self):
     self.type = ''
     self.preferred_labels = {}
-    self.alternative_labels = ''
-    self.related = []
-    self.description = ''
-    self.reason = ''
-    self.scopeNote = ''
+    self.alternative_labels = []
+    self.broader_labels = []
+    self.narrower_labels = []
+    self.related_labels = []
+    self.exact_matches = []
+    self.needed_for = None
+    self.description = None
+    self.reason = None
+    self.scope_note = None
     self.groups = []
-    self.organization = ''
+    self.organization = None
     self.yse_term = {}
 
 class GithubMeetingModel(object):
@@ -28,3 +32,4 @@ class GithubIssueModel(object):
     self.closed = closed
     self.body = body
     self.tags = []
+    self.events = []

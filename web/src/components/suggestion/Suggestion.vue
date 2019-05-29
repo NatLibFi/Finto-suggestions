@@ -45,7 +45,7 @@
               <span>
                 <strong>#{{ suggestion.id }} </strong>
               </span>
-              <span>{{ dateTimeFormatLabel(suggestion.created) }}</span>
+              <span>{{ dateTimeFormatLabel(suggestion.created) }} </span>
               <assign-meeting
                 @closeDropdown="dropdownOpen = false"
                 @goToMeeting="goToMeeting($event)"
@@ -310,7 +310,7 @@ export default {
       });
     },
     async getUserName() {
-      if (this.suggestion.user_id) {
+      if (this.suggestion && this.suggestion.user_id) {
         await this.getUser(this.suggestion.user_id);
         this.userName = this.user.name;
       } else {
@@ -523,7 +523,6 @@ h1.suggestion-title {
   font-weight: 900;
   font-size: 24px;
   vertical-align: middle;
-  text-transform: lowercase;
 }
 
 .suggestion-header-buttons {
