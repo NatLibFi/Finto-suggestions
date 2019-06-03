@@ -33,10 +33,18 @@ export const suggestionTypeToStyleClass = {
 
 export const filterType = {
   STATUS: 'status',
-  TAG: 'tag',
+  TAGS: 'tags',
   TYPE: 'type',
   MEETING: 'meeting',
   SEARCH: 'search'
+};
+
+/* Helper method for calculating the offset for pagination */
+export const offsetByPagination = page => {
+  if (page > 1) {
+    return (page - 1) * 15;
+  }
+  return 0;
 };
 
 /*
