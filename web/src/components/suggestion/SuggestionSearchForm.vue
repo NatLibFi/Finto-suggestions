@@ -3,15 +3,16 @@
     <h5>Hae ehdotusta</h5>
     <div class="search-wrapper">
       <div class="input-wrapper">
-        <input v-model="searchQuery" ref="input" @keyup.enter="doSearch" type="text" />
+        <input
+          :value="searchWord"
+          ref="input"
+          @input="updateSearchWord"
+          @keyup.enter.prevent="updateSearchWord" />
         <transition name="fade">
-          <div v-if="searchQuery.length > 0" @click="clearSearch" class="clear-button">
+          <div v-if="searchWord.length > 0" @click="clearSearch" class="clear-button">
             <svg-icon icon-name="cross"><icon-cross /></svg-icon>
           </div>
         </transition>
-      </div>
-      <div @click="doSearch" class="search-button">
-        <span>Hae</span>
       </div>
     </div>
   </div>
@@ -38,49 +39,58 @@ export default {
     SvgIcon,
     IconCross
   },
-  data: () => ({
-    searchQuery: ''
-  }),
+  props: {
+    filters: String,
+    searchWord: String
+  },
   computed: {
     ...mapSuggestionGetters({
-      filters: suggestionGetters.GET_FILTERS,
       isSuggestionListDirty: suggestionGetters.GET_DIRTYNESS
     })
   },
-  async created() {
-    await this.getSelectedFilters();
-    if (this.filters.length > 0) {
-      const searchFilter = this.filters.find(f => f.type === filterType.SEARCH);
-      this.searchQuery = searchFilter ? searchFilter.value : '';
-    }
-  },
   methods: {
-    ...mapSuggestionActions({
-      setFilters: suggestionActions.SET_SELECTED_FILTERS,
-      getSelectedFilters: suggestionActions.GET_SELECTED_FILTERS
-    }),
-    doSearch() {
-      const value = { type: filterType.SEARCH, value: this.searchQuery };
-      handleSetFilters(value, this.filters, this.setFilters);
+    updateSearchWord() {
+      setTimeout(() => {
+        this.handleQueries(this.filters, this.$refs.input.value);
+      }, 800);
     },
     clearSearch() {
-      this.searchQuery = '';
-      this.doSearch();
+      console.log('TYHJENNETÄÄN');
+      this.handleQueries(this.filters, '');
+    },
+    handleQueries(filters, searchWord) {
+      if (filters.length > 0 && searchWord.length > 0) {
+        this.$router.push({
+          query: {
+            filters: filters,
+            search: searchWord
+          }
+        });
+      } else if (filters.length > 0 && searchWord.length === 0) {
+        this.$router.push({
+          query: {
+            filters: filters
+          }
+        });
+      } else if (filters.length === 0 && searchWord.length > 0) {
+        this.$router.push({
+          query: {
+            search: searchWord
+          }
+        });
+      } else {
+        this.$router.push({
+          query: {}
+        });
+      }
     }
   },
-  mounted: function() {
+  mounted() {
     document.addEventListener('keydown', e => {
       if (e.keyCode == 13) {
-        this.doSearch();
+        this.updateSearchWord(this.$refs.input.value);
       }
     });
-  },
-  watch: {
-    isSuggestionListDirty() {
-      if (!this.isSuggestionListDirty) {
-        this.searchQuery = '';
-      }
-    }
   }
 };
 /* eslint-disable */

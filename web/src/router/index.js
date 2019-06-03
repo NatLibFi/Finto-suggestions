@@ -1,12 +1,12 @@
 import Vue from 'vue';
 import Router from 'vue-router';
-import Index from '../views/Index.vue';
-import Suggestion from '../views/Suggestion.vue';
-import User from '../views/User.vue';
-import UserSettings from '../views/UserSettings.vue';
-import Meetings from '../views/Meetings.vue';
-import MeetingSuggestionList from '../views/MeetingSuggestionList.vue';
-import MeetingSuggestion from '../views/MeetingSuggestion.vue';
+import Suggestions from '../views/Suggestions';
+import Suggestion from '../views/Suggestion';
+import User from '../views/User';
+import UserSettings from '../views/UserSettings';
+import Meetings from '../views/Meetings';
+import MeetingSuggestionList from '../views/MeetingSuggestionList';
+import MeetingSuggestion from '../views/MeetingSuggestion';
 
 import GithubAuthentication from '../components/auth/GithubAuthentication';
 
@@ -17,7 +17,20 @@ export default new Router({
     {
       path: '/',
       name: 'index',
-      component: Index
+      component: Suggestions,
+      props: () => ({
+        page: 1
+      })
+    },
+    {
+      path: '/suggestions/:page',
+      name: 'suggestions',
+      component: Suggestions,
+      props: route => ({
+        page: route.params.page,
+        filters: route.query.filters,
+        searchWord: route.query.search
+      })
     },
     {
       path: '/suggestion/:suggestionId',

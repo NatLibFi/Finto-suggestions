@@ -1,18 +1,20 @@
 <template>
-  <div class="paginate-container">
-    <paginate
-      v-if="pageCount"
-      v-model="page"
-      :page-count="pageCount"
-      :click-handler="changePageHandler"
-      :prev-text="'«'"
-      :next-text="'»'"
-      :container-class="'paginate'"
-      :page-class="'paginate-item'"
-      :next-class="'paginate-item next'"
-      :prev-class="'paginate-item prev'"
-    >
-    </paginate>
+  <div :class="[pageCountLoading ? 'loading' : '', 'paginate-container']">
+    <transition name="fade">
+      <paginate
+        v-if="pageCount"
+        v-model="pageNumber"
+        :page-count="pageCount"
+        :click-handler="changePageHandler"
+        :prev-text="'«'"
+        :next-text="'»'"
+        :container-class="'paginate'"
+        :page-class="'paginate-item'"
+        :next-class="'paginate-item next'"
+        :prev-class="'paginate-item prev'"
+      >
+      </paginate>
+    </transition>
   </div>
 </template>
 
@@ -24,14 +26,55 @@ export default {
     Paginate
   },
   props: {
-    pageCount: Number
+    pageCount: Number,
+    page: [String, Number],
+    pageCountLoading: Boolean
   },
-  data: () => ({
-    page: 1
-  }),
+  data() {
+    return {
+      pageNumber: parseInt(this.page, 10),
+      filters: this.$route.query.filters ? this.$route.query.filters : '',
+      searchWord: this.$route.query.search ? this.$route.query.search : ''
+    };
+  },
   methods: {
     changePageHandler(pageNumber) {
-      this.$emit('paginationPageChanged', pageNumber);
+      this.$router.push({
+        name: 'suggestions',
+        params: {
+          page: pageNumber,
+          meetingId: null
+        }
+      });
+      this.handleQueries(this.filters, this.searchWord);
+    },
+    handleQueries(filters, searchWord) {
+      if (filters.length > 0 && searchWord.length > 0) {
+        this.$router.push({
+          query: {
+            filters: filters,
+            search: searchWord
+          }
+        });
+      } else if (filters.length > 0 && searchWord.length === 0) {
+        this.$router.push({
+          query: {
+            filters: filters
+          }
+        });
+      } else if (filters.length === 0 && searchWord.length > 0) {
+        this.$router.push({
+          query: {
+            search: searchWord
+          }
+        });
+      }
+    }
+  },
+  watch: {
+    $route(to, from) {
+        this.filters = this.$route.query.filters ? this.$route.query.filters : '';
+        this.searchWord = this.$route.query.search ? this.$route.query.search : '';
     }
   }
 };
@@ -113,6 +156,31 @@ ul.paginate .paginate-item {
   div.paginate-container {
     width: 80vw;
     margin: 0 10vw 50px;
+  }
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.5s;
+}
+.fade-enter,
+.fade-leave-to {
+  opacity: 0;
+}
+
+.loading {
+  animation: loading 1.5s infinite;
+}
+
+@keyframes loading {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+  100% {
+    opacity: 1;
   }
 }
 </style>

@@ -16,10 +16,10 @@
         </p>
       </div>
       <div>
-        <suggestion-search-form />
+        <suggestion-search-form :filters="filters" :searchWord="searchWord" />
       </div>
       <div>
-        <filter-suggestions :isMeeting="false" />
+        <filter-suggestions :isMeeting="false" :filters="filters" :searchWord="searchWord" />
       </div>
     </div>
   </div>
@@ -33,6 +33,16 @@ export default {
   components: {
     SuggestionSearchForm,
     FilterSuggestions
+  },
+  props: {
+    filters: {
+      type: String,
+      default: ''
+    },
+    searchWord: {
+      type: String,
+      default: ''
+    }
   },
   data() {
     return {
