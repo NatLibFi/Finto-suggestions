@@ -73,6 +73,38 @@ def get_all_or_404_custom(query_func) -> str:
     return create_response(serialized_objects, 200)
 
 
+def get_count_or_404_custom(query_func) -> str:
+    """
+        Gets count of objects, with a custom query function
+
+        :param model: model to query
+        :param query_func: a function, that takes a query
+            instance as a parameter and returns a query instance.
+
+            This is handy for filtering, sorting and searching.
+
+            def query_func()
+                query = model.query
+                if limit:
+                    query = query.limit(limit)
+                return query.all()
+
+        :returns: All columns matching the filtered query or 404
+    """
+    try:
+        db_objs = query_func()
+    except InvalidFilterException as e:
+        return create_response({}, 404, str(e))
+
+    serialized_objects = []
+    if db_objs:
+        serialized_objects = [o.as_dict() for o in db_objs]
+
+    object_count = len(serialized_objects)
+
+    return create_response({ "count": object_count }, 200)
+
+
 def get_all_or_404(model, limit: int, offset: int) -> str:
     """
     Returns all queried objects.
