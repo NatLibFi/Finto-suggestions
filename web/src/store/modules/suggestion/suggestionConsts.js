@@ -18,6 +18,7 @@ export const sessionStorageKeyNames = {
 
 export const suggestionGetters = {
   GET_SUGGESTIONS: 'getSuggestions',
+  GET_SUGGESTIONS_COUNT: 'getSuggestionsCount',
   GET_SUGGESTION: 'getSuggestion',
   GET_SEARCH_QUERY: 'getSearchQuery',
   GET_FILTERS: 'getFilters',
@@ -29,6 +30,7 @@ export const suggestionGetters = {
 
 export const suggestionMutations = {
   SET_SUGGESTIONS: 'setSuggestions',
+  SET_SUGGESTIONS_COUNT: 'setSuggestionsCount',
   SET_SUGGESTION: 'setSuggestion',
   SET_SEARCH_QUERY: 'setSearchQuery',
   SET_FILTERS: 'setFilters',
@@ -44,6 +46,7 @@ export const suggestionMutations = {
 
 export const suggestionActions = {
   GET_SUGGESTIONS: 'getSuggestions',
+  GET_SUGGESTIONS_COUNT: 'getSuggestionsCount',
   GET_SUGGESTIONS_BY_USER_ID: 'getSuggestionsByUserId',
   GET_SORTED_SUGGESTIONS_BY_USER_ID: 'getSortedSuggestionsByUserId',
   GET_SORTED_SUGGESTIONS: 'getSortedSuggestions',

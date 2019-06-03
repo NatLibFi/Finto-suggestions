@@ -18,15 +18,17 @@ export default {
   namespaced: true,
   state: {
     [storeStateNames.ITEMS]: [],
+    [storeStateNames.COUNT]: 0,
     [storeStateNames.FILTERS]: [],
     [storeStateNames.ITEM]: null,
-    [storeStateNames.SUGGESTIONS_SELECTED_SORT]: null,
-    [storeStateNames.MEETING_SUGGESTIONS_SELECTED_SORT]: null,
+    [storeStateNames.SUGGESTIONS_SELECTED_SORT]: 'CREATED_DESC',
+    [storeStateNames.MEETING_SUGGESTIONS_SELECTED_SORT]: 'CREATED_DESC',
     [storeStateNames.FILTERED_ITEMS]: [],
     [storeStateNames.IS_DIRTY]: false
   },
   getters: {
     [suggestionGetters.GET_SUGGESTIONS]: state => state[storeStateNames.ITEMS],
+    [suggestionGetters.GET_SUGGESTIONS_COUNT]: state => state[storeStateNames.COUNT],
     [suggestionGetters.GET_SUGGESTION]: state => state[storeStateNames.ITEM],
     [suggestionGetters.GET_SEARCH_QUERY]: state => state[storeStateNames.SEARCH_QUERY],
     [suggestionGetters.GET_FILTERS]: state => state[storeStateNames.FILTERS],
@@ -40,6 +42,9 @@ export default {
   mutations: {
     [suggestionMutations.SET_SUGGESTIONS](state, suggestions) {
       Vue.set(state, storeStateNames.ITEMS, suggestions);
+    },
+    [suggestionMutations.SET_SUGGESTIONS_COUNT](state, count) {
+      Vue.set(state, storeStateNames.COUNT, count);
     },
     [suggestionMutations.SET_SEARCH_QUERY](state, searchQuery) {
       Vue.set(state, storeStateNames.SEARCH_QUERY, searchQuery);
@@ -76,14 +81,24 @@ export default {
     }
   },
   actions: {
-    async [suggestionActions.GET_SUGGESTIONS]({ commit }) {
-      const result = await api.suggestion.getSuggestions();
+    async [suggestionActions.GET_SUGGESTIONS](
+      { commit },
+      { offset, sortValue, filters, searchWord }
+    ) {
+      const result = await api.suggestion.getSuggestions(offset, sortValue, filters, searchWord);
       if (result && result.code == 200) {
         commit(suggestionMutations.SET_SUGGESTIONS, result.data);
+        return result.items;
       }
     },
-    async [suggestionActions.GET_SUGGESTIONS_BY_USER_ID]({ commit }, userId) {
-      const result = await api.suggestion.getSuggestionsByUserId(userId);
+    async [suggestionActions.GET_SUGGESTIONS_COUNT]({ commit }, { filters, searchWord }) {
+      const result = await api.suggestion.getSuggestionsCount(filters, searchWord);
+      if (result && result.code == 200) {
+        commit(suggestionMutations.SET_SUGGESTIONS_COUNT, result.data.count);
+      }
+    },
+    async [suggestionActions.GET_SUGGESTIONS_BY_USER_ID]({ commit }, userId, offset) {
+      const result = await api.suggestion.getSuggestionsByUserId(userId, offset);
       if (result && result.code == 200) {
         commit(suggestionMutations.SET_SUGGESTIONS, result.data);
       }
@@ -97,8 +112,9 @@ export default {
         commit(suggestionMutations.SET_SUGGESTIONS, result.data);
       }
     },
-    async [suggestionActions.GET_SORTED_SUGGESTIONS]({ commit }, sortValue) {
-      const result = await api.suggestion.getSortedSuggestions(sortValue);
+    async [suggestionActions.GET_SORTED_SUGGESTIONS]({ commit }, { sortValue, offset }) {
+      console.log(sortValue, offset);
+      const result = await api.suggestion.getSortedSuggestions(sortValue, offset);
       if (result && result.code == 200) {
         commit(suggestionMutations.SET_SUGGESTIONS, result.data);
       }
@@ -182,8 +198,8 @@ export default {
         console.log(`Could not set suggestion state to rejected ${params.suggestionId}, ${error}`);
       }
     },
-    async [suggestionActions.GET_SUGGESTIONS_BY_SEARCH_WORD]({ commit }, searchWord) {
-      const result = await api.suggestion.getSuggestionsBySearchWord(searchWord);
+    async [suggestionActions.GET_SUGGESTIONS_BY_SEARCH_WORD]({ commit }, searchWord, offset) {
+      const result = await api.suggestion.getSuggestionsBySearchWord(searchWord, offset);
       if (result && result.code === 200) {
         commit(suggestionMutations.SET_SUGGESTIONS, result.data);
         commit(suggestionMutations.SET_DIRTYNESS_TO_TRUE);
@@ -201,14 +217,14 @@ export default {
         commit(suggestionMutations.SET_FILTERS, filters);
       }
     },
-    async [suggestionActions.GET_OPEN_SUGGESTIONS]({ commit }) {
-      const result = await api.suggestion.getOpenSuggestions();
+    async [suggestionActions.GET_OPEN_SUGGESTIONS]({ commit }, offset) {
+      const result = await api.suggestion.getOpenSuggestions(offset);
       if (result && result.code === 200) {
         commit(suggestionMutations.SET_SUGGESTIONS, result.data);
       }
     },
-    async [suggestionActions.GET_RESOLVED_SUGGESTIONS]({ commit }) {
-      const result = await api.suggestion.getResolvedSuggestions();
+    async [suggestionActions.GET_RESOLVED_SUGGESTIONS]({ commit }, offset) {
+      const result = await api.suggestion.getResolvedSuggestions(offset);
       if (result && result.code === 200) {
         commit(suggestionMutations.SET_SUGGESTIONS, result.data);
       }

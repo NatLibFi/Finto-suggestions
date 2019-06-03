@@ -62,6 +62,23 @@ paths:
           description: The created suggestion
           schema:
             $ref: '#/definitions/SuggestionResponse'
+  /suggestions/count:
+    get:
+      operationId: api.logic.suggestions.get_suggestions_count
+      parameters:
+        - name: filters
+          in: query
+          description: 'Pipe-separated filter string, i.e. status:accepted|type:new|meeting_id:12'
+          required: false
+          type: string
+        - name: search
+          in: query
+          description: Search string
+          required: false
+          type: string
+      responses:
+        "200":
+          description: Object containing number of suggestions
   /suggestions/user={user_id}:
     get:
       operationId: api.logic.suggestions.get_user_suggestions

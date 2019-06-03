@@ -1,17 +1,30 @@
 import { get, put, post, del, patch } from '../utils';
 import { asciiUriEncoding } from '../helper';
+import { sortingKeys } from '../../utils/sortingHelper';
 
-const defaultLimit = 0;
+const defaultLimit = 15;
 
-//TODO: cache limited fetch, because this is really slow
 export default {
-  getSuggestions: () => get({ resource: `/suggestions?limit=${defaultLimit}` }),
-  getSortedSuggestions: sortValue =>
-    get({ resource: `/suggestions?limit=${defaultLimit}&sort=${sortValue}` }),
-  getSuggestionsByUserId: userId => get({ resource: `/suggestions/user=${userId}` }),
+  getSuggestions: (
+    offset = 0,
+    sortValue = sortingKeys.NEWEST_FIRST,
+    filters = '',
+    searchWord = ''
+  ) =>
+    get({
+      // eslint-disable-next-line
+      resource: `/suggestions?limit=${defaultLimit}&offset=${offset}&sort=${sortValue}&filters=${filters}&search=${searchWord}`
+    }),
+  getSuggestionsCount: (filters, searchWord) =>
+    get({ resource: `/suggestions/count?filters=${filters}&search=${searchWord}` }),
+  getSortedSuggestions: (sortValue, offset) =>
+    get({ resource: `/suggestions?limit=${defaultLimit}&sort=${sortValue}&offset=${offset}` }),
+  getSuggestionsByUserId: (userId, offset = 0) =>
+    get({ resource: `/suggestions/user=${userId}?limit=${defaultLimit}&offset=${offset}` }),
   getSortedSuggestionByUserId: (userId, sortValue) =>
     get({ resource: `/suggestions/user=${userId}?sort=${sortValue}` }),
-  getSuggestionsBySearchWord: searchWord => get({ resource: `suggestions?search=${searchWord}` }),
+  getSuggestionsBySearchWord: (searchWord, offset = 0) =>
+    get({ resource: `suggestions?search=${searchWord}?limit=${defaultLimit}&offset=${offset}` }),
   getSuggestionById: suggestionId => get({ resource: `/suggestions/${suggestionId}` }),
   assignUserToSuggestion: (suggestionId, userId) =>
     put({ resource: `/suggestions/${suggestionId}/assign/${userId}` }),
