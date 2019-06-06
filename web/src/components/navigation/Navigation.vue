@@ -174,14 +174,8 @@ export default {
       resetPasswordByEmail: userActions.RESET_PASSWORD,
       registerLocalUser: userActions.CREATE_USER
     }),
-    ...mapSuggestionActions({
-      setSelectedFilters: suggestionActions.SET_SELECTED_FILTERS,
-      resetSuggestionListing: suggestionActions.RESET_SUGGESTION_LISTING
-    }),
     async returnToHome() {
       this.$router.push('/');
-      await this.setSelectedFilters([]);
-      await this.resetSuggestionListing();
     },
     closeDropdown() {
       this.showDropdown = false;
