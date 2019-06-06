@@ -85,7 +85,8 @@ export default {
         name: 'meeting-suggestion-list',
         params: {
           meetingId: this.meeting.id,
-          meeting: this.meeting
+          meeting: this.meeting,
+          page: 1
         }
       });
     },

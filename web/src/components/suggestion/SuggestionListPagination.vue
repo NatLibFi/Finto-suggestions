@@ -21,11 +21,17 @@
 <script>
 import Paginate from 'vuejs-paginate';
 
+import { handleQueries } from '../../utils/suggestionHelpers.js';
+
 export default {
   components: {
     Paginate
   },
   props: {
+    meetingId: {
+      type: Number,
+      default: null
+    },
     pageCount: Number,
     page: [String, Number],
     pageCountLoading: Boolean
@@ -34,47 +40,37 @@ export default {
     return {
       pageNumber: parseInt(this.page, 10),
       filters: this.$route.query.filters ? this.$route.query.filters : '',
-      searchWord: this.$route.query.search ? this.$route.query.search : ''
+      searchWord: this.$route.query.search ? this.$route.query.search : '',
+      sort: this.$route.query.sort ? this.$route.query.sort : ''
     };
   },
   methods: {
     changePageHandler(pageNumber) {
-      this.$router.push({
-        name: 'suggestions',
-        params: {
-          page: pageNumber,
-          meetingId: null
-        }
-      });
-      this.handleQueries(this.filters, this.searchWord);
-    },
-    handleQueries(filters, searchWord) {
-      if (filters.length > 0 && searchWord.length > 0) {
+      if (this.meetingId) {
         this.$router.push({
-          query: {
-            filters: filters,
-            search: searchWord
+          name: 'meeting-suggestion-list',
+          params: {
+            page: pageNumber,
+            meetingId: this.meetingId
           }
-        });
-      } else if (filters.length > 0 && searchWord.length === 0) {
+        })
+      } else {
         this.$router.push({
-          query: {
-            filters: filters
-          }
-        });
-      } else if (filters.length === 0 && searchWord.length > 0) {
-        this.$router.push({
-          query: {
-            search: searchWord
+          name: 'suggestions',
+          params: {
+            page: pageNumber,
+            meetingId: null
           }
         });
       }
+      handleQueries(this.filters, this.searchWord, this.sort, this.$router);
     }
   },
   watch: {
-    $route(to, from) {
+    $route() {
         this.filters = this.$route.query.filters ? this.$route.query.filters : '';
         this.searchWord = this.$route.query.search ? this.$route.query.search : '';
+        this.sort = this.$route.query.sort ? this.$route.query.sort : '';
     }
   }
 };

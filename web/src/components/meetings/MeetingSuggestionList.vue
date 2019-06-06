@@ -1,6 +1,7 @@
 <template>
   <div>
     <div class="meeting-container">
+      <p>page {{page}}</p>
       <div class="arrow-button">
         <a @click="goToMeetings" unselectable="on">
           <svg-icon icon-name="arrow"><icon-arrow /></svg-icon>
@@ -15,7 +16,7 @@
         </div>
       </div>
     </div>
-    <suggestion-list :meetingId="meetingId" />
+    <suggestion-list :meetingId="meetingId" :page="page" />
   </div>
 </template>
 
@@ -40,6 +41,11 @@ export default {
     meetingId: {
       type: [String, Number],
       required: true
+    },
+    page: {
+      type: [String, Number],
+      required: true,
+      default: 1
     }
   },
   methods: {

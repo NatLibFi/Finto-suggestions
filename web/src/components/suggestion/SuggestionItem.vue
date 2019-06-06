@@ -88,7 +88,7 @@ import {
   suggestionTypeToString,
   suggestionStateStatus,
   suggestionStateStatusToString
-} from '../../utils/suggestionHelpers';
+} from '../../utils/suggestionHelpers.js';
 import { dateTimeFormatLabel } from '../../utils/dateHelper';
 import { eventTypes } from '../../utils/eventHelper';
 

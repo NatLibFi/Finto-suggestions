@@ -27,9 +27,7 @@ export default new Router({
       name: 'suggestions',
       component: Suggestions,
       props: route => ({
-        page: route.params.page,
-        filters: route.query.filters,
-        searchWord: route.query.search
+        page: route.params.page
       })
     },
     {
@@ -58,7 +56,7 @@ export default new Router({
       component: Meetings
     },
     {
-      path: '/meetings/:meetingId',
+      path: '/meetings/:meetingId/:page',
       name: 'meeting-suggestion-list',
       component: MeetingSuggestionList,
       props: true

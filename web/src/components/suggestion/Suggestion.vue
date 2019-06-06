@@ -167,7 +167,7 @@ import {
   suggestionTypeToString,
   suggestionStateStatus,
   suggestionStateStatusToString
-} from '../../utils/suggestionHelpers';
+} from '../../utils/suggestionHelpers.js';
 
 import {
   suggestionGetters,
