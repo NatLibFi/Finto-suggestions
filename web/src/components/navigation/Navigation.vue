@@ -2,18 +2,18 @@
   <div class="navigation">
     <div class="nav-content">
       <div class="nav-title">
-        <img @click="returnToHome" src="./finto-logo.svg" alt="">
+        <img @click="returnToHome" src="./finto-logo.svg" alt="" />
         <span @click="returnToHome">Finto – Käsite-ehdotukset</span>
       </div>
       <transition name="fade">
-        <div v-if="isAuthenticated" class="nav-menu" @click="showDropdown = true">
+        <div v-if="isAuthenticated && userName" class="nav-menu" @click="showDropdown = true">
           <div class="user-bubble">
             <span v-if="userInitials" unselectable="on">{{ userInitials }}</span>
             <span v-else unselectable="on">{{ userId }}</span>
           </div>
           <div class="nav-menu-user">
-            <p v-if="name && name.length > 0">{{ name }}</p>
-            <p v-else>Käyttäjä {{ userId }}</p>
+            <p v-if="userName && userName.length > 0">{{ userName }}</p>
+            <p v-if="userName && userName.length === 0">Käyttäjä {{ userId }}</p>
           </div>
           <svg-icon icon-name="triangle"><icon-triangle /></svg-icon>
         </div>
@@ -26,8 +26,12 @@
       </transition>
       <transition name="fade">
         <!-- Mobile menu shown below screen width of 700px -->
-        <div v-if="isAuthenticated" class="nav-menu-mobile" @click="showMobileDropdown = true">
-          <svg-icon icon-name="more"><icon-more/></svg-icon>
+        <div
+          v-if="isAuthenticated && userName"
+          class="nav-menu-mobile"
+          @click="showMobileDropdown = true"
+        >
+          <svg-icon icon-name="more"><icon-more /></svg-icon>
         </div>
       </transition>
       <transition name="fade">
@@ -47,14 +51,15 @@
     <div
       v-if="showMobileDropdown"
       v-on-clickaway="closeMobileDropdown"
-      class="nav-mobile-dropdown dropdown">
+      class="nav-mobile-dropdown dropdown"
+    >
       <div class="nav-mobile-dropdown-header">
         <div class="user-bubble">
           <span unselectable="on">{{ userInitials }}</span>
         </div>
         <div class="nav-dropdown-user">
-          <p v-if="name && name.length > 0">{{ name }}</p>
-          <p v-else>Käyttäjä {{ userId }}</p>
+          <p v-if="userName && userName.length > 0">{{ userName }}</p>
+          <p v-if="userName && userName.length === 0">Käyttäjä {{ userId }}</p>
         </div>
       </div>
       <div class="nav-mobile-dropdown-content">
@@ -66,17 +71,26 @@
 
     <div v-if="showLoginDialog">
       <centered-dialog @close="closeDialog">
-        <the-login @login="login" @resetPassword="resetPassword"/>
+        <the-login
+          :showResetPasswordForm="showResetPasswordForm"
+          :showLocalLoginError="showLocalLoginError"
+          @login="login"
+          @resetPassword="resetPassword"
+        />
       </centered-dialog>
     </div>
     <div v-if="showSignupDialog">
       <centered-dialog @close="closeDialog">
-        <the-signup @signup="signup"/>
+        <the-signup @signup="signup" />
       </centered-dialog>
     </div>
     <div v-if="showSignupConfirmation">
       <centered-dialog @close="closeDialog">
-        <the-signup-confirmation/>
+        <the-signup-confirmation
+          :signupSucceeded="signupSucceeded"
+          :errorMessage="signupError"
+          @openResetPasswordForm="openResetPasswordForm"
+        />
       </centered-dialog>
     </div>
   </div>
@@ -92,15 +106,16 @@ import IconMore from '../icons/IconMore';
 import IconTriangle from '../icons/IconTriangle';
 import { directive as onClickaway } from 'vue-clickaway';
 
-import { userActions, userGetters } from '../../store/modules/user/userConsts';
-import { mapUserActions, mapUserGetters } from '../../store/modules/user/userModule';
+import { userActions } from '../../store/modules/user/userConsts';
+import { mapUserActions } from '../../store/modules/user/userModule';
 // eslint-disable-next-line
-import { mapAuthenticatedUserGetters, mapAuthenticatedUserActions } from '../../store/modules/authenticatedUser/authenticatedUserModule.js';
+import { mapAuthenticatedUserGetters, mapAuthenticatedUserActions } from '../../store/modules/authenticatedUser/authenticatedUserModule';
 // eslint-disable-next-line
-import { authenticatedUserGetters, authenticatedUserActions, storeKeyNames } from '../../store/modules/authenticatedUser/authenticatedUserConsts.js';
+import { authenticatedUserGetters, authenticatedUserActions, storeKeyNames, authenticatedUserMutations } from '../../store/modules/authenticatedUser/authenticatedUserConsts';
+import { mapSuggestionActions } from '../../store/modules/suggestion/suggestionModule';
+import { suggestionActions } from '../../store/modules/suggestion/suggestionConsts';
 
-import api from '../../api/index.js';
-import { userNameInitials, emailValidator } from '../../utils/userHelpers.js';
+import { userNameInitials } from '../../utils/userHelpers.js';
 
 export default {
   components: {
@@ -123,16 +138,17 @@ export default {
     showMobileDropdown: false,
     showLoginDialog: false,
     showSignupDialog: false,
-    showSignupConfirmation: false
+    showSignupConfirmation: false,
+    signupSucceeded: true,
+    signupError: '',
+    showResetPasswordForm: false,
+    showLocalLoginError: false
   }),
   computed: {
-    ...mapUserGetters({
-      user: userGetters.GET_USER
-    }),
     ...mapAuthenticatedUserGetters({
       isAuthenticated: authenticatedUserGetters.GET_IS_AUTHENTICATED,
       userId: authenticatedUserGetters.GET_USER_ID,
-      name: authenticatedUserGetters.GET_USER_NAME,
+      userName: authenticatedUserGetters.GET_USER_NAME,
       // can be shown if login did not succeed:
       error: authenticatedUserGetters.GET_AUTHENTICATE_ERROR
     })
@@ -140,26 +156,32 @@ export default {
   async created() {
     await this.validateAuthentication();
     if (this.isAuthenticated) {
-      await this.handleTokenRefesh();
+      await this.refreshToken();
+      await this.getUserIdFromStorage();
+      await this.handleUserFetch();
     }
-    this.getUserIdFromStorage();
-    this.handleUserFetch();
   },
   methods: {
     ...mapAuthenticatedUserActions({
       validateAuthentication: authenticatedUserActions.VALIDATE_AUTHENTICATION,
       revokeAuthentication: authenticatedUserActions.REVOKE_AUTHENTICATION,
-      getUserName: authenticatedUserActions.GET_USER_NAME,
       authenticateLocalUser: authenticatedUserActions.AUTHENTICATE_LOCAL_USER,
       getUserIdFromStorage: authenticatedUserActions.GET_USER_ID_FROM_STORAGE,
-      refreshToken: authenticatedUserActions.REFRESH_AUTHORIZATION_TOKEN
+      refreshToken: authenticatedUserActions.REFRESH_AUTHORIZATION_TOKEN,
+      getUserName: authenticatedUserActions.GET_USER_NAME
     }),
     ...mapUserActions({
-      getUser: userActions.GET_USER,
-      resetPasswordByEmail: userActions.RESET_PASSWORD
+      resetPasswordByEmail: userActions.RESET_PASSWORD,
+      registerLocalUser: userActions.CREATE_USER
     }),
-    returnToHome() {
+    ...mapSuggestionActions({
+      setSelectedFilters: suggestionActions.SET_SELECTED_FILTERS,
+      resetSuggestionListing: suggestionActions.RESET_SUGGESTION_LISTING
+    }),
+    async returnToHome() {
       this.$router.push('/');
+      await this.setSelectedFilters([]);
+      await this.resetSuggestionListing();
     },
     closeDropdown() {
       this.showDropdown = false;
@@ -171,23 +193,33 @@ export default {
       this.showLoginDialog = false;
       this.showSignupDialog = false;
       this.showSignupConfirmation = false;
+      this.showLocalLoginError = false;
     },
     async login(data) {
       if (data) {
         if (data.service !== '' && data.service !== 'local') {
           await this.oAuth2Authenticate(data.service);
         } else {
-          await this.authenticateLocalUser(data.loginData);
+          await this.authenticateLocalUser(data.loginData)
+            .then(() => {
+              if (this.userId) {
+                this.getUserName(this.userId);
+                this.showLoginDialog = false;
+              }
+            })
+            .catch(() => {
+              this.showLocalLoginError = true;
+            });
         }
       }
-      this.getUser(this.userId);
-      this.showLoginDialog = false;
     },
     async signup(data) {
       if (data && data.service !== 'local') {
         await this.oAuth2Authenticate(data.service);
       } else {
-        await this.registerLocalUser(data.userdata);
+        const createdUserResponse = await this.registerLocalUser(data.userdata);
+        this.signupSucceeded = createdUserResponse.success;
+        this.signupError = createdUserResponse.error;
       }
       this.showSignupDialog = false;
       this.showSignupConfirmation = true;
@@ -216,43 +248,36 @@ export default {
       this.revokeAuthentication();
       this.closeDropdown();
       this.closeMobileDropdown();
-      this.$router.push('/');
     },
     async oAuth2Authenticate() {
       this.$router.push('/github');
     },
-    async registerLocalUser(userdata) {
-      await api.user.registerLocalUser(userdata);
-    },
-    handleUserFetch() {
+    async handleUserFetch() {
       if (parseInt(this.userId) > 0) {
-        this.getUserName(parseInt(this.userId));
+        this.getUserName(this.userId);
+        this.handleUserInitialsFetch();
       }
     },
     handleUserInitialsFetch() {
-      this.userInitials = userNameInitials(this.name);
-    },
-    async handleTokenRefesh() {
-      // eslint-disable-next-line no-undef
-      const access_token = $cookies.get(storeKeyNames.ACCESS_TOKEN);
-      // eslint-disable-next-line no-undef
-      const refreshToken = $cookies.get(storeKeyNames.REFRESH_TOKEN);
-      await this.refreshToken({ access_token: access_token, refresh_token: refreshToken });
+      this.userInitials = userNameInitials(this.userName);
     },
     async resetPassword(email) {
-      this.showLoginDialog = false;
-      const validEmail = emailValidator(email);
-      if (validEmail) {
-        await this.resetPasswordByEmail(email);
-      } else {
-        //TODO: show some info to user about this
-        console.log('email is not valid', email);
-      }
+      await this.resetPasswordByEmail(email)
+        .then(() => {
+        })
+        .catch(() => {
+          console.log('Resetting failed.');
+        });
+    },
+    openResetPasswordForm() {
+      this.showSignupConfirmation = false;
+      this.showResetPasswordForm = true;
+      this.showLoginDialog = true;
     }
   },
   watch: {
-    name: {
-      handler: 'handleUserInitialsFetch',
+    userName: {
+      handler: 'handleUserFetch',
       immediate: true
     }
   },
@@ -288,7 +313,7 @@ export default {
   position: absolute;
   top: 50%;
   left: 40px;
-  transform: perspective(1px) translateY(-50%);
+  transform: perspective(1px) translateY(calc(-50% - 0.5px));
   height: 60px;
   line-height: 60px;
   width: 45%;
@@ -298,7 +323,7 @@ export default {
   position: absolute;
   top: 51%;
   left: 0;
-  transform: perspective(1px) translateY(-50%);
+  transform: perspective(1px) translateY(calc(-50% - 0.5px));
 }
 
 .nav-title img:hover,
@@ -313,7 +338,7 @@ export default {
   position: absolute;
   top: 56%;
   left: 90px;
-  transform: perspective(1px) translateY(-50%);
+  transform: perspective(1px) translateY(calc(-50% - 0.5px));
   font-weight: 600;
 }
 
@@ -322,7 +347,7 @@ export default {
   position: absolute;
   top: 50%;
   right: 40px;
-  transform: perspective(1px) translateY(-47%);
+  transform: perspective(1px) translateY(calc(-47% - 0.5px));
   height: 60px;
   line-height: 60px;
   width: 45%;
@@ -354,7 +379,7 @@ export default {
   padding: 0 40px 0 20px;
   top: 52%;
   height: 100%;
-  transform: perspective(1px) translateY(-50%);
+  transform: perspective(1px) translateY(calc(-50% - 0.5px));
   color: #1ea195;
   font-weight: 600;
   font-size: 15px;
@@ -365,7 +390,7 @@ export default {
 .nav-menu .user-bubble {
   position: relative;
   top: 50%;
-  transform: perspective(1px) translateY(-50%);
+  transform: perspective(1px) translateY(calc(-50% - 0.5px));
   overflow: hidden;
 }
 
@@ -389,14 +414,14 @@ export default {
   right: 0;
   padding-right: 40px;
   top: 50%;
-  transform: perspective(1px) translateY(-50%);
+  transform: perspective(1px) translateY(calc(-50% - 0.5px));
   height: 100%;
 }
 
 .nav-menu-mobile svg {
   position: relative;
   top: 55%;
-  transform: perspective(1px) translateY(-50%);
+  transform: perspective(1px) translateY(calc(-50% - 0.5px));
   display: inline-block;
   margin: 0 0 -8px 10px;
   background-size: 24px 24px;
@@ -456,7 +481,7 @@ export default {
   font-size: 16px;
   position: absolute;
   top: 50%;
-  transform: perspective(1px) translateY(-50%);
+  transform: perspective(1px) translateY(calc(-50% - 0.5px));
 }
 
 .nav-mobile-dropdown-header .nav-dropdown-user {
@@ -467,7 +492,7 @@ export default {
   position: absolute;
   left: 60px;
   top: 50%;
-  transform: perspective(1px) translateY(-50%);
+  transform: perspective(1px) translateY(calc(-50% - 0.5px));
 }
 
 .nav-mobile-dropdown-content div {

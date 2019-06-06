@@ -2,13 +2,17 @@
   <div class="header-container">
     <div v-if="!userPage" class="title">
       <span
-        :class="['open', openSuggestionClicked ? 'toggled' : '']"
-        @click="showOpenSuggestions()">
-        {{ openSuggestionCount }} käsittelemätöntä</span>
+        :class="['open', openSuggestionClicked && isSuggestionListDirty ? 'toggled' : '']"
+        @click="showOpenSuggestions()"
+      >
+        {{ openSuggestionCount }} käsittelemätöntä
+      </span>
       <span
-        :class="['resolved', resolvedSuggestionsClicked ? 'toggled' : '']"
-        @click="showResolvedSuggestions()">
-        {{ resolvedSuggestionCount }} käsiteltyä</span>
+        :class="[resolvedSuggestionsClicked ? 'toggled' : '']"
+        @click="showResolvedSuggestions()"
+      >
+        {{ resolvedSuggestionCount }} käsiteltyä
+      </span>
     </div>
     <div v-if="userPage" class="title">
       <span>Käyttäjälle asetut ehdotukset</span>
@@ -16,7 +20,8 @@
     <div
       v-if="!userPage"
       @click="isDropDownOpened = !isDropDownOpened"
-      :class="[isDropDownOpened ? 'selected' : '', 'drop-down-button']">
+      :class="[isDropDownOpened ? 'selected' : '', 'drop-down-button']"
+    >
       <span>Järjestä</span>
       <svg-icon icon-name="triangle"><icon-triangle /></svg-icon>
     </div>
@@ -26,7 +31,8 @@
       :dropDownOptions="dropDownOptions"
       @setSelectedSort="setSelectedSort"
       @refreshSelectedIndex="selectedSortOptionIndex = $event"
-      @closeDropDown="closeDropDown"/>
+      @closeDropDown="closeDropDown"
+    />
   </div>
 </template>
 
@@ -39,11 +45,13 @@ import IconTriangle from '../icons/IconTriangle';
 
 import {
   mapSuggestionGetters,
-  mapSuggestionActions
+  mapSuggestionActions,
+  mapSuggestionMutations
 } from '../../store/modules/suggestion/suggestionModule.js';
 import {
   suggestionGetters,
-  suggestionActions
+  suggestionActions,
+  suggestionMutations
 } from '../../store/modules/suggestion/suggestionConsts.js';
 
 export default {
@@ -64,10 +72,9 @@ export default {
     dropDownOptions: [
       { label: 'Uusin ensin', value: sortingKeys.NEWEST_FIRST },
       { label: 'Vanhin ensin', value: sortingKeys.OLDEST_FIRST },
-      { label: 'Eniten kommentoitu', value: sortingKeys.MOST_COMMENTS },
-      { label: 'Vähiten kommentoitu', value: sortingKeys.LEAST_COMMENTS },
-      { label: 'Viimeksi päivitetty', value: sortingKeys.LAST_UPDATED },
-      { label: 'Eniten reaktiota', value: sortingKeys.MOST_REACTIONS }
+      // { label: 'Eniten kommentoitu', value: sortingKeys.MOST_COMMENTS },
+      // { label: 'Vähiten kommentoitu', value: sortingKeys.LEAST_COMMENTS },
+      { label: 'Viimeksi päivitetty', value: sortingKeys.LAST_UPDATED }
     ],
     openSuggestionClicked: false,
     resolvedSuggestionsClicked: false
@@ -75,7 +82,8 @@ export default {
   computed: {
     ...mapSuggestionGetters({
       suggestionSelectedSort: suggestionGetters.GET_SUGGESTIONS_SELECTED_SORT,
-      meetingSuggestionSelectedSort: suggestionGetters.GET_MEETING_SUGGESTIONS_SELECTED_SORT
+      meetingSuggestionSelectedSort: suggestionGetters.GET_MEETING_SUGGESTIONS_SELECTED_SORT,
+      isSuggestionListDirty: suggestionGetters.GET_DIRTYNESS
     })
   },
   created() {
@@ -92,6 +100,10 @@ export default {
       setMeetingSuggestionSelectedSort: suggestionActions.SET_MEETING_SUGGESTIONS_SELECTED_SORT,
       getSuggestionSelectedSort: suggestionActions.GET_SUGGESTIONS_SELECTED_SORT,
       getMeetingSuggestionSelectedSort: suggestionActions.GET_MEETING_SUGGESTIONS_SELECTED_SORT
+    }),
+    ...mapSuggestionMutations({
+      setDirtynessToTrue: suggestionMutations.SET_DIRTYNESS_TO_TRUE,
+      setDirtynessToFalse: suggestionMutations.SET_DIRTYNESS_TO_FALSE
     }),
     setSelectedSort(selectedSort) {
       if (this.meetingSort) {
@@ -121,6 +133,7 @@ export default {
       }
     },
     showOpenSuggestions() {
+      this.setDirtynessToTrue();
       if (!this.openSuggestionClicked) {
         this.openSuggestionClicked = true;
         this.resolvedSuggestionsClicked = false;
@@ -131,6 +144,7 @@ export default {
       }
     },
     showResolvedSuggestions() {
+      this.setDirtynessToTrue();
       if (!this.resolvedSuggestionsClicked) {
         this.openSuggestionClicked = false;
         this.resolvedSuggestionsClicked = true;
@@ -170,6 +184,7 @@ export default {
   padding: 12px 20px 10px;
   font-size: 13px;
   font-weight: 600;
+  color: #a4a4a4;
   vertical-align: middle;
   min-width: 25%;
   cursor: pointer;
@@ -183,10 +198,6 @@ export default {
   padding-right: 10px;
 }
 
-.resolved {
-  color: #a4a4a4;
-}
-
 .toggled {
   color: #06a798;
 }
@@ -195,7 +206,7 @@ export default {
   position: absolute;
   top: 54%;
   right: 19px;
-  transform: perspective(1px) translateY(-50%);
+  transform: perspective(1px) translateY(calc(-50% - 0.5px));
   overflow: hidden;
   text-align: right;
   font-size: 13px;
@@ -275,6 +286,25 @@ export default {
 
   .option {
     padding: 12px 6px 11px;
+  }
+}
+@media (max-width: 420px) {
+  .header-container {
+    height: 70px;
+  }
+
+  .title {
+    position: initial;
+    display: block;
+    height: 40px;
+  }
+
+  .drop-down-button {
+    position: initial;
+    display: block;
+    text-align: left;
+    height: 40px;
+    margin-left: 20px;
   }
 }
 </style>

@@ -1,30 +1,30 @@
 <template>
-<div class="list-container">
-  <suggestion-list-header
-    :openSuggestionCount="openCount || 0"
-    :resolvedSuggestionCount="resolvedCount || 0"
-    :meetingSort="meetingSort"
-    class="header"
-    @showOpenSuggestions="fetchOpenSuggestions"
-    @showResolvedSuggestions="fetchResolvedSuggestions"
-    @showAllSuggestions="handleSuggestionFetching"
-  />
-  <ul class="list">
-    <transition-group name="fade">
-      <suggestion-item
-        class="item"
-        v-for="item in paginated_items"
-        :key="item.id"
-        :suggestion="item"
-        :meetingId="meetingId"
+  <div class="list-container">
+    <suggestion-list-header
+      :openSuggestionCount="openCount || 0"
+      :resolvedSuggestionCount="resolvedCount || 0"
+      :meetingSort="meetingSort"
+      class="header"
+      @showOpenSuggestions="fetchOpenSuggestions"
+      @showResolvedSuggestions="fetchResolvedSuggestions"
+      @showAllSuggestions="handleSuggestionFetching"
+    />
+    <ul class="list">
+      <transition-group name="fade">
+        <suggestion-item
+          class="item"
+          v-for="item in paginated_items"
+          :key="item.id"
+          :suggestion="item"
+          :meetingId="meetingId"
         />
-    </transition-group>
-  </ul>
-  <suggestion-list-pagination
-    :pageCount="paginationPageCount"
-    @paginationPageChanged="paginationPageChanged"
-  />
-</div>
+      </transition-group>
+    </ul>
+    <suggestion-list-pagination
+      :pageCount="paginationPageCount"
+      @paginationPageChanged="paginationPageChanged"
+    />
+  </div>
 </template>
 
 <script>
@@ -65,7 +65,7 @@ export default {
   },
   data() {
     return {
-      paginationMaxCount: 10,
+      paginationMaxCount: 15,
       paginationPageCount: 0,
       openCount: 0,
       resolvedCount: 0,
@@ -79,7 +79,8 @@ export default {
       filters: suggestionGetters.GET_FILTERS,
       suggestionsSelectedSort: suggestionGetters.GET_SUGGESTIONS_SELECTED_SORT,
       meetingSuggestionsSelectedSort: suggestionGetters.GET_MEETING_SUGGESTIONS_SELECTED_SORT,
-      filtered_items: suggestionGetters.GET_FILTERED_ITEMS
+      filtered_items: suggestionGetters.GET_FILTERED_ITEMS,
+      isSuggestionListDirty: suggestionGetters.GET_DIRTYNESS
     })
   },
   async created() {
@@ -89,7 +90,7 @@ export default {
     await this.handleSuggestionFetching();
     this.getSelectedFilters();
 
-    if (this.filters.length > 0) {
+    if (this.filters && this.filters.length > 0) {
       this.filterSuggestions();
     }
   },
@@ -109,12 +110,13 @@ export default {
       getResolvedSuggestions: suggestionActions.GET_RESOLVED_SUGGESTIONS
     }),
     ...mapSuggestionMutations({
-      setFilteredItems: suggestionMutations.SET_FILTERED_ITEMS
+      setFilteredItems: suggestionMutations.SET_FILTERED_ITEMS,
+      setDirtynessToTrue: suggestionMutations.SET_DIRTYNESS_TO_TRUE
     }),
     async handleSuggestionFetching() {
       if (this.meetingId && parseInt(this.meetingId) > 0) {
         // notice: clearing all the filters when entering meeting suggestion list
-        if (this.filters.length > 0) {
+        if (this.filters && this.filters.length > 0) {
           await this.setSelectedFilters([]);
         }
         await this.fetchAndSortMeetingSuggestions();
@@ -126,7 +128,7 @@ export default {
       await this.getSuggestionsSelectedSortKey();
       if (this.suggestionsSelectedSort && this.suggestionsSelectedSort !== '') {
         await this.getSortedSuggestions(this.suggestionsSelectedSort);
-        if (this.filters.length > 0) {
+        if (this.filters && this.filters.length > 0) {
           await this.filterSuggestions();
         }
       } else {
@@ -156,8 +158,8 @@ export default {
           ? this.items.length
           : endIndex
         : endIndex > items.length
-          ? items.length
-          : endIndex;
+        ? items.length
+        : endIndex;
     },
     async paginationPageChanged(pageNumber = 1, items = null, refreshSuggestionsCount = true) {
       const start = this.getPaginationStaringIndex(pageNumber);
@@ -166,7 +168,7 @@ export default {
       let paginatedItems;
       if (items) {
         paginatedItems = items;
-        if (this.filters.length > 0) {
+        if (this.filters && this.filters.length > 0) {
           await this.setFilteredItems(items);
         }
       } else if (!items && this.filters.length > 0) {
@@ -205,7 +207,7 @@ export default {
         if (searchFilter) {
           await this.getSuggestionsBySearchWord(searchFilter.value);
           items = this.items;
-          if (this.filters.length > 1) {
+          if (this.filters && this.filters.length > 1) {
             items = this.handleTheResultFiltering(this.items, this.filters);
           }
         } else {
@@ -275,15 +277,17 @@ export default {
 
 ul {
   list-style: none;
+  min-height: 760px;
 }
 
 .list {
   text-align: left;
   background-color: #ffffff;
   border: 2px solid #f5f5f5;
+  border-bottom: none;
   border-top: none;
   width: 60vw;
-  margin: 0 20vw 20px;
+  margin: 0 20vw;
   padding-left: 0; /* reset inital padding for ul tags */
 }
 

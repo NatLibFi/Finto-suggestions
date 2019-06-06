@@ -10,27 +10,27 @@ export const sortingKeys = {
 };
 
 /*
-* Desc (newest first) comparer for array.sort()
-* field is the name of the property inside array's object
-*/
+ * Desc (newest first) comparer for array.sort()
+ * field is the name of the property inside array's object
+ */
 export const comparerDesc = field => {
   return (obj1, obj2) => parse(obj2[field]) - parse(obj1[field]);
 };
 
 /*
-* Asc (oldest first) comparer for array.sort()
-* field is the name of the property inside array's object
-*/
+ * Asc (oldest first) comparer for array.sort()
+ * field is the name of the property inside array's object
+ */
 export const comparerAsc = field => {
   return (obj1, obj2) => parse(obj1[field]) - parse(obj2[field]);
 };
 
 /*
-* Returns selected sort options index number from dropdownoptions by selectedsort
-* If dropdownoptions or selectedsort are null or empty returning default index that is 1
-* if not given in parameters
-* (or selectedsort not founded in dropdownoptions)
-*/
+ * Returns selected sort options index number from dropdownoptions by selectedsort
+ * If dropdownoptions or selectedsort are null or empty returning default index that is 1
+ * if not given in parameters
+ * (or selectedsort not founded in dropdownoptions)
+ */
 export const getSelectedSortOptionIndex = (dropDownOptions, selectedSort, defaultIndex = 1) => {
   if (dropDownOptions && dropDownOptions.length > 0 && selectedSort && selectedSort.length > 0) {
     return selectedSort

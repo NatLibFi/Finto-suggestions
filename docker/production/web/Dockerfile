@@ -5,7 +5,7 @@ RUN npm install -g @vue/cli && npm install @vue/cli-service-global
 
 COPY ./web/package*.json /tmp/
 
-RUN cd /tmp && npm install
+RUN cd /tmp && npm install && npm audit fix
 
 WORKDIR /app
 

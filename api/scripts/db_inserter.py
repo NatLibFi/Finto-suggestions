@@ -1,5 +1,5 @@
 from api.models import Suggestion, Tag, Meeting, SuggestionTag, Event, EventTypes
-import datetime
+from datetime import datetime
 
 class DBInserter:
 
@@ -26,23 +26,24 @@ class DBInserter:
     return meeting_bo
 
   def __map_suggestion_bo(self, model):
-    suggesiton_bo = Suggestion()
-    if int(model.body.voyager_id) > 0:
-      suggesiton_bo.created =  datetime.datetime.strptime(model.body.created_date, '%d.%m.%Y')
-      suggesiton_bo.modified = datetime.datetime.strptime(model.body.modified_date, '%d.%m.%Y')
-    else:
-      suggesiton_bo.created = model.created
-      suggesiton_bo.modified = model.modified
-    suggesiton_bo.suggestion_type = model.body.type
-    suggesiton_bo.status = model.status
-    suggesiton_bo.organization = model.body.organization
-    suggesiton_bo.reason = model.body.reason
-    suggesiton_bo.preferred_label = model.body.preferred_labels
-    suggesiton_bo.groups = model.body.groups
-    suggesiton_bo.description = model.body.description
-    suggesiton_bo.scopeNote = model.body.scopeNote
-    suggesiton_bo.yse_term = model.body.yse_term
-    return suggesiton_bo
+    suggestion_bo = Suggestion()
+    suggestion_bo.created = model.created
+    suggestion_bo.modified = model.modified
+    suggestion_bo.suggestion_type = model.body.type
+    suggestion_bo.status = model.status
+    suggestion_bo.organization = model.body.organization
+    suggestion_bo.description = model.body.description
+    suggestion_bo.reason = model.body.reason
+    suggestion_bo.preferred_label = model.body.preferred_labels
+    suggestion_bo.alternative_labels = model.body.alternative_labels
+    suggestion_bo.broader_labels = model.body.broader_labels
+    suggestion_bo.narrower_labels = model.body.narrower_labels
+    suggestion_bo.related_labels = model.body.related_labels
+    suggestion_bo.groups = model.body.groups
+    suggestion_bo.scopeNote = model.body.scope_note
+    suggestion_bo.exactMatches = model.body.exact_matches
+    suggestion_bo.yse_term = model.body.yse_term
+    return suggestion_bo
 
   def __map_tags_to_tags_bo(self, tags):
     tags_bo = []
@@ -120,7 +121,6 @@ class DBInserter:
       return event_bo
     return None
 
-
   def __insert_suggestion_tag_relationship(self, db, tag_label, suggestion_id, event_id):
     suggestion_tag = self.__map_tag_labels_to_suggestiontag_bo(tag_label, suggestion_id, event_id)
     if suggestion_tag is not None:
@@ -143,12 +143,10 @@ class DBInserter:
           print(f"New tag added {tag_label.label}")
         else:
           suggestion_tags.append(exists_tag)
-
-      for tag in suggestion_tags:
         event_bo = self.__insert_event_bo_to_db(db, suggestion_tags, suggestion_id)
         if event_bo is not None:
           # lets not try to add this if event creation failed
-          self.__insert_suggestion_tag_relationship(db, tag, suggestion_id, event_bo.id)
+          self.__insert_suggestion_tag_relationship(db, tag_label.label, suggestion_id, event_bo.id)
 
   def insert_models_to_db(self, db, models):
     bo_models_dict = self.__map_models_to_db_bo(models)

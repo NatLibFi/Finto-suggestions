@@ -118,6 +118,7 @@ export default {
         $cookies.set(storeKeyNames.REFRESH_TOKEN, response.refresh_token);
       } else {
         commit(authenticatedUserMutations.SET_AUTHENTICATION, false);
+        throw `Login failed.`;
       }
     },
     [authenticatedUserActions.GET_USER_ID_FROM_STORAGE]({ commit }) {
@@ -126,8 +127,15 @@ export default {
         commit(authenticatedUserMutations.SET_USER_ID, userId);
       }
     },
-    async [authenticatedUserActions.REFRESH_AUTHORIZATION_TOKEN]({ dispatch }, payload) {
-      const response = await api.authenticate.refreshAuthenticationToken(payload);
+    async [authenticatedUserActions.REFRESH_AUTHORIZATION_TOKEN]({ dispatch }) {
+      // eslint-disable-next-line no-undef
+      const access_token = $cookies.get(storeKeyNames.ACCESS_TOKEN);
+      // eslint-disable-next-line no-undef
+      const refreshToken = $cookies.get(storeKeyNames.REFRESH_TOKEN);
+      const response = await api.authenticate.refreshAuthenticationToken({
+        access_token: access_token,
+        refresh_token: refreshToken
+      });
       if (response && response.code === 200) {
         // eslint-disable-next-line no-undef
         $cookies.set(storeKeyNames.ACCESS_TOKEN, response.access_token);

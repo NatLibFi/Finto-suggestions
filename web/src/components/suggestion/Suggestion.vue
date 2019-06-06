@@ -30,17 +30,21 @@
         <div class="suggestion-header-headline">
           <h1
             v-if="suggestion.preferred_label.fi && suggestion.preferred_label.fi.value"
-            class="suggestion-title">
+            class="suggestion-title"
+          >
             {{ suggestion.preferred_label.fi.value }}
           </h1>
           <h1
             v-if="suggestion.preferred_label.fi && !suggestion.preferred_label.fi.value"
-            class="suggestion-title">
+            class="suggestion-title"
+          >
             {{ suggestion.preferred_label.fi }}
           </h1>
           <transition name="fade">
             <div class="suggestion-header-details">
-              <span><strong>#{{ suggestion.id }} </strong></span>
+              <span>
+                <strong>#{{ suggestion.id }} </strong>
+              </span>
               <span>{{ dateTimeFormatLabel(suggestion.created) }} </span>
               <assign-meeting
                 @closeDropdown="dropdownOpen = false"
@@ -49,57 +53,58 @@
                 :meetingId="suggestion.meeting_id"
                 :isAuthenticated="isAuthenticated"
                 :isAdmin="role === userRoles.ADMIN"
-                class="assign-meeting" />
+                class="assign-meeting"
+              />
             </div>
           </transition>
           <div class="tags">
-            <span
-              v-if="suggestion.suggestion_type === suggestionType.NEW"
-              class="tag type-new">
+            <span v-if="suggestion.suggestion_type === suggestionType.NEW" class="tag type-new">
               {{ suggestionTypeToString[suggestion.suggestion_type] }}
             </span>
             <span
               v-if="suggestion.suggestion_type === suggestionType.MODIFY"
-              class="tag type-modify">
+              class="tag type-modify"
+            >
               {{ suggestionTypeToString[suggestion.suggestion_type] }}
             </span>
             <span
               v-if="suggestion.status === suggestionStateStatus.RECEIVED"
-              class="tag status-received">
+              class="tag status-received"
+            >
               {{ suggestionStateStatusToString[suggestionStateStatus.RECEIVED] }}
             </span>
             <span
               v-if="suggestion.status === suggestionStateStatus.READ"
-              class="tag status-received">
+              class="tag status-received"
+            >
               {{ suggestionStateStatusToString[suggestionStateStatus.READ] }}
             </span>
             <span
               v-if="suggestion.status === suggestionStateStatus.ACCEPTED"
-              class="tag status-accepted">{{
-                suggestionStateStatusToString[suggestionStateStatus.ACCEPTED]
-              }}
+              class="tag status-accepted"
+            >
+              {{ suggestionStateStatusToString[suggestionStateStatus.ACCEPTED] }}
             </span>
             <span
               v-if="suggestion.status === suggestionStateStatus.REJECTED"
-              class="tag status-rejected">
+              class="tag status-rejected"
+            >
               {{ suggestionStateStatusToString[suggestionStateStatus.REJECTED] }}
             </span>
             <span
               v-if="suggestion.status === suggestionStateStatus.RETAINED"
-              class="tag status-retained">
+              class="tag status-retained"
+            >
               {{ suggestionStateStatusToString[suggestionStateStatus.RETAINED] }}
             </span>
             <span
               v-if="suggestion.status === suggestionStateStatus.ARCHIVED"
-              class="tag status-retained">
+              class="tag status-retained"
+            >
               {{ suggestionStateStatusToString[suggestionStateStatus.ARCHIVED] }}
             </span>
-            <span
-              v-if="suggestion.tags && suggestion.tags.length > 0">
-              <span
-                v-for="tag in suggestion.tags"
-                :key="tag.label"
-                class="tag">
+            <span v-if="suggestion.tags && suggestion.tags.length > 0">
+              <span v-for="tag in suggestion.tags" :key="tag.label" class="tag">
                 {{ tag.label }}
               </span>
             </span>
@@ -135,7 +140,8 @@
           :event="event"
           :type="event.event_type"
           :suggestionId="suggestionId"
-          :isAuthenticated="isAuthenticated" />
+          :isAuthenticated="isAuthenticated"
+        />
       </div>
     </div>
 
@@ -304,7 +310,7 @@ export default {
       });
     },
     async getUserName() {
-      if (this.suggestion.user_id) {
+      if (this.suggestion && this.suggestion.user_id) {
         await this.getUser(this.suggestion.user_id);
         this.userName = this.user.name;
       } else {
@@ -517,7 +523,6 @@ h1.suggestion-title {
   font-weight: 900;
   font-size: 24px;
   vertical-align: middle;
-  text-transform: lowercase;
 }
 
 .suggestion-header-buttons {

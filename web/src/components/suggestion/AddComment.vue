@@ -1,34 +1,34 @@
 <template>
-<div class="comment">
-  <div v-if="isAuthenticated" class="comment-container">
-    <div class="comment-header">
-      <div class="comment-info">
-        <p><strong>Kommentoi ehdotusta</strong></p>
+  <div class="comment">
+    <div v-if="isAuthenticated" class="comment-container">
+      <div class="comment-header">
+        <div class="comment-info">
+          <p><strong>Kommentoi ehdotusta</strong></p>
+        </div>
+      </div>
+      <div class="comment-box">
+        <markdown-editor
+          v-model="content"
+          ref="markdownEditor"
+          :configs="mdeConfigs"
+          :class="[!isAuthenticated ? 'disabled' : '']"
+        >
+        </markdown-editor>
+      </div>
+      <div class="comment-submit">
+        <span @click="saveNewComment" class="submit-button">
+          Lähetä kommentti
+        </span>
       </div>
     </div>
-    <div class="comment-box">
-      <markdown-editor
-        v-model="content"
-        ref="markdownEditor"
-        :configs="mdeConfigs"
-        :class="[!isAuthenticated ? 'disabled' : '']">
-      </markdown-editor>
-    </div>
-    <div class="comment-submit">
-      <span @click="saveNewComment" class="submit-button">
-        Lähetä kommentti
-      </span>
-    </div>
-  </div>
-  <div v-if="!isAuthenticated" class="comment-container">
-    <div class="comment-header">
-      <div class="comment-info">
-        <p>Kirjaudu sisään kommentoidaksesi ehdotusta</p>
+    <div v-if="!isAuthenticated" class="comment-container">
+      <div class="comment-header">
+        <div class="comment-info">
+          <p>Kirjaudu sisään kommentoidaksesi ehdotusta</p>
+        </div>
       </div>
     </div>
   </div>
-</div>
-
 </template>
 
 <script>

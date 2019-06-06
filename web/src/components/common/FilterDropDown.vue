@@ -1,8 +1,5 @@
 <template>
-  <div
-    v-if="isOpened"
-    class="drop-down-options empty-options"
-    v-on-clickaway="closeDropDown">
+  <div v-if="isOpened" class="drop-down-options empty-options" v-on-clickaway="closeDropDown">
     <div v-if="dropDownOptions.length == 0">
       <div class="option" style="padding-left: 16px;">
         <span>{{ noOptionsMessage }}</span>
@@ -12,10 +9,10 @@
       <div v-for="(option, i) in dropDownOptions" :key="option.id">
         <div
           @click="filterValueSelected(option, i)"
-          :class="[i == selectedIndex ? 'selected' : '', 'option']">
-          <svg-icon
-            :class="[i == selectedIndex ? '' : 'hidden-checkmark']"
-            icon-name="check"><icon-check />
+          :class="[i == selectedIndex ? 'selected' : '', 'option']"
+        >
+          <svg-icon :class="[i == selectedIndex ? '' : 'hidden-checkmark']" icon-name="check">
+            <icon-check />
           </svg-icon>
           <p>{{ option.label }}</p>
         </div>
@@ -30,6 +27,15 @@ import { findValueFromDropDownOptions } from '../../utils/dropDownHelper.js';
 import SvgIcon from '../icons/SvgIcon';
 import IconCheck from '../icons/IconCheck';
 import { directive as onClickaway } from 'vue-clickaway';
+
+import {
+  mapSuggestionGetters,
+  mapSuggestionMutations
+} from '../../store/modules/suggestion/suggestionModule.js';
+import {
+  suggestionGetters,
+  suggestionMutations
+} from '../../store/modules/suggestion/suggestionConsts.js';
 
 export default {
   components: {
@@ -46,7 +52,11 @@ export default {
     noOptionsMessage: String
   },
   methods: {
+    ...mapSuggestionMutations({
+      setDirtynessToTrue: suggestionMutations.SET_DIRTYNESS_TO_TRUE
+    }),
     filterValueSelected(option, index) {
+      this.setDirtynessToTrue();
       this.handleDropDownSelectedIndicator(index);
 
       if (option && option.value !== '') {
@@ -107,7 +117,7 @@ export default {
 .option p {
   position: absolute;
   top: 50%;
-  transform: perspective(1px) translateY(-50%);
+  transform: perspective(1px) translateY(calc(-50% - 0.5px));
   display: inline-block;
   margin: 0;
   text-transform: lowercase;

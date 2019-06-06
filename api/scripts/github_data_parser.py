@@ -27,24 +27,57 @@ class GithubDataParser:
         'uri': splitted_parsed_value[1].replace(')', '').strip()
       }
 
-  def __parse_alternative_labels(self, value):
-    alternative_labels = ''
-    splitted_values = value.split('Vaihtoehtoiset termit ja ilmaisut')
-    alternative_labels = splitted_values[1].strip()
-    return alternative_labels
+  def __parse_alternative_labels(self, value, body):
+    splitted_value = value.replace('\n\n', '').split('Vaihtoehtoiset termit ja ilmaisut')
+    if len(splitted_value) > 0:
+      group_values = splitted_value[1].strip().split(',')
+      for value in group_values:
+        body.alternative_labels.append({'value': value})
 
-  def __parse_related(self, value):
-    related = []
-    splitted_values = value.split('Vastaava käsite muussa sanastossa')
-    splitted_related = splitted_values[1].split('\n')
-    for vocab in splitted_related:
-      splitted_vocabulary = vocab.split(' :')
-      if len(splitted_vocabulary) > 1 and len(splitted_vocabulary[0]) > 3:
-        related.append({
-          'vocab': splitted_vocabulary[0].strip(),
-          'value': splitted_vocabulary[1].strip()
-        })
-    return related
+  def __parse_broader(self, value, body):
+    splitted_value = value.split('Ehdotettu yläkäsite YSOssa (LT)')
+    if len(splitted_value) > 0:
+      splitted_broader = splitted_value[1].replace('(', '').replace(')', '').split('[')[1:]
+      for broader in splitted_broader:
+        splitted_values = broader.strip().split(']')
+        group_value = splitted_values[0]
+        group_url = splitted_values[1]
+        body.broader_labels.append({'value': group_value, 'uri': group_url})
+
+  def __parse_narrower(self, value, body):
+    splitted_value = value.split('Alakäsitteet (ST)')
+    if len(splitted_value) > 0:
+      splitted_narrower = splitted_value[1].replace('(', '').replace(')', '').split('[')[1:]
+      for narrower in splitted_narrower:
+        splitted_values = narrower.strip().split(']')
+        group_value = splitted_values[0]
+        group_url = splitted_values[1]
+        body.narrower_labels.append({'value': group_value, 'uri': group_url})
+
+  def __parse_related(self, value, body):
+    splitted_value = value.split('Assosiatiiviset (RT)')
+    if len(splitted_value) > 0:
+      splitted_related = splitted_value[1].replace('(', '').replace(')', '').split('[')[1:]
+      for related in splitted_related:
+        splitted_values = related.strip().split(']')
+        group_value = splitted_values[0]
+        group_url = splitted_values[1]
+        body.related_labels.append({'value': group_value, 'uri': group_url})
+
+  def __parse_matches(self, value, body):
+    splitted_value = value.split('Vastaava käsite muussa sanastossa')
+    splitted_matches = splitted_value[1].replace('\n\n', '').split('\n')
+    for value in splitted_matches:
+      if len(value) > 0:
+        value = value.replace('<', '').replace('>', '')
+        if 'http' in value:
+          splitted_match = value.strip().split('http')
+          match_vocab = splitted_match[0].replace(':', '').rstrip()
+          match_value = 'http' + splitted_match[1]
+        else:
+          match_vocab = value.strip()
+          match_value = ''
+        body.exact_matches.append({'vocab': match_vocab, 'value': match_value})
 
   def __parse_description(self, value):
     description = ''
@@ -56,10 +89,28 @@ class GithubDataParser:
       description = splitted_description[1].strip()
     return description
 
+  def __parse_remove_name_and_email_from_body(self, body_str):
+    if 'Ehdottajan nimi' in body_str:
+      split_remove_sender_name = body_str.split('Ehdottajan nimi')
+      body_str = split_remove_sender_name[0].replace('*', '').strip()
+    if 'Ehdottajan sähköpostiosoite' in body_str:
+      split_remove_sender_email = body_str.split('Ehdottajan sähköpostiosoite')
+      body_str = split_remove_sender_email[0].replace('*', '').strip()
+    if 'Ehdottaja' in body_str:
+      split_remove_sender_email = body_str.split('Ehdottaja')
+      body_str = split_remove_sender_email[0].replace('*', '').strip()
+    if 'fromname' in body_str:
+      split_remove_sender_email = body_str.split('fromname')
+      body_str = split_remove_sender_email[0].replace('*', '').strip()
+    if 'fromemail' in body_str:
+      split_remove_sender_email = body_str.split('fromemail')
+      body_str = split_remove_sender_email[0].replace('*', '').strip()
+    return body_str
+
   def __parse_remove_org_and_term_suggestion_from_reason(self, value):
     if 'Ehdottajan organisaatio' in value:
       splitted_remove_org = value.split('Ehdottajan organisaatio')
-      parsed_value = splitted_remove_org[0].replace('*','').strip()
+      parsed_value = splitted_remove_org[0].replace('*','').replace(':','').strip()
       return parsed_value
     if 'Termiehdotus Fintossa' in value:
       splitted_remove_term_on_finto = value.split('Termiehdotus Fintossa')
@@ -82,39 +133,64 @@ class GithubDataParser:
       else:
         body.reason = parsed_value
 
-  def __parse_scopeNote(self, value, body):
+  def __parse_scope(self, value, body):
     if 'Tarkoitusta täsmentävä selite' in value:
       splitted_scope_note = value.split('Tarkoitusta täsmentävä selite')
-      body.scopeNote = splitted_scope_note[1].strip()
+      body.scope_note = splitted_scope_note[1].strip()
 
   def __parse_groups(self, value, body):
-    splitted_value = value.split('Ehdotetut temaattiset ryhmät (YSA-ryhmät)')
+    splitted_value = value.split('Ehdotetut temaattiset ryhmät (YSA-ryhmät)')[1].split('**')[0]
     if len(splitted_value) > 0:
-      splitted_groups = splitted_value[1].strip().split(']')
-      group_value = splitted_groups[0].replace('[', '')
-      group_url = splitted_groups[1].translate({ord('('): None}).translate({ord(')'): None}).split('**')[0].strip()
-      body.groups.append({'value': group_value, 'uri': group_url})
+      splitted_groups = splitted_value.replace('(', '').replace(')','').split('[')[1:]
+      for group in splitted_groups:
+        splitted_values = group.strip().split(']')
+        group_value = splitted_values[0]
+        group_url = splitted_values[1]
+        body.groups.append({'value': group_value, 'uri': group_url})
 
-  def __parse_organization(self, value):
+  def __parse_organization(self, value, body):
     organization = ''
-    splitted_value = value.split('Ehdottajan organisaatio')
-    organization = splitted_value[1].strip()
+    if 'Ehdottajan sähköpostiosoite' in value:
+      value = value.split('Ehdottajan sähköpostiosoite')[0]
+    if 'Ehdottajan organisaatio' in value:
+      splitted_value = value.split('Ehdottajan organisaatio')
+      organization = splitted_value[1].replace('*', '').replace(':', '').strip().split('####')[0]
+    if 'fromorg' in value:
+      splitted_value = value.split('fromorg')
+      organization = splitted_value[1].replace('*', '').replace(':', '').strip().split('####')[0]
     if 'Termiehdotus Fintossa' in organization:
       splitted_organization = organization.split('Termiehdotus Fintossa')
-      organization = splitted_organization[0].replace('*', '').replace(':', '').strip()
-    if 'Ehdottajan sähköpostiosoite' in organization:
-      split_remove_sender_email = organization.split('Ehdottajan sähköpostiosoite')
-      organization = split_remove_sender_email[0].strip()
-    return organization
+      organization = splitted_organization[0].replace('*', '').replace(':', '').strip().split('####')[0]
+    body.organization = organization
 
-  def __parse_yse_term(self, value):
+  def __parse_yse_term(self, value, body):
     splitted_value = value.split('Termiehdotus Fintossa')
     splitted_yse_term_value = splitted_value[1].split('\n')[0].split(']')
     yse_term = {
       'value': splitted_yse_term_value[0].replace('[','').replace(']','').replace('*','').replace(':','') .strip(),
       'uri': splitted_yse_term_value[1].replace('(','').replace(')','').strip()
     }
-    return yse_term
+    body.yse_term = yse_term
+
+  def __parse_voyager_body_strings(self, body_str):
+    body = GithubBodyModel()
+
+    if 'Ehdottajan nimi' or 'Ehdottajan sähköpostiosoite' or 'fromname' or 'fromemail' in body_str:
+      body_str = self.__parse_remove_name_and_email_from_body(body_str)
+
+    if 'Termiehdotus Fintossa' in body_str:
+      self.__parse_yse_term(body_str, body)
+
+    body.type = 'NEW'
+    body.scope_note = 'Tuotu Voaygerista'
+    splitted_body_strings = body_str.split("####")
+    for section in splitted_body_strings:
+      if 'Ehdotettu termi suomeksi' in section:
+        self.__parse_preferred_labels(section, body)
+      if 'Ehdotetut temaattiset ryhmät (YSA-ryhmät)' in section:
+        self.__parse_groups(section, body)
+
+    return body
 
   def __parse_to_json_labels(self, value):
     values = []
@@ -163,9 +239,19 @@ class GithubDataParser:
   def __parse_body_strings(self, body_str):
     body = GithubBodyModel()
 
+    if 'Ehdottajan organisaatio' or 'fromorg' in body_str:
+      self.__parse_organization(body_str, body)
+
+    if 'Ehdottajan nimi' or 'Ehdottajan sähköpostiosoite' or 'fromname' or 'fromemail' in body_str:
+      body_str = self.__parse_remove_name_and_email_from_body(body_str)
+
+    if 'Termiehdotus Fintossa' in body_str:
+      self.__parse_yse_term(body_str, body)
+
+    splitted_body_strings = body_str.split("####")
+
     if 'CONCEPT' in body_str or 'GEO' in body_str:
       body.type = 'NEW'
-      splitted_body_strings = body_str.split("####")
       for section in splitted_body_strings:
         if 'Ehdotettu termi suomeksi' in section:
           self.__parse_preferred_labels(section, body)
@@ -174,46 +260,26 @@ class GithubDataParser:
         if 'Ehdotettu termi englanniksi' in section:
           self.__parse_preferred_labels(section, body)
         if 'Vaihtoehtoiset termit ja ilmaisut' in section:
-          body.alternative_labels = self.__parse_alternative_labels(section)
+          self.__parse_alternative_labels(section, body)
+        if 'Ehdotettu yläkäsite YSOssa (LT)' in section:
+          self.__parse_broader(section, body)
+        if 'Alakäsitteet (ST)' in section:
+          self.__parse_narrower(section, body)
+        if 'Assosiatiiviset (RT)' in section:
+          self.__parse_related(section, body)
         if 'Vastaava käsite muussa sanastossa' in section:
-          body.related = self.__parse_related(section)
+          self.__parse_matches(section, body)
         if 'Perustelut ehdotukselle' in section:
           body.description = self.__parse_description(section)
         if 'Aineisto jonka kuvailussa käsitettä tarvitaan (esim. nimeke tai URL)' in section:
           self.__parse_reason(section, body)
         if 'Tarkoitusta täsmentävä selite' in section:
-          self.__parse_scopeNote(section, body)
+          self.__parse_scope(section, body)
         if 'Ehdotetut temaattiset ryhmät (YSA-ryhmät)' in section:
           self.__parse_groups(section, body)
-        if '**Ehdottajan organisaatio:**' in section:
-          body.organization = self.__parse_organization(section)
-        if 'Termiehdotus Fintossa' in section:
-          body.yse_term = self.__parse_yse_term(section)
-        if 'Ehdotettu yläkäsite YSOssa (LT)' in section:
-          body.broader_labels = self.__parse_to_json_labels(section)
-        if 'Alakäsitteet (RT)' in section:
-          body.narrower_labels = self.__parse_to_json_labels(section)
-        if 'Assosiatiiviset (RT)' in section:
-          body.related_labels = self.__parse_to_json_labels(section)
-    elif 'Voyager-id' in body_str:
-      body.type = 'NEW'
-      splitted_body_strings = body_str.split("####")
-      for section in splitted_body_strings:
-        if 'Ehdotettu termi suomeksi' in section:
-          self.__parse_preferred_labels(section, body)
-        if 'Ehdotetut temaattiset ryhmät (YSA-ryhmät)' in section:
-          self.__parse_groups(section, body)
-        if 'Luontipäivämäärä' in section:
-          self.__parse_created_datetime(section, body)
-        if 'Muokkauspäivämäärä' in section:
-          self.__parse_modified_datetime(section, body)
-        if 'Voyager-id' in section:
-          self.__parse_voyager_id(section, body)
-        if 'Termiehdotus Fintossa' in section:
-          body.yse_term = self.__parse_yse_term(section)
+
     else:
       body.type = 'MODIFY'
-      splitted_body_strings = body_str.split("####")
       for section in splitted_body_strings:
         if 'preflabel' in section:
           self.__parse_preferred_labels(section, body)
@@ -221,8 +287,7 @@ class GithubDataParser:
           body.description = self.__parse_description(section)
         if 'Perustelut ehdotukselle' in section:
           self.__parse_reason(section, body)
-        if 'Ehdottajan organisaatio' in section:
-          body.organization = self.__parse_organization(section)
+
     return body
 
   def __parse_meeting(self, meeting):
@@ -259,25 +324,43 @@ class GithubDataParser:
     personal_token = os.environ.get('GITHUB_PERSONAL_TOKEN')
     return requests.get(f'https://api.github.com/repos/Finto-ehdotus/YSE/issues?per_page=100&state=all&page={page}', auth=(user, personal_token))
 
-  def __fetch_data_from_github_by_id(self, id):
-    user = os.environ.get('GITHUB_USERNAME')
-    personal_token = os.environ.get('GITHUB_PERSONAL_TOKEN')
-    return requests.get(f'https://api.github.com/repos/Finto-ehdotus/YSE/issues/{id}', auth=(user, personal_token))
-
-
-  def __map_reponse(self, json_item):
-    suggestion_model = GithubIssueModel(
-      json_item["title"],
-      self.__parse_status(json_item["state"], json_item["labels"]),
-      self.__parse_meeting(json_item["milestone"]),
-      json_item["created_at"],
-      json_item["updated_at"],
-      json_item["closed_at"],
-      self.__parse_body_strings(json_item["body"])
-    )
+  def __map_response(self, json_item):
+    if 'Voyager-id' in json_item["body"]:
+      suggestion_model = GithubIssueModel(
+        json_item["title"],
+        self.__parse_status(json_item["state"], json_item["labels"]),
+        self.__parse_meeting(json_item["milestone"]),
+        json_item["created_at"],
+        json_item["updated_at"],
+        json_item["closed_at"],
+        self.__parse_voyager_body_strings(json_item["body"])
+      )
+    else:
+      suggestion_model = GithubIssueModel(
+        json_item["title"],
+        self.__parse_status(json_item["state"], json_item["labels"]),
+        self.__parse_meeting(json_item["milestone"]),
+        json_item["created_at"],
+        json_item["updated_at"],
+        json_item["closed_at"],
+        self.__parse_body_strings(json_item["body"])
+      )
 
     for label in json_item["labels"]:
+      # don't add unnecessary tags
+      if 'uusi' in label["name"]:
+        break
+      elif 'muutos' in label["name"]:
+        break
+      elif 'hyväksytty' in label["name"]:
+        break
+      elif 'jää termiehdotukseksi' in label["name"]:
+        break
+      # yet append the correct ones
       suggestion_model.tags.append(label["name"])
+
+    if 'GEO' in json_item["body"] and 'maantieteellinen' not in suggestion_model.tags:
+      suggestion_model.tags.append('maantieteellinen')
 
     return suggestion_model
 
@@ -290,10 +373,25 @@ class GithubDataParser:
   def handle_response(self, arg_loop_count, id = None):
     models = []
 
-    if id is None:
-      loop_count = 0
-      if arg_loop_count is not None and arg_loop_count > 0:
-        loop_count = arg_loop_count
+    loop_count = 0
+    if arg_loop_count is not None and arg_loop_count > 0:
+      loop_count = arg_loop_count
+    else:
+      response = self.__fetch_data_from_github()
+      loop_count = self.__parse_count_from_response_headers(response.headers)
+
+    i = 1
+    while i <= loop_count:
+      if self.last_request_completed == False:
+        response = self.__fetch_data_from_github(i)
+        if len(response.json()) > 0:
+          print(f"Issue batch fetch {i}/{loop_count}")
+          i+= 1
+          for json_item in response.json():
+            model = self.__map_response(json_item)
+            models.append(model)
+        else:
+          self.last_request_completed = True
       else:
         response = self.__fetch_data_from_github()
         loop_count = self.__parse_count_from_response_headers(response.headers)

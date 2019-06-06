@@ -76,6 +76,11 @@ export default {
         this.userNameInitials = userNameInitials(this.user.name);
       }
     }
+  },
+  watch: {
+    user() {
+      this.fetchUserNameAndInitials();
+    }
   }
 };
 </script>
@@ -107,7 +112,7 @@ export default {
   position: absolute;
   top: 50%;
   left: initial;
-  transform: perspective(1px) translateY(-50%);
+  transform: perspective(1px) translateY(calc(-50% - 0.5px));
   display: inline-block;
   height: 50px;
   width: 50px;
@@ -129,7 +134,7 @@ export default {
   position: absolute;
   top: 50%;
   left: 120px;
-  transform: perspective(1px) translateY(-50%);
+  transform: perspective(1px) translateY(calc(-50% - 0.5px));
 }
 
 .profile-user {

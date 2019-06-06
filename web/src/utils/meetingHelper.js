@@ -1,8 +1,8 @@
 import { suggestionStateStatus } from './suggestionHelpers';
 
 /*
-* Local method for calculating processed suggestions count
-*/
+ * Local method for calculating processed suggestions count
+ */
 const getProcessedCount = processed => {
   let count = 0;
 

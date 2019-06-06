@@ -4,15 +4,15 @@
     <div class="setting-inputs">
       <div>
         <p>Nimi:</p>
-        <input v-model="userName" type="text">
+        <input v-model="userName" type="text" />
       </div>
       <div>
         <p>Nimike/titteli:</p>
-        <input v-model="userTitle" @input="$v.$touch()" type="text">
+        <input v-model="userTitle" @input="$v.$touch()" type="text" />
       </div>
       <div>
         <p>Organisaatio:</p>
-        <input v-model="userOrg" @input="$v.$touch()" type="text">
+        <input v-model="userOrg" @input="$v.$touch()" type="text" />
       </div>
       <!-- <div>
         <p>Profiilikuvan url-osoite:</p>
@@ -114,12 +114,23 @@ export default {
             this.hasFailed = false;
           }, 3000);
         });
+      await this.updateShowingUserData();
     },
     async submitForm() {
       if (!this.$v.$invalid) {
         await this.updateUser();
       }
+    },
+    async updateShowingUserData() {
+      await this.getUser(this.userId);
     }
+  },
+  mounted: function() {
+    document.addEventListener('keydown', e => {
+      if (e.keyCode == 13) {
+        this.submitForm();
+      }
+    });
   }
 };
 </script>

@@ -1,8 +1,5 @@
 <template>
-  <div
-    v-if="isOpened"
-    class="drop-down-options empty-options"
-    v-on-clickaway="closeDropDown">
+  <div v-if="isOpened" class="drop-down-options empty-options" v-on-clickaway="closeDropDown">
     <div v-if="dropDownOptions.length == 0">
       <div class="option" style="padding-left: 16px;">
         <span>{{ noOptionsMessage }}</span>
@@ -12,11 +9,11 @@
       <div v-for="(option, i) in dropDownOptions" :key="option.id">
         <div
           @click="filterValueSelected(option, i)"
-          :class="[isSelected(option, i) ? 'selected' : '', 'option']">
+          :class="[isSelected(option, i) ? 'selected' : '', 'option']"
+        >
           <div class="svg-wrapper">
-            <svg-icon
-              :class="[isSelected(option, i) ? '' : 'hidden-checkmark']"
-              icon-name="check"><icon-check />
+            <svg-icon :class="[isSelected(option, i) ? '' : 'hidden-checkmark']" icon-name="check">
+              <icon-check />
             </svg-icon>
           </div>
           <p>{{ option.label }}</p>
@@ -40,6 +37,15 @@ import IconCheck from '../icons/IconCheck';
 import IconCross from '../icons/IconCross';
 import { directive as onClickaway } from 'vue-clickaway';
 
+import {
+  mapSuggestionGetters,
+  mapSuggestionMutations
+} from '../../store/modules/suggestion/suggestionModule.js';
+import {
+  suggestionGetters,
+  suggestionMutations
+} from '../../store/modules/suggestion/suggestionConsts.js';
+
 export default {
   components: {
     SvgIcon,
@@ -56,7 +62,11 @@ export default {
     noOptionsMessage: String
   },
   methods: {
+    ...mapSuggestionMutations({
+      setDirtynessToTrue: suggestionMutations.SET_DIRTYNESS_TO_TRUE
+    }),
     filterValueSelected(option, index) {
+      this.setDirtynessToTrue();
       this.handleDropDownSelectedIndicator(index);
 
       // TODO: ensure that this filters multiple tags in filterValueHelper.js
