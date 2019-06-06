@@ -7,9 +7,10 @@
           :value="searchWord"
           ref="input"
           @input="updateSearchWord"
-          @keyup.enter.prevent="updateSearchWord" />
+          @keyup.enter.prevent="updateSearchWord"
+        />
         <transition name="fade">
-          <div v-if="searchWord.length > 0" @click="clearSearch" class="clear-button">
+          <div v-if="searchWord && searchWord.length > 0" @click="clearSearch" class="clear-button">
             <svg-icon icon-name="cross"><icon-cross /></svg-icon>
           </div>
         </transition>
@@ -22,17 +23,10 @@
 import SvgIcon from '../icons/SvgIcon';
 import IconCross from '../icons/IconCross';
 
-import {
-  suggestionGetters,
-  suggestionActions
-} from '../../store/modules/suggestion/suggestionConsts.js';
-import {
-  mapSuggestionGetters,
-  mapSuggestionActions
-} from '../../store/modules/suggestion/suggestionModule.js';
+import { suggestionGetters } from '../../store/modules/suggestion/suggestionConsts.js';
+import { mapSuggestionGetters } from '../../store/modules/suggestion/suggestionModule.js';
 
-import { handleSetFilters } from '../../utils/filterValueHelper.js';
-import { filterType } from '../../utils/suggestionHelpers.js';
+import { handleQueries } from '../../utils/suggestionHelpers.js';
 
 export default {
   components: {
@@ -41,7 +35,8 @@ export default {
   },
   props: {
     filters: String,
-    searchWord: String
+    searchWord: String,
+    sort: String
   },
   computed: {
     ...mapSuggestionGetters({
@@ -51,38 +46,11 @@ export default {
   methods: {
     updateSearchWord() {
       setTimeout(() => {
-        this.handleQueries(this.filters, this.$refs.input.value);
+        handleQueries(this.filters, this.$refs.input.value, this.sort, this.$router);
       }, 800);
     },
     clearSearch() {
-      console.log('TYHJENNETÄÄN');
-      this.handleQueries(this.filters, '');
-    },
-    handleQueries(filters, searchWord) {
-      if (filters.length > 0 && searchWord.length > 0) {
-        this.$router.push({
-          query: {
-            filters: filters,
-            search: searchWord
-          }
-        });
-      } else if (filters.length > 0 && searchWord.length === 0) {
-        this.$router.push({
-          query: {
-            filters: filters
-          }
-        });
-      } else if (filters.length === 0 && searchWord.length > 0) {
-        this.$router.push({
-          query: {
-            search: searchWord
-          }
-        });
-      } else {
-        this.$router.push({
-          query: {}
-        });
-      }
+      handleQueries(this.filters, '', this.sort, this.$router);
     }
   },
   mounted() {
@@ -117,15 +85,15 @@ h5 {
 .input-wrapper {
   position: relative;
   display: inline-block;
-  height: 38px;
-  width: calc(100% - 150px);
+  height: 40px;
+  width: 100%;
   text-align: left;
 }
 
 .input-wrapper input {
   position: absolute;
   width: 100%;
-  height: 38px;
+  height: 40px;
   padding-left: 8px;
   text-align: left;
   border: 2px solid #eeeeee;
@@ -137,7 +105,7 @@ h5 {
 .input-wrapper .clear-button {
   position: absolute;
   right: 12px;
-  top: 7px;
+  top: 8px;
   color: #cccccc;
 }
 
@@ -149,53 +117,15 @@ h5 {
   width: 20px;
 }
 
-.search-button {
-  position: absolute;
-  right: 0;
-  display: inline-block;
-  height: 38px;
-  width: 140px;
-  color: #ffffff;
-  font-weight: 600;
-  font-size: 16px;
-  background-color: #06A798;
-  margin-bottom: -14px;
-  text-align: center;
-  cursor: pointer;
-  cursor: hand;
-  -webkit-user-select: none; /* Safari */
-  -moz-user-select: none; /* Firefox */
-  -ms-user-select: none; /* IE10+/Edge */
-  user-select: none; /* Standard */
-  transition: background-color 0.1s;
-}
-
-.search-button:hover {
-  background-color: #0EB6A6;
-}
-
-.search-button span {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: perspective(1px) translate(-50%, calc(-50% - 0.5px));
-}
-
 @media (max-width: 900px) {
-  .search-wrapper input, .search-button {
+  .search-wrapper input {
     display: block;
     position: relative;
     width: 100%;
   }
 
-.input-wrapper {
-  width: 100%;
-}
-
-  .search-button {
-    left: 0;
-    margin-top: 10px;
-    margin-bottom: 0;
+  .input-wrapper {
+    width: 100%;
   }
 }
 

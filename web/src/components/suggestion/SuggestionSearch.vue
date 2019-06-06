@@ -16,10 +16,10 @@
         </p>
       </div>
       <div>
-        <suggestion-search-form :filters="filters" :searchWord="searchWord" />
+        <suggestion-search-form :filters="filters" :searchWord="searchWord" :sort="sort" />
       </div>
       <div>
-        <filter-suggestions :isMeeting="false" :filters="filters" :searchWord="searchWord" />
+        <filter-suggestions :isMeeting="false" :filters="filters" :searchWord="searchWord" :sort="sort" />
       </div>
     </div>
   </div>
@@ -40,6 +40,10 @@ export default {
       default: ''
     },
     searchWord: {
+      type: String,
+      default: ''
+    },
+    sort: {
       type: String,
       default: ''
     }

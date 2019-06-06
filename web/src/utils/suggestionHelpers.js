@@ -47,6 +47,65 @@ export const offsetByPagination = page => {
   return 0;
 };
 
+export const handleQueries = (filters, searchWord, sort, router) => {
+  if (sort.length > 0) {
+    if (filters.length > 0 && searchWord.length > 0) {
+      router.push({
+        query: {
+          filters: filters,
+          search: searchWord,
+          sort: sort
+        }
+      });
+    } else if (filters.length > 0 && searchWord.length === 0) {
+      router.push({
+        query: {
+          filters: filters,
+          sort: sort
+        }
+      });
+    } else if (filters.length === 0 && searchWord.length > 0) {
+      router.push({
+        query: {
+          search: searchWord,
+          sort: sort
+        }
+      });
+    } else {
+      router.push({
+        query: {
+          sort: sort
+        }
+      });
+    }
+  } else if (sort.length === 0) {
+    if (filters.length > 0 && searchWord.length > 0) {
+      router.push({
+        query: {
+          filters: filters,
+          search: searchWord
+        }
+      });
+    } else if (filters.length > 0 && searchWord.length === 0) {
+      router.push({
+        query: {
+          filters: filters
+        }
+      });
+    } else if (filters.length === 0 && searchWord.length > 0) {
+      router.push({
+        query: {
+          search: searchWord
+        }
+      });
+    } else {
+      router.push({
+        query: {}
+      });
+    }
+  }
+};
+
 /*
  * Helper method to calculate on place open and resolved count from suggestions
  * Return null if items count is empty

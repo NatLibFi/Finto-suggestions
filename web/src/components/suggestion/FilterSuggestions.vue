@@ -3,7 +3,7 @@
     <h5>
       Suodata hakutuloksia
       <a
-        v-if="hasTouchedFilters && isSuggestionListDirty"
+        v-if="filters && filters.length > 0"
         @click="resetFilters()"
         class="clear-button"
       >
@@ -56,8 +56,8 @@
         @closeDropDown="closeDropDown"
       />
     </div>
-    <!-- <div
-      v-if="mapMeetingsToDropDown().length > 0"
+    <div
+      v-if="!isMeeting && mapMeetingsToDropDown().length > 0"
       @click="isDropDownOpened.MEETING = !isDropDownOpened.MEETING"
       class="filter-item"
     >
@@ -65,17 +65,16 @@
         <span>Kokous</span>
         <svg-icon icon-name="triangle"><icon-triangle /></svg-icon>
       </div>
-      TODO: Fix functionality of meeting selection
       <filter-drop-down
         :selectedIndex="selectedOptionIndex.MEETING"
         :isOpened="isDropDownOpened.MEETING"
         :dropDownOptions="mapMeetingsToDropDown()"
-        :noOptionsMessage="'Kokouksia ei valittavissa.'"
+        :noOptionsMessage="'Ei kokouspäiviä määriteltynä.'"
         @applyFilter="meetingChanged($event)"
         @refreshSelectedIndex="selectedOptionIndex.MEETING = $event"
         @closeDropDown="closeDropDown"
       />
-    </div> -->
+    </div>
   </div>
 </template>
 
@@ -85,7 +84,7 @@ import MultipleChoiceDropDown from '../common/MultipleChoiceDropDown';
 import SvgIcon from '../icons/SvgIcon';
 import IconTriangle from '../icons/IconTriangle';
 
-import { filterType } from '../../utils/suggestionHelpers.js';
+import { filterType, handleQueries } from '../../utils/suggestionHelpers.js';
 import {
   suggestionGetters,
   suggestionActions
@@ -121,7 +120,8 @@ export default {
   props: {
     isMeeting: Boolean,
     filters: String,
-    searchWord: String
+    searchWord: String,
+    sort: String
   },
   data: () => ({
     filterStrings: {
@@ -136,7 +136,6 @@ export default {
       TYPE: 0, // one always selected
       MEETING: null // no default
     },
-    hasTouchedFilters: false,
     isDropDownOpened: {
       STATUS: false,
       TAG: false,
@@ -194,13 +193,15 @@ export default {
     }),
     ...mapTagGetters({
       tags: tagGetters.GET_TAGS
-    }),
-    ...mapSuggestionGetters({
-      isSuggestionListDirty: suggestionGetters.GET_DIRTYNESS
     })
   },
   async created() {
-    // TODO: meetings not used right now, let's not make fetch if not used, enable if needed later
+    this.filterStrings = {
+      status: '',
+      tags: '',
+      type: '',
+      meeting: ''
+    };
     await this.getMeetings();
     await this.getTags();
   },
@@ -212,21 +213,23 @@ export default {
       getTags: tagActions.GET_TAGS
     }),
     stateChanged(selected) {
-      this.hasTouchedFilters = true;
       let stateString = this.createFilterString(filterType.STATUS, selected);
       let filters = this.combineStateStrings(filterType.STATUS, stateString);
-      this.handleQueries(filters, this.searchWord);
+      handleQueries(filters, this.searchWord, this.sort, this.$router);
+    },
+    meetingChanged(selected) {
+      let stateString = 'meeting_id:' + selected.toString().toLowerCase();
+      let filters = this.combineStateStrings(filterType.MEETING, stateString);
+      handleQueries(filters, this.searchWord, this.sort, this.$router);
     },
     tagChanged(selected) {
-      this.hasTouchedFilters = true;
       let filters = this.combineStateStrings(filterType.TAGS, selected);
-      this.handleQueries(filters, this.searchWord);
+      handleQueries(filters, this.searchWord, this.sort, this.$router);
     },
     typeChanged(selected) {
-      this.hasTouchedFilters = true;
       let stateString = this.createFilterString(filterType.TYPE, selected);
       let filters = this.combineStateStrings(filterType.TYPE, stateString);
-      this.handleQueries(filters, this.searchWord);
+      handleQueries(filters, this.searchWord, this.sort, this.$router);
     },
     mapMeetingsToDropDown() {
       let meetings = [];
@@ -235,7 +238,7 @@ export default {
         this.meetings.forEach(meeting => {
           if (meeting.meeting_date) {
             meetings.push({
-              label: meeting.id + ': ' + meeting.name,
+              label: meeting.name,
               value: meeting.id
             });
           }
@@ -243,9 +246,6 @@ export default {
       }
       return meetings;
     },
-    // meetingChanged(selected) {
-    //   this.hasTouchedFilters = true;
-    // },
     mapTagsToDropDown() {
       let tags = [];
       if (this.tags && this.tags.length > 0) {
@@ -280,10 +280,7 @@ export default {
         type: '',
         meeting: ''
       };
-      this.tagChanged('');
-      // this.meetingChanged('');
-      this.typeChanged('');
-      this.stateChanged('');
+      handleQueries('', this.searchWord, this.sort, this.$router);
       this.hasTouchedFilters = false;
     },
     closeDropDown() {
@@ -292,37 +289,11 @@ export default {
       this.isDropDownOpened.TYPE = false;
       this.isDropDownOpened.MEETING = false;
     },
-    handleQueries(filters, searchWord) {
-      if (filters.length > 0 && searchWord.length > 0) {
-        this.$router.push({
-          query: {
-            filters: filters,
-            search: searchWord
-          }
-        });
-      } else if (filters.length > 0 && searchWord.length === 0) {
-        this.$router.push({
-          query: {
-            filters: filters
-          }
-        });
-      } else if (filters.length === 0 && searchWord.length > 0) {
-        this.$router.push({
-          query: {
-            search: searchWord
-          }
-        });
-      } else {
-        this.$router.push({
-          query: {}
-        });
-      }
-    },
     createFilterString(filterType, selected) {
       if (selected) {
-        return filterType + ':' + selected.toLowerCase()
+        return filterType + ':' + selected.toLowerCase();
       }
-      return ''
+      return '';
     },
     combineStateStrings(filter, string) {
       if (this.filters.includes(filter) && string && string.length > 0) {
@@ -336,7 +307,6 @@ export default {
           return '';
         }
       } else {
-        this.updateStateString(filter, string);
         return this.updateStateString(filter, string);
       }
     },

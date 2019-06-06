@@ -81,14 +81,13 @@ export default {
     }
   },
   actions: {
-    async [suggestionActions.GET_SUGGESTIONS](
-      { commit },
-      { offset, sortValue, filters, searchWord }
-    ) {
-      const result = await api.suggestion.getSuggestions(offset, sortValue, filters, searchWord);
+    async [suggestionActions.GET_SUGGESTIONS]({ commit }, { offset, sort, filters, searchWord }) {
+      const result = await api.suggestion.getSuggestions(offset, sort, filters, searchWord);
       if (result && result.code == 200) {
         commit(suggestionMutations.SET_SUGGESTIONS, result.data);
         return result.items;
+      } else {
+        return [];
       }
     },
     async [suggestionActions.GET_SUGGESTIONS_COUNT]({ commit }, { filters, searchWord }) {
@@ -104,17 +103,13 @@ export default {
       }
     },
     async [suggestionActions.GET_SORTED_SUGGESTIONS_BY_USER_ID]({ commit }, values) {
-      const result = await api.suggestion.getSortedSuggestionByUserId(
-        values.userId,
-        values.sortValue
-      );
+      const result = await api.suggestion.getSortedSuggestionByUserId(values.userId, values.sort);
       if (result && result.code === 200) {
         commit(suggestionMutations.SET_SUGGESTIONS, result.data);
       }
     },
-    async [suggestionActions.GET_SORTED_SUGGESTIONS]({ commit }, { sortValue, offset }) {
-      console.log(sortValue, offset);
-      const result = await api.suggestion.getSortedSuggestions(sortValue, offset);
+    async [suggestionActions.GET_SORTED_SUGGESTIONS]({ commit }, { sort, offset }) {
+      const result = await api.suggestion.getSortedSuggestions(sort, offset);
       if (result && result.code == 200) {
         commit(suggestionMutations.SET_SUGGESTIONS, result.data);
       }
@@ -164,15 +159,6 @@ export default {
         commit(suggestionMutations.SET_SUGGESTIONS, result.data);
       }
     },
-    async [suggestionActions.GET_SORTED_SUGGESTIONS_BY_MEETING_ID]({ commit }, values) {
-      const result = await api.suggestion.getSortedSuggestionByMeetingId(
-        values.meetingId,
-        values.sortValue
-      );
-      if (result && result.code === 200) {
-        commit(suggestionMutations.SET_SUGGESTIONS, result.data);
-      }
-    },
     [suggestionActions.GET_MEETING_SUGGESTIONS_SELECTED_SORT]({ commit }) {
       const sortKey = sessionStorage[sessionStorageKeyNames.MEETING_SUGGESTIONS_SELECTED_SORT];
       if (sortKey) {
@@ -196,13 +182,6 @@ export default {
         }
       } catch (error) {
         console.log(`Could not set suggestion state to rejected ${params.suggestionId}, ${error}`);
-      }
-    },
-    async [suggestionActions.GET_SUGGESTIONS_BY_SEARCH_WORD]({ commit }, searchWord, offset) {
-      const result = await api.suggestion.getSuggestionsBySearchWord(searchWord, offset);
-      if (result && result.code === 200) {
-        commit(suggestionMutations.SET_SUGGESTIONS, result.data);
-        commit(suggestionMutations.SET_DIRTYNESS_TO_TRUE);
       }
     },
     [suggestionActions.GET_SELECTED_FILTERS]({ commit }) {

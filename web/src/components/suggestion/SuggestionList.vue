@@ -1,6 +1,12 @@
 <template>
   <div>
-    <suggestion-search :filters="filters" :searchWord="searchWord" />
+    <suggestion-search :filters="filters" :searchWord="searchWord" :sort="sort" />
+    <suggestion-list-header-new
+      :meetingId="meetingId"
+      :filters="filters"
+      :searchWord="searchWord"
+      :sort="sort"
+    />
     <div class="list-container">
       <ul class="list">
         <transition-group name="fade">
@@ -17,8 +23,9 @@
         :pageCount="pageCount"
         :pageCountLoading="pageCountLoading"
         :page="page"
-        :filters="$route.query.filters"
-        :searchWord="$route.query.search"
+        :filters="filters"
+        :searchWord="searchWord"
+        :sort="sort"
         @pageChanged="updateSuggestionList"
       />
     </div>
@@ -27,6 +34,7 @@
 
 <script>
 import SuggestionSearch from './SuggestionSearch';
+import SuggestionListHeaderNew from './SuggestionListHeaderNew';
 import SuggestionItem from './SuggestionItem';
 import SuggestionListPagination from './SuggestionListPagination';
 
@@ -40,11 +48,13 @@ import {
   mapSuggestionActions
 } from '../../store/modules/suggestion/suggestionModule.js';
 
-import { offsetByPagination } from '../../utils/suggestionHelpers.js';
+import { offsetByPagination, handleQueries } from '../../utils/suggestionHelpers.js';
+import { sortingKeys } from '../../utils/sortingHelper.js';
 
 export default {
   components: {
     SuggestionSearch,
+    SuggestionListHeaderNew,
     SuggestionItem,
     SuggestionListPagination
   },
@@ -63,6 +73,7 @@ export default {
     return {
       filters: this.$route.query.filters ? this.$route.query.filters : '',
       searchWord: this.$route.query.search ? this.$route.query.search : '',
+      sort: this.$route.query.sort ? this.$route.query.sort : sortingKeys.NEWEST_FIRST,
       offsetByPagination,
       pageCount: 400,
       pageCountLoading: false
@@ -71,13 +82,11 @@ export default {
   computed: {
     ...mapSuggestionGetters({
       items: suggestionGetters.GET_SUGGESTIONS,
-      itemCount: suggestionGetters.GET_SUGGESTIONS_COUNT,
-      sortKey: suggestionGetters.GET_SUGGESTIONS_SELECTED_SORT
+      itemCount: suggestionGetters.GET_SUGGESTIONS_COUNT
     })
   },
   async created() {
     this.pageCountLoading = true;
-    await this.getSuggestionsSelectedSortKey();
     this.fetchSuggestions();
     await this.getSuggestionsCount({
       filters: this.filters,
@@ -92,13 +101,12 @@ export default {
   methods: {
     ...mapSuggestionActions({
       getSuggestions: suggestionActions.GET_SUGGESTIONS,
-      getSuggestionsCount: suggestionActions.GET_SUGGESTIONS_COUNT,
-      getSuggestionsSelectedSortKey: suggestionActions.GET_SUGGESTIONS_SELECTED_SORT
+      getSuggestionsCount: suggestionActions.GET_SUGGESTIONS_COUNT
     }),
     fetchSuggestions() {
       this.getSuggestions({
         offset: offsetByPagination(this.page),
-        sortValue: this.sortKey,
+        sort: this.sort,
         filters: this.filters,
         searchWord: this.searchWord
       });
@@ -124,7 +132,8 @@ export default {
         },
         query: {
           filters: this.filters,
-          search: this.searchWord
+          search: this.searchWord,
+          sort: this.sort
         }
       });
     }
@@ -133,6 +142,7 @@ export default {
     $route(to, from) {
       this.filters = this.$route.query.filters ? this.$route.query.filters : '';
       this.searchWord = this.$route.query.search ? this.$route.query.search : '';
+      this.sort = this.$route.query.sort ? this.$route.query.sort : sortingKeys.NEWEST_FIRST;
       this.updateSuggestionList();
     }
   }

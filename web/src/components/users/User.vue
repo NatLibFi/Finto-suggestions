@@ -64,7 +64,7 @@
 import SuggestionListHeader from '../suggestion/SuggestionListHeader';
 import SuggestionItem from '../suggestion/SuggestionItem';
 import SuggestionListPagination from '../suggestion/SuggestionListPagination';
-import { calculateOpenAndResolvedSuggestionCounts } from '../../utils/suggestionHelpers';
+import { calculateOpenAndResolvedSuggestionCounts } from '../../utils/suggestionHelpers.js';
 
 import { userActions, userGetters } from '../../store/modules/user/userConsts';
 import { mapUserActions, mapUserGetters } from '../../store/modules/user/userModule';
@@ -85,7 +85,7 @@ import {
   mapSuggestionGetters
 } from '../../store/modules/suggestion/suggestionModule.js';
 
-import { filterType } from '../../utils/suggestionHelpers';
+import { filterType } from '../../utils/suggestionHelpers.js';
 
 import SvgIcon from '../icons/SvgIcon';
 import IconMore from '../icons/IconMore';
@@ -157,11 +157,11 @@ export default {
     },
     async fetchAndSortAllSuggestions() {
       await this.getSuggestionsSelectedSortKey();
-      // TODO: Ensure that the sortValue is taken into account
+      // TODO: Ensure that the sort is taken into account
       if (this.suggestionsSelectedSort && this.suggestionsSelectedSort !== '') {
         await this.getSortedSuggestionsByUserId({
           userId: parseInt(this.userId),
-          sortValue: this.suggestionsSelectedSort
+          sort: this.suggestionsSelectedSort
         });
       } else {
         await this.getSuggestionsByUserId(parseInt(this.userId));
