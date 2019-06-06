@@ -1,7 +1,6 @@
 <template>
   <div>
     <div class="meeting-container">
-      <p>page {{page}}</p>
       <div class="arrow-button">
         <a @click="goToMeetings" unselectable="on">
           <svg-icon icon-name="arrow"><icon-arrow /></svg-icon>
