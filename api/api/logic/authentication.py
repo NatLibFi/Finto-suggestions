@@ -173,6 +173,7 @@ def handle_github_request(code) -> (str, str):
 
     name = ''
     email = ''
+    image = ''
 
     # for debug if error occurred
     user_data = ''
@@ -203,6 +204,11 @@ def handle_github_request(code) -> (str, str):
                     user_data = user_data_response.json()
                     if user_data['name'] is not None:
                       name = user_data['name']
+                    else:
+                      name = user_data['login']
+                    if user_data['avatar_url'] is not None:
+                      image = user_data['avatar_url']
+
 
             user_email_data_response = requests.get(f'https://api.github.com/user/emails?access_token={github_access_token}')
             if user_email_data_response is not None and user_email_data_response.ok is True:
@@ -212,7 +218,7 @@ def handle_github_request(code) -> (str, str):
                         email = data['email']
 
     if email is not None:
-        return (name, email)
+        return (name, email, image)
     else:
         raise ValueError(f'Could not get github user email info {user_data} {user_email_data}')
 
@@ -226,6 +232,7 @@ def handle_user_creation(code, oauth_data) -> str:
 
     name = oauth_data[0]
     email = oauth_data[1]
+    image = oauth_data[2]
 
     local_access_token = ''
 
@@ -235,6 +242,7 @@ def handle_user_creation(code, oauth_data) -> str:
         user = User(
           name=name,
           email=email,
+          imageUrl=image,
           password=None,
           role=UserRoles.NORMAL
         )
