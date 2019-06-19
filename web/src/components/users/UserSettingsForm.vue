@@ -14,10 +14,10 @@
         <p>Organisaatio:</p>
         <input v-model="userOrg" @input="$v.$touch()" type="text" />
       </div>
-      <!-- <div>
+      <div>
         <p>Profiilikuvan url-osoite:</p>
-        <input disabled v-model="userImageUrl" @input="$v.$touch()" type="url">
-      </div> -->
+        <input v-model="userImageUrl" @input="$v.$touch()" type="url">
+      </div>
     </div>
 
     <div @click.stop="submitForm" :class="[$v.$invalid ? 'disabled' : '', 'button']">
