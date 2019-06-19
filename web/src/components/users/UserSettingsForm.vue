@@ -70,7 +70,7 @@ export default {
   },
   async created() {
     await this.getUserIdFromStorage();
-    await this.getUser(this.userId);
+    await this.getAuthenticatedUser(this.userId);
     this.userName = this.user.name;
     if (this.user.title) {
       this.userTitle = this.user.title;
@@ -88,7 +88,7 @@ export default {
       getUserName: authenticatedUserActions.GET_USER_NAME
     }),
     ...mapUserActions({
-      getUser: userActions.GET_USER,
+      getAuthenticatedUser: userActions.GET_AUTHENTICATED_USER,
       patchUser: userActions.PATCH_USER
     }),
     async updateUser() {
@@ -122,7 +122,7 @@ export default {
       }
     },
     async updateShowingUserData() {
-      await this.getUser(this.userId);
+      await this.getAuthenticatedUser(this.userId);
     }
   },
   mounted: function() {
