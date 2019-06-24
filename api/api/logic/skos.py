@@ -43,13 +43,13 @@ def suggestionToTriple(suggestion, graph = None):
     g.add((URIRef(uri), dct.created, Literal(suggestion.created.date(), datatype=XSD.date)))
 
     if suggestion.preferred_label.fi.value:
-      g.add((URIRef(uri), URIRef(skos + 'prefLabel'), Literal(suggestion.preferred_label.fi.value, lang='fi')))
+      g.add((URIRef(uri), skos.prefLabel, Literal(suggestion.preferred_label.fi.value, lang='fi')))
 
     if suggestion.preferred_label.sv.value:
-      g.add((URIRef(uri), URIRef(skos + 'prefLabel'), Literal(suggestion.preferred_label.sv.value, lang='sv')))
+      g.add((URIRef(uri), skos.prefLabel, Literal(suggestion.preferred_label.sv.value, lang='sv')))
 
     if suggestion.preferred_label.en:
-      g.add((URIRef(uri), URIRef(skos + 'prefLabel'), Literal(suggestion.preferred_label.en, lang='en')))
+      g.add((URIRef(uri), skos.prefLabel, Literal(suggestion.preferred_label.en, lang='en')))
 
     for group in suggestion.groups:
       g.add((URIRef(uri), skos.member, URIRef(group.uri)))
