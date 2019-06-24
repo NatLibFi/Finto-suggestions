@@ -75,7 +75,7 @@
       </p>
     </div>
 
-    <div v-if="suggestion.groups && suggestion.groups[0]">
+    <div v-if="suggestion.groups && suggestion.groups[0] && suggestion.groups[0].length > 0">
       <p class="content-title"><strong>YSA/YSO temaattinen ryhmä</strong></p>
       <p v-for="group in suggestion.groups" :key="group.id">
         <a :href="group.uri">{{ group.value }}</a>
