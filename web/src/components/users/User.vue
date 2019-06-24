@@ -30,13 +30,13 @@
       </div>
     </div>
 
-    <suggestion-list-header-new :userPage="true" class="header" />
+    <suggestion-list-header :userPage="true" class="header" />
     <suggestion-list :userId="userId" :page="page" :isUserPage="true" />
   </div>
 </template>
 
 <script>
-import SuggestionListHeaderNew from '../suggestion/SuggestionListHeaderNew';
+import SuggestionListHeader from '../suggestion/SuggestionListHeader';
 import SuggestionItem from '../suggestion/SuggestionItem';
 import SuggestionList from '../suggestion/SuggestionList';
 
@@ -57,7 +57,7 @@ import { directive as onClickaway } from 'vue-clickaway';
 
 export default {
   components: {
-    SuggestionListHeaderNew,
+    SuggestionListHeader,
     SuggestionList,
     SuggestionItem,
     SvgIcon,

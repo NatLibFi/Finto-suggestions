@@ -37,10 +37,13 @@ export default new Router({
       props: true
     },
     {
-      path: '/users/:userId',
+      path: '/users/:userId/:page',
       name: 'user',
       component: User,
-      props: true
+      props: route => ({
+        userId: route.params.userId,
+        page: route.params.page
+      })
       // TODO: beforeEnter check authentication
     },
     {
@@ -59,7 +62,10 @@ export default new Router({
       path: '/meetings/:meetingId/:page',
       name: 'meeting-suggestion-list',
       component: MeetingSuggestionList,
-      props: true
+      props: route => ({
+        meetingId: route.params.meetingId,
+        page: route.params.page
+      })
     },
     {
       path: '/meetings/:meetingId/:suggestionId',

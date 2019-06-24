@@ -1,7 +1,14 @@
 <template>
   <div>
-    <suggestion-search :filters="filters" :searchWord="searchWord" :sort="sort" />
-    <suggestion-list-header-new
+    <suggestion-search
+      v-if="!isUserPage"
+      :meetingId="meetingId"
+      :filters="filters"
+      :searchWord="searchWord"
+      :sort="sort"
+    />
+    <suggestion-list-header
+      v-if="!isUserPage"
       :meetingId="meetingId"
       :filters="filters"
       :searchWord="searchWord"
@@ -11,10 +18,10 @@
       <ul class="list">
         <transition-group name="fade">
           <suggestion-item
-            class="item"
-            v-for="item in items"
-            :key="item.id"
-            :suggestion="item"
+            class="suggestion"
+            v-for="suggestion in suggestions"
+            :key="suggestion.id"
+            :suggestion="suggestion"
             :meetingId="meetingId"
           />
         </transition-group>
@@ -22,6 +29,9 @@
       <suggestion-list-pagination
         :pageCount="pageCount"
         :pageCountLoading="pageCountLoading"
+        :userId="userId"
+        :isUserPage="isUserPage"
+        :meetingId="meetingId"
         :page="page"
         :filters="filters"
         :searchWord="searchWord"
@@ -34,7 +44,7 @@
 
 <script>
 import SuggestionSearch from './SuggestionSearch';
-import SuggestionListHeaderNew from './SuggestionListHeaderNew';
+import SuggestionListHeader from './SuggestionListHeader';
 import SuggestionItem from './SuggestionItem';
 import SuggestionListPagination from './SuggestionListPagination';
 
@@ -48,18 +58,22 @@ import {
   mapSuggestionActions
 } from '../../store/modules/suggestion/suggestionModule.js';
 
-import { offsetByPagination, handleQueries } from '../../utils/suggestionHelpers.js';
+import { offsetByPagination } from '../../utils/suggestionHelpers.js';
 import { sortingKeys } from '../../utils/sortingHelper.js';
 
 export default {
   components: {
     SuggestionSearch,
-    SuggestionListHeaderNew,
+    SuggestionListHeader,
     SuggestionItem,
     SuggestionListPagination
   },
   props: {
-    // TODO: use meetingId to filter suggestions under this meeting for Meeting's Suggestion list
+    userId: {
+      type: [String, Number],
+      default: null
+    },
+    isUserPage: Boolean,
     meetingId: {
       type: [String, Number],
       default: null
@@ -81,8 +95,8 @@ export default {
   },
   computed: {
     ...mapSuggestionGetters({
-      items: suggestionGetters.GET_SUGGESTIONS,
-      itemCount: suggestionGetters.GET_SUGGESTIONS_COUNT
+      suggestions: suggestionGetters.GET_SUGGESTIONS,
+      suggestionCount: suggestionGetters.GET_SUGGESTIONS_COUNT
     })
   },
   async created() {
@@ -92,7 +106,7 @@ export default {
       filters: this.filters,
       searchWord: this.searchWord
     });
-    this.pageCount = Math.ceil(this.itemCount / 15);
+    this.pageCount = Math.ceil(this.suggestionCount / 15);
     if (this.pageCount < this.page) {
       this.goToFirstPage();
     }
@@ -117,29 +131,44 @@ export default {
       await this.getSuggestionsCount({
         filters: this.filters,
         searchWord: this.searchWord
-      })
-      this.pageCount = Math.ceil(this.itemCount / 15);
+      });
+      this.pageCount = Math.ceil(this.suggestionCount / 15);
       if (this.pageCount < this.page) {
         this.goToFirstPage();
       }
       this.pageCountLoading = false;
     },
     goToFirstPage() {
-      this.$router.push({
-        name: 'suggestions',
-        params: {
-          page: 1
-        },
-        query: {
-          filters: this.filters,
-          search: this.searchWord,
-          sort: this.sort
-        }
-      });
+      if (this.meetingId) {
+        this.$router.push({
+          name: 'meeting-suggestion-list',
+          params: {
+            meetingId: this.meetingId,
+            page: 1
+          },
+          query: {
+            filters: this.filters,
+            search: this.searchWord,
+            sort: this.sort
+          }
+        });
+      } else {
+        this.$router.push({
+          name: 'suggestions',
+          params: {
+            page: 1
+          },
+          query: {
+            filters: this.filters,
+            search: this.searchWord,
+            sort: this.sort
+          }
+        });
+      }
     }
   },
-  watch:{
-    $route(to, from) {
+  watch: {
+    $route() {
       this.filters = this.$route.query.filters ? this.$route.query.filters : '';
       this.searchWord = this.$route.query.search ? this.$route.query.search : '';
       this.sort = this.$route.query.sort ? this.$route.query.sort : sortingKeys.NEWEST_FIRST;
@@ -170,7 +199,7 @@ ul {
   padding-left: 0; /* reset inital padding for ul tags */
 }
 
-.item {
+.suggestion {
   margin: 10px 0 10px 0;
   border-bottom: 2px solid #f5f5f5;
 }

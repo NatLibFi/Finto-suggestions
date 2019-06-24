@@ -100,6 +100,8 @@ export default {
       const result = await api.suggestion.getSuggestionsByUserId(userId, offset);
       if (result && result.code == 200) {
         commit(suggestionMutations.SET_SUGGESTIONS, result.data);
+      } else {
+        return [];
       }
     },
     async [suggestionActions.GET_SORTED_SUGGESTIONS_BY_USER_ID]({ commit }, values) {

@@ -2,11 +2,7 @@
   <div class="filter-suggestions">
     <h5>
       Suodata hakutuloksia
-      <a
-        v-if="filters && filters.length > 0"
-        @click="resetFilters()"
-        class="clear-button"
-      >
+      <a v-if="filters && filters.length > 0" @click="resetFilters()" class="clear-button">
         Tyhjennä valinnat
       </a>
     </h5>
@@ -57,7 +53,7 @@
       />
     </div>
     <div
-      v-if="!isMeeting && mapMeetingsToDropDown().length > 0"
+      v-if="!meetingId && mapMeetingsToDropDown().length > 0"
       @click="isDropDownOpened.MEETING = !isDropDownOpened.MEETING"
       class="filter-item"
     >
@@ -84,15 +80,7 @@ import MultipleChoiceDropDown from '../common/MultipleChoiceDropDown';
 import SvgIcon from '../icons/SvgIcon';
 import IconTriangle from '../icons/IconTriangle';
 
-import { filterType, handleQueries } from '../../utils/suggestionHelpers.js';
-import {
-  suggestionGetters,
-  suggestionActions
-} from '../../store/modules/suggestion/suggestionConsts.js';
-import {
-  mapSuggestionGetters,
-  mapSuggestionActions
-} from '../../store/modules/suggestion/suggestionModule.js';
+import { filterType, handleQueries, handleMeetingQueries } from '../../utils/suggestionHelpers.js';
 
 import { mapMeetingActions, mapMeetingGetters } from '../../store/modules/meeting/meetingModule.js';
 import { meetingActions, meetingGetters } from '../../store/modules/meeting/meetingConsts.js';
@@ -107,9 +95,6 @@ import {
   suggestionStateStatusToString
 } from '../../utils/suggestionHelpers.js';
 
-import { handleDropDownSelection } from '../../utils/filterValueHelper.js';
-import { findIndexFromDropDownOptionsByValue } from '../../utils//dropDownHelper';
-
 export default {
   components: {
     FilterDropDown,
@@ -118,7 +103,7 @@ export default {
     IconTriangle
   },
   props: {
-    isMeeting: Boolean,
+    meetingId: [String, Number],
     filters: String,
     searchWord: String,
     sort: String
@@ -215,21 +200,37 @@ export default {
     stateChanged(selected) {
       let stateString = this.createFilterString(filterType.STATUS, selected);
       let filters = this.combineStateStrings(filterType.STATUS, stateString);
-      handleQueries(filters, this.searchWord, this.sort, this.$router);
+      if (this.meetingId) {
+        handleMeetingQueries(this.meetingId, filters, this.searchWord, this.sort, this.$router);
+      } else {
+        handleQueries(filters, this.searchWord, this.sort, this.$router);
+      }
     },
     meetingChanged(selected) {
-      let stateString = 'meeting_id:' + selected.toString().toLowerCase();
-      let filters = this.combineStateStrings(filterType.MEETING, stateString);
-      handleQueries(filters, this.searchWord, this.sort, this.$router);
+      if (this.meetingId) {
+        handleMeetingQueries(this.meetingId, this.filters, this.searchWord, this.sort, this.$router);
+      } else {
+        let stateString = 'meeting_id:' + selected.toString().toLowerCase();
+        let filters = this.combineStateStrings(filterType.MEETING, stateString);
+        handleQueries(filters, this.searchWord, this.sort, this.$router);
+      }
     },
     tagChanged(selected) {
       let filters = this.combineStateStrings(filterType.TAGS, selected);
-      handleQueries(filters, this.searchWord, this.sort, this.$router);
+      if (this.meetingId) {
+        handleMeetingQueries(this.meetingId, filters, this.searchWord, this.sort, this.$router);
+      } else {
+        handleQueries(filters, this.searchWord, this.sort, this.$router);
+      }
     },
     typeChanged(selected) {
       let stateString = this.createFilterString(filterType.TYPE, selected);
       let filters = this.combineStateStrings(filterType.TYPE, stateString);
-      handleQueries(filters, this.searchWord, this.sort, this.$router);
+      if (this.meetingId) {
+        handleMeetingQueries(this.meetingId, filters, this.searchWord, this.sort, this.$router);
+      } else {
+        handleQueries(filters, this.searchWord, this.sort, this.$router);
+      }
     },
     mapMeetingsToDropDown() {
       let meetings = [];
@@ -335,7 +336,7 @@ export default {
         }
       }
 
-      return str
+      return str;
     },
     updateTags() {
       let str = '';

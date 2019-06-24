@@ -14,7 +14,7 @@
         {{ resolvedSuggestionCount }} käsiteltyä
       </span>
     </div>
-    <div v-if="userPage" class="title">
+    <div v-if="userPage" class="title user-title">
       <span>Käyttäjälle asetut ehdotukset</span>
     </div>
     <div
@@ -37,11 +37,12 @@
 </template>
 
 <script>
-import { sortingKeys, getSelectedSortOptionIndex } from '../../utils/sortingHelper.js';
-
 import SortingDropDown from '../common/SortingDropDown';
 import SvgIcon from '../icons/SvgIcon';
 import IconTriangle from '../icons/IconTriangle';
+
+import { sortingKeys, getSelectedSortOptionIndex } from '../../utils/sortingHelper.js';
+import { handleQueries } from '../../utils/suggestionHelpers.js';
 
 import {
   mapSuggestionGetters,
@@ -63,8 +64,14 @@ export default {
   props: {
     openSuggestionCount: Number,
     resolvedSuggestionCount: Number,
-    meetingSort: Boolean,
-    userPage: Boolean
+    meetingId: {
+      type: [String, Number],
+      default: null
+    },
+    userPage: Boolean,
+    filters: String,
+    searchWord: String,
+    sort: String
   },
   data: () => ({
     selectedSortOptionIndex: 0,
@@ -72,8 +79,8 @@ export default {
     dropDownOptions: [
       { label: 'Uusin ensin', value: sortingKeys.NEWEST_FIRST },
       { label: 'Vanhin ensin', value: sortingKeys.OLDEST_FIRST },
-      // { label: 'Eniten kommentoitu', value: sortingKeys.MOST_COMMENTS },
-      // { label: 'Vähiten kommentoitu', value: sortingKeys.LEAST_COMMENTS },
+      { label: 'Eniten kommentoitu', value: sortingKeys.MOST_COMMENTS },
+      { label: 'Vähiten kommentoitu', value: sortingKeys.LEAST_COMMENTS },
       { label: 'Viimeksi päivitetty', value: sortingKeys.LAST_UPDATED }
     ],
     openSuggestionClicked: false,
@@ -87,12 +94,12 @@ export default {
     })
   },
   created() {
-    if (this.meetingSort) {
+    if (this.meetingId) {
       this.getMeetingSuggestionSelectedSort();
     } else {
       this.getSuggestionSelectedSort();
     }
-    this.handleSortinDropDownIndex();
+    this.handleSortingDropDownIndex();
   },
   methods: {
     ...mapSuggestionActions({
@@ -106,18 +113,12 @@ export default {
       setDirtynessToFalse: suggestionMutations.SET_DIRTYNESS_TO_FALSE
     }),
     setSelectedSort(selectedSort) {
-      if (this.meetingSort) {
-        this.setMeetingSuggestionSelectedSort(selectedSort);
-        this.getMeetingSuggestionSelectedSort();
-      } else {
-        this.setSuggestionSelectedSort(selectedSort);
-        this.getSuggestionSelectedSort();
-      }
+      handleQueries(this.filters, this.searchWord, selectedSort, this.$router);
     },
     closeDropDown: function() {
       this.isDropDownOpened = false;
     },
-    handleSortinDropDownIndex() {
+    handleSortingDropDownIndex() {
       if (this.meetingSort) {
         this.selectedSortOptionIndex = getSelectedSortOptionIndex(
           this.dropDownOptions,
@@ -157,10 +158,10 @@ export default {
   },
   watch: {
     suggestionSelectedSort() {
-      this.handleSortinDropDownIndex();
+      this.handleSortingDropDownIndex();
     },
     meetingSuggestionSelectedSort() {
-      this.handleSortinDropDownIndex();
+      this.handleSortingDropDownIndex();
     }
   }
 };
@@ -193,6 +194,9 @@ export default {
   -moz-user-select: none; /* Firefox */
   -ms-user-select: none; /* IE10+/Edge */
   user-select: none; /* Standard */
+}
+.user-title {
+  color: #353535;
 }
 .open {
   padding-right: 10px;

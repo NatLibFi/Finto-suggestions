@@ -1,7 +1,7 @@
 <template>
   <div>
     <navigation></navigation>
-    <suggestion-list :meetingId="null" :page="page" />
+    <suggestion-list :meetingId="null" :userId="null" :page="page" />
   </div>
 </template>
 
