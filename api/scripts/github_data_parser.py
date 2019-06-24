@@ -18,7 +18,7 @@ class GithubDataParser:
       body.preferred_labels['sv'] = { 'value': splitted_values[1].strip() }
     if 'Ehdotettu termi englanniksi' in value:
       splitted_values = value.split('Ehdotettu termi englanniksi')
-      body.preferred_labels['en'] = { 'value': splitted_values[1].strip() }
+      body.preferred_labels['en'] = splitted_values[1].strip()
     if 'preflabel' in value:
       splitted_values = value.split('preflabel')
       splitted_parsed_value = splitted_values[1].replace('[', '').replace(']', '').split('(')

@@ -30,7 +30,7 @@ def suggestionToTriple(suggestion, graph = None):
   if suggestion is not None:
     uri = yso['p{}'.format(50000 + suggestion.id)]
     g.add((uri, RDF.type, SKOS.Concept))
-    
+
     for tag in suggestion.tags:
       if 'maantieteellinen' in tag.label.lower():
         g.add(((URIRef(uri), RDF.type, URIRef(ysameta + 'GeographicalConcept'))))
@@ -42,28 +42,28 @@ def suggestionToTriple(suggestion, graph = None):
     g.add((URIRef(uri), foaf.homepage, URIRef(f'{suggestion_system_url}/{suggestion.id}')))
     g.add((URIRef(uri), dct.created, Literal(suggestion.created.date(), datatype=XSD.date)))
 
-    for pref_label in suggestion.preferred_label:
-        g.add((URIRef(uri), URIRef(skos + 'prefLabel'), Literal(suggestion.preferred_label['pref_label'], lang=pref_label)))
+    if suggestion.preferred_label.fi.value:
+      g.add((URIRef(uri), URIRef(skos + 'prefLabel'), Literal(suggestion.preferred_label.fi.value, lang='fi')))
 
-    for group in suggestion.group:
-      g.add((URIRef(group.uri), skos.member, URIRef(uri)))
+    if suggestion.preferred_label.sv.value:
+      g.add((URIRef(uri), URIRef(skos + 'prefLabel'), Literal(suggestion.preferred_label.sv.value, lang='sv')))
 
-    #Ehdotettu yläkäsite YSOssa (LT) : broadMatch (missing from parser, ok now)
-    # example: [{value: "peruna", uri: "http://www.yso.fi/onto/yso/p13407"}, {value: "perunajauho", uri: "http://www.yso.fi/onto/yso/p6710"}]
-    # for broader_labels
+    if suggestion.preferred_label.en:
+      g.add((URIRef(uri), URIRef(skos + 'prefLabel'), Literal(suggestion.preferred_label.en, lang='en')))
 
-    #Tarkoitusta täsmentävä selite : note
-    # "peruna on tärkeä aihe kansakunnassa"
-    # for scopeNote from suggestion.scopeNote:
+    for group in suggestion.groups:
+      g.add((URIRef(uri), skos.member, URIRef(group.uri)))
 
-    #Vaihtoehtoiset termit ja ilmaisut : altLabel
-    # [{value: "peruna"}, {value: "perunajauho"}]
-    # for alt_label in suggestion.alternative_labels:
+    for match in suggestion.broader_labels:
+      g.add((URIRef(uri), skos.broadMatch, URIRef(match.uri)))
 
-    #Alakäsitteet (ST) : narrowMatch (missing from parser, ok now)
-    # example: [{value: "peruna", uri: "http://www.yso.fi/onto/yso/p13407"}, {value: "perunajauho", uri: "http://www.yso.fi/onto/yso/p6710"}]
+    g.add((URIRef(uri), skos.note, suggestion.scopeNote))
 
-    #Assosiatiiviset (RT) : relatedMatch (missing from parser, ok now)
-    # example: [{value: "peruna", uri: "http://www.yso.fi/onto/yso/p13407"}, {value: "perunajauho", uri: "http://www.yso.fi/onto/yso/p6710"}]
+    for label in suggestion.alternative_labels:
+      g.add((URIRef(uri), skos.altLabel, URIRef(label.uri)))
 
+    for match in suggestion.narrower_labels:
+      g.add((URIRef(uri), skos.narrowMatch, URIRef(match.uri)))
 
+    for match in suggestion.related_labels:
+      g.add((URIRef(uri), skos.relatedMatch, URIRef(match.uri)))
