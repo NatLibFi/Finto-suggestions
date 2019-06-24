@@ -9,7 +9,7 @@
         <div v-if="isAuthenticated && user.name" class="nav-menu" @click="showDropdown = true">
           <transition name="fade">
             <div v-if="user.imageUrl" class="user-bubble-image">
-              <img :src="user.imageUrl" alt="">
+              <img :src="user.imageUrl" alt="userInitials" />
             </div>
           </transition>
           <div v-if="!user.imageUrl" class="user-bubble">
@@ -61,7 +61,7 @@
       <div class="nav-mobile-dropdown-header">
         <transition name="fade">
           <div v-if="user.imageUrl" class="user-bubble-image">
-            <img :src="user.imageUrl" alt="">
+            <img :src="user.imageUrl" alt="userInitials" />
           </div>
         </transition>
         <div v-if="!user.imageUrl" class="user-bubble">
@@ -122,8 +122,6 @@ import { mapUserGetters, mapUserActions } from '../../store/modules/user/userMod
 import { mapAuthenticatedUserGetters, mapAuthenticatedUserActions } from '../../store/modules/authenticatedUser/authenticatedUserModule';
 // eslint-disable-next-line
 import { authenticatedUserGetters, authenticatedUserActions, storeKeyNames, authenticatedUserMutations } from '../../store/modules/authenticatedUser/authenticatedUserConsts';
-import { mapSuggestionActions } from '../../store/modules/suggestion/suggestionModule';
-import { suggestionActions } from '../../store/modules/suggestion/suggestionConsts';
 
 import { userNameInitials } from '../../utils/userHelpers.js';
 
@@ -154,7 +152,7 @@ export default {
       signupError: '',
       showResetPasswordForm: false,
       showLocalLoginError: false
-    }
+    };
   },
   computed: {
     ...mapAuthenticatedUserGetters({
@@ -236,7 +234,8 @@ export default {
       this.$router.push({
         name: 'user',
         params: {
-          userId: this.userId
+          userId: this.userId,
+          page: 1
         }
       });
       this.showDropdown = false;
@@ -271,8 +270,7 @@ export default {
     },
     async resetPassword(email) {
       await this.resetPasswordByEmail(email)
-        .then(() => {
-        })
+        .then(() => {})
         .catch(() => {
           console.log('Resetting failed.');
         });
@@ -390,7 +388,7 @@ export default {
 }
 
 .nav-menu .user-bubble,
-.nav-menu .user-bubble-image  {
+.nav-menu .user-bubble-image {
   position: relative;
   top: 50%;
   transform: perspective(1px) translateY(calc(-50% - 0.5px));

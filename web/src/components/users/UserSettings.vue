@@ -2,7 +2,7 @@
   <div class="user">
     <div class="profile-container">
       <div v-if="user.imageUrl" class="profile-image">
-        <img :src="user.imageUrl" :alt="userNameInitials">
+        <img :src="user.imageUrl" :alt="userNameInitials" />
       </div>
       <div v-if="!user.imageUrl" class="user-name-initials">
         <span v-if="userNameInitials">{{ userNameInitials }}</span>
@@ -36,9 +36,9 @@ import { userRoleToString } from '../../utils/userMappings.js';
 import { userGetters } from '../../store/modules/user/userConsts';
 import { mapUserGetters } from '../../store/modules/user/userModule';
 // eslint-disable-next-line
-import { authenticatedUserGetters, authenticatedUserActions } from '../../store/modules/authenticatedUser/authenticatedUserConsts.js';
+import { authenticatedUserGetters } from '../../store/modules/authenticatedUser/authenticatedUserConsts.js';
 // eslint-disable-next-line
-import { mapAuthenticatedUserGetters, mapAuthenticatedUserActions } from '../../store/modules/authenticatedUser/authenticatedUserModule.js';
+import { mapAuthenticatedUserGetters } from '../../store/modules/authenticatedUser/authenticatedUserModule.js';
 
 export default {
   components: {
@@ -54,22 +54,16 @@ export default {
   computed: {
     ...mapAuthenticatedUserGetters({
       userId: authenticatedUserGetters.GET_USER_ID,
-      isAuthenticated: authenticatedUserGetters.GET_IS_AUTHENTICATED,
-      name: authenticatedUserGetters.GET_USER_NAME
+      isAuthenticated: authenticatedUserGetters.GET_IS_AUTHENTICATED
     }),
     ...mapUserGetters({
       user: userGetters.GET_AUTHENTICATED_USER
     })
   },
   async created() {
-    this.getUserIdFromStorage();
     await this.fetchUserNameAndInitials();
   },
   methods: {
-    ...mapAuthenticatedUserActions({
-      getUserIdFromStorage: authenticatedUserActions.GET_USER_ID_FROM_STORAGE,
-      getUserName: authenticatedUserActions.GET_USER_NAME
-    }),
     fetchUserNameAndInitials() {
       if (this.user) {
         this.userNameInitials = userNameInitials(this.user.name);

@@ -16,7 +16,7 @@
       </div>
       <div>
         <p>Profiilikuvan url-osoite:</p>
-        <input v-model="userImageUrl" @input="$v.$touch()" type="url">
+        <input v-model="userImageUrl" @input="$v.$touch()" type="url" />
       </div>
     </div>
 
@@ -61,7 +61,7 @@ export default {
   },
   computed: {
     ...mapUserGetters({
-      user: userGetters.GET_USER
+      user: userGetters.GET_AUTHENTICATED_USER
     }),
     ...mapAuthenticatedUserGetters({
       userId: authenticatedUserGetters.GET_USER_ID,
@@ -84,8 +84,7 @@ export default {
   },
   methods: {
     ...mapAuthenticatedUserActions({
-      getUserIdFromStorage: authenticatedUserActions.GET_USER_ID_FROM_STORAGE,
-      getUserName: authenticatedUserActions.GET_USER_NAME
+      getUserIdFromStorage: authenticatedUserActions.GET_USER_ID_FROM_STORAGE
     }),
     ...mapUserActions({
       getAuthenticatedUser: userActions.GET_AUTHENTICATED_USER,

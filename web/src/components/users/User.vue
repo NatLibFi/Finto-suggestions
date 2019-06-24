@@ -30,44 +30,15 @@
       </div>
     </div>
 
-    <div v-if="paginated_items && paginated_items.length > 0" class="user-suggestions">
-      <suggestion-list-header
-        :openSuggestionCount="openCount || 0"
-        :resolvedSuggestionCount="resolvedCount || 0"
-        :userPage="true"
-        class="header"
-      />
-      <ul class="list">
-        <transition-group name="fade">
-          <suggestion-item
-            class="item"
-            v-for="item in paginated_items"
-            :key="item.id"
-            :suggestion="item"
-          />
-        </transition-group>
-      </ul>
-      <suggestion-list-pagination
-        v-if="calculatePageCountForPagination() > 1"
-        :pageCount="calculatePageCountForPagination()"
-        @paginationPageChanged="paginationPageChanged"
-      />
-    </div>
-
-    <div
-      v-if="paginated_items && paginated_items.length === 0"
-      class="no-user-suggestions-container"
-    >
-      <p>Käyttäjälle ei ole asetettu käsitteitä.</p>
-    </div>
+    <suggestion-list-header-new :userPage="true" class="header" />
+    <suggestion-list :userId="userId" :page="page" :isUserPage="true" />
   </div>
 </template>
 
 <script>
-import SuggestionListHeader from '../suggestion/SuggestionListHeader';
+import SuggestionListHeaderNew from '../suggestion/SuggestionListHeaderNew';
 import SuggestionItem from '../suggestion/SuggestionItem';
-import SuggestionListPagination from '../suggestion/SuggestionListPagination';
-import { calculateOpenAndResolvedSuggestionCounts } from '../../utils/suggestionHelpers.js';
+import SuggestionList from '../suggestion/SuggestionList';
 
 import { userGetters } from '../../store/modules/user/userConsts';
 import { mapUserGetters } from '../../store/modules/user/userModule';
@@ -78,17 +49,7 @@ import { authenticatedUserGetters } from '../../store/modules/authenticatedUser/
 // eslint-disable-next-line
 import { mapAuthenticatedUserGetters} from '../../store/modules/authenticatedUser/authenticatedUserModule.js';
 
-import {
-  suggestionGetters,
-  suggestionActions
-} from '../../store/modules/suggestion/suggestionConsts.js';
-
-import {
-  mapSuggestionActions,
-  mapSuggestionGetters
-} from '../../store/modules/suggestion/suggestionModule.js';
-
-import { filterType } from '../../utils/suggestionHelpers.js';
+import { handleUserQueries } from '../../utils/suggestionHelpers.js';
 
 import SvgIcon from '../icons/SvgIcon';
 import IconMore from '../icons/IconMore';
@@ -96,9 +57,9 @@ import { directive as onClickaway } from 'vue-clickaway';
 
 export default {
   components: {
-    SuggestionListHeader,
+    SuggestionListHeaderNew,
+    SuggestionList,
     SuggestionItem,
-    SuggestionListPagination,
     SvgIcon,
     IconMore
   },
@@ -106,16 +67,20 @@ export default {
     onClickaway: onClickaway
   },
   props: {
-    userId: [String, Number]
+    userId: [String, Number],
+    page: {
+      type: [String, Number],
+      required: true,
+      default: 1
+    }
   },
   data() {
     return {
+      filters: this.$route.query.filters ? this.$route.query.filters : '',
+      searchWord: this.$route.query.search ? this.$route.query.search : '',
+      sort: this.$route.query.sort ? this.$route.query.sort : '',
       userRoleToString,
       userNameInitials: '',
-      paginationMaxCount: 10,
-      openCount: 0,
-      resolvedCount: 0,
-      paginated_items: [],
       showDropdown: false
     };
   },
@@ -126,72 +91,17 @@ export default {
     }),
     ...mapUserGetters({
       user: userGetters.GET_AUTHENTICATED_USER
-    }),
-    ...mapSuggestionGetters({
-      items: suggestionGetters.GET_SUGGESTIONS,
-      filters: suggestionGetters.GET_FILTERS,
-      suggestionsSelectedSort: suggestionGetters.GET_SUGGESTIONS_SELECTED_SORT
     })
   },
   async created() {
-    await this.fetchUserNameAndInitials();
-    await this.getSuggestionsByUserId(parseInt(this.userId));
-    await this.handleSuggestionFetching();
-    await this.getSuggestionsSelectedSortKey();
+    handleUserQueries(this.userId, this.filters, this.searchWord, this.sort, this.$router);
+    this.fetchUserNameAndInitials();
   },
   methods: {
-    ...mapSuggestionActions({
-      getSuggestionsByUserId: suggestionActions.GET_SUGGESTIONS_BY_USER_ID,
-      getSortedSuggestionsByUserId: suggestionActions.GET_SORTED_SUGGESTIONS_BY_USER_ID,
-      getSuggestionsSelectedSortKey: suggestionActions.GET_SUGGESTIONS_SELECTED_SORT
-    }),
     fetchUserNameAndInitials() {
       if (this.user) {
         this.userNameInitials = userNameInitials(this.user.name);
       }
-    },
-    async handleSuggestionFetching() {
-      await this.fetchAndSortAllSuggestions();
-      await this.paginationPageChanged();
-    },
-    async fetchAndSortAllSuggestions() {
-      await this.getSuggestionsSelectedSortKey();
-      // TODO: Ensure that the sort is taken into account
-      if (this.suggestionsSelectedSort && this.suggestionsSelectedSort !== '') {
-        await this.getSortedSuggestionsByUserId({
-          userId: parseInt(this.userId),
-          sort: this.suggestionsSelectedSort
-        });
-      } else {
-        await this.getSuggestionsByUserId(parseInt(this.userId));
-      }
-    },
-    getPaginationStaringIndex(pageNumber) {
-      return pageNumber > 1 ? this.paginationMaxCount * pageNumber - this.paginationMaxCount : 0;
-    },
-    getPaginationEndingIndex(pageNumber) {
-      const endIndex = this.paginationMaxCount * pageNumber;
-      return endIndex > this.items.length ? this.items.length : endIndex;
-    },
-    async paginationPageChanged(pageNumber = 1, items = null) {
-      const start = this.getPaginationStaringIndex(pageNumber);
-      const end = this.getPaginationEndingIndex(pageNumber);
-      const paginatedItems = items ? items : this.items;
-      // eslint-disable-next-line
-      this.paginated_items = paginatedItems && paginatedItems.length > 0 ? paginatedItems.slice(start, end) : [];
-      this.calculateOpenAndResolvedSuggestionCounts(items);
-      this.calculatePageCountForPagination(items);
-    },
-    calculatePageCountForPagination() {
-      return Math.ceil(this.items.length / this.paginationMaxCount);
-    },
-    calculateOpenAndResolvedSuggestionCounts(items = null) {
-      const counts =
-        items === null
-          ? calculateOpenAndResolvedSuggestionCounts(this.items)
-          : calculateOpenAndResolvedSuggestionCounts(items);
-      this.openCount = counts && counts.openCount ? counts.openCount : 0;
-      this.resolvedCount = counts && counts.resolvedCount ? counts.resolvedCount : 0;
     },
     closeDropdown() {
       this.showDropdown = false;
@@ -201,26 +111,6 @@ export default {
         name: 'settings'
       });
       this.showDropdown = false;
-    }
-  },
-  watch: {
-    async filters() {
-      if (this.filters.length > 0) {
-        let items = this.items;
-        this.filters.forEach(filter => {
-          switch (filter.type) {
-            case filterType.STATUS:
-              items = items.filter(i => i.status === filter.value);
-              break;
-          }
-        });
-        await this.paginationPageChanged(1, items);
-      } else {
-        await this.handleSuggestionFetching();
-      }
-    },
-    async suggestionsSelectedSort() {
-      await this.handleSuggestionFetching();
     }
   },
   mounted: function() {
@@ -339,25 +229,6 @@ export default {
   margin-bottom: 40px;
 }
 
-ul {
-  list-style: none;
-}
-
-.list {
-  text-align: left;
-  background-color: #ffffff;
-  border: 2px solid #f5f5f5;
-  border-top: none;
-  width: 60vw;
-  margin: 0 20vw 20px;
-  padding-left: 0; /* reset inital padding for ul tags */
-}
-
-.item {
-  margin: 10px 0 10px 0;
-  border-bottom: 2px solid #f5f5f5;
-}
-
 .no-user-suggestions-container {
   position: relative;
   margin: 20px 20vw 0;
@@ -397,11 +268,6 @@ ul {
     transform: initial;
     text-align: center;
     padding: 20px 10px 10px;
-  }
-
-  .list {
-    width: 80vw;
-    margin: 0 10vw 20px;
   }
 
   .no-user-suggestions-container {

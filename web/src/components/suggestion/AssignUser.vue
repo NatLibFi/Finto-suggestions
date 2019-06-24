@@ -17,14 +17,14 @@
         >
           <div v-if="user.name && user.name.length > 0">
             <div v-if="user.imageUrl" class="user-image">
-              <img :src="user.imageUrl" :alt="userNameInitials">
+              <img :src="user.imageUrl" :alt="userNameInitials" />
             </div>
             <div v-if="!user.imageUrl" class="user-image">{{ userNameInitials(user.name) }}</div>
             <div class="user-name">{{ user.name }}</div>
           </div>
           <div v-if="user.name && user.name.length === 0">
             <div v-if="user.imageUrl" class="user-image">
-              <img :src="user.imageUrl" :alt="user.id">
+              <img :src="user.imageUrl" :alt="user.id" />
             </div>
             <div v-if="!user.imageUrl" class="user-image">{{ user.id }}</div>
             <div class="user-name">Käyttäjä {{ user.id }}</div>
