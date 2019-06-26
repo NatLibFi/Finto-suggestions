@@ -31,6 +31,8 @@ def get_suggestions(limit: int = None, offset: int = None, filters: str = None, 
     def query_func():
         if sort in SUGGESTION_SORT_FUNCTIONS:
             query = SUGGESTION_SORT_FUNCTIONS.get(sort)(db.session)
+        else:
+            query = SUGGESTION_SORT_FUNCTIONS.get('CREATED_DESC')(db.session)
 
         if filters and _validate_filters(filters):
             for name, value in filters:
