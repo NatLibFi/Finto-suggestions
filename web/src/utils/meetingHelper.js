@@ -1,4 +1,4 @@
-import { suggestionStateStatus } from './suggestionHelpers';
+import { suggestionStateStatus } from './suggestionHelpers.js';
 
 /*
  * Local method for calculating processed suggestions count

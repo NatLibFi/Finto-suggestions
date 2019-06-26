@@ -2,7 +2,7 @@
   <div v-if="isOpened" class="drop-down-options" v-on-clickaway="closeDropDown">
     <div v-for="(option, i) in dropDownOptions" :key="option.id">
       <div
-        @click="sortValueSelected(option, i)"
+        @click="sortSelected(option, i)"
         :class="[i == selectedIndex ? 'selected' : '', 'option']"
       >
         <svg-icon :class="[i == selectedIndex ? '' : 'hidden-checkmark']" icon-name="check">
@@ -52,7 +52,7 @@ export default {
     ...mapSuggestionMutations({
       setDirtynessToTrue: suggestionMutations.SET_DIRTYNESS_TO_TRUE
     }),
-    sortValueSelected(option, index) {
+    sortSelected(option, index) {
       this.setDirtynessToTrue();
       this.handleDropDownSelectedIndicator(index);
 

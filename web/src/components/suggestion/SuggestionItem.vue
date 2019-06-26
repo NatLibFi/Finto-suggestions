@@ -88,7 +88,7 @@ import {
   suggestionTypeToString,
   suggestionStateStatus,
   suggestionStateStatusToString
-} from '../../utils/suggestionHelpers';
+} from '../../utils/suggestionHelpers.js';
 import { dateTimeFormatLabel } from '../../utils/dateHelper';
 import { eventTypes } from '../../utils/eventHelper';
 
@@ -140,7 +140,8 @@ export default {
       this.$router.push({
         name: 'meeting-suggestion-list',
         params: {
-          meetingId: id
+          meetingId: id,
+          page: 1
         }
       });
     }

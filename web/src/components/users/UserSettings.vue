@@ -1,7 +1,10 @@
 <template>
   <div class="user">
     <div class="profile-container">
-      <div class="user-name-initials">
+      <div v-if="user.imageUrl" class="profile-image">
+        <img :src="user.imageUrl" :alt="userNameInitials" />
+      </div>
+      <div v-if="!user.imageUrl" class="user-name-initials">
         <span v-if="userNameInitials">{{ userNameInitials }}</span>
         <span v-else>{{ userId }}</span>
       </div>
@@ -30,12 +33,12 @@ import UserSettingsForm from './UserSettingsForm';
 import { userNameInitials } from '../../utils/userHelpers.js';
 import { userRoleToString } from '../../utils/userMappings.js';
 
-import { userActions, userGetters } from '../../store/modules/user/userConsts';
-import { mapUserActions, mapUserGetters } from '../../store/modules/user/userModule';
+import { userGetters } from '../../store/modules/user/userConsts';
+import { mapUserGetters } from '../../store/modules/user/userModule';
 // eslint-disable-next-line
-import { authenticatedUserGetters, authenticatedUserActions } from '../../store/modules/authenticatedUser/authenticatedUserConsts.js';
+import { authenticatedUserGetters } from '../../store/modules/authenticatedUser/authenticatedUserConsts.js';
 // eslint-disable-next-line
-import { mapAuthenticatedUserGetters, mapAuthenticatedUserActions } from '../../store/modules/authenticatedUser/authenticatedUserModule.js';
+import { mapAuthenticatedUserGetters } from '../../store/modules/authenticatedUser/authenticatedUserModule.js';
 
 export default {
   components: {
@@ -51,26 +54,16 @@ export default {
   computed: {
     ...mapAuthenticatedUserGetters({
       userId: authenticatedUserGetters.GET_USER_ID,
-      isAuthenticated: authenticatedUserGetters.GET_IS_AUTHENTICATED,
-      name: authenticatedUserGetters.GET_USER_NAME
+      isAuthenticated: authenticatedUserGetters.GET_IS_AUTHENTICATED
     }),
     ...mapUserGetters({
-      user: userGetters.GET_USER
+      user: userGetters.GET_AUTHENTICATED_USER
     })
   },
   async created() {
-    this.getUserIdFromStorage();
-    await this.getUser(this.userId);
     await this.fetchUserNameAndInitials();
   },
   methods: {
-    ...mapAuthenticatedUserActions({
-      getUserIdFromStorage: authenticatedUserActions.GET_USER_ID_FROM_STORAGE,
-      getUserName: authenticatedUserActions.GET_USER_NAME
-    }),
-    ...mapUserActions({
-      getUser: userActions.GET_USER
-    }),
     fetchUserNameAndInitials() {
       if (this.user) {
         this.userNameInitials = userNameInitials(this.user.name);
@@ -119,7 +112,7 @@ export default {
   border-radius: 50px;
   line-height: 52px;
   text-align: center;
-  background-color: #804af2;
+  background-color: #dddddd;
   color: #ffffff;
   font-size: 17px;
   font-weight: 800;
@@ -147,6 +140,25 @@ export default {
   margin: 0;
   margin-top: 4px;
   font-size: 13px;
+}
+
+.profile-image {
+  position: absolute;
+  height: 50px;
+  width: 50px;
+  top: 50%;
+  left: initial;
+  transform: perspective(1px) translateY(calc(-50% - 0.5px));
+  display: inline-block;
+  border-radius: 50px;
+  margin-right: 20px;
+  text-align: center;
+}
+
+.profile-image img {
+  height: 50px;
+  width: 50px;
+  background-color: #eeeeee;
 }
 
 @media (max-width: 700px) {

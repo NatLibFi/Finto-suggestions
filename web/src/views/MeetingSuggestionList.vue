@@ -1,7 +1,7 @@
 <template>
   <div>
     <navigation />
-    <meeting-suggestion-list :meetingId="meetingId" />
+    <meeting-suggestion-list :meetingId="meetingId" :page="page" />
   </div>
 </template>
 
@@ -18,6 +18,11 @@ export default {
     meetingId: {
       type: [String, Number],
       required: true
+    },
+    page: {
+      type: [String, Number],
+      required: true,
+      default: 1
     }
   }
 };

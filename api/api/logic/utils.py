@@ -1,5 +1,5 @@
-from sqlalchemy import or_
-from ..models import db, Event, Reaction, Suggestion, SuggestionTypes, SuggestionStatusTypes
+from sqlalchemy import or_, func
+from ..models import db, Event, Tag, Reaction, Suggestion, SuggestionTypes, SuggestionStatusTypes
 from .common import InvalidFilterException
 
 
@@ -22,6 +22,23 @@ def _meeting_id_filter(query, value):
 
     return query.filter(Suggestion.meeting_id == value)
 
+def _tags_filter(query, value):
+    values = value.split('-')
+
+    for value in values:
+        query = query.filter(Suggestion.tags.any(Tag.label == value))
+
+    return query
+
+def _user_id_filter(query, value):
+    if value == 'NULL':
+        value = None
+    elif value.isdigit():
+        value = int(value)
+    else:
+        _raise_exception(value, 'USER')
+
+    return query.filter(Suggestion.user_id == value)
 
 SUGGESTION_FILTER_FUNCTIONS = {
     'STATUS': (
@@ -36,7 +53,9 @@ SUGGESTION_FILTER_FUNCTIONS = {
         if value in SuggestionTypes.__members__
         else _raise_exception(value, 'SUGGESTION_TYPE', [e.name for e in SuggestionTypes])
     ),
-    'MEETING_ID': _meeting_id_filter
+    'MEETING_ID': _meeting_id_filter,
+    'TAGS': _tags_filter,
+    'USER_ID': _user_id_filter
 }
 
 
