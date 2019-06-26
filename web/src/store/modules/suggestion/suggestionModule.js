@@ -104,18 +104,6 @@ export default {
         return [];
       }
     },
-    async [suggestionActions.GET_SORTED_SUGGESTIONS_BY_USER_ID]({ commit }, values) {
-      const result = await api.suggestion.getSortedSuggestionByUserId(values.userId, values.sort);
-      if (result && result.code === 200) {
-        commit(suggestionMutations.SET_SUGGESTIONS, result.data);
-      }
-    },
-    async [suggestionActions.GET_SORTED_SUGGESTIONS]({ commit }, { sort, offset }) {
-      const result = await api.suggestion.getSortedSuggestions(sort, offset);
-      if (result && result.code == 200) {
-        commit(suggestionMutations.SET_SUGGESTIONS, result.data);
-      }
-    },
     async [suggestionActions.GET_SUGGESTION_BY_ID]({ commit }, suggestionId) {
       const result = await api.suggestion.getSuggestionById(suggestionId);
       if (result && result.code == 200) {

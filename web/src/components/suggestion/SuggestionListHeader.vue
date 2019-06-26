@@ -1,6 +1,6 @@
 <template>
   <div class="header-container">
-    <div v-if="!userPage" class="title">
+    <!--TODO: <div v-if="!userPage" class="title">
       <span
         :class="['open', openSuggestionClicked && isSuggestionListDirty ? 'toggled' : '']"
         @click="showOpenSuggestions()"
@@ -13,14 +13,18 @@
       >
         {{ resolvedSuggestionCount }} käsiteltyä
       </span>
-    </div>
+    </div> -->
     <div v-if="userPage" class="title user-title">
       <span>Käyttäjälle asetut ehdotukset</span>
     </div>
     <div
       v-if="!userPage"
       @click="isDropDownOpened = !isDropDownOpened"
-      :class="[isDropDownOpened ? 'selected' : '', 'drop-down-button']"
+      :class="[
+        isDropDownOpened ? 'selected' : '',
+        selectedSortOptionIndex !== 0 ? 'active' : '',
+        'drop-down-button'
+      ]"
     >
       <span>Järjestä</span>
       <svg-icon icon-name="triangle"><icon-triangle /></svg-icon>
@@ -42,18 +46,7 @@ import SvgIcon from '../icons/SvgIcon';
 import IconTriangle from '../icons/IconTriangle';
 
 import { sortingKeys, getSelectedSortOptionIndex } from '../../utils/sortingHelper.js';
-import { handleQueries } from '../../utils/suggestionHelpers.js';
-
-import {
-  mapSuggestionGetters,
-  mapSuggestionActions,
-  mapSuggestionMutations
-} from '../../store/modules/suggestion/suggestionModule.js';
-import {
-  suggestionGetters,
-  suggestionActions,
-  suggestionMutations
-} from '../../store/modules/suggestion/suggestionConsts.js';
+import { handleQueries, findSortSelectionIndex } from '../../utils/suggestionHelpers.js';
 
 export default {
   components: {
@@ -86,52 +79,15 @@ export default {
     openSuggestionClicked: false,
     resolvedSuggestionsClicked: false
   }),
-  computed: {
-    ...mapSuggestionGetters({
-      suggestionSelectedSort: suggestionGetters.GET_SUGGESTIONS_SELECTED_SORT,
-      meetingSuggestionSelectedSort: suggestionGetters.GET_MEETING_SUGGESTIONS_SELECTED_SORT,
-      isSuggestionListDirty: suggestionGetters.GET_DIRTYNESS
-    })
-  },
   created() {
-    if (this.meetingId) {
-      this.getMeetingSuggestionSelectedSort();
-    } else {
-      this.getSuggestionSelectedSort();
-    }
-    this.handleSortingDropDownIndex();
+    this.parseRouteForSelection();
   },
   methods: {
-    ...mapSuggestionActions({
-      setSuggestionSelectedSort: suggestionActions.SET_SUGGESTIONS_SELECTED_SORT,
-      setMeetingSuggestionSelectedSort: suggestionActions.SET_MEETING_SUGGESTIONS_SELECTED_SORT,
-      getSuggestionSelectedSort: suggestionActions.GET_SUGGESTIONS_SELECTED_SORT,
-      getMeetingSuggestionSelectedSort: suggestionActions.GET_MEETING_SUGGESTIONS_SELECTED_SORT
-    }),
-    ...mapSuggestionMutations({
-      setDirtynessToTrue: suggestionMutations.SET_DIRTYNESS_TO_TRUE,
-      setDirtynessToFalse: suggestionMutations.SET_DIRTYNESS_TO_FALSE
-    }),
     setSelectedSort(selectedSort) {
       handleQueries(this.filters, this.searchWord, selectedSort, this.$router);
     },
     closeDropDown: function() {
       this.isDropDownOpened = false;
-    },
-    handleSortingDropDownIndex() {
-      if (this.meetingSort) {
-        this.selectedSortOptionIndex = getSelectedSortOptionIndex(
-          this.dropDownOptions,
-          this.meetingSuggestionSelectedSort,
-          0
-        );
-      } else {
-        this.selectedSortOptionIndex = getSelectedSortOptionIndex(
-          this.dropDownOptions,
-          this.suggestionSelectedSort,
-          0
-        );
-      }
     },
     showOpenSuggestions() {
       this.setDirtynessToTrue();
@@ -154,14 +110,12 @@ export default {
         this.resolvedSuggestionsClicked = false;
         this.$emit('showAllSuggestions');
       }
-    }
-  },
-  watch: {
-    suggestionSelectedSort() {
-      this.handleSortingDropDownIndex();
     },
-    meetingSuggestionSelectedSort() {
-      this.handleSortingDropDownIndex();
+    parseRouteForSelection() {
+      let arr = Object.values(this.dropDownOptions);
+      if (this.sort) {
+        this.selectedSortOptionIndex = findSortSelectionIndex(this.sort, arr);
+      }
     }
   }
 };
@@ -263,6 +217,10 @@ export default {
 .selected {
   font-weight: 600;
   color: #111111;
+}
+
+.active {
+  color: #06b1a1;
 }
 
 .hidden-checkmark {
