@@ -158,3 +158,51 @@ export const calculateOpenAndResolvedSuggestionCounts = items => {
   }
   return null;
 };
+
+export const findSelectionIndex = (splittedFilter, array) => {
+  let i = 0;
+  while (i !== array.length) {
+    i += 1;
+    if (array[i].value.toString() === splittedFilter[1].toUpperCase()) {
+      return i;
+    }
+  }
+  return 0;
+};
+
+export const findMeetingSelectionIndex = (splittedFilter, array) => {
+  let i = 0;
+  while (i !== array.length) {
+    if (array[i].value.toString() === splittedFilter[1].toUpperCase()) {
+      return i;
+    }
+    i += 1;
+  }
+  return null;
+};
+
+export const findTagSelectionIndex = (splittedFilter, array) => {
+  let indexes = [];
+  let tagFilters = splittedFilter[1].split('-');
+  for (let i in tagFilters) {
+    for (let index in array) {
+      if (array[index].value === tagFilters[i].toUpperCase()) {
+        index = parseInt(index, 10);
+        indexes.push(index);
+        break;
+      }
+    }
+  }
+  return indexes;
+};
+
+export const findSortSelectionIndex = (sort, array) => {
+  let i = 0;
+  while (i !== array.length) {
+    if (array[i].value.toString() === sort) {
+      return i;
+    }
+    i += 1;
+  }
+  return 0;
+};

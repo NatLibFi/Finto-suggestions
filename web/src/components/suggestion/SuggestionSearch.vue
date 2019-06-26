@@ -21,7 +21,7 @@
         <suggestion-search-form :filters="filters" :searchWord="searchWord" :sort="sort" />
       </div>
       <div>
-        <filter-suggestions :meetingId="meetingId" :filters="filters" :searchWord="searchWord" :sort="sort" />
+        <suggestion-filtering :meetingId="meetingId" :filters="filters" :searchWord="searchWord" :sort="sort" />
       </div>
     </div>
   </div>
@@ -29,12 +29,12 @@
 
 <script>
 import SuggestionSearchForm from './SuggestionSearchForm';
-import FilterSuggestions from './FilterSuggestions';
+import SuggestionFiltering from './SuggestionFiltering';
 
 export default {
   components: {
     SuggestionSearchForm,
-    FilterSuggestions
+    SuggestionFiltering
   },
   props: {
     meetingId: {

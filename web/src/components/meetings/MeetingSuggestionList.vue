@@ -22,7 +22,7 @@ import SvgIcon from '../icons/SvgIcon';
 import IconArrow from '../icons/IconArrow';
 import MeetingStatus from './MeetingStatus';
 import SuggestionSearchForm from '../suggestion/SuggestionSearchForm';
-import FilterSuggestions from '../suggestion/FilterSuggestions';
+import SuggestionFiltering from '../suggestion/SuggestionFiltering';
 import SuggestionList from '../suggestion/SuggestionList';
 
 import { handleMeetingQueries } from '../../utils/suggestionHelpers';
@@ -33,7 +33,7 @@ export default {
     IconArrow,
     MeetingStatus,
     SuggestionSearchForm,
-    FilterSuggestions,
+    SuggestionFiltering,
     SuggestionList
   },
   data() {

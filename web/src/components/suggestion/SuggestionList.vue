@@ -59,7 +59,6 @@ import {
 } from '../../store/modules/suggestion/suggestionModule.js';
 
 import { offsetByPagination } from '../../utils/suggestionHelpers.js';
-import { sortingKeys } from '../../utils/sortingHelper.js';
 
 export default {
   components: {
@@ -87,7 +86,7 @@ export default {
     return {
       filters: this.$route.query.filters ? this.$route.query.filters : '',
       searchWord: this.$route.query.search ? this.$route.query.search : '',
-      sort: this.$route.query.sort ? this.$route.query.sort : sortingKeys.NEWEST_FIRST,
+      sort: this.$route.query.sort ? this.$route.query.sort : '',
       offsetByPagination,
       pageCount: 400,
       pageCountLoading: false
@@ -171,7 +170,7 @@ export default {
     $route() {
       this.filters = this.$route.query.filters ? this.$route.query.filters : '';
       this.searchWord = this.$route.query.search ? this.$route.query.search : '';
-      this.sort = this.$route.query.sort ? this.$route.query.sort : sortingKeys.NEWEST_FIRST;
+      this.sort = this.$route.query.sort ? this.$route.query.sort : '';
       this.updateSuggestionList();
     }
   }
