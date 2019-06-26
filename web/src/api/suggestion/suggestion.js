@@ -10,12 +10,8 @@ export default {
     }),
   getSuggestionsCount: (filters, searchWord) =>
     get({ resource: `/suggestions/count?filters=${filters}&search=${searchWord}` }),
-  getSortedSuggestions: (sort, offset) =>
-    get({ resource: `/suggestions?limit=${defaultLimit}&sort=${sort}&offset=${offset}` }),
   getSuggestionsByUserId: (userId, offset = 0) =>
     get({ resource: `/suggestions/user=${userId}?limit=${defaultLimit}&offset=${offset}` }),
-  getSortedSuggestionByUserId: (userId, sort) =>
-    get({ resource: `/suggestions/user=${userId}?sort=${sort}` }),
   getSuggestionById: suggestionId => get({ resource: `/suggestions/${suggestionId}` }),
   assignUserToSuggestion: (suggestionId, userId) =>
     put({ resource: `/suggestions/${suggestionId}/assign/${userId}` }),
