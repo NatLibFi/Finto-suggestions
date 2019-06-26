@@ -222,6 +222,10 @@ export default {
   text-align: left;
 }
 
+.status-container h2 {
+  width: calc(100% - 30px);
+}
+
 .menu-wrapper {
   display: inline;
 }

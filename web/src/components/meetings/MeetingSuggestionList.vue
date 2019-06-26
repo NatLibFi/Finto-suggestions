@@ -10,12 +10,10 @@
       <div class="meeting-header">
         <div class="content">
           <meeting-status :meetingId="meetingId" />
-          <suggestion-search-form />
-          <filter-suggestions :isMeeting="true" />
         </div>
       </div>
     </div>
-    <suggestion-list :meetingId="meetingId" />
+    <suggestion-list :meetingId="meetingId" :page="page" />
   </div>
 </template>
 
@@ -24,8 +22,10 @@ import SvgIcon from '../icons/SvgIcon';
 import IconArrow from '../icons/IconArrow';
 import MeetingStatus from './MeetingStatus';
 import SuggestionSearchForm from '../suggestion/SuggestionSearchForm';
-import FilterSuggestions from '../suggestion/FilterSuggestions';
+import SuggestionFiltering from '../suggestion/SuggestionFiltering';
 import SuggestionList from '../suggestion/SuggestionList';
+
+import { handleMeetingQueries } from '../../utils/suggestionHelpers';
 
 export default {
   components: {
@@ -33,14 +33,29 @@ export default {
     IconArrow,
     MeetingStatus,
     SuggestionSearchForm,
-    FilterSuggestions,
+    SuggestionFiltering,
     SuggestionList
+  },
+  data() {
+    return {
+      filters: this.$route.query.filters ? this.$route.query.filters : '',
+      searchWord: this.$route.query.search ? this.$route.query.search : '',
+      sort: this.$route.query.sort ? this.$route.query.sort : ''
+    };
   },
   props: {
     meetingId: {
       type: [String, Number],
       required: true
+    },
+    page: {
+      type: [String, Number],
+      required: true,
+      default: 1
     }
+  },
+  created() {
+    handleMeetingQueries(this.meetingId, this.filters, this.searchWord, this.sort, this.$router);
   },
   methods: {
     goToMeetings: function() {
@@ -53,17 +68,18 @@ export default {
 <style scoped>
 .meeting-container {
   width: 60vw;
-  margin: 40px 20vw 20px;
+  margin: 40px 20vw 0;
 }
 
 .meeting-header {
   text-align: left;
   background-color: #ffffff;
   border: 2px solid #f5f5f5;
+  border-bottom: 0;
 }
 
 .meeting-header .content {
-  padding: 20px 40px 20px;
+  padding: 20px 40px 0;
 }
 
 .arrow-button {
@@ -93,7 +109,7 @@ export default {
 @media (max-width: 700px) {
   .meeting-container {
     width: 80vw;
-    margin: 0 10vw 20px;
+    margin: 30px 10vw 0;
   }
 }
 </style>

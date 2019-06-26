@@ -13,15 +13,20 @@ export default {
   namespaced: true,
   state: {
     [storeStateNames.USER]: '',
+    [storeStateNames.AUTHENTICATED_USER]: '',
     [storeStateNames.USERS]: []
   },
   getters: {
     [userGetters.GET_USER]: state => state[storeStateNames.USER],
+    [userGetters.GET_AUTHENTICATED_USER]: state => state[storeStateNames.AUTHENTICATED_USER],
     [userGetters.GET_USERS]: state => state[storeStateNames.USERS]
   },
   mutations: {
     [userMutations.SET_USER](state, user) {
       Vue.set(state, storeStateNames.USER, user);
+    },
+    [userMutations.SET_AUTHENTICATED_USER](state, user) {
+      Vue.set(state, storeStateNames.AUTHENTICATED_USER, user);
     },
     [userMutations.SET_USERS](state, users) {
       Vue.set(state, storeStateNames.USERS, users);
@@ -32,6 +37,12 @@ export default {
       const response = await api.user.getUser(userId);
       if (response && response.code === 200) {
         commit(userMutations.SET_USER, response.data);
+      }
+    },
+    async [userActions.GET_AUTHENTICATED_USER]({ commit }, userId) {
+      const response = await api.user.getUser(userId);
+      if (response && response.code === 200) {
+        commit(userMutations.SET_AUTHENTICATED_USER, response.data);
       }
     },
     async [userActions.GET_USERS]({ commit }) {

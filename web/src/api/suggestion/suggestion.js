@@ -1,17 +1,17 @@
 import { get, put, post, del, patch } from '../utils';
-import { asciiUriEncoding } from '../helper';
 
-const defaultLimit = 0;
+const defaultLimit = 15;
 
-//TODO: cache limited fetch, because this is really slow
 export default {
-  getSuggestions: () => get({ resource: `/suggestions?limit=${defaultLimit}` }),
-  getSortedSuggestions: sortValue =>
-    get({ resource: `/suggestions?limit=${defaultLimit}&sort=${sortValue}` }),
-  getSuggestionsByUserId: userId => get({ resource: `/suggestions/user=${userId}` }),
-  getSortedSuggestionByUserId: (userId, sortValue) =>
-    get({ resource: `/suggestions/user=${userId}?sort=${sortValue}` }),
-  getSuggestionsBySearchWord: searchWord => get({ resource: `suggestions?search=${searchWord}` }),
+  getSuggestions: (offset = 0, sort = '', filters = '', searchWord = '') =>
+    get({
+      // eslint-disable-next-line
+      resource: `/suggestions?limit=${defaultLimit}&offset=${offset}&sort=${sort}&filters=${filters}&search=${searchWord}`
+    }),
+  getSuggestionsCount: (filters, searchWord) =>
+    get({ resource: `/suggestions/count?filters=${filters}&search=${searchWord}` }),
+  getSuggestionsByUserId: (userId, offset = 0) =>
+    get({ resource: `/suggestions/user=${userId}?limit=${defaultLimit}&offset=${offset}` }),
   getSuggestionById: suggestionId => get({ resource: `/suggestions/${suggestionId}` }),
   assignUserToSuggestion: (suggestionId, userId) =>
     put({ resource: `/suggestions/${suggestionId}/assign/${userId}` }),
@@ -20,9 +20,6 @@ export default {
   assignSuggestionToMeeting: (suggestionId, meetingId) =>
     patch({ resource: `/suggestions/${suggestionId}`, data: { meeting_id: meetingId } }),
   getSuggestionByMeetingId: meetingId => get({ resource: `/suggestions/meeting/${meetingId}` }),
-  getSortedSuggestionByMeetingId: (meetingId, sortValue) =>
-    // eslint-disable-next-line
-    get({ resource: `/suggestions?sort=${sortValue}&filters=meeting_id${asciiUriEncoding.VALUE_OF_PARAM}${meetingId}` }),
   updateSuggestionStatus: (suggestionId, status) =>
     put({ resource: `/suggestions/${suggestionId}/status/${status}` }),
   addTagToSuggestion: (suggestionId, tag) =>

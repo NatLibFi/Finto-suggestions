@@ -6,14 +6,19 @@
         <span @click="returnToHome">Finto – Käsite-ehdotukset</span>
       </div>
       <transition name="fade">
-        <div v-if="isAuthenticated && userName" class="nav-menu" @click="showDropdown = true">
-          <div class="user-bubble">
+        <div v-if="isAuthenticated && user.name" class="nav-menu" @click="showDropdown = true">
+          <transition name="fade">
+            <div v-if="user.imageUrl" class="user-bubble-image">
+              <img :src="user.imageUrl" alt="userInitials" />
+            </div>
+          </transition>
+          <div v-if="!user.imageUrl" class="user-bubble">
             <span v-if="userInitials" unselectable="on">{{ userInitials }}</span>
             <span v-else unselectable="on">{{ userId }}</span>
           </div>
           <div class="nav-menu-user">
-            <p v-if="userName && userName.length > 0">{{ userName }}</p>
-            <p v-if="userName && userName.length === 0">Käyttäjä {{ userId }}</p>
+            <p v-if="user.name && user.name.length > 0">{{ user.name }}</p>
+            <p v-if="user.name && user.name.length === 0">Käyttäjä {{ userId }}</p>
           </div>
           <svg-icon icon-name="triangle"><icon-triangle /></svg-icon>
         </div>
@@ -27,7 +32,7 @@
       <transition name="fade">
         <!-- Mobile menu shown below screen width of 700px -->
         <div
-          v-if="isAuthenticated && userName"
+          v-if="isAuthenticated && user.name"
           class="nav-menu-mobile"
           @click="showMobileDropdown = true"
         >
@@ -54,12 +59,17 @@
       class="nav-mobile-dropdown dropdown"
     >
       <div class="nav-mobile-dropdown-header">
-        <div class="user-bubble">
+        <transition name="fade">
+          <div v-if="user.imageUrl" class="user-bubble-image">
+            <img :src="user.imageUrl" alt="userInitials" />
+          </div>
+        </transition>
+        <div v-if="!user.imageUrl" class="user-bubble">
           <span unselectable="on">{{ userInitials }}</span>
         </div>
         <div class="nav-dropdown-user">
-          <p v-if="userName && userName.length > 0">{{ userName }}</p>
-          <p v-if="userName && userName.length === 0">Käyttäjä {{ userId }}</p>
+          <p v-if="user.name && user.name.length > 0">{{ user.name }}</p>
+          <p v-if="user.name && user.name.length === 0">Käyttäjä {{ userId }}</p>
         </div>
       </div>
       <div class="nav-mobile-dropdown-content">
@@ -106,14 +116,12 @@ import IconMore from '../icons/IconMore';
 import IconTriangle from '../icons/IconTriangle';
 import { directive as onClickaway } from 'vue-clickaway';
 
-import { userActions } from '../../store/modules/user/userConsts';
-import { mapUserActions } from '../../store/modules/user/userModule';
+import { userGetters, userActions } from '../../store/modules/user/userConsts';
+import { mapUserGetters, mapUserActions } from '../../store/modules/user/userModule';
 // eslint-disable-next-line
 import { mapAuthenticatedUserGetters, mapAuthenticatedUserActions } from '../../store/modules/authenticatedUser/authenticatedUserModule';
 // eslint-disable-next-line
 import { authenticatedUserGetters, authenticatedUserActions, storeKeyNames, authenticatedUserMutations } from '../../store/modules/authenticatedUser/authenticatedUserConsts';
-import { mapSuggestionActions } from '../../store/modules/suggestion/suggestionModule';
-import { suggestionActions } from '../../store/modules/suggestion/suggestionConsts';
 
 import { userNameInitials } from '../../utils/userHelpers.js';
 
@@ -130,27 +138,31 @@ export default {
   directives: {
     onClickaway: onClickaway
   },
-  data: () => ({
-    userInitials: '',
-    loginProvider: '',
-    registerData: null,
-    showDropdown: false,
-    showMobileDropdown: false,
-    showLoginDialog: false,
-    showSignupDialog: false,
-    showSignupConfirmation: false,
-    signupSucceeded: true,
-    signupError: '',
-    showResetPasswordForm: false,
-    showLocalLoginError: false
-  }),
+  data() {
+    return {
+      userInitials: '',
+      loginProvider: '',
+      registerData: null,
+      showDropdown: false,
+      showMobileDropdown: false,
+      showLoginDialog: false,
+      showSignupDialog: false,
+      showSignupConfirmation: false,
+      signupSucceeded: true,
+      signupError: '',
+      showResetPasswordForm: false,
+      showLocalLoginError: false
+    };
+  },
   computed: {
     ...mapAuthenticatedUserGetters({
       isAuthenticated: authenticatedUserGetters.GET_IS_AUTHENTICATED,
       userId: authenticatedUserGetters.GET_USER_ID,
-      userName: authenticatedUserGetters.GET_USER_NAME,
       // can be shown if login did not succeed:
       error: authenticatedUserGetters.GET_AUTHENTICATE_ERROR
+    }),
+    ...mapUserGetters({
+      user: userGetters.GET_AUTHENTICATED_USER
     })
   },
   async created() {
@@ -167,21 +179,15 @@ export default {
       revokeAuthentication: authenticatedUserActions.REVOKE_AUTHENTICATION,
       authenticateLocalUser: authenticatedUserActions.AUTHENTICATE_LOCAL_USER,
       getUserIdFromStorage: authenticatedUserActions.GET_USER_ID_FROM_STORAGE,
-      refreshToken: authenticatedUserActions.REFRESH_AUTHORIZATION_TOKEN,
-      getUserName: authenticatedUserActions.GET_USER_NAME
+      refreshToken: authenticatedUserActions.REFRESH_AUTHORIZATION_TOKEN
     }),
     ...mapUserActions({
       resetPasswordByEmail: userActions.RESET_PASSWORD,
-      registerLocalUser: userActions.CREATE_USER
-    }),
-    ...mapSuggestionActions({
-      setSelectedFilters: suggestionActions.SET_SELECTED_FILTERS,
-      resetSuggestionListing: suggestionActions.RESET_SUGGESTION_LISTING
+      registerLocalUser: userActions.CREATE_USER,
+      getAuthenticatedUser: userActions.GET_AUTHENTICATED_USER
     }),
     async returnToHome() {
       this.$router.push('/');
-      await this.setSelectedFilters([]);
-      await this.resetSuggestionListing();
     },
     closeDropdown() {
       this.showDropdown = false;
@@ -203,7 +209,7 @@ export default {
           await this.authenticateLocalUser(data.loginData)
             .then(() => {
               if (this.userId) {
-                this.getUserName(this.userId);
+                this.getAuthenticatedUser(this.userId);
                 this.showLoginDialog = false;
               }
             })
@@ -228,7 +234,8 @@ export default {
       this.$router.push({
         name: 'user',
         params: {
-          userId: this.userId
+          userId: this.userId,
+          page: 1
         }
       });
       this.showDropdown = false;
@@ -254,17 +261,16 @@ export default {
     },
     async handleUserFetch() {
       if (parseInt(this.userId) > 0) {
-        this.getUserName(this.userId);
+        this.getAuthenticatedUser(this.userId);
         this.handleUserInitialsFetch();
       }
     },
     handleUserInitialsFetch() {
-      this.userInitials = userNameInitials(this.userName);
+      this.userInitials = userNameInitials(this.user.name);
     },
     async resetPassword(email) {
       await this.resetPasswordByEmail(email)
-        .then(() => {
-        })
+        .then(() => {})
         .catch(() => {
           console.log('Resetting failed.');
         });
@@ -273,12 +279,6 @@ export default {
       this.showSignupConfirmation = false;
       this.showResetPasswordForm = true;
       this.showLoginDialog = true;
-    }
-  },
-  watch: {
-    userName: {
-      handler: 'handleUserFetch',
-      immediate: true
     }
   },
   mounted: function() {
@@ -387,11 +387,18 @@ export default {
   cursor: hand;
 }
 
-.nav-menu .user-bubble {
+.nav-menu .user-bubble,
+.nav-menu .user-bubble-image {
   position: relative;
   top: 50%;
   transform: perspective(1px) translateY(calc(-50% - 0.5px));
   overflow: hidden;
+}
+
+.nav-menu .user-bubble-image img {
+  height: 35px;
+  width: 35px;
+  background-color: #eeeeee;
 }
 
 .nav-menu .nav-menu-user {
@@ -474,7 +481,8 @@ export default {
   height: 60px;
 }
 
-.nav-mobile-dropdown-header .user-bubble {
+.nav-mobile-dropdown-header .user-bubble,
+.nav-mobile-dropdown-header .user-bubble-image {
   height: 50px;
   width: 50px;
   line-height: 50px;
@@ -565,14 +573,15 @@ export default {
   border-radius: 2px;
 }
 
-.user-bubble {
+.user-bubble,
+.user-bubble-image {
   display: inline-block;
   height: 35px;
   width: 35px;
   border-radius: 35px;
   line-height: 36px;
   text-align: center;
-  background-color: #804af2;
+  background-color: #dddddd;
   color: #ffffff;
   font-size: 13px;
   font-weight: 800;

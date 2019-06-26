@@ -1,37 +1,86 @@
 <template>
-  <div class="paginate-container">
-    <paginate
-      v-if="pageCount"
-      v-model="page"
-      :page-count="pageCount"
-      :click-handler="changePageHandler"
-      :prev-text="'«'"
-      :next-text="'»'"
-      :container-class="'paginate'"
-      :page-class="'paginate-item'"
-      :next-class="'paginate-item next'"
-      :prev-class="'paginate-item prev'"
-    >
-    </paginate>
+  <div :class="[pageCountLoading ? 'loading' : '', 'paginate-container']">
+    <transition name="fade">
+      <paginate
+        v-if="pageCount"
+        v-model="pageNumber"
+        :page-count="pageCount"
+        :click-handler="changePageHandler"
+        :prev-text="'«'"
+        :next-text="'»'"
+        :container-class="'paginate'"
+        :page-class="'paginate-item'"
+        :next-class="'paginate-item next'"
+        :prev-class="'paginate-item prev'"
+      >
+      </paginate>
+    </transition>
   </div>
 </template>
 
 <script>
 import Paginate from 'vuejs-paginate';
 
+import { handleQueries } from '../../utils/suggestionHelpers.js';
+
 export default {
   components: {
     Paginate
   },
   props: {
-    pageCount: Number
+    meetingId: {
+      type: [Number, String],
+      default: null
+    },
+    pageCount: Number,
+    page: [String, Number],
+    pageCountLoading: Boolean,
+    isUserPage: Boolean,
+    userId: [Number, String]
   },
-  data: () => ({
-    page: 1
-  }),
+  data() {
+    return {
+      pageNumber: parseInt(this.page, 10),
+      filters: this.$route.query.filters ? this.$route.query.filters : '',
+      searchWord: this.$route.query.search ? this.$route.query.search : '',
+      sort: this.$route.query.sort ? this.$route.query.sort : ''
+    };
+  },
   methods: {
     changePageHandler(pageNumber) {
-      this.$emit('paginationPageChanged', pageNumber);
+      if (this.isUserPage) {
+        this.$router.push({
+          name: 'user',
+          params: {
+            page: pageNumber,
+            userId: this.userId
+          }
+        });
+      } else if (this.meetingId) {
+        this.$router.push({
+          name: 'meeting-suggestion-list',
+          params: {
+            page: pageNumber,
+            meetingId: this.meetingId
+          }
+        });
+      } else {
+        this.$router.push({
+          name: 'suggestions',
+          params: {
+            page: pageNumber,
+            meetingId: null
+          }
+        });
+      }
+      handleQueries(this.filters, this.searchWord, this.sort, this.$router);
+    }
+  },
+  watch: {
+    $route() {
+      this.filters = this.$route.query.filters ? this.$route.query.filters : '';
+      this.searchWord = this.$route.query.search ? this.$route.query.search : '';
+      this.sort = this.$route.query.sort ? this.$route.query.sort : '';
     }
   }
 };
@@ -113,6 +162,31 @@ ul.paginate .paginate-item {
   div.paginate-container {
     width: 80vw;
     margin: 0 10vw 50px;
+  }
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.5s;
+}
+.fade-enter,
+.fade-leave-to {
+  opacity: 0;
+}
+
+.loading {
+  animation: loading 1.5s infinite;
+}
+
+@keyframes loading {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+  100% {
+    opacity: 1;
   }
 }
 </style>

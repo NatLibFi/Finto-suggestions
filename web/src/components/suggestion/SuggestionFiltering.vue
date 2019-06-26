@@ -1,15 +1,15 @@
 <template>
-  <div class="filter-suggestions">
+  <div class="suggestion-filtering">
     <h5>
       Suodata hakutuloksia
-      <a
-        v-if="hasTouchedFilters && isSuggestionListDirty"
-        @click="resetFilters()"
-        class="clear-button">
+      <a v-if="filters && filters.length > 0" @click="resetFilters()" class="clear-button">
         Tyhjennä valinnat
       </a>
     </h5>
-    <div @click="isDropDownOpened.STATUS = !isDropDownOpened.STATUS" class="filter-item">
+    <div
+      @click="isDropDownOpened.STATUS = !isDropDownOpened.STATUS"
+      :class="[filterStrings.status.length > 0 ? 'active-filter' : '', 'filter-item']"
+    >
       <div :class="[isDropDownOpened.STATUS ? 'selected' : '', 'drop-down-button']">
         <span>Käsittelyn tila</span>
         <svg-icon icon-name="triangle"><icon-triangle /></svg-icon>
@@ -24,23 +24,10 @@
         @closeDropDown="closeDropDown"
       />
     </div>
-    <div @click="isDropDownOpened.TAG = !isDropDownOpened.TAG" class="filter-item">
-      <div :class="[isDropDownOpened.TAG ? 'selected' : '', 'drop-down-button']">
-        <span>Tunniste</span>
-        <svg-icon icon-name="triangle"><icon-triangle /></svg-icon>
-      </div>
-      <multiple-choice-drop-down
-        :selectedIndexes="selectedOptionIndex.TAGS"
-        :isOpened="isDropDownOpened.TAG"
-        :dropDownOptions="mapTagsToDropDown()"
-        :noOptionsMessage="'Tunnisteita ei valittavissa.'"
-        @applyFilter="tagChanged($event)"
-        @addToSelectedIndexes="addSelectedTagIndex($event)"
-        @resetTags="resetTags()"
-        @closeDropDown="closeDropDown"
-      />
-    </div>
-    <div @click="isDropDownOpened.TYPE = !isDropDownOpened.TYPE" class="filter-item">
+    <div
+      @click="isDropDownOpened.TYPE = !isDropDownOpened.TYPE"
+      :class="[filterStrings.type.length > 0 ? 'active-filter' : '', 'filter-item']"
+    >
       <div :class="[isDropDownOpened.TYPE ? 'selected' : '', 'drop-down-button']">
         <span>Ehdotustyyppi</span>
         <svg-icon icon-name="triangle"><icon-triangle /></svg-icon>
@@ -56,20 +43,38 @@
       />
     </div>
     <div
-      v-if="mapMeetingsToDropDown().length > 0"
+      @click="isDropDownOpened.TAG = !isDropDownOpened.TAG"
+      :class="[filterStrings.tags.length > 0 ? 'active-filter' : '', 'filter-item']"
+    >
+      <div :class="[isDropDownOpened.TAG ? 'selected' : '', 'drop-down-button']">
+        <span>Tunniste</span>
+        <svg-icon icon-name="triangle"><icon-triangle /></svg-icon>
+      </div>
+      <multiple-choice-drop-down
+        :selectedIndexes="selectedOptionIndex.TAGS"
+        :isOpened="isDropDownOpened.TAG"
+        :dropDownOptions="mapTagsToDropDown()"
+        :noOptionsMessage="'Tunnisteita ei valittavissa.'"
+        @applyFilter="tagChanged($event)"
+        @addToSelectedIndexes="addSelectedTagIndex($event)"
+        @resetTags="resetTags()"
+        @closeDropDown="closeDropDown"
+      />
+    </div>
+    <div
+      v-if="!meetingId && mapMeetingsToDropDown().length > 0"
       @click="isDropDownOpened.MEETING = !isDropDownOpened.MEETING"
-      class="filter-item"
+      :class="[filterStrings.meeting.length > 0 ? 'active-filter' : '', 'filter-item']"
     >
       <div :class="[isDropDownOpened.MEETING ? 'selected' : '', 'drop-down-button']">
         <span>Kokous</span>
         <svg-icon icon-name="triangle"><icon-triangle /></svg-icon>
       </div>
-      <!-- TODO: Fix functionality of meeting selection-->
       <filter-drop-down
         :selectedIndex="selectedOptionIndex.MEETING"
         :isOpened="isDropDownOpened.MEETING"
         :dropDownOptions="mapMeetingsToDropDown()"
-        :noOptionsMessage="'Kokouksia ei valittavissa.'"
+        :noOptionsMessage="'Ei kokouspäiviä määriteltynä.'"
         @applyFilter="meetingChanged($event)"
         @refreshSelectedIndex="selectedOptionIndex.MEETING = $event"
         @closeDropDown="closeDropDown"
@@ -84,15 +89,15 @@ import MultipleChoiceDropDown from '../common/MultipleChoiceDropDown';
 import SvgIcon from '../icons/SvgIcon';
 import IconTriangle from '../icons/IconTriangle';
 
-import { filterType } from '../../utils/suggestionHelpers.js';
 import {
-  suggestionGetters,
-  suggestionActions
-} from '../../store/modules/suggestion/suggestionConsts.js';
-import {
-  mapSuggestionGetters,
-  mapSuggestionActions
-} from '../../store/modules/suggestion/suggestionModule.js';
+  filterType,
+  handleQueries,
+  handleMeetingQueries,
+  findSelectionIndex,
+  findTagSelectionIndex,
+  findMeetingSelectionIndex
+} from '../../utils/suggestionHelpers.js';
+import { findValueFromDropDownOptions } from '../../utils/dropDownHelper.js';
 
 import { mapMeetingActions, mapMeetingGetters } from '../../store/modules/meeting/meetingModule.js';
 import { meetingActions, meetingGetters } from '../../store/modules/meeting/meetingConsts.js';
@@ -107,9 +112,6 @@ import {
   suggestionStateStatusToString
 } from '../../utils/suggestionHelpers.js';
 
-import { handleDropDownSelection } from '../../utils/filterValueHelper.js';
-import { findIndexFromDropDownOptionsByValue } from '../../utils//dropDownHelper';
-
 export default {
   components: {
     FilterDropDown,
@@ -118,26 +120,34 @@ export default {
     IconTriangle
   },
   props: {
-    isMeeting: Boolean
+    meetingId: [String, Number],
+    filters: String,
+    searchWord: String,
+    sort: String
   },
   data: () => ({
+    filterStrings: {
+      status: '',
+      type: '',
+      tags: '',
+      meeting: ''
+    },
     selectedOptionIndex: {
       STATUS: 0, // one always selected
+      TYPE: 0, // one always selected
       TAGS: [], // multiple choice
-      TYPE: 0, // multiple choice
       MEETING: null // no default
     },
-    hasTouchedFilters: false,
     isDropDownOpened: {
       STATUS: false,
-      TAG: false,
       TYPE: false,
+      TAG: false,
       MEETING: false
     },
     suggestionStateStatuses: [
       {
         label: 'Kaikki ehdotukset',
-        value: 'NONE'
+        value: null
       },
       {
         label: suggestionStateStatusToString.RECEIVED,
@@ -167,7 +177,7 @@ export default {
     suggestionTypes: [
       {
         label: 'Kaikki ehdotustyypit',
-        value: 'NONE'
+        value: null
       },
       {
         label: suggestionTypeToString.NEW,
@@ -185,18 +195,18 @@ export default {
     }),
     ...mapTagGetters({
       tags: tagGetters.GET_TAGS
-    }),
-    ...mapSuggestionGetters({
-      filters: suggestionGetters.GET_FILTERS,
-      isSuggestionListDirty: suggestionGetters.GET_DIRTYNESS
     })
   },
   async created() {
-    // TODO: meetings not used right now, let's not make fetch if not used, enable if needed later
-    // await this.getMeetings();
+    this.filterStrings = {
+      status: '',
+      type: '',
+      tags: '',
+      meeting: ''
+    };
+    await this.getMeetings();
     await this.getTags();
-    await this.getSelectedFilters();
-    this.markDropDownValuesSelected();
+    this.parseRouteIntoSelections();
   },
   methods: {
     ...mapMeetingActions({
@@ -205,29 +215,40 @@ export default {
     ...mapTagActions({
       getTags: tagActions.GET_TAGS
     }),
-    ...mapSuggestionActions({
-      setFilters: suggestionActions.SET_SELECTED_FILTERS,
-      getSelectedFilters: suggestionActions.GET_SELECTED_FILTERS
-    }),
     stateChanged(selected) {
-      this.hasTouchedFilters = true;
-      handleDropDownSelection(
-        selected === 'NONE' ? null : selected,
-        filterType.STATUS,
-        this.suggestionStateStatuses,
-        this.filters,
-        this.setFilters
-      );
+      let stateString = this.createFilterString(filterType.STATUS, selected);
+      let filters = this.combineStateStrings(filterType.STATUS, stateString);
+      if (this.meetingId) {
+        handleMeetingQueries(this.meetingId, filters, this.searchWord, this.sort, this.$router);
+      } else {
+        handleQueries(filters, this.searchWord, this.sort, this.$router);
+      }
+    },
+    meetingChanged(selected) {
+      if (this.meetingId) {
+        handleMeetingQueries(this.meetingId, this.filters, this.searchWord, this.sort, this.$router);
+      } else {
+        let stateString = 'meeting_id:' + selected.toString().toLowerCase();
+        let filters = this.combineStateStrings(filterType.MEETING, stateString);
+        handleQueries(filters, this.searchWord, this.sort, this.$router);
+      }
+    },
+    tagChanged(selected) {
+      let filters = this.combineStateStrings(filterType.TAGS, selected);
+      if (this.meetingId) {
+        handleMeetingQueries(this.meetingId, filters, this.searchWord, this.sort, this.$router);
+      } else {
+        handleQueries(filters, this.searchWord, this.sort, this.$router);
+      }
     },
     typeChanged(selected) {
-      this.hasTouchedFilters = true;
-      handleDropDownSelection(
-        selected === 'NONE' ? null : selected,
-        filterType.TYPE,
-        this.suggestionTypes,
-        this.filters,
-        this.setFilters
-      );
+      let stateString = this.createFilterString(filterType.TYPE, selected);
+      let filters = this.combineStateStrings(filterType.TYPE, stateString);
+      if (this.meetingId) {
+        handleMeetingQueries(this.meetingId, filters, this.searchWord, this.sort, this.$router);
+      } else {
+        handleQueries(filters, this.searchWord, this.sort, this.$router);
+      }
     },
     mapMeetingsToDropDown() {
       let meetings = [];
@@ -236,23 +257,13 @@ export default {
         this.meetings.forEach(meeting => {
           if (meeting.meeting_date) {
             meetings.push({
-              label: meeting.id + ': ' + meeting.name,
+              label: meeting.name,
               value: meeting.id
             });
           }
         });
       }
       return meetings;
-    },
-    meetingChanged(selected) {
-      this.hasTouchedFilters = true;
-      handleDropDownSelection(
-        selected,
-        filterType.MEETING,
-        this.mapMeetingsToDropDown(),
-        this.filters,
-        this.setFilters
-      );
     },
     mapTagsToDropDown() {
       let tags = [];
@@ -263,16 +274,6 @@ export default {
       }
       return tags;
     },
-    tagChanged(selected) {
-      this.hasTouchedFilters = true;
-      handleDropDownSelection(
-        selected,
-        filterType.TAG,
-        this.mapTagsToDropDown(),
-        this.filters,
-        this.setFilters
-      );
-    },
     addSelectedTagIndex(tagIndex) {
       if (this.selectedOptionIndex.TAGS.indexOf(tagIndex) == -1) {
         this.selectedOptionIndex.TAGS.push(tagIndex);
@@ -282,6 +283,7 @@ export default {
       }
     },
     resetTags() {
+      this.tagChanged('');
       this.selectedOptionIndex.TAGS = [];
     },
     resetFilters() {
@@ -291,10 +293,13 @@ export default {
         TYPE: 0,
         MEETING: null
       };
-      this.tagChanged(null);
-      this.meetingChanged(null);
-      this.typeChanged(0);
-      this.stateChanged(0);
+      this.filterStrings = {
+        status: '',
+        tags: '',
+        type: '',
+        meeting: ''
+      };
+      handleQueries('', this.searchWord, this.sort, this.$router);
       this.hasTouchedFilters = false;
     },
     closeDropDown() {
@@ -303,36 +308,70 @@ export default {
       this.isDropDownOpened.TYPE = false;
       this.isDropDownOpened.MEETING = false;
     },
-    markDropDownValuesSelected() {
-      if (this.filters.length > 0) {
-        this.filters.forEach(f => {
-          switch (f.type) {
-            case filterType.STATUS: {
-              const statusIndex = findIndexFromDropDownOptionsByValue(
-                f.value,
-                this.suggestionStateStatuses
-              );
-              if (statusIndex !== -1) {
-                this.selectedOptionIndex.STATUS = statusIndex;
-              }
-              break;
-            }
-            case filterType.TAG: {
-              const tagIndex = this.findTagIndexByTagName(f.value);
-              if (tagIndex !== -1) {
-                this.addSelectedTagIndex(tagIndex);
-              }
-              break;
-            }
-            case filterType.TYPE: {
-              const typeIndex = findIndexFromDropDownOptionsByValue(f.value, this.suggestionTypes);
-              if (typeIndex !== -1) {
-                this.selectedOptionIndex.TYPE = typeIndex;
-              }
-              break;
-            }
-          }
-        });
+    createFilterString(filterType, selected) {
+      if (selected) {
+        return filterType + ':' + selected.toLowerCase();
+      }
+      return '';
+    },
+    combineStateStrings(filter, string) {
+      if (this.filters.includes(filter) && string && string.length > 0) {
+        let str = this.updateStateString(filter, string);
+        if (str.length > 0) {
+          return str;
+        }
+        if (!filterType.TAGS) {
+          return string;
+        } else {
+          return '';
+        }
+      } else {
+        return this.updateStateString(filter, string);
+      }
+    },
+    updateFilterStrings(filter, string) {
+      if (filter === filterType.STATUS) {
+        this.filterStrings.status = string;
+      } else if (filter === filterType.TAGS) {
+        this.updateTags();
+      } else if (filter === filterType.TYPE) {
+        this.filterStrings.type = string;
+      } else if (filter === filterType.MEETING) {
+        this.filterStrings.meeting = string;
+      }
+    },
+    updateStateString(filter, string) {
+      this.updateFilterStrings(filter, string);
+
+      let arr = Object.values(this.filterStrings);
+      let str = '';
+
+      for (let i in arr) {
+        if (str.length === 0) {
+          str = str.concat(arr[i]);
+        } else if (str.length > 0 && arr[i].length > 0) {
+          str = str.concat('|' + arr[i]);
+        }
+      }
+
+      return str;
+    },
+    updateTags() {
+      let str = '';
+
+      let indexes = Object.values(this.selectedOptionIndex.TAGS);
+
+      for (let i in this.selectedOptionIndex.TAGS) {
+        if (str.length === 0) {
+          str = str.concat(this.tags[indexes[i]].label.toLowerCase());
+        } else {
+          str = str.concat('-', this.tags[indexes[i]].label.toLowerCase());
+        }
+      }
+      if (str.length > 0) {
+        this.filterStrings.tags = 'tags:' + str;
+      } else {
+        this.filterStrings.tags = '';
       }
     },
     findTagIndexByTagName(tag) {
@@ -342,6 +381,35 @@ export default {
         return tags.indexOf(selectedTag);
       }
       return -1;
+    },
+    parseRouteIntoSelections() {
+      let arr = this.filters.split('|');
+      for (let item of arr) {
+        if (item.includes('status:')) {
+          let splittedFilter = item.split(':');
+          let arr = Object.values(this.suggestionStateStatuses);
+          this.selectedOptionIndex['STATUS'] = findSelectionIndex(splittedFilter, arr);
+          this.updateStateString('status', item);
+
+        } else if (item.includes('type:')) {
+          let splittedFilter = item.split(':');
+          let arr = Object.values(this.suggestionTypes);
+          this.selectedOptionIndex['TYPE'] = findSelectionIndex(splittedFilter, arr);
+          this.updateStateString('type', item);
+
+        } else if (item.includes('tags:')) {
+          let splittedFilter = item.split(':');
+          let arr = Object.values(this.mapTagsToDropDown());
+          this.selectedOptionIndex['TAGS'] = findTagSelectionIndex(splittedFilter, arr);
+          this.updateStateString('tags', item);
+
+        } else if (item.includes('meeting_id:')) {
+          let splittedFilter = item.split(':');
+          let arr = Object.values(this.mapMeetingsToDropDown());
+          this.selectedOptionIndex['MEETING'] = findMeetingSelectionIndex(splittedFilter, arr);
+          this.updateStateString('meeting', item);
+        }
+      }
     }
   }
 };
@@ -362,7 +430,7 @@ h5 {
   user-select: none; /* Standard */
 }
 
-.filter-suggestions {
+.suggestion-filtering {
   width: 100%;
   padding-right: 10px;
   text-align: left;
@@ -382,6 +450,16 @@ h5 {
 
 .filter-item:hover {
   border-color: #a7e7e1;
+}
+
+.active-filter {
+  border: 2px solid #06b1a1;
+  color: #ffffff !important;
+  background-color: #06b1a1;
+}
+
+.active-filter .drop-down-button {
+  color: #ffffff;
 }
 
 .drop-down-button {

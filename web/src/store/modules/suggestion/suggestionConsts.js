@@ -18,6 +18,7 @@ export const sessionStorageKeyNames = {
 
 export const suggestionGetters = {
   GET_SUGGESTIONS: 'getSuggestions',
+  GET_SUGGESTIONS_COUNT: 'getSuggestionsCount',
   GET_SUGGESTION: 'getSuggestion',
   GET_SEARCH_QUERY: 'getSearchQuery',
   GET_FILTERS: 'getFilters',
@@ -29,6 +30,7 @@ export const suggestionGetters = {
 
 export const suggestionMutations = {
   SET_SUGGESTIONS: 'setSuggestions',
+  SET_SUGGESTIONS_COUNT: 'setSuggestionsCount',
   SET_SUGGESTION: 'setSuggestion',
   SET_SEARCH_QUERY: 'setSearchQuery',
   SET_FILTERS: 'setFilters',
@@ -44,9 +46,8 @@ export const suggestionMutations = {
 
 export const suggestionActions = {
   GET_SUGGESTIONS: 'getSuggestions',
+  GET_SUGGESTIONS_COUNT: 'getSuggestionsCount',
   GET_SUGGESTIONS_BY_USER_ID: 'getSuggestionsByUserId',
-  GET_SORTED_SUGGESTIONS_BY_USER_ID: 'getSortedSuggestionsByUserId',
-  GET_SORTED_SUGGESTIONS: 'getSortedSuggestions',
   GET_SUGGESTION_BY_ID: 'getSuggestionById',
   ASSIGN_SUGGESTION_TO_USER: 'assignSuggestionToUser',
   UNASSIGN_SUGGESTION_FROM_USER: 'unassignSuggestionFromUser',
@@ -54,11 +55,9 @@ export const suggestionActions = {
   GET_SUGGESTIONS_SELECTED_SORT: 'getSuggestionsSelectedSort',
   SET_SUGGESTIONS_SELECTED_SORT: 'setSuggestionsSelectedSort',
   GET_SUGGESTIONS_BY_MEETING_ID: 'getSuggestionsByMeetingId',
-  GET_SORTED_SUGGESTIONS_BY_MEETING_ID: 'getSortedSuggestionsByMeetingId',
   GET_MEETING_SUGGESTIONS_SELECTED_SORT: 'getMeetingSuggestionsSelectedSort',
   SET_MEETING_SUGGESTIONS_SELECTED_SORT: 'setMeetingSuggestionsSelectedSort',
   SET_SUGGESTION_STATUS: 'setSuggestionStatus',
-  GET_SUGGESTIONS_BY_SEARCH_WORD: 'getSuggestionsBySearchWord',
   GET_SELECTED_FILTERS: 'getSelectedFilters',
   SET_SELECTED_FILTERS: 'setSelectedFilters',
   GET_OPEN_SUGGESTIONS: 'getOpenSuggestions',

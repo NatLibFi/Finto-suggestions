@@ -1,5 +1,5 @@
-import { findValueFromDropDownOptions } from './dropDownHelper';
-import { filterType } from './suggestionHelpers';
+import { findValueFromDropDownOptions } from './dropDownHelper.js';
+import { filterType } from './suggestionHelpers.js';
 
 const removeOldFilterParamFromFilterList = (filters, type) => {
   return filters.filter(f => f.type !== type);
