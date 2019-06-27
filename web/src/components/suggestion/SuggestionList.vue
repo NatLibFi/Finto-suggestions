@@ -152,19 +152,24 @@ export default {
           }
         });
       } else if (this.userId) {
+        if (this.suggestions.length > 0) {
+          this.$router.push({
+            name: 'user',
+            params: {
+              page: 1,
+              userId: this.userId
+            },
+            query: {
+              filters: this.filters,
+              search: this.searchWord,
+              sort: this.sort
+            }
+          });
+        }
         this.$router.push({
-          name: 'user',
-          params: {
-            page: 1,
-            userId: this.userId
-          },
-          query: {
-            filters: this.filters,
-            search: this.searchWord,
-            sort: this.sort
-          }
+          name: 'user'
         });
-      } else {
+      } else if (this.suggestions.length > 0) {
         this.$router.push({
           name: 'suggestions',
           params: {
@@ -175,6 +180,10 @@ export default {
             search: this.searchWord,
             sort: this.sort
           }
+        });
+      } else {
+        this.$router.push({
+          name: 'index'
         });
       }
     }
