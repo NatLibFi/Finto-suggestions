@@ -151,6 +151,19 @@ export default {
             sort: this.sort
           }
         });
+      } else if (this.userId) {
+        this.$router.push({
+          name: 'user',
+          params: {
+            page: 1,
+            userId: this.userId
+          },
+          query: {
+            filters: this.filters,
+            search: this.searchWord,
+            sort: this.sort
+          }
+        });
       } else {
         this.$router.push({
           name: 'suggestions',
