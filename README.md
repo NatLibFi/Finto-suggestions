@@ -89,11 +89,11 @@ You can remove previously built containers and volumes by executing `docker syst
 
 ### Staging Installation
 
-Our staging installation is half automated. When commit is noticed on the master branch, **drone.io** starts building new images for web and api, and these are then pushed **quay.io**. After these have finished, you will need to manually start the update process in the **portainer.io** service for the web and api services. If the new commits contain migrations, you will need to run them through the shell found at portainer.io.
+Our staging installation is half automated. When commit is noticed on the master branch, **drone.io** starts building new images for web and api, and these are then pushed **quay.io**. After these have finished, you will need to manually start the update process in the **portainer.io** service for the web and api services. If the new commits contain migrations, you will need to run them through the shell found at portainer.io. Documentation found [here](https://github.com/NatLibFi/Finto-suggestions/blob/master/documentation/HOWTO_update_and_fresh_install.md).
 
 ### Production Installation
 
-Production installation will be automated in the same way as the staging environment – this will be updated here later.
+Production installation will be automated in the same way as the staging environment – documentation found [here](https://github.com/NatLibFi/Finto-suggestions/blob/master/documentation/HOWTO_update_and_fresh_install.md).
 
 ### Development Workflow
 
@@ -101,16 +101,17 @@ Both the API and frontend can be developed simultaneously. All the changes to th
 
 ### Frontend
 
-Frontend is initialized with **vue-cli** (latest version, https://github.com/vuejs/vue-cli).
+The frontend is initialized with **vue-cli** (https://github.com/vuejs/vue-cli).
 
-To add new dependencies, use `npm install package-name` or `npm install package-name --save-dev`. Afterwards, you will need to rebuild the containers by running `docker-compose build web`. You need to have **node** installed on your computer to use npm. You can also modify the package.json to add dependencies or make version updates.
+To add new dependencies, use `npm install package-name` or `npm install package-name --save-dev`. Afterwards, you will need to rebuild the containers by running `docker-compose build web`. You can also modify the package.json to add dependencies and make version updates.
 
-The frontend can be run locally without Docker, too. You will need to have **node** installed. Run `npm install` in the /web directory to install the required dependencies. Afterwards, you can start the development server by running `npm run serve`.
+The frontend can be run locally without Docker, too. Run `npm install` in the /web directory to install the required dependencies. Afterwards, you can start the development server by running `npm run serve`.
 
+You will need [**node**](https://nodejs.org/en/download/) installed on your computer to use npm.
 
 ### Backend (API)
 
-Backend (API) is a simple Python webapp. Dependency management is handled by a Pipenv virtual environment.
+Our backend (API) is a simple Python webapp. Dependency management is handled by a Pipenv virtual environment.
 
 Add new dependencies by running `pipenv install package-name` or `npm install package-name --dev` on your own computer (to update the Pipfile and Pipfile.lock). Afterwards, rebuild the api container `docker-compose build api` so that the changes are also installed within the containers. You need to have Python 3 and pipenv installed to do this locally.
 
@@ -162,9 +163,10 @@ New features are created as feature or fix branches (**feature-<some_task>** or 
 The continous deployment flow service works semi-automatically. The service listens to commits on the **master** branch, and when a commit is pushed, it pulls the new version and builds the **api** and **web** images. Then it pushes them to **quay**: you have to add them by hand in the **portainer** service to use newest images for staging or production. See the flow graph underneath:
 
 git: master/push -> drone.io -> pull git -> build -> push to quay
+
 portainer: pull the newest image with tag:staging -> shut down the containers -> start the newest container with the newest image (this has to be made by the user)
 
-#### Bugs and quirks
+### Bugs and quirks
 
 **pytest**
 
