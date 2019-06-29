@@ -30,6 +30,16 @@ def _tags_filter(query, value):
 
     return query
 
+def _user_id_filter(query, value):
+    if value == 'NULL':
+        value = None
+    elif value.isdigit():
+        value = int(value)
+    else:
+        _raise_exception(value, 'USER')
+
+    return query.filter(Suggestion.user_id == value)
+
 SUGGESTION_FILTER_FUNCTIONS = {
     'STATUS': (
         lambda query, value:
@@ -44,7 +54,8 @@ SUGGESTION_FILTER_FUNCTIONS = {
         else _raise_exception(value, 'SUGGESTION_TYPE', [e.name for e in SuggestionTypes])
     ),
     'MEETING_ID': _meeting_id_filter,
-    'TAGS': _tags_filter
+    'TAGS': _tags_filter,
+    'USER_ID': _user_id_filter
 }
 
 

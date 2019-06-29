@@ -1,7 +1,7 @@
 <template>
   <div>
     <navigation />
-    <user :userId="userId" />
+    <user :userId="userId" :page="page" />
   </div>
 </template>
 
@@ -16,8 +16,13 @@ export default {
   },
   props: {
     userId: {
-      userId: [String, Number],
+      type: [String, Number],
       required: true
+    },
+    page: {
+      type: [String, Number],
+      required: true,
+      default: 1
     }
   }
 };

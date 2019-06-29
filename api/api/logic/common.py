@@ -92,17 +92,11 @@ def get_count_or_404_custom(query_func) -> str:
         :returns: All columns matching the filtered query or 404
     """
     try:
-        db_objs = query_func()
+        db_count = query_func()
     except InvalidFilterException as e:
-        return create_response({}, 404, str(e))
+        return create_response(0, 404, str(e))
 
-    serialized_objects = []
-    if db_objs:
-        serialized_objects = [o.as_dict() for o in db_objs]
-
-    object_count = len(serialized_objects)
-
-    return create_response({ "count": object_count }, 200)
+    return create_response({ "count": db_count }, 200)
 
 
 def get_all_or_404(model, limit: int, offset: int) -> str:

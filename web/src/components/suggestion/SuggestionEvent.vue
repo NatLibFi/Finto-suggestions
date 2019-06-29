@@ -4,7 +4,10 @@
 
     <div class="event-container">
       <div class="event-header">
-        <div class="event-user-initials">{{ userNameInitials }}</div>
+        <div v-if="userImage" class="event-user-image">
+          <img :src="userImage" :alt="userNameInitials">
+        </div>
+        <div v-if="!userImage" class="event-user-initials">{{ userNameInitials }}</div>
         <div class="event-info">
           <p class="event-user">
             <span class="user-name">{{ userName }}</span>
@@ -106,6 +109,7 @@ export default {
       combineEventTextContent,
       eventTypes,
       userName: '',
+      userImage: '',
       userNameInitials: '',
       userRoles,
       commentOptions: [
@@ -160,6 +164,7 @@ export default {
     async fetchUserNameAndInitials() {
       if (this.user) {
         this.userName = this.user.name;
+        this.userImage = this.user.imageUrl;
         this.userNameInitials = userNameInitials(this.user.name);
       }
     },
@@ -252,10 +257,26 @@ export default {
   border-radius: 35px;
   line-height: 46px;
   text-align: center;
-  background-color: #804af2;
+  background-color: #dddddd;
   color: #727272;
   font-size: 20px;
   font-weight: 800;
+}
+
+.event-user-image {
+  display: inline-block;
+  height: 40px;
+  width: 40px;
+  border-radius: 35px;
+  text-align: center;
+  vertical-align: middle;
+}
+
+.event-user-image img {
+  line-height: 46px;
+  height: 40px;
+  width: 40px;
+  border-radius: 40px;
 }
 
 .tag {

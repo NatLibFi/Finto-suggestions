@@ -31,6 +31,8 @@ def get_suggestions(limit: int = None, offset: int = None, filters: str = None, 
     def query_func():
         if sort in SUGGESTION_SORT_FUNCTIONS:
             query = SUGGESTION_SORT_FUNCTIONS.get(sort)(db.session)
+        else:
+            query = SUGGESTION_SORT_FUNCTIONS.get('CREATED_DESC')(db.session)
 
         if filters and _validate_filters(filters):
             for name, value in filters:
@@ -78,7 +80,7 @@ def get_suggestions(limit: int = None, offset: int = None, filters: str = None, 
     return get_all_or_404_custom(query_func)
 
 
-def get_suggestions_count(filters: str = None, search: str = None, sort: str = 'DEFAULT') -> str:
+def get_suggestions_count(filters: str = None, search: str = None) -> str:
     """
     Returns the amount of suggestions for pagination purposes.
 
@@ -90,8 +92,7 @@ def get_suggestions_count(filters: str = None, search: str = None, sort: str = '
     """
 
     def query_func():
-        if sort in SUGGESTION_SORT_FUNCTIONS:
-            query = SUGGESTION_SORT_FUNCTIONS.get(sort)(db.session)
+        query = db.session.query(Suggestion)
 
         if filters and _validate_filters(filters):
             for name, value in filters:
@@ -121,7 +122,7 @@ def get_suggestions_count(filters: str = None, search: str = None, sort: str = '
                 func.lower(Suggestion.yse_term.cast(Unicode)).contains(search.lower()),
             ))
 
-        return query.all()
+        return query.count()
 
     def _validate_filters(f):
         return all([f[0].upper() in SUGGESTION_FILTER_FUNCTIONS.keys() for f in filters])

@@ -23,13 +23,6 @@ paths:
           description: Sort method
           required: false
           type: string
-          enum:
-              - CREATED_DESC
-              - CREATED_ASC
-              - COMMENTS_DESC
-              - COMMENTS_ASC
-              - UPDATED_DESC
-              - REACTIONS_DESC
         - name: filters
           in: query
           description: 'Pipe-separated filter string, i.e. status:accepted|type:new|meeting_id:12'

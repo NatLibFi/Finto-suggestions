@@ -29,12 +29,14 @@ export default {
   },
   props: {
     meetingId: {
-      type: Number,
+      type: [Number, String],
       default: null
     },
     pageCount: Number,
     page: [String, Number],
-    pageCountLoading: Boolean
+    pageCountLoading: Boolean,
+    isUserPage: Boolean,
+    userId: [Number, String]
   },
   data() {
     return {
@@ -46,14 +48,22 @@ export default {
   },
   methods: {
     changePageHandler(pageNumber) {
-      if (this.meetingId) {
+      if (this.isUserPage) {
+        this.$router.push({
+          name: 'user',
+          params: {
+            page: pageNumber,
+            userId: this.userId
+          }
+        });
+      } else if (this.meetingId) {
         this.$router.push({
           name: 'meeting-suggestion-list',
           params: {
             page: pageNumber,
             meetingId: this.meetingId
           }
-        })
+        });
       } else {
         this.$router.push({
           name: 'suggestions',
@@ -68,9 +78,9 @@ export default {
   },
   watch: {
     $route() {
-        this.filters = this.$route.query.filters ? this.$route.query.filters : '';
-        this.searchWord = this.$route.query.search ? this.$route.query.search : '';
-        this.sort = this.$route.query.sort ? this.$route.query.sort : '';
+      this.filters = this.$route.query.filters ? this.$route.query.filters : '';
+      this.searchWord = this.$route.query.search ? this.$route.query.search : '';
+      this.sort = this.$route.query.sort ? this.$route.query.sort : '';
     }
   }
 };
