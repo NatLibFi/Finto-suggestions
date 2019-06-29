@@ -2,7 +2,7 @@
   <div class="user">
     <div class="profile-container">
       <div v-if="user.imageUrl" class="profile-image">
-        <img :src="user.imageUrl" :alt="userNameInitials">
+        <img :src="user.imageUrl" :alt="userNameInitials" />
       </div>
       <div v-if="!user.imageUrl" class="user-name-initials">
         <span v-if="userNameInitials">{{ userNameInitials }}</span>

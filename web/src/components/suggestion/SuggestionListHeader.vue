@@ -45,7 +45,7 @@ import SortingDropDown from '../common/SortingDropDown';
 import SvgIcon from '../icons/SvgIcon';
 import IconTriangle from '../icons/IconTriangle';
 
-import { sortingKeys, getSelectedSortOptionIndex } from '../../utils/sortingHelper.js';
+import { sortingKeys } from '../../utils/sortingHelper.js';
 import { handleQueries, findSortSelectionIndex } from '../../utils/suggestionHelpers.js';
 
 export default {

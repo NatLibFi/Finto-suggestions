@@ -97,7 +97,6 @@ import {
   findTagSelectionIndex,
   findMeetingSelectionIndex
 } from '../../utils/suggestionHelpers.js';
-import { findValueFromDropDownOptions } from '../../utils/dropDownHelper.js';
 
 import { mapMeetingActions, mapMeetingGetters } from '../../store/modules/meeting/meetingModule.js';
 import { meetingActions, meetingGetters } from '../../store/modules/meeting/meetingConsts.js';
@@ -226,7 +225,13 @@ export default {
     },
     meetingChanged(selected) {
       if (this.meetingId) {
-        handleMeetingQueries(this.meetingId, this.filters, this.searchWord, this.sort, this.$router);
+        handleMeetingQueries(
+          this.meetingId,
+          this.filters,
+          this.searchWord,
+          this.sort,
+          this.$router
+        );
       } else {
         let stateString = 'meeting_id:' + selected.toString().toLowerCase();
         let filters = this.combineStateStrings(filterType.MEETING, stateString);
@@ -390,19 +395,16 @@ export default {
           let arr = Object.values(this.suggestionStateStatuses);
           this.selectedOptionIndex['STATUS'] = findSelectionIndex(splittedFilter, arr);
           this.updateStateString('status', item);
-
         } else if (item.includes('type:')) {
           let splittedFilter = item.split(':');
           let arr = Object.values(this.suggestionTypes);
           this.selectedOptionIndex['TYPE'] = findSelectionIndex(splittedFilter, arr);
           this.updateStateString('type', item);
-
         } else if (item.includes('tags:')) {
           let splittedFilter = item.split(':');
           let arr = Object.values(this.mapTagsToDropDown());
           this.selectedOptionIndex['TAGS'] = findTagSelectionIndex(splittedFilter, arr);
           this.updateStateString('tags', item);
-
         } else if (item.includes('meeting_id:')) {
           let splittedFilter = item.split(':');
           let arr = Object.values(this.mapMeetingsToDropDown());
