@@ -2,7 +2,7 @@
   <div class="header-container">
     <!--TODO: <div v-if="!userPage" class="title">
       <span
-        :class="['open', openSuggestionClicked && isSuggestionListDirty ? 'toggled' : '']"
+        :class="['open', openSuggestionClicked ? 'toggled' : '']"
         @click="showOpenSuggestions()"
       >
         {{ openSuggestionCount }} käsittelemätöntä
@@ -90,7 +90,6 @@ export default {
       this.isDropDownOpened = false;
     },
     showOpenSuggestions() {
-      this.setDirtynessToTrue();
       if (!this.openSuggestionClicked) {
         this.openSuggestionClicked = true;
         this.resolvedSuggestionsClicked = false;
@@ -101,7 +100,6 @@ export default {
       }
     },
     showResolvedSuggestions() {
-      this.setDirtynessToTrue();
       if (!this.resolvedSuggestionsClicked) {
         this.openSuggestionClicked = false;
         this.resolvedSuggestionsClicked = true;

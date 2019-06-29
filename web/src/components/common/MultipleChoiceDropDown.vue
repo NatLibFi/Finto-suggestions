@@ -37,15 +37,6 @@ import IconCheck from '../icons/IconCheck';
 import IconCross from '../icons/IconCross';
 import { directive as onClickaway } from 'vue-clickaway';
 
-import {
-  mapSuggestionGetters,
-  mapSuggestionMutations
-} from '../../store/modules/suggestion/suggestionModule.js';
-import {
-  suggestionGetters,
-  suggestionMutations
-} from '../../store/modules/suggestion/suggestionConsts.js';
-
 export default {
   components: {
     SvgIcon,
@@ -62,11 +53,7 @@ export default {
     noOptionsMessage: String
   },
   methods: {
-    ...mapSuggestionMutations({
-      setDirtynessToTrue: suggestionMutations.SET_DIRTYNESS_TO_TRUE
-    }),
     filterValueSelected(option, index) {
-      this.setDirtynessToTrue();
       this.handleDropDownSelectedIndicator(index);
 
       // TODO: ensure that this filters multiple tags in filterValueHelper.js
