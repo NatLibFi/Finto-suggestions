@@ -54,20 +54,6 @@ export default {
       default: ''
     }
   },
-  props: {
-    filters: {
-      type: String,
-      default: ''
-    },
-    searchWord: {
-      type: String,
-      default: ''
-    },
-    sort: {
-      type: String,
-      default: ''
-    }
-  },
   data() {
     return {
       isShown: false,
