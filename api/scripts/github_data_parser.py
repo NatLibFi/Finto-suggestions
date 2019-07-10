@@ -107,6 +107,12 @@ class GithubDataParser:
       body_str = split_remove_sender_email[0].replace('*', '').strip()
     return body_str
 
+  def __parse_remove_yse_term_from_body(self, body_str):
+    if 'Termiehdotus Fintossa' in body_str:
+      split_remove_yse_term = body_str.split('Termiehdotus Fintossa')
+      body_str = split_remove_yse_term[0].replace('*', '').replace(':', '').strip()
+    return body_str
+
   def __parse_remove_org_and_term_suggestion_from_reason(self, value):
     if 'Ehdottajan organisaatio' in value:
       splitted_remove_org = value.split('Ehdottajan organisaatio')
@@ -203,6 +209,7 @@ class GithubDataParser:
 
     if 'Termiehdotus Fintossa' in body_str:
       self.__parse_yse_term(body_str, body)
+      body_str = self.__parse_remove_yse_term_from_body(body_str)
 
     splitted_body_strings = body_str.split("####")
 
