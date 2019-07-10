@@ -15,7 +15,7 @@ class GithubBodyModel(object):
     self.scope_note = None
     self.groups = []
     self.organization = None
-    self.yse_term = {}
+    self.yse_term = None
 
 class GithubMeetingModel(object):
   def __init__(self, name, created_date):

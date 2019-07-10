@@ -164,7 +164,7 @@ class GithubDataParser:
     body.organization = organization
 
   def __parse_yse_term(self, value, body):
-    splitted_value = value.split('Termiehdotus Fintossa')
+    splitted_value = value.replace(':', '').split('Termiehdotus Fintossa')
     splitted_yse_term_value = splitted_value[1].split(']')
     yse_term = {
       'value': splitted_yse_term_value[0].replace('[','').replace(']','').replace('*','').replace(':','') .strip(),
