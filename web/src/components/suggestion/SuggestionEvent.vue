@@ -2,7 +2,9 @@
   <div class="event">
     <div class="event-divider"></div>
     <div class="event-container">
-      <div class="event-header">
+      <div
+        v-if="event.user_id || type === eventTypes.ACTION"
+        class="event-header">
         <div v-if="userImage" class="event-user-image">
           <img :src="userImage" :alt="userNameInitials" />
         </div>

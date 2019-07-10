@@ -1,5 +1,5 @@
 import requests, math, os
-from .github_models import GithubBodyModel, GithubMeetingModel, GithubIssueModel
+from .github_models import GithubBodyModel, GithubMeetingModel, GithubIssueModel, GithubCommentModel
 
 class GithubDataParser:
 
@@ -281,11 +281,15 @@ class GithubDataParser:
           mapped_status = 'REJECTED'
     return mapped_status
 
+  def __fetch_comments_from_github(self, comment_url):
+    user = os.environ.get('GITHUB_USERNAME')
+    personal_token = os.environ.get('GITHUB_PERSONAL_TOKEN')
+    return requests.get(comment_url, auth=(user, personal_token))
 
   def __fetch_data_from_github(self, page = 1):
     user = os.environ.get('GITHUB_USERNAME')
     personal_token = os.environ.get('GITHUB_PERSONAL_TOKEN')
-    return requests.get(f'https://api.github.com/repos/Finto-ehdotus/YSE/issues?per_page=100&state=all&page={page}', auth=(user, personal_token))
+    return requests.get(f'https://api.github.com/repos/Finto-ehdotus/YSE/issues?per_page=100&direction=asc&state=all&page={page}', auth=(user, personal_token))
 
   def __map_response(self, json_item):
     if 'Voyager-id' in json_item["body"]:
@@ -322,6 +326,16 @@ class GithubDataParser:
       # yet append the correct ones
       suggestion_model.tags.append(label["name"])
 
+    if json_item["comments"] > 0:
+      response = self.__fetch_comments_from_github(json_item["comments_url"])
+      for comment in response.json():
+        comment = GithubCommentModel(
+          comment["created_at"],
+          comment["updated_at"],
+          '<strong>' + comment["user"]["login"] + ':</strong>\n\n' + comment["body"]
+        )
+        suggestion_model.comments.append(comment)
+
     if 'GEO' in json_item["body"] and 'maantieteellinen' not in suggestion_model.tags:
       suggestion_model.tags.append('maantieteellinen')
 
@@ -344,6 +358,7 @@ class GithubDataParser:
       loop_count = self.__parse_count_from_response_headers(response.headers)
 
     i = 1
+    loop_count = 2 # TODO: remove this
     while i <= loop_count:
       if self.last_request_completed == False:
         response = self.__fetch_data_from_github(i)

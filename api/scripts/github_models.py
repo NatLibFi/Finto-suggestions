@@ -1,3 +1,5 @@
+from api.models import EventTypes
+
 ### temp models
 
 class GithubBodyModel(object):
@@ -33,3 +35,13 @@ class GithubIssueModel(object):
     self.body = body
     self.tags = []
     self.events = []
+    self.comments = []
+
+class GithubCommentModel(object):
+  def __init__(self, created, modified, text):
+    self.created = created
+    self.modified = modified
+    self.user_id = None
+    self.event_type = EventTypes.COMMENT
+    self.suggestion_id = None
+    self.text = text

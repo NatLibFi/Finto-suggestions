@@ -1,4 +1,4 @@
-from api.models import Suggestion, Tag, Meeting, SuggestionTag, Event, EventTypes
+from api.models import Suggestion, Tag, Meeting, SuggestionTag, Event, EventTypes, EventActionSubTypes
 from datetime import datetime
 
 class DBInserter:
@@ -73,6 +73,19 @@ class DBInserter:
     event_bo.suggestion_id = suggestion_id
     return event_bo
 
+  def __map_comments_to_comments_bo(self, comments, suggestion_id):
+    comments_bo = []
+    if comments is not None and len(comments) > 0:
+      for comment in comments:
+        comment_bo = Event()
+        comment_bo.created = comment.created
+        comment_bo.modified = comment.modified
+        comment_bo.event_type = EventTypes.COMMENT
+        comment_bo.text = comment.text
+        comment_bo.suggestion_id = suggestion_id
+        comments_bo.append(comment_bo)
+    return comments_bo
+
   def __map_models_to_db_bo(self, models):
     bo_models = []
     if models is not None and len(models) > 0:
@@ -84,6 +97,7 @@ class DBInserter:
         suggestion_bo = self.__map_suggestion_bo(model)
         suggestion_models["suggestion"] = suggestion_bo
         suggestion_models["tags"] = self.__map_tags_to_tags_bo(model.tags)
+        suggestion_models["comments"] = self.__map_comments_to_comments_bo(model.comments, None)
         bo_models.append(suggestion_models)
     return bo_models
 
@@ -122,6 +136,18 @@ class DBInserter:
       print(f"New event {event_bo.id} for adding tags {', '.join(tags)} to suggestion {suggestion_id}")
       return event_bo
     return None
+
+  def __insert_comments_to_db(self, db, comments, suggestion_id):
+    comment_id_list = []
+    if comments is not None and len(comments) > 0:
+      comments_bo = self.__map_comments_to_comments_bo(comments, suggestion_id)
+      for comment_bo in comments_bo:
+        db.session.add(comment_bo)
+        db.session.commit()
+        self.events_count += 1
+        comment_id_list.append(comment_bo.id)
+        print(f"New comment {comment_bo.id} added to suggestion {suggestion_id}")
+    return comment_id_list
 
   def __insert_suggestion_tag_relationship(self, db, tag_label, suggestion_id, event_id):
     suggestion_tag = self.__map_tag_labels_to_suggestiontag_bo(tag_label, suggestion_id, event_id)
@@ -167,6 +193,11 @@ class DBInserter:
             suggestion.meeting_id = exists["id"]
         self.__insert_suggestion_to_db(db, suggestion)
         self.__insert_tags_and_relation_to_suggestion(db, tags, suggestion.id)
+        if 'comments' in model.keys():
+          comments = model["comments"]
+          comment_id_list = self.__insert_comments_to_db(db, comments, suggestion.id)
+          for id in comment_id_list:
+            suggestion.events.append( Event.query.get(id) )
       except Exception as ex:
         print(str(ex))
         db.session.rollback()
