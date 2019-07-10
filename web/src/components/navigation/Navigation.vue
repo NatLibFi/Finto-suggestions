@@ -493,6 +493,12 @@ export default {
   transform: perspective(1px) translateY(calc(-50% - 0.5px));
 }
 
+.nav-mobile-dropdown-header .user-bubble-image img {
+  height: 50px;
+  width: 50px;
+  border-radius: 50px;
+}
+
 .nav-mobile-dropdown-header .nav-dropdown-user {
   display: inline-block;
   margin-left: 30px;
