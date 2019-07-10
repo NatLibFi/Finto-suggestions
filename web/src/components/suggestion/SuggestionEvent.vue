@@ -1,22 +1,34 @@
 <template>
   <div class="event">
     <div class="event-divider"></div>
-
     <div class="event-container">
       <div class="event-header">
         <div v-if="userImage" class="event-user-image">
-          <img :src="userImage" :alt="userNameInitials">
+          <img :src="userImage" :alt="userNameInitials" />
         </div>
-        <div v-if="!userImage" class="event-user-initials">{{ userNameInitials }}</div>
+        <div
+          v-if="!userImage && event.sub_type && event.sub_type === eventSubTypes.SYSTEM"
+          class="event-user-image"
+        >
+          <img src="../assets/finto-small.jpg" alt="" />
+        </div>
+        <div
+          v-if="!userImage && !event.sub_type"
+          class="event-user-initials"
+        >
+          {{ userNameInitials }}
+        </div>
         <div class="event-info">
           <p class="event-user">
-            <span class="user-name">{{ userName }}</span>
+            <span v-if="!event.sub_type" class="user-name">{{ userName }}</span>
             <span v-if="type === eventTypes.ACTION">
               {{ event.text }}
-              <span class="tag">{{ event.value }}</span>
+              <span v-for="tag in event.tags" :key="tag.id" class="tag">{{ tag.label }}</span>
             </span>
           </p>
-          <p class="date-sent">{{ dateTimeFormatLabel(this.event.created) }}</p>
+          <p v-if="event.sub_type && event.sub_type === eventSubTypes.SYSTEM" class="date-sent">
+            {{ dateTimeFormatLabel(this.event.created) }}
+          </p>
         </div>
         <div
           v-if="
@@ -69,7 +81,7 @@ import { mapAuthenticatedUserGetters } from '../../store/modules/authenticatedUs
 // eslint-disable-next-line
 import { authenticatedUserGetters } from '../../store/modules/authenticatedUser/authenticatedUserConsts.js';
 
-import { combineEventTextContent, eventTypes } from '../../utils/eventHelper';
+import { combineEventTextContent, eventTypes, eventSubTypes } from '../../utils/eventHelper';
 import { eventActions } from '../../store/modules/event/eventConsts.js';
 import { mapEventActions } from '../../store/modules/event/eventModule.js';
 import { mapUserGetters, mapUserActions } from '../../store/modules/user/userModule';
@@ -108,6 +120,7 @@ export default {
       dateTimeFormatLabel,
       combineEventTextContent,
       eventTypes,
+      eventSubTypes,
       userName: '',
       userImage: '',
       userNameInitials: '',
@@ -131,8 +144,10 @@ export default {
     };
   },
   async created() {
-    await this.getUser(this.event.user_id);
-    this.fetchUserNameAndInitials();
+    if (this.event.user_id) {
+      await this.getUser(this.event.user_id);
+      this.fetchUserNameAndInitials();
+    }
   },
   computed: {
     ...mapUserGetters({

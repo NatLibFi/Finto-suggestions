@@ -13,11 +13,10 @@ class EventTypes(enum.IntEnum):
     ACTION = 0
     COMMENT = 1
 
-
 class EventActionSubTypes(enum.IntEnum):
     STATUS = 0
     TAG = 1
-
+    SYSTEM = 2
 
 class SuggestionStatusTypes(enum.IntEnum):
     RECEIVED = 0,
@@ -31,11 +30,9 @@ class SuggestionTypes(enum.IntEnum):
     NEW = 0
     MODIFY = 1
 
-
 class UserRoles(enum.IntEnum):
     NORMAL = 0
     ADMIN = 1
-
 
 class SerializableMixin():
     """
@@ -58,22 +55,22 @@ class SerializableMixin():
 
     def as_dict(self, strip=True):
         d = {c.name: self._serialize(getattr(self, c.name))
-             for c in self.__table__.columns}
+            for c in self.__table__.columns}
         if strip:  # strip hidden fields, such as meeting_id
             d = {k: v for k, v in d.items() if k in self.__public__}
         return d
 
 
 class SuggestionTag(db.Model, SerializableMixin):
-  __tablename__ = 'suggestion_tags_association'
-  __public__ = ['tag_label', 'suggestion_id', 'event_id']
+    __tablename__ = 'suggestion_tags_association'
+    __public__ = ['tag_label', 'suggestion_id', 'event_id']
 
-  tag_label = db.Column(db.String, db.ForeignKey('tags.label'), primary_key=True)
-  suggestion_id = db.Column(db.Integer, db.ForeignKey('suggestions.id'), primary_key=True)
-  event_id = db.Column(db.Integer, db.ForeignKey('events.id'))
+    tag_label = db.Column(db.String, db.ForeignKey('tags.label'), primary_key=True)
+    suggestion_id = db.Column(db.Integer, db.ForeignKey('suggestions.id'), primary_key=True)
+    event_id = db.Column(db.Integer, db.ForeignKey('events.id'))
 
-  def __repr__(self):
-    return '<SuggestionTag {}>'.format(self.code)
+    def __repr__(self):
+        return '<SuggestionTag {}>'.format(self.code)
 
 
 class Event(db.Model, SerializableMixin):
@@ -99,15 +96,14 @@ class Event(db.Model, SerializableMixin):
     # user: backref
     # suggestion: backref
 
-
     suggestion_id = db.Column(db.Integer, db.ForeignKey('suggestions.id'))
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
 
     tags = db.relationship(
-      'Tag',
-      secondary='suggestion_tags_association',
-      backref=db.backref('events'),
-      lazy='joined')
+        'Tag',
+        secondary='suggestion_tags_association',
+        backref=db.backref('events'),
+        lazy='joined')
 
     def __repr__(self):
         msg = self.text if len(self.text) <= 16 else (self.text[:16] + '...')
@@ -129,9 +125,9 @@ class Reaction(db.Model, SerializableMixin):
 
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     user = db.relationship(
-      "User",
-      backref=db.backref("user", uselist=False),
-      lazy='joined'
+        "User",
+        backref=db.backref("user", uselist=False),
+        lazy='joined'
     )
 
     # suggestion: backref

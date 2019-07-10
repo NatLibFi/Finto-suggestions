@@ -63,12 +63,14 @@ class DBInserter:
       return suggestion_tag
     return None
 
-  def __map_to_event_bo(self, tags):
+  def __map_to_event_bo(self, suggestion_id):
     event_bo = Event()
     event_bo.created = datetime.now()
     event_bo.modified = datetime.now()
     event_bo.event_type = EventTypes.ACTION
-    event_bo.text = f"Vanhasta järjestelmästä tuodut tunnisteet ehdotukselle: {', '.join(tags)}"
+    event_bo.sub_type = EventActionSubTypes.SYSTEM
+    event_bo.text = f"Lisätty tunnisteet:  "
+    event_bo.suggestion_id = suggestion_id
     return event_bo
 
   def __map_models_to_db_bo(self, models):
@@ -113,11 +115,11 @@ class DBInserter:
 
   def __insert_event_bo_to_db(self, db, tags, suggestion_id):
     if tags is not None and len(tags) > 0:
-      event_bo = self.__map_to_event_bo(tags)
+      event_bo = self.__map_to_event_bo(suggestion_id)
       db.session.add(event_bo)
       db.session.commit()
       self.events_count += 1
-      print(f"New event {event_bo.id} for adding tags {', '.join(tags)} to suggestion {suggestion_id} ")
+      print(f"New event {event_bo.id} for adding tags {', '.join(tags)} to suggestion {suggestion_id}")
       return event_bo
     return None
 
@@ -133,8 +135,8 @@ class DBInserter:
     if tags is not None and len(tags) > 0:
       suggestion_tags = []
       for tag_label in tags:
-        exists_tag = self.__get_existing_tag(tag_label.label)
-        if exists_tag is None:
+        existing_tag = self.__get_existing_tag(tag_label.label)
+        if existing_tag is None:
           db.session.add(tag_label)
           db.session.commit()
           self.new_tags.append(tag_label.label)
@@ -142,8 +144,9 @@ class DBInserter:
           self.existing_tags.append(tag_label.label)
           print(f"New tag added {tag_label.label}")
         else:
-          suggestion_tags.append(exists_tag)
-        event_bo = self.__insert_event_bo_to_db(db, suggestion_tags, suggestion_id)
+          suggestion_tags.append(existing_tag)
+      event_bo = self.__insert_event_bo_to_db(db, suggestion_tags, suggestion_id)
+      for tag_label in tags:
         if event_bo is not None:
           # lets not try to add this if event creation failed
           self.__insert_suggestion_tag_relationship(db, tag_label.label, suggestion_id, event_bo.id)

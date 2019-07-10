@@ -351,7 +351,6 @@ definitions:
         isTouched:
           type: boolean
 
-
   scopeNote:
     type: string
     example: "Tarkoittaa tarkemmin sanottuna kissamaista nisäkästä."
@@ -543,6 +542,8 @@ definitions:
         type: number
       event_type:
         $ref: "#/definitions/event_type"
+      sub_type:
+        $ref: "#/definitions/sub_type"
       text:
         $ref: "#/definitions/text"
     required:
@@ -560,9 +561,9 @@ definitions:
         type: number
       event_type:
         $ref: "#/definitions/event_type"
+      sub_type:
+        $ref: "#/definitions/sub_type"
       text:
-        $ref: "#/definitions/text"
-      value:
         $ref: "#/definitions/text"
     required:
       - event_type
@@ -580,6 +581,8 @@ definitions:
         type: number
       event_type:
         $ref: "#/definitions/event_type"
+      sub_type:
+        $ref: "#/definitions/sub_type"
       text:
         $ref: "#/definitions/text"
 
@@ -594,6 +597,15 @@ definitions:
   text:
     type: string
     example: "Hello there!"
+
+  sub_type:
+    type: string
+    enum:
+      - STATUS
+      - TAG
+      - SYSTEM
+    description: "The subtype of an ACTION event."
+    example: "SYSTEM"
 
   # MEETING
 
