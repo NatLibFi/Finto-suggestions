@@ -2,9 +2,7 @@
   <div class="event">
     <div class="event-divider"></div>
     <div class="event-container">
-      <div
-        v-if="event.user_id || type === eventTypes.ACTION"
-        class="event-header">
+      <div v-if="event.user_id || type === eventTypes.ACTION" class="event-header">
         <div v-if="userImage" class="event-user-image">
           <img :src="userImage" :alt="userNameInitials" />
         </div>
@@ -14,10 +12,7 @@
         >
           <img src="../assets/finto-small.jpg" alt="" />
         </div>
-        <div
-          v-if="!userImage && !event.sub_type"
-          class="event-user-initials"
-        >
+        <div v-if="!userImage && !event.sub_type" class="event-user-initials">
           {{ userNameInitials }}
         </div>
         <div class="event-info">
