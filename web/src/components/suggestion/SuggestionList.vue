@@ -181,7 +181,7 @@ export default {
             sort: this.sort
           }
         });
-      } else {
+      } else if (this.suggestions.length === 0 && !this.$route.query) {
         this.$router.push({
           name: 'index'
         });

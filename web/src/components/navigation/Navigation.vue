@@ -13,8 +13,9 @@
             </div>
           </transition>
           <div v-if="!user.imageUrl" class="user-bubble">
-            <span v-if="userInitials" unselectable="on">{{ userInitials }}</span>
-            <span v-else unselectable="on">{{ userId }}</span>
+            <transition name="fade">
+              <span v-if="userInitials" unselectable="on">{{ userInitials }}</span>
+            </transition>
           </div>
           <div class="nav-menu-user">
             <p v-if="user.name && user.name.length > 0">{{ user.name }}</p>
