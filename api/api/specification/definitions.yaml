@@ -187,9 +187,9 @@ definitions:
       organization:
         $ref: "#/definitions/organization"
       meeting_id:
-        type: number
+        $ref: "#/definitions/meeting_id"
       user_id:
-        type: number
+        $ref: "#/definitions/user_id"
       tags:
         type: array
         items:
@@ -284,12 +284,12 @@ definitions:
       properties:
         value:
           type: string
+          example: "agenttiteoria"
         uri:
           type: string
+          example: "https://finto.fi/yso/fi/page/p23547"
         isTouched:
           type: boolean
-    example:
-      - "http://www.yso.fi/onto/ysa/Y98177"
 
   narrower_labels:
     type: array
@@ -299,12 +299,12 @@ definitions:
       properties:
         value:
           type: string
+          example: "aggregointi"
         uri:
           type: string
+          example: "https://finto.fi/yso/fi/page/p25245"
         isTouched:
           type: boolean
-    example:
-      - "http://www.yso.fi/onto/ysa/Y98176"
 
   related_labels:
     type: array
@@ -314,12 +314,12 @@ definitions:
       properties:
         value:
           type: string
+          example: "agitaatio"
         uri:
           type: string
+          example: "http://www.yso.fi/onto/yso/p23939"
         isTouched:
           type: boolean
-    example:
-      - "http://www.yso.fi/onto/ysa/Y12345"
 
   groups:
     type: array
@@ -377,6 +377,11 @@ definitions:
 
   meeting_id:
     type: number
+    example: 1
+
+  user_id:
+    type: number
+    example: 1
 
   events:
     type: array
