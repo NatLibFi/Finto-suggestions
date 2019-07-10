@@ -20,9 +20,10 @@ class GithubBodyModel(object):
     self.yse_term = None
 
 class GithubMeetingModel(object):
-  def __init__(self, name, created_date):
+  def __init__(self, name, created_date, meeting_date):
     self.name = name
     self.created_date = created_date
+    self.meeting_date = meeting_date
 
 class GithubIssueModel(object):
   def __init__(self, name, status, meeting, created, modified, closed, body):

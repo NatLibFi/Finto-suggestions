@@ -257,11 +257,16 @@ class GithubDataParser:
     if meeting is not None:
       title = ''
       created_date = ''
+      meeting_date = ''
       if meeting["title"] is not None and len(meeting["title"]) > 0:
         title = meeting["title"]
       if meeting["created_at"] is not None and len(meeting["created_at"]) > 0:
         created_date = meeting["created_at"]
-      return GithubMeetingModel(title, created_date)
+      if meeting["due_on"] is not None and len(meeting["due_on"]) > 0:
+        meeting_date = meeting["due_on"]
+      else:
+        meeting_date = None
+      return GithubMeetingModel(title, created_date, meeting_date)
     else:
       return None
 
@@ -358,7 +363,6 @@ class GithubDataParser:
       loop_count = self.__parse_count_from_response_headers(response.headers)
 
     i = 1
-    loop_count = 2 # TODO: remove this
     while i <= loop_count:
       if self.last_request_completed == False:
         response = self.__fetch_data_from_github(i)

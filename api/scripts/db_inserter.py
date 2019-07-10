@@ -23,6 +23,7 @@ class DBInserter:
     meeting_bo = Meeting()
     meeting_bo.name = meeting.name
     meeting_bo.created_date = meeting.created_date
+    meeting_bo.meeting_date = meeting.meeting_date
     return meeting_bo
 
   def __map_suggestion_bo(self, model):
