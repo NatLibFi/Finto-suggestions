@@ -1,13 +1,14 @@
 <template>
   <div class="user">
     <div class="profile-container">
-      <div v-if="user.imageUrl" class="profile-image">
-        <img :src="user.imageUrl" :alt="userNameInitials" />
-      </div>
-      <div v-if="!user.imageUrl" class="user-name-initials">
-        <span v-if="userNameInitials">{{ userNameInitials }}</span>
-        <span v-else>{{ userId }}</span>
-      </div>
+      <transition name="fade">
+        <div v-if="user.imageUrl" class="profile-image">
+          <img :src="user.imageUrl" :alt="userNameInitials" />
+        </div>
+        <div v-if="!user.imageUrl" class="user-name-initials">
+          <span v-if="userNameInitials">{{ userNameInitials }}</span>
+        </div>
+      </transition>
       <div class="profile">
         <p class="profile-user" v-if="!user.name">
           Käyttäjä {{ userId }}<span v-if="user.role">, {{ userRoleToString[user.role] }}</span>
@@ -40,16 +41,14 @@ import SuggestionListHeader from '../suggestion/SuggestionListHeader';
 import SuggestionItem from '../suggestion/SuggestionItem';
 import SuggestionList from '../suggestion/SuggestionList';
 
-import { userGetters } from '../../store/modules/user/userConsts';
-import { mapUserGetters } from '../../store/modules/user/userModule';
+import { userGetters, userActions } from '../../store/modules/user/userConsts';
+import { mapUserGetters, mapUserActions } from '../../store/modules/user/userModule';
 import { userNameInitials } from '../../utils/userHelpers.js';
 import { userRoleToString } from '../../utils/userMappings.js';
 // eslint-disable-next-line
 import { authenticatedUserGetters } from '../../store/modules/authenticatedUser/authenticatedUserConsts.js';
 // eslint-disable-next-line
-import { mapAuthenticatedUserGetters} from '../../store/modules/authenticatedUser/authenticatedUserModule.js';
-
-import { handleUserQueries } from '../../utils/suggestionHelpers.js';
+import { mapAuthenticatedUserGetters } from '../../store/modules/authenticatedUser/authenticatedUserModule.js';
 
 import SvgIcon from '../icons/SvgIcon';
 import IconMore from '../icons/IconMore';
@@ -67,7 +66,10 @@ export default {
     onClickaway: onClickaway
   },
   props: {
-    userId: [String, Number],
+    userId: {
+      type: [String, Number],
+      required: true
+    },
     page: {
       type: [String, Number],
       required: true,
@@ -93,8 +95,7 @@ export default {
       user: userGetters.GET_AUTHENTICATED_USER
     })
   },
-  async created() {
-    handleUserQueries(this.userId, this.filters, this.searchWord, this.sort, this.$router);
+  created() {
     this.fetchUserNameAndInitials();
   },
   methods: {

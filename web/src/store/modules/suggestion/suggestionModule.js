@@ -86,7 +86,7 @@ export default {
         commit(suggestionMutations.SET_SUGGESTIONS_COUNT, result.data.count);
       }
     },
-    async [suggestionActions.GET_SUGGESTIONS_BY_USER_ID]({ commit }, userId, offset) {
+    async [suggestionActions.GET_SUGGESTIONS_BY_USER_ID]({ commit }, { userId, offset }) {
       const result = await api.suggestion.getSuggestionsByUserId(userId, offset);
       if (result && result.code == 200) {
         commit(suggestionMutations.SET_SUGGESTIONS, result.data);

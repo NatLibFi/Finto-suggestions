@@ -73,8 +73,8 @@ def get_suggestions(limit: int = None, offset: int = None, filters: str = None, 
         return all([f[0].upper() in SUGGESTION_FILTER_FUNCTIONS.keys() for f in filters])
 
     if filters:
-        # status:accepted|type:new|meeting:12|tags:
-        # -> [['status', 'accepted'], ['type', 'new'], ['meeting', '12'], ['tags', 'melinda-slm']]
+        # status:accepted|type:new|meeting_id:12|tags:melinda-slm|user_id:1
+        # -> [['status', 'accepted'], ['type', 'new'], ['meeting_id', '12'], ['tags', 'melinda-slm'], ['user_id', '1]]
         filters = [f.split(':') for f in filters.split('|')]
 
     return get_all_or_404_custom(query_func)
