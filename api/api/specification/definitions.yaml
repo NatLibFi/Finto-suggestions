@@ -191,10 +191,7 @@ definitions:
       user_id:
         $ref: "#/definitions/user_id"
       tags:
-        type: array
-        items:
-          type: string
-          example: "TEST_TAG_1"
+        $ref: "#/definitions/tags"
     required:
       - preferred_label
       - suggestion_type
@@ -397,6 +394,10 @@ definitions:
     type: array
     items:
       type: object
+      properties:
+        label:
+          type: string
+          example: 'MAANTIETEELLINEN'
 
   created:
     type: string
@@ -727,12 +728,8 @@ definitions:
     type: object
     additionalProperties: false
     properties:
-      id:
-        type: number
       label:
         type: string
-      suggestions:
-        $ref: "#/definitions/suggestions"
     required:
       - id
       - label
