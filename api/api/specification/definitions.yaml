@@ -429,8 +429,6 @@ definitions:
         type: number
       name:
         $ref: "#/definitions/name"
-      email:
-        $ref: "#/definitions/email"
       events:
         type: array
         items:
@@ -446,7 +444,6 @@ definitions:
     required:
       - id
       - name
-      - email
 
   UserPatchObject:
     type: object
@@ -611,7 +608,6 @@ definitions:
       - TAG
       - SYSTEM
     description: "The subtype of an ACTION event."
-    example: "SYSTEM"
 
   # MEETING
 
