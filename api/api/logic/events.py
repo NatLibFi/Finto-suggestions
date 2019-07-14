@@ -57,16 +57,16 @@ def post_event() -> str:
 
     create_event_response = create_or_400(Event, connexion.request.json)
     if create_event_response is not None and create_event_response[1] is 201:
-      try:
-        suggestion = Suggestion.query.get(connexion.request.json.get('suggestion_id'))
-        if suggestion is not None:
-          suggestion.modified = datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')
-          db.session.add(suggestion)
-          db.session.commit()
-      except ValueError as ex:
-        print('Could not update suggestion modified time' + str(ex))
+        try:
+            suggestion = Suggestion.query.get(connexion.request.json.get('suggestion_id'))
+            if suggestion is not None:
+                suggestion.modified = datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')
+                db.session.add(suggestion)
+                db.session.commit()
+        except ValueError as ex:
+            print('Could not update suggestion modified time' + str(ex))
 
-      return create_event_response
+        return create_event_response
 
 @authorized
 @event_parameter_validator

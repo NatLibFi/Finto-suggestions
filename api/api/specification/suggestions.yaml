@@ -176,7 +176,7 @@ paths:
             $ref: '#/definitions/TagListParameterObject'
       responses:
         "201":
-          description:  Updated meeting object
+          description:  Added tag to suggestion
           schema:
             $ref: '#/definitions/SuggestionResponse'
 
