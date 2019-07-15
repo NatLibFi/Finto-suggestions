@@ -67,7 +67,7 @@ paths:
             $ref: '#/definitions/TagParameterObject'
       responses:
         '200':
-          description:  The updated tag by id
+          description:  The updated tag by label
           schema:
             $ref: '#/definitions/TagResponse'
         '404':

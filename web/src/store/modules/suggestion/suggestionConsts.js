@@ -24,8 +24,7 @@ export const suggestionGetters = {
   GET_FILTERS: 'getFilters',
   GET_SUGGESTIONS_SELECTED_SORT: 'getSuggestionsSelectedSort',
   GET_MEETING_SUGGESTIONS_SELECTED_SORT: 'getMeetingSuggestionsSelectedSort',
-  GET_FILTERED_ITEMS: 'getFilteredItems',
-  GET_DIRTYNESS: 'getDirtyness'
+  GET_FILTERED_ITEMS: 'getFilteredItems'
 };
 
 export const suggestionMutations = {
@@ -39,9 +38,7 @@ export const suggestionMutations = {
   SET_MEETING_SUGGESTIONS_SELECTED_SORT: 'setMeetingSuggestionsSelectedSort',
   SET_MEETING_SUGGESTIONS_SELECTED_STORAGE_SORT: 'setMeetingSuggestionsSelectedStorageSort',
   SET_FILTERED_ITEMS: 'setFilteredItems',
-  SET_SELECTED_STORAGE_FILTERS: 'setSelectedStorageFilters',
-  SET_DIRTYNESS_TO_TRUE: 'setDirtynessToTrue',
-  SET_DIRTYNESS_TO_FALSE: 'setDirtynessToFalse'
+  SET_SELECTED_STORAGE_FILTERS: 'setSelectedStorageFilters'
 };
 
 export const suggestionActions = {

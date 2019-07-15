@@ -21,10 +21,7 @@ export default {
     [storeStateNames.COUNT]: 0,
     [storeStateNames.FILTERS]: [],
     [storeStateNames.ITEM]: null,
-    [storeStateNames.SUGGESTIONS_SELECTED_SORT]: 'CREATED_DESC',
-    [storeStateNames.MEETING_SUGGESTIONS_SELECTED_SORT]: 'CREATED_DESC',
-    [storeStateNames.FILTERED_ITEMS]: [],
-    [storeStateNames.IS_DIRTY]: false
+    [storeStateNames.FILTERED_ITEMS]: []
   },
   getters: {
     [suggestionGetters.GET_SUGGESTIONS]: state => state[storeStateNames.ITEMS],
@@ -36,8 +33,7 @@ export default {
       state[storeStateNames.SUGGESTIONS_SELECTED_SORT],
     [suggestionGetters.GET_MEETING_SUGGESTIONS_SELECTED_SORT]: state =>
       state[storeStateNames.MEETING_SUGGESTIONS_SELECTED_SORT],
-    [suggestionGetters.GET_FILTERED_ITEMS]: state => state[storeStateNames.FILTERED_ITEMS],
-    [suggestionGetters.GET_DIRTYNESS]: state => state[storeStateNames.IS_DIRTY]
+    [suggestionGetters.GET_FILTERED_ITEMS]: state => state[storeStateNames.FILTERED_ITEMS]
   },
   mutations: {
     [suggestionMutations.SET_SUGGESTIONS](state, suggestions) {
@@ -72,12 +68,6 @@ export default {
     },
     [suggestionMutations.SET_SELECTED_STORAGE_FILTERS](state, filters) {
       Vue.set(sessionStorage, sessionStorageKeyNames.SELECTED_FILTERS, filters);
-    },
-    [suggestionMutations.SET_DIRTYNESS_TO_TRUE](state) {
-      Vue.set(state, storeStateNames.IS_DIRTY, true);
-    },
-    [suggestionMutations.SET_DIRTYNESS_TO_FALSE](state) {
-      Vue.set(state, storeStateNames.IS_DIRTY, false);
     }
   },
   actions: {
@@ -96,7 +86,7 @@ export default {
         commit(suggestionMutations.SET_SUGGESTIONS_COUNT, result.data.count);
       }
     },
-    async [suggestionActions.GET_SUGGESTIONS_BY_USER_ID]({ commit }, userId, offset) {
+    async [suggestionActions.GET_SUGGESTIONS_BY_USER_ID]({ commit }, { userId, offset }) {
       const result = await api.suggestion.getSuggestionsByUserId(userId, offset);
       if (result && result.code == 200) {
         commit(suggestionMutations.SET_SUGGESTIONS, result.data);
@@ -205,7 +195,6 @@ export default {
         commit(suggestionMutations.SET_SUGGESTIONS, result.data);
         commit(suggestionMutations.SET_SELECTED_STORAGE_FILTERS, []);
         commit(suggestionMutations.SET_FILTERS, []);
-        commit(suggestionMutations.SET_DIRTYNESS_TO_FALSE);
       }
     }
   }

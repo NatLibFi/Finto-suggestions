@@ -104,7 +104,11 @@
               {{ suggestionStateStatusToString[suggestionStateStatus.ARCHIVED] }}
             </span>
             <span v-if="suggestion.tags && suggestion.tags.length > 0">
-              <span v-for="tag in suggestion.tags" :key="tag.label" class="tag">
+              <span
+                :style="{ backgroundColor: tag.color, borderColor: tag.color }"
+                v-for="tag in suggestion.tags"
+                :key="tag.label" class="tag"
+              >
                 {{ tag.label }}
               </span>
             </span>
@@ -301,7 +305,8 @@ export default {
       this.$router.push({
         name: 'meeting-suggestion-list',
         params: {
-          meetingId: id
+          meetingId: id,
+          page: 1
         }
       });
     },

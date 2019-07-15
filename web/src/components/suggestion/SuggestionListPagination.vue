@@ -60,8 +60,8 @@ export default {
         this.$router.push({
           name: 'meeting-suggestion-list',
           params: {
-            page: pageNumber,
-            meetingId: this.meetingId
+            meetingId: this.meetingId,
+            page: pageNumber
           }
         });
       } else {
