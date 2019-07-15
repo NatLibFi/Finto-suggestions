@@ -36,6 +36,13 @@ export default {
     SuggestionFiltering,
     SuggestionList
   },
+  data() {
+    return {
+      filters: this.$route.query.filters ? this.$route.query.filters : '',
+      searchWord: this.$route.query.search ? this.$route.query.search : '',
+      sort: this.$route.query.sort ? this.$route.query.sort : ''
+    };
+  },
   props: {
     meetingId: {
       type: [String, Number],
