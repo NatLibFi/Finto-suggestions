@@ -142,7 +142,7 @@ def get_user_suggestions(user_id: int) -> str:
     """
 
     if user_id > 0:
-        user_suggestions = Suggestion.query.filter_by(user_id=user_id).all()
+        user_suggestions = Suggestion.query.filter_by(user_id=user_id).order_by(Suggestion.created.desc()).all()
         serialized_objects = [o.as_dict() for o in user_suggestions]
         return { 'data': serialized_objects, 'code': 200 }, 200
 
