@@ -21,6 +21,7 @@
             <span v-if="type === eventTypes.ACTION">
               {{ event.text }}
               <span v-for="tag in event.tags" :key="tag.id" class="tag">{{ tag.label }}</span>
+              <span v-if="event.value" class="tag">{{ event.value }}</span>
             </span>
           </p>
           <p v-if="event.sub_type && event.sub_type === eventSubTypes.SYSTEM" class="date-sent">

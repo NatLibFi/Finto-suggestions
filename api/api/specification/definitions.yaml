@@ -568,6 +568,8 @@ definitions:
         $ref: "#/definitions/sub_type"
       text:
         $ref: "#/definitions/text"
+      value:
+        $ref: "#/definitions/text"
     required:
       - event_type
       - text
@@ -726,6 +728,8 @@ definitions:
     properties:
       label:
         type: string
+      color:
+        type: string
     required:
       - id
       - label
@@ -735,6 +739,8 @@ definitions:
     additionalProperties: false
     properties:
       label:
+        type: string
+      color:
         type: string
     required:
       - label
