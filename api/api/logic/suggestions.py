@@ -134,7 +134,7 @@ def get_suggestions_count(filters: str = None, search: str = None) -> str:
 
     return get_count_or_404_custom(query_func)
 
-def get_user_suggestions(user_id: int) -> str:
+def get_user_suggestions(user_id: int, limit: int = None, offset: int = None) -> str:
     """
     Gets suggestions by user id
     :params user_id
@@ -142,7 +142,12 @@ def get_user_suggestions(user_id: int) -> str:
     """
 
     if user_id > 0:
-        user_suggestions = Suggestion.query.filter_by(user_id=user_id).order_by(Suggestion.created.desc()).all()
+        query = Suggestion.query.filter_by(user_id=user_id).order_by(Suggestion.created.desc())
+        if limit:
+            query = query.limit(limit)
+        if offset:
+            query = query.offset(offset)
+        user_suggestions = query.all()
         serialized_objects = [o.as_dict() for o in user_suggestions]
         return { 'data': serialized_objects, 'code': 200 }, 200
 
