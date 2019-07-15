@@ -268,7 +268,7 @@ def add_tags_to_suggestion(suggestion_id: int) -> str:
     def _get_or_create_tag(label):
         instance = Tag.query.get(label)
         if not instance:
-            instance = Tag(label=label)
+            instance = Tag(label=label, color='#4794a2')
             db.session.add(instance)
             db.session.commit()
 

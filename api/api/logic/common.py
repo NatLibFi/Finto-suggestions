@@ -217,6 +217,32 @@ def update_or_404(model: object, primary_key: int, payload: Dict) -> str:
     return create_response(db_obj.as_dict(), 200)
 
 
+def update_or_404_custom(model: object, primary_key: int, payload: Dict) -> str:
+    """
+    Updates a single sqlalchemy model by label.
+
+    :param model: SQLAlchemy database model
+    :param primary_key: updated primary_key
+    :param payload: payload to update the object with
+    :returns: the updated object as json, or 404
+    """
+
+    old_object = model.query.get(primary_key)
+    if not old_object:
+        msg = "{} with an id {} doesn't exist.".format(
+            str(model.__table__)[:-1], primary_key)
+        return create_response(None, 404, msg)
+
+    # create a new model instance, but replace its id
+    db_obj = model(**payload)
+    db_obj.label = old_object.label
+
+    db.session.merge(db_obj)
+    db.session.commit()
+
+    return create_response(db_obj.as_dict(), 200)
+
+
 def patch_or_404(model: object, primary_key: int, payload: Dict) -> str:
     """
     Patches a single sqlalchemy model by primary_key.

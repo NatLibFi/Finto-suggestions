@@ -228,9 +228,10 @@ class Suggestion(db.Model, SerializableMixin):
 
 class Tag(db.Model, SerializableMixin):
     __tablename__ = "tags"
-    __public__ = ['label']
+    __public__ = ['label', 'color']
 
     label = db.Column(db.String(128), index=True, primary_key=True)
+    color = db.Column(db.String(7), nullable=True)
     # suggestions: backref
 
     # convert tag always to uppercase

@@ -20,7 +20,14 @@
             <span v-if="!event.sub_type" class="user-name">{{ userName }}</span>
             <span v-if="type === eventTypes.ACTION">
               {{ event.text }}
-              <span v-for="tag in event.tags" :key="tag.id" class="tag">{{ tag.label }}</span>
+              <span
+                :style="{ backgroundColor: tag.color, borderColor: tag.color }"
+                v-for="tag in event.tags"
+                :key="tag.id"
+                class="tag"
+              >
+                {{ tag.label }}
+              </span>
               <span v-if="event.value" class="tag">{{ event.value }}</span>
             </span>
           </p>
