@@ -127,7 +127,7 @@ Add new dependencies by running `pipenv install package-name` or `npm install pa
 | start-db        | Starts the database container.                                                                                        | pipenv run start-db                                   |
 | migrate-db      | Creates a new Alembic migration file.                                                                                 | pipenv run migrate-db                                 |
 | upgrade-db      | Upgrades the database (to the next migration version).                                                                | pipenv run upgrade-db                                 |
-| downgrade-db    | Downgrades the database (to the previous migration version).                                                          | pipenv run downgrade-db                               |
+| downgrade-db    | Downgrades the database (to the previous migration version).                                                          | pipenv run downgrade-db                               |                          |
 | proddata-import | Imports all old issues from github repository. You can limit how many rounds will it fetch by arguments loop-count=10 | pipenv run proddata-import                                       |
 
 See [examples](documentation/examples.md) for additional tips and examples for development.

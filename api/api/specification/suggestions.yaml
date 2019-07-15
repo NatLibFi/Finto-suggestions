@@ -61,7 +61,7 @@ paths:
       parameters:
         - name: filters
           in: query
-          description: 'Pipe-separated filter string, i.e. status:accepted|type:new|meeting_id:12'
+          description: 'Pipe-separated filter string, i.e. status:accepted|type:new|meeting_id:12|tags:melinda-slm|user_id:1'
           required: false
           type: string
         - name: search
@@ -80,6 +80,16 @@ paths:
           in: path
           type: integer
           required: true
+        - name: limit
+          in: query
+          description: Maximum number of returned suggestions
+          required: false
+          type: integer
+        - name: offset
+          in: query
+          description: Offset of the results (e.g. for paging)
+          required: false
+          type: integer
       responses:
         "200":
           description: List of user-assigned suggestions
@@ -176,7 +186,7 @@ paths:
             $ref: '#/definitions/TagListParameterObject'
       responses:
         "201":
-          description:  Updated meeting object
+          description:  Added tag to suggestion
           schema:
             $ref: '#/definitions/SuggestionResponse'
 

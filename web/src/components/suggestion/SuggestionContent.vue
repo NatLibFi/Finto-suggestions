@@ -97,7 +97,7 @@
     </div>
 
     <div v-if="suggestion.scopeNote">
-      <p class="content-title"><strong>Tarkoitusta täsmentävä selite:</strong></p>
+      <p class="content-title"><strong>Tarkoitusta täsmentävä selite</strong></p>
       <p>{{ suggestion.scopeNote }}</p>
     </div>
 

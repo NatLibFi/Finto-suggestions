@@ -100,11 +100,7 @@ export default {
   },
   async created() {
     this.pageCountLoading = true;
-    this.fetchSuggestions();
-    await this.getSuggestionsCount({
-      filters: this.filters,
-      searchWord: this.searchWord
-    });
+    await this.fetchSuggestions();
     this.pageCount = Math.ceil(this.suggestionCount / 15);
     if (this.pageCount < this.page) {
       this.goToFirstPage();
@@ -114,23 +110,35 @@ export default {
   methods: {
     ...mapSuggestionActions({
       getSuggestions: suggestionActions.GET_SUGGESTIONS,
+      getSuggestionsByUserId: suggestionActions.GET_SUGGESTIONS_BY_USER_ID,
       getSuggestionsCount: suggestionActions.GET_SUGGESTIONS_COUNT
     }),
-    fetchSuggestions() {
-      this.getSuggestions({
-        offset: offsetByPagination(this.page),
-        sort: this.sort,
-        filters: this.filters,
-        searchWord: this.searchWord
-      });
+    async fetchSuggestions() {
+      if (this.userId) {
+        this.getSuggestionsByUserId({
+          userId: this.userId,
+          offset: offsetByPagination(this.page)
+        });
+        await this.getSuggestionsCount({
+          filters: 'user_id:' + this.userId,
+          searchWord: ''
+        });
+      } else {
+        this.getSuggestions({
+          offset: offsetByPagination(this.page),
+          sort: this.sort,
+          filters: this.filters,
+          searchWord: this.searchWord
+        });
+        await this.getSuggestionsCount({
+          filters: this.filters,
+          searchWord: this.searchWord
+        });
+      }
     },
     async updateSuggestionList() {
       this.pageCountLoading = true;
-      this.fetchSuggestions();
-      await this.getSuggestionsCount({
-        filters: this.filters,
-        searchWord: this.searchWord
-      });
+      await this.fetchSuggestions();
       this.pageCount = Math.ceil(this.suggestionCount / 15);
       if (this.pageCount < this.page) {
         this.goToFirstPage();
@@ -151,7 +159,15 @@ export default {
             sort: this.sort
           }
         });
-      } else {
+      } else if (this.userId) {
+        this.$router.push({
+          name: 'user',
+          params: {
+            userId: this.userId,
+            page: 1
+          }
+        })
+      } else if (this.suggestions.length > 0) {
         this.$router.push({
           name: 'suggestions',
           params: {
@@ -162,6 +178,10 @@ export default {
             search: this.searchWord,
             sort: this.sort
           }
+        });
+      } else if (this.suggestions.length === 0 && !this.$route.query) {
+        this.$router.push({
+          name: 'index'
         });
       }
     }

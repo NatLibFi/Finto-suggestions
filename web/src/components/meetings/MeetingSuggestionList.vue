@@ -54,6 +54,13 @@ export default {
       default: 1
     }
   },
+  data() {
+    return {
+      filters: this.$route.query.filters ? this.$route.query.filters : '',
+      searchWord: this.$route.query.search ? this.$route.query.search : '',
+      sort: this.$route.query.sort ? this.$route.query.sort : ''
+    };
+  },
   created() {
     handleMeetingQueries(this.meetingId, this.filters, this.searchWord, this.sort, this.$router);
   },

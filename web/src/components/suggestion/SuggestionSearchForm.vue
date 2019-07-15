@@ -23,9 +23,6 @@
 import SvgIcon from '../icons/SvgIcon';
 import IconCross from '../icons/IconCross';
 
-import { suggestionGetters } from '../../store/modules/suggestion/suggestionConsts.js';
-import { mapSuggestionGetters } from '../../store/modules/suggestion/suggestionModule.js';
-
 import { handleQueries } from '../../utils/suggestionHelpers.js';
 
 export default {
@@ -37,11 +34,6 @@ export default {
     filters: String,
     searchWord: String,
     sort: String
-  },
-  computed: {
-    ...mapSuggestionGetters({
-      isSuggestionListDirty: suggestionGetters.GET_DIRTYNESS
-    })
   },
   methods: {
     updateSearchWord() {

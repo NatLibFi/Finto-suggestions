@@ -44,14 +44,12 @@ export default new Router({
         userId: route.params.userId,
         page: route.params.page
       })
-      // TODO: beforeEnter check authentication
     },
     {
       path: '/settings',
       name: 'settings',
       component: UserSettings,
       props: true
-      // TODO: beforeEnter check authentication
     },
     {
       path: '/meetings',

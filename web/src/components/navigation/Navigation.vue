@@ -2,7 +2,7 @@
   <div class="navigation">
     <div class="nav-content">
       <div class="nav-title">
-        <img @click="returnToHome" src="./finto-logo.svg" alt="" />
+        <img @click="returnToHome" src="../assets/finto-logo.svg" alt="" />
         <span @click="returnToHome">Finto – Käsite-ehdotukset</span>
       </div>
       <transition name="fade">
@@ -13,8 +13,9 @@
             </div>
           </transition>
           <div v-if="!user.imageUrl" class="user-bubble">
-            <span v-if="userInitials" unselectable="on">{{ userInitials }}</span>
-            <span v-else unselectable="on">{{ userId }}</span>
+            <transition name="fade">
+              <span v-if="userInitials" unselectable="on">{{ userInitials }}</span>
+            </transition>
           </div>
           <div class="nav-menu-user">
             <p v-if="user.name && user.name.length > 0">{{ user.name }}</p>
@@ -490,6 +491,12 @@ export default {
   position: absolute;
   top: 50%;
   transform: perspective(1px) translateY(calc(-50% - 0.5px));
+}
+
+.nav-mobile-dropdown-header .user-bubble-image img {
+  height: 50px;
+  width: 50px;
+  border-radius: 50px;
 }
 
 .nav-mobile-dropdown-header .nav-dropdown-user {

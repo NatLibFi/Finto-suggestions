@@ -49,7 +49,12 @@
             {{ suggestionStateStatusToString[suggestionStateStatus.ARCHIVED] }}
           </span>
           <span v-if="suggestion.tags.length > 0">
-            <span class="tags tag" v-for="tag in suggestion.tags" :key="tag.label">
+            <span
+              :style="{ backgroundColor: tag.color, borderColor: tag.color }"
+              class="tags tag"
+              v-for="tag in suggestion.tags"
+              :key="tag.label"
+            >
               {{ tag.label }}
             </span>
           </span>

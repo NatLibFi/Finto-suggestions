@@ -21,7 +21,12 @@
         <suggestion-search-form :filters="filters" :searchWord="searchWord" :sort="sort" />
       </div>
       <div>
-        <suggestion-filtering :meetingId="meetingId" :filters="filters" :searchWord="searchWord" :sort="sort" />
+        <suggestion-filtering
+          :meetingId="meetingId"
+          :filters="filters"
+          :searchWord="searchWord"
+          :sort="sort"
+        />
       </div>
     </div>
   </div>

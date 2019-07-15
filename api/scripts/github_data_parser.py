@@ -1,5 +1,5 @@
 import requests, math, os
-from .github_models import GithubBodyModel, GithubMeetingModel, GithubIssueModel
+from .github_models import GithubBodyModel, GithubMeetingModel, GithubIssueModel, GithubCommentModel
 
 class GithubDataParser:
 
@@ -107,6 +107,12 @@ class GithubDataParser:
       body_str = split_remove_sender_email[0].replace('*', '').strip()
     return body_str
 
+  def __parse_remove_yse_term_from_body(self, body_str):
+    if 'Termiehdotus Fintossa' in body_str:
+      split_remove_yse_term = body_str.split('Termiehdotus Fintossa')
+      body_str = split_remove_yse_term[0].replace('*', '').replace(':', '').strip()
+    return body_str
+
   def __parse_remove_org_and_term_suggestion_from_reason(self, value):
     if 'Ehdottajan organisaatio' in value:
       splitted_remove_org = value.split('Ehdottajan organisaatio')
@@ -164,7 +170,7 @@ class GithubDataParser:
     body.organization = organization
 
   def __parse_yse_term(self, value, body):
-    splitted_value = value.split('Termiehdotus Fintossa')
+    splitted_value = value.replace(':', '').split('Termiehdotus Fintossa')
     splitted_yse_term_value = splitted_value[1].split(']')
     yse_term = {
       'value': splitted_yse_term_value[0].replace('[','').replace(']','').replace('*','').replace(':','') .strip(),
@@ -203,6 +209,7 @@ class GithubDataParser:
 
     if 'Termiehdotus Fintossa' in body_str:
       self.__parse_yse_term(body_str, body)
+      body_str = self.__parse_remove_yse_term_from_body(body_str)
 
     splitted_body_strings = body_str.split("####")
 
@@ -250,11 +257,16 @@ class GithubDataParser:
     if meeting is not None:
       title = ''
       created_date = ''
+      meeting_date = ''
       if meeting["title"] is not None and len(meeting["title"]) > 0:
         title = meeting["title"]
       if meeting["created_at"] is not None and len(meeting["created_at"]) > 0:
         created_date = meeting["created_at"]
-      return GithubMeetingModel(title, created_date)
+      if meeting["due_on"] is not None and len(meeting["due_on"]) > 0:
+        meeting_date = meeting["due_on"]
+      else:
+        meeting_date = None
+      return GithubMeetingModel(title, created_date, meeting_date)
     else:
       return None
 
@@ -274,11 +286,15 @@ class GithubDataParser:
           mapped_status = 'REJECTED'
     return mapped_status
 
+  def __fetch_comments_from_github(self, comment_url):
+    user = os.environ.get('GITHUB_USERNAME')
+    personal_token = os.environ.get('GITHUB_PERSONAL_TOKEN')
+    return requests.get(comment_url, auth=(user, personal_token))
 
   def __fetch_data_from_github(self, page = 1):
     user = os.environ.get('GITHUB_USERNAME')
     personal_token = os.environ.get('GITHUB_PERSONAL_TOKEN')
-    return requests.get(f'https://api.github.com/repos/Finto-ehdotus/YSE/issues?per_page=100&state=all&page={page}', auth=(user, personal_token))
+    return requests.get(f'https://api.github.com/repos/Finto-ehdotus/YSE/issues?per_page=100&direction=asc&state=all&page={page}', auth=(user, personal_token))
 
   def __map_response(self, json_item):
     if 'Voyager-id' in json_item["body"]:
@@ -314,6 +330,16 @@ class GithubDataParser:
         break
       # yet append the correct ones
       suggestion_model.tags.append(label["name"])
+
+    if json_item["comments"] > 0:
+      response = self.__fetch_comments_from_github(json_item["comments_url"])
+      for comment in response.json():
+        comment = GithubCommentModel(
+          comment["created_at"],
+          comment["updated_at"],
+          '<strong>' + comment["user"]["login"] + ':</strong>\n\n' + comment["body"]
+        )
+        suggestion_model.comments.append(comment)
 
     if 'GEO' in json_item["body"] and 'maantieteellinen' not in suggestion_model.tags:
       suggestion_model.tags.append('maantieteellinen')

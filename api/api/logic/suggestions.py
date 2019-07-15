@@ -4,8 +4,8 @@ from sqlalchemy import or_, func
 from sqlalchemy.types import Unicode
 from ..authentication import admin_only
 from .validators import suggestion_parameter_validator, suggestion_id_validator, _error_messagify
-from .common import (create_response, get_one_or_404, get_all_or_404_custom, get_count_or_404_custom,
-                     create_or_400, delete_or_404, patch_or_404, update_or_404)
+from .common import (create_response, get_one_or_404, get_all_or_404, get_all_or_404_custom,
+                     get_count_or_404_custom, create_or_400, delete_or_404, patch_or_404, update_or_404)
 from .utils import SUGGESTION_FILTER_FUNCTIONS, SUGGESTION_SORT_FUNCTIONS
 from ..models import db, Suggestion, Tag, User
 from flask import jsonify
@@ -73,8 +73,8 @@ def get_suggestions(limit: int = None, offset: int = None, filters: str = None, 
         return all([f[0].upper() in SUGGESTION_FILTER_FUNCTIONS.keys() for f in filters])
 
     if filters:
-        # status:accepted|type:new|meeting:12|tags:
-        # -> [['status', 'accepted'], ['type', 'new'], ['meeting', '12'], ['tags', 'melinda-slm']]
+        # status:accepted|type:new|meeting_id:12|tags:melinda-slm|user_id:1
+        # -> [['status', 'accepted'], ['type', 'new'], ['meeting_id', '12'], ['tags', 'melinda-slm'], ['user_id', '1]]
         filters = [f.split(':') for f in filters.split('|')]
 
     return get_all_or_404_custom(query_func)
@@ -134,7 +134,7 @@ def get_suggestions_count(filters: str = None, search: str = None) -> str:
 
     return get_count_or_404_custom(query_func)
 
-def get_user_suggestions(user_id: int) -> str:
+def get_user_suggestions(user_id: int, limit: int = None, offset: int = None) -> str:
     """
     Gets suggestions by user id
     :params user_id
@@ -142,7 +142,12 @@ def get_user_suggestions(user_id: int) -> str:
     """
 
     if user_id > 0:
-        user_suggestions = Suggestion.query.filter_by(user_id=user_id).all()
+        query = Suggestion.query.filter_by(user_id=user_id).order_by(Suggestion.created.desc())
+        if limit:
+            query = query.limit(limit)
+        if offset:
+            query = query.offset(offset)
+        user_suggestions = query.all()
         serialized_objects = [o.as_dict() for o in user_suggestions]
         return { 'data': serialized_objects, 'code': 200 }, 200
 
@@ -170,11 +175,34 @@ def post_suggestion() -> str:
     :returns: the created suggestion as json
     """
 
+    def _get_or_create_tag(label):
+        instance = Tag.query.get(label)
+        if not instance:
+            instance = Tag(label=label)
+            db.session.add(instance)
+            db.session.commit()
+
+        return instance
+
     payload_dict = connexion.request.json
     payload_dict['status'] = 'RECEIVED'
 
+    # cannot add tags directly – we handle tags separately
+    if 'tags' in payload_dict:
+        payload_tags = payload_dict['tags']
+        payload_dict['tags'] = []
+
     created_response = create_or_400(Suggestion, payload_dict)
     response = created_response[0]
+
+    if response is not None and response['code'] is 201 and 'tags' in payload_dict and len(payload_tags) > 0:
+        suggestion = Suggestion.query.get(response['data']['id'])
+        for tag in payload_tags:
+            existing_tag = _get_or_create_tag(tag['label'])
+            suggestion.tags.append(existing_tag)
+            response['data']['tags'].append(tag['label'])
+
+        db.session.commit()
 
     if response is not None and response['code'] is 201:
         suggestion_id = response['data']['id']
@@ -240,7 +268,7 @@ def add_tags_to_suggestion(suggestion_id: int) -> str:
     def _get_or_create_tag(label):
         instance = Tag.query.get(label)
         if not instance:
-            instance = Tag(label=label)
+            instance = Tag(label=label, color='#4794a2')
             db.session.add(instance)
             db.session.commit()
 
@@ -350,12 +378,12 @@ def get_open_suggestions() -> str:
     Get open status suggestions from db
     """
     try:
-      open_suggestions = Suggestion.query.filter(Suggestion.status.notin_(['ACCEPTED', 'REJECTED', 'RETAINED', 'ARCHIVED'])).all()
-      serialized_objects = [o.as_dict() for o in open_suggestions]
-      return { 'data': serialized_objects, 'code': 200 }, 200
+        open_suggestions = Suggestion.query.filter(Suggestion.status.notin_(['ACCEPTED', 'REJECTED', 'RETAINED', 'ARCHIVED'])).all()
+        serialized_objects = [o.as_dict() for o in open_suggestions]
+        return { 'data': serialized_objects, 'code': 200 }, 200
     except Exception as ex:
-      print(str(ex))
-      return { 'code': 404, 'error': str(ex) }, 404
+        print(str(ex))
+        return { 'code': 404, 'error': str(ex) }, 404
 
 
 def get_resolved_suggestions() -> str:
@@ -363,9 +391,9 @@ def get_resolved_suggestions() -> str:
     Get open status suggestions from db
     """
     try:
-      resolved_suggestions = Suggestion.query.filter(Suggestion.status.in_(['ACCEPTED', 'REJECTED', 'RETAINED', 'ARCHIVED'])).all()
-      serialized_objects = [o.as_dict() for o in resolved_suggestions]
-      return { 'data': serialized_objects, 'code': 200 }, 200
+        resolved_suggestions = Suggestion.query.filter(Suggestion.status.in_(['ACCEPTED', 'REJECTED', 'RETAINED', 'ARCHIVED'])).all()
+        serialized_objects = [o.as_dict() for o in resolved_suggestions]
+        return { 'data': serialized_objects, 'code': 200 }, 200
     except Exception as ex:
-      print(str(ex))
-      return { 'code': 404, 'error': str(ex) }, 404
+        print(str(ex))
+        return { 'code': 404, 'error': str(ex) }, 404
