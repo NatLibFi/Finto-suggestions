@@ -66,7 +66,7 @@
       @click="isDropDownOpened.MEETING = !isDropDownOpened.MEETING"
       :class="[filterStrings.meeting.length > 0 ? 'active-filter' : '', 'filter-item']"
     >
-      <div :class="[isDropDownOpened.MEETING ? 'selected' : '', 'drop-down-button']">
+     <div :class="[isDropDownOpened.MEETING ? 'selected' : '', 'drop-down-button']">
         <span>Kokous: </span>
         <span v-for="item in mapMeetingsToDropDown()" :key="item.value">
           <span v-if="'meeting_id:' + item.value==filterStrings.meeting">
