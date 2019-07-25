@@ -25,11 +25,16 @@
     <div class="setting-container">
       <user-settings-form />
     </div>
+        <div class="setting-container">
+      <settings-administrated-by-user-form />
+    </div>
   </div>
 </template>
 
 <script>
 import UserSettingsForm from './UserSettingsForm';
+// Mika
+import SettingsAdministratedByUserForm from './SettingsAdministratedByUserForm.vue';
 import { userNameInitials } from '../../utils/userHelpers.js';
 import { userRoleToString } from '../../utils/userMappings.js';
 
@@ -42,7 +47,8 @@ import { mapAuthenticatedUserGetters } from '../../store/modules/authenticatedUs
 
 export default {
   components: {
-    UserSettingsForm
+    UserSettingsForm,
+    SettingsAdministratedByUserForm
   },
   data() {
     return {

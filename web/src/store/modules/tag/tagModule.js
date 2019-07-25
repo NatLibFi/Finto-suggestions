@@ -60,6 +60,20 @@ export default {
         );
       }
     },
+// Mika
+    async [tagActions.ADD_TAG_STRAIGHT_TO_DB]({ dispatch }, params) {
+      const result = await api.tag.addNewTagStraightToDB(params);
+      if (result && result.code === 201) {
+        dispatch (tagActions.GET_TAGS);
+      }
+    },
+// Mika
+    async [tagActions.DELETE_TAG_STRAIGHT_FROM_DB]({ dispatch }, params) {
+      const result = await api.tag.deleteTag(params);
+      if (result && result.code === 204) {
+        dispatch (tagActions.GET_TAGS);
+      }
+    },
     async [tagActions.REMOVE_TAG_FROM_SUGGESTION]({ dispatch }, params) {
       const response = await api.suggestion.removeTagFromSuggestion(
         params.suggestionId,
