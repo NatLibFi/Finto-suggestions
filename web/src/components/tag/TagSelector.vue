@@ -13,7 +13,7 @@
         <ul v-if="tags && tags.length > 0">
           <li class="tag-label" v-for="tag in tags" :key="tag.label">
             <span :style="{ backgroundColor: tag.color }" class="tag">
-              {{ normalizeText(tag.label) }}
+              {{ normalizeText(tag.label).toLowerCase() }}
             </span>
             <input
               v-if="!showModifyTagButtons"
