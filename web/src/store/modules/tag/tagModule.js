@@ -31,6 +31,10 @@ export default {
         commit(tagMutations.SET_TAGS, result.data);
       }
     },
+    async [tagActions.PUT_TAG]({ dispatch }, params) {
+      await api.tag.putTag(params.tagLabel, params.tag);
+      dispatch(tagActions.GET_TAGS);
+    },
     async [tagActions.DELETE_TAG]({ dispatch }, params) {
       await api.tag.deleteTag(params.tagLabel);
       dispatch(tagActions.GET_TAGS);
