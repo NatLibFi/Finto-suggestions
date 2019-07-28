@@ -5,10 +5,11 @@
     </button>
     <div v-if="showTagSelector" v-on-clickaway="toggleTagSelector" class="tag-selector">
       <div class="tag-selector-header">
-        <h4 v-if="!showCreateTagInputs">Hallitse käsitteen tunnisteita</h4>
+        <h4 v-if="!showCreateTagInputs && !showModifyTagInputs">Hallitse käsitteen tunnisteita</h4>
         <h4 v-if="showCreateTagInputs">Luo uusi tunniste</h4>
+        <h4 v-if="showModifyTagInputs">Muokkaa tunnistetta</h4>
       </div>
-      <div  v-if="!showCreateTagInputs" class="tag-selector-tags">
+      <div  v-if="!showCreateTagInputs && !showModifyTagInputs" class="tag-selector-tags">
         <ul v-if="tags && tags.length > 0">
           <li class="tag-label" v-for="tag in tags" :key="tag.label">
             <span :style="{ backgroundColor: tag.color }" class="tag">
@@ -92,6 +93,7 @@ export default {
     showTagSelector: false,
     checkedTags: [],
     showCreateTagInputs: false,
+    showModifyTagInputs: false,
     showModifyTagButtons: false,
     newTag: null
   }),
@@ -112,6 +114,10 @@ export default {
     toggleTagSelector() {
       this.showTagSelector = !this.showTagSelector;
       this.showCreateTagInputs = false;
+      this.showModifyTagButtons = false;
+      this.showModifyTagInputs = false;
+      this.tagBeingModified = null;
+      this.tagLabelBeingModified = null;
     },
     normalizeText(text) {
       const firstCharacter = text.substring(0, 1);
