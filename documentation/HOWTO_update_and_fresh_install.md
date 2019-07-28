@@ -58,7 +58,7 @@ Type in the console `pgcli -h <:host> -U <:user> -d <:database_name>` for connec
 **:database_name** if not changed is *devdb*
 
 When connected, you can just run sql update to the selected user.
-Example: `UPDATE SET ROLE = 'ADMIN' WHERE user.id = 123;`
+Example: `UPDATE users SET role='ADMIN' WHERE id=999;`
 
 ## 2. Install a new and fresh installation
 

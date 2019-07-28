@@ -1,25 +1,32 @@
 <template>
-  <div class="search-container">
+  <div :class="['search-container', !meetingId ? 'extra-margin' : '']">
     <div class="content">
-      <h3>YSE - YSAn ja YSOn käsite-ehdotukset</h3>
-      <div class="welcome-text">
-        <p>
-          {{ welcomeSummary }}
-          <a @click="toggleWelcomeText" v-if="!isShown" class="button">Lue lisää</a>
-          <a @click="toggleWelcomeText" v-if="isShown" class="button">Piilota</a>
-        </p>
-        <p v-if="isShown">{{ welcomeExplanation }}</p>
-        <p class="meetings-link">
-          <strong>
-            Voit tarkastella tulevia YSO-kokouksia <a @click="goToMeetings()">täällä</a>.
-          </strong>
-        </p>
+      <div v-if="!meetingId">
+        <h3>YSE - YSAn ja YSOn käsite-ehdotukset</h3>
+        <div class="welcome-text">
+          <p>
+            {{ welcomeSummary }}
+            <a @click="toggleWelcomeText" v-if="!isShown" class="button">Lue lisää</a>
+            <a @click="toggleWelcomeText" v-if="isShown" class="button">Piilota</a>
+          </p>
+          <p v-if="isShown">{{ welcomeExplanation }}</p>
+          <p class="meetings-link">
+            <strong>
+              Voit tarkastella tulevia YSO-kokouksia <a @click="goToMeetings()">täällä</a>.
+            </strong>
+          </p>
+        </div>
       </div>
       <div>
-        <suggestion-search-form />
+        <suggestion-search-form :filters="filters" :searchWord="searchWord" :sort="sort" />
       </div>
       <div>
-        <filter-suggestions :isMeeting="false" />
+        <suggestion-filtering
+          :meetingId="meetingId"
+          :filters="filters"
+          :searchWord="searchWord"
+          :sort="sort"
+        />
       </div>
     </div>
   </div>
@@ -27,12 +34,30 @@
 
 <script>
 import SuggestionSearchForm from './SuggestionSearchForm';
-import FilterSuggestions from './FilterSuggestions';
+import SuggestionFiltering from './SuggestionFiltering';
 
 export default {
   components: {
     SuggestionSearchForm,
-    FilterSuggestions
+    SuggestionFiltering
+  },
+  props: {
+    meetingId: {
+      type: [String, Number],
+      default: null
+    },
+    filters: {
+      type: String,
+      default: ''
+    },
+    searchWord: {
+      type: String,
+      default: ''
+    },
+    sort: {
+      type: String,
+      default: ''
+    }
   },
   data() {
     return {
@@ -62,38 +87,55 @@ h3 {
   text-align: left;
   padding-bottom: 6px;
 }
+
 .search-container {
-  width: 60vw;
-  margin: 20px 20vw 0;
+  margin: 0 20vw 0;
   border: 2px solid #f5f5f5;
+  border-top: none;
   background-color: #ffffff;
 }
+
+.extra-margin {
+  margin-top: 20px;
+  border-top: 2px solid #f5f5f5;
+}
+
 .search-container .content {
   padding: 20px 30px 10px;
 }
+
 .welcome-text {
   text-align: left;
   font-size: 14.5px;
 }
+
 .button {
   white-space: nowrap;
 }
+
 .button:hover {
   cursor: pointer;
   cursor: hand;
 }
+
 .meetings-link a:hover {
   cursor: pointer;
   cursor: hand;
 }
+
 @media (max-width: 700px) {
   .search-container {
-    width: 80vw;
-    margin: 20px 10vw 0;
+    margin: 0 10vw;
   }
+
+  .extra-margin {
+    margin-top: 20px;
+  }
+
   .search-container .content {
     padding: 20px 20px 10px;
   }
+
   .welcome-text {
     font-size: 15px;
     line-height: 1.3;

@@ -104,7 +104,11 @@
               {{ suggestionStateStatusToString[suggestionStateStatus.ARCHIVED] }}
             </span>
             <span v-if="suggestion.tags && suggestion.tags.length > 0">
-              <span v-for="tag in suggestion.tags" :key="tag.label" class="tag">
+              <span
+                :style="{ backgroundColor: tag.color, borderColor: tag.color }"
+                v-for="tag in suggestion.tags"
+                :key="tag.label" class="tag"
+              >
                 {{ tag.label }}
               </span>
             </span>
@@ -167,7 +171,7 @@ import {
   suggestionTypeToString,
   suggestionStateStatus,
   suggestionStateStatusToString
-} from '../../utils/suggestionHelpers';
+} from '../../utils/suggestionHelpers.js';
 
 import {
   suggestionGetters,
@@ -295,17 +299,14 @@ export default {
       getUser: userActions.GET_USER
     }),
     goBack() {
-      if (this.meetingId) {
-        this.$router.push(`/meetings/${this.meetingId}`);
-      } else {
-        this.$router.go(-1);
-      }
+      this.$router.go(-1);
     },
     goToMeeting(id) {
       this.$router.push({
         name: 'meeting-suggestion-list',
         params: {
-          meetingId: id
+          meetingId: id,
+          page: 1
         }
       });
     },
@@ -531,8 +532,8 @@ h1.suggestion-title {
   right: 0px;
   bottom: 0px;
   display: inline-block;
-  width: 30%;
-  height: 100px;
+  width: 100px;
+  height: 30px;
   text-align: right;
 }
 

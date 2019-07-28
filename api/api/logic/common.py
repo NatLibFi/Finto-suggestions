@@ -73,6 +73,32 @@ def get_all_or_404_custom(query_func) -> str:
     return create_response(serialized_objects, 200)
 
 
+def get_count_or_404_custom(query_func) -> str:
+    """
+        Gets count of objects, with a custom query function
+
+        :param model: model to query
+        :param query_func: a function, that takes a query
+            instance as a parameter and returns a query instance.
+
+            This is handy for filtering, sorting and searching.
+
+            def query_func()
+                query = model.query
+                if limit:
+                    query = query.limit(limit)
+                return query.all()
+
+        :returns: All columns matching the filtered query or 404
+    """
+    try:
+        db_count = query_func()
+    except InvalidFilterException as e:
+        return create_response(0, 404, str(e))
+
+    return create_response({ "count": db_count }, 200)
+
+
 def get_all_or_404(model, limit: int, offset: int) -> str:
     """
     Returns all queried objects.
@@ -184,6 +210,32 @@ def update_or_404(model: object, primary_key: int, payload: Dict) -> str:
         db_obj.modified = datetime.utcnow()
     if 'created' in model.__table__.columns:
         db_obj.created = old_object.created
+
+    db.session.merge(db_obj)
+    db.session.commit()
+
+    return create_response(db_obj.as_dict(), 200)
+
+
+def update_or_404_custom(model: object, primary_key: int, payload: Dict) -> str:
+    """
+    Updates a single sqlalchemy model by label.
+
+    :param model: SQLAlchemy database model
+    :param primary_key: updated primary_key
+    :param payload: payload to update the object with
+    :returns: the updated object as json, or 404
+    """
+
+    old_object = model.query.get(primary_key)
+    if not old_object:
+        msg = "{} with an id {} doesn't exist.".format(
+            str(model.__table__)[:-1], primary_key)
+        return create_response(None, 404, msg)
+
+    # create a new model instance, but replace its id
+    db_obj = model(**payload)
+    db_obj.label = old_object.label
 
     db.session.merge(db_obj)
     db.session.commit()

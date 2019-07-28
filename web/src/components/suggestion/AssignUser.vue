@@ -16,11 +16,17 @@
           class="user-item"
         >
           <div v-if="user.name && user.name.length > 0">
-            <div class="user-image">{{ userNameInitials(user.name) }}</div>
+            <div v-if="user.imageUrl" class="user-image">
+              <img :src="user.imageUrl" :alt="userNameInitials" />
+            </div>
+            <div v-if="!user.imageUrl" class="user-image">{{ userNameInitials(user.name) }}</div>
             <div class="user-name">{{ user.name }}</div>
           </div>
           <div v-if="user.name && user.name.length === 0">
-            <div class="user-image">{{ user.id }}</div>
+            <div v-if="user.imageUrl" class="user-image">
+              <img :src="user.imageUrl" :alt="user.id" />
+            </div>
+            <div v-if="!user.imageUrl" class="user-image">{{ user.id }}</div>
             <div class="user-name">Käyttäjä {{ user.id }}</div>
           </div>
         </div>
@@ -179,10 +185,15 @@ input.dropdown-filter-input {
   border-radius: 35px;
   line-height: 27px;
   text-align: center;
-  background-color: #804af2;
+  background-color: #dddddd;
   color: #ffffff;
   font-size: 10px;
   font-weight: 800;
+}
+.user-image img {
+  height: 25px;
+  width: 25px;
+  border-radius: 25px;
 }
 .user-name {
   position: absolute;

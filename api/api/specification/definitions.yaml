@@ -187,14 +187,11 @@ definitions:
       organization:
         $ref: "#/definitions/organization"
       meeting_id:
-        type: number
+        $ref: "#/definitions/meeting_id"
       user_id:
-        type: number
+        $ref: "#/definitions/user_id"
       tags:
-        type: array
-        items:
-          type: string
-          example: "TEST_TAG_1"
+        $ref: "#/definitions/tags"
     required:
       - preferred_label
       - suggestion_type
@@ -284,12 +281,12 @@ definitions:
       properties:
         value:
           type: string
+          example: "agenttiteoria"
         uri:
           type: string
+          example: "https://finto.fi/yso/fi/page/p23547"
         isTouched:
           type: boolean
-    example:
-      - "http://www.yso.fi/onto/ysa/Y98177"
 
   narrower_labels:
     type: array
@@ -299,12 +296,12 @@ definitions:
       properties:
         value:
           type: string
+          example: "aggregointi"
         uri:
           type: string
+          example: "https://finto.fi/yso/fi/page/p25245"
         isTouched:
           type: boolean
-    example:
-      - "http://www.yso.fi/onto/ysa/Y98176"
 
   related_labels:
     type: array
@@ -314,12 +311,12 @@ definitions:
       properties:
         value:
           type: string
+          example: "agitaatio"
         uri:
           type: string
+          example: "http://www.yso.fi/onto/yso/p23939"
         isTouched:
           type: boolean
-    example:
-      - "http://www.yso.fi/onto/ysa/Y12345"
 
   groups:
     type: array
@@ -351,7 +348,6 @@ definitions:
         isTouched:
           type: boolean
 
-
   scopeNote:
     type: string
     example: "Tarkoittaa tarkemmin sanottuna kissamaista nisäkästä."
@@ -378,6 +374,11 @@ definitions:
 
   meeting_id:
     type: number
+    example: 1
+
+  user_id:
+    type: number
+    example: 1
 
   events:
     type: array
@@ -393,6 +394,10 @@ definitions:
     type: array
     items:
       type: object
+      properties:
+        label:
+          type: string
+          example: 'MAANTIETEELLINEN'
 
   created:
     type: string
@@ -424,8 +429,6 @@ definitions:
         type: number
       name:
         $ref: "#/definitions/name"
-      email:
-        $ref: "#/definitions/email"
       events:
         type: array
         items:
@@ -441,7 +444,6 @@ definitions:
     required:
       - id
       - name
-      - email
 
   UserPatchObject:
     type: object
@@ -543,6 +545,8 @@ definitions:
         type: number
       event_type:
         $ref: "#/definitions/event_type"
+      sub_type:
+        $ref: "#/definitions/sub_type"
       text:
         $ref: "#/definitions/text"
     required:
@@ -560,6 +564,8 @@ definitions:
         type: number
       event_type:
         $ref: "#/definitions/event_type"
+      sub_type:
+        $ref: "#/definitions/sub_type"
       text:
         $ref: "#/definitions/text"
       value:
@@ -580,6 +586,8 @@ definitions:
         type: number
       event_type:
         $ref: "#/definitions/event_type"
+      sub_type:
+        $ref: "#/definitions/sub_type"
       text:
         $ref: "#/definitions/text"
 
@@ -594,6 +602,14 @@ definitions:
   text:
     type: string
     example: "Hello there!"
+
+  sub_type:
+    type: string
+    enum:
+      - STATUS
+      - TAG
+      - SYSTEM
+    description: "The subtype of an ACTION event."
 
   # MEETING
 
@@ -710,14 +726,11 @@ definitions:
     type: object
     additionalProperties: false
     properties:
-      id:
-        type: number
       label:
         type: string
-      suggestions:
-        $ref: "#/definitions/suggestions"
+      color:
+        type: string
     required:
-      - id
       - label
 
   TagParameterObject:
@@ -725,6 +738,8 @@ definitions:
     additionalProperties: false
     properties:
       label:
+        type: string
+      color:
         type: string
     required:
       - label

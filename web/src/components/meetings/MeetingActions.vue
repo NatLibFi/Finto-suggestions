@@ -2,9 +2,6 @@
   <div v-if="isAuthenticated && role === userRoles.ADMIN" class="actions-container">
     <add-comment v-if="events && events.length > 1" :userId="userId" :suggestionId="suggestionId" />
     <div class="action-buttons">
-      <span class="button move-to-next-meeting">
-        Siirrä seuraavaan<span class="hidden-in-mobile"> kokoukseen</span>
-      </span>
       <span class="button dismiss" @click="retainSuggestion()">
         Jätä ehdotukseksi
       </span>

@@ -2,7 +2,7 @@
   <div v-if="isOpened" class="drop-down-options" v-on-clickaway="closeDropDown">
     <div v-for="(option, i) in dropDownOptions" :key="option.id">
       <div
-        @click="sortValueSelected(option, i)"
+        @click="sortSelected(option, i)"
         :class="[i == selectedIndex ? 'selected' : '', 'option']"
       >
         <svg-icon :class="[i == selectedIndex ? '' : 'hidden-checkmark']" icon-name="check">
@@ -21,15 +21,6 @@ import SvgIcon from '../icons/SvgIcon';
 import IconCheck from '../icons/IconCheck';
 import { directive as onClickaway } from 'vue-clickaway';
 
-import {
-  mapSuggestionGetters,
-  mapSuggestionMutations
-} from '../../store/modules/suggestion/suggestionModule.js';
-import {
-  suggestionGetters,
-  suggestionMutations
-} from '../../store/modules/suggestion/suggestionConsts.js';
-
 export default {
   components: {
     SvgIcon,
@@ -43,17 +34,8 @@ export default {
     isOpened: Boolean,
     dropDownOptions: Array
   },
-  computed: {
-    ...mapSuggestionGetters({
-      isSuggestionListDirty: suggestionGetters.GET_DIRTYNESS
-    })
-  },
   methods: {
-    ...mapSuggestionMutations({
-      setDirtynessToTrue: suggestionMutations.SET_DIRTYNESS_TO_TRUE
-    }),
-    sortValueSelected(option, index) {
-      this.setDirtynessToTrue();
+    sortSelected(option, index) {
       this.handleDropDownSelectedIndicator(index);
 
       let selectedSort = null;

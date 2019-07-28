@@ -1,12 +1,12 @@
 import Vue from 'vue';
 import Router from 'vue-router';
-import Index from '../views/Index.vue';
-import Suggestion from '../views/Suggestion.vue';
-import User from '../views/User.vue';
-import UserSettings from '../views/UserSettings.vue';
-import Meetings from '../views/Meetings.vue';
-import MeetingSuggestionList from '../views/MeetingSuggestionList.vue';
-import MeetingSuggestion from '../views/MeetingSuggestion.vue';
+import Suggestions from '../views/Suggestions';
+import Suggestion from '../views/Suggestion';
+import User from '../views/User';
+import UserSettings from '../views/UserSettings';
+import Meetings from '../views/Meetings';
+import MeetingSuggestionList from '../views/MeetingSuggestionList';
+import MeetingSuggestion from '../views/MeetingSuggestion';
 
 import GithubAuthentication from '../components/auth/GithubAuthentication';
 
@@ -17,7 +17,18 @@ export default new Router({
     {
       path: '/',
       name: 'index',
-      component: Index
+      component: Suggestions,
+      props: () => ({
+        page: 1
+      })
+    },
+    {
+      path: '/suggestions/:page',
+      name: 'suggestions',
+      component: Suggestions,
+      props: route => ({
+        page: route.params.page
+      })
     },
     {
       path: '/suggestion/:suggestionId',
@@ -26,18 +37,19 @@ export default new Router({
       props: true
     },
     {
-      path: '/users/:userId',
+      path: '/users/:userId/:page',
       name: 'user',
       component: User,
-      props: true
-      // TODO: beforeEnter check authentication
+      props: route => ({
+        userId: route.params.userId,
+        page: route.params.page
+      })
     },
     {
       path: '/settings',
       name: 'settings',
       component: UserSettings,
       props: true
-      // TODO: beforeEnter check authentication
     },
     {
       path: '/meetings',
@@ -45,10 +57,13 @@ export default new Router({
       component: Meetings
     },
     {
-      path: '/meetings/:meetingId',
+      path: '/meetings/:meetingId/:page',
       name: 'meeting-suggestion-list',
       component: MeetingSuggestionList,
-      props: true
+      props: route => ({
+        meetingId: route.params.meetingId,
+        page: route.params.page
+      })
     },
     {
       path: '/meetings/:meetingId/:suggestionId',

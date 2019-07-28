@@ -1,10 +1,14 @@
 <template>
   <div class="user">
     <div class="profile-container">
-      <div class="user-name-initials">
-        <span v-if="userNameInitials">{{ userNameInitials }}</span>
-        <span v-else>{{ userId }}</span>
-      </div>
+      <transition name="fade">
+        <div v-if="user.imageUrl" class="profile-image">
+          <img :src="user.imageUrl" :alt="userNameInitials" />
+        </div>
+        <div v-if="!user.imageUrl" class="user-name-initials">
+          <span v-if="userNameInitials">{{ userNameInitials }}</span>
+        </div>
+      </transition>
       <div class="profile">
         <p class="profile-user" v-if="!user.name">
           Käyttäjä {{ userId }}<span v-if="user.role">, {{ userRoleToString[user.role] }}</span>
@@ -27,65 +31,24 @@
       </div>
     </div>
 
-    <div v-if="paginated_items && paginated_items.length > 0" class="user-suggestions">
-      <suggestion-list-header
-        :openSuggestionCount="openCount || 0"
-        :resolvedSuggestionCount="resolvedCount || 0"
-        :userPage="true"
-        class="header"
-      />
-      <ul class="list">
-        <transition-group name="fade">
-          <suggestion-item
-            class="item"
-            v-for="item in paginated_items"
-            :key="item.id"
-            :suggestion="item"
-          />
-        </transition-group>
-      </ul>
-      <suggestion-list-pagination
-        v-if="calculatePageCountForPagination() > 1"
-        :pageCount="calculatePageCountForPagination()"
-        @paginationPageChanged="paginationPageChanged"
-      />
-    </div>
-
-    <div
-      v-if="paginated_items && paginated_items.length === 0"
-      class="no-user-suggestions-container"
-    >
-      <p>Käyttäjälle ei ole asetettu käsitteitä.</p>
-    </div>
+    <suggestion-list-header :userPage="true" class="header" />
+    <suggestion-list :userId="userId" :page="page" :isUserPage="true" />
   </div>
 </template>
 
 <script>
 import SuggestionListHeader from '../suggestion/SuggestionListHeader';
 import SuggestionItem from '../suggestion/SuggestionItem';
-import SuggestionListPagination from '../suggestion/SuggestionListPagination';
-import { calculateOpenAndResolvedSuggestionCounts } from '../../utils/suggestionHelpers';
+import SuggestionList from '../suggestion/SuggestionList';
 
-import { userActions, userGetters } from '../../store/modules/user/userConsts';
-import { mapUserActions, mapUserGetters } from '../../store/modules/user/userModule';
+import { userGetters, userActions } from '../../store/modules/user/userConsts';
+import { mapUserGetters, mapUserActions } from '../../store/modules/user/userModule';
 import { userNameInitials } from '../../utils/userHelpers.js';
 import { userRoleToString } from '../../utils/userMappings.js';
 // eslint-disable-next-line
 import { authenticatedUserGetters } from '../../store/modules/authenticatedUser/authenticatedUserConsts.js';
 // eslint-disable-next-line
-import { mapAuthenticatedUserGetters} from '../../store/modules/authenticatedUser/authenticatedUserModule.js';
-
-import {
-  suggestionGetters,
-  suggestionActions
-} from '../../store/modules/suggestion/suggestionConsts.js';
-
-import {
-  mapSuggestionActions,
-  mapSuggestionGetters
-} from '../../store/modules/suggestion/suggestionModule.js';
-
-import { filterType } from '../../utils/suggestionHelpers';
+import { mapAuthenticatedUserGetters } from '../../store/modules/authenticatedUser/authenticatedUserModule.js';
 
 import SvgIcon from '../icons/SvgIcon';
 import IconMore from '../icons/IconMore';
@@ -94,8 +57,8 @@ import { directive as onClickaway } from 'vue-clickaway';
 export default {
   components: {
     SuggestionListHeader,
+    SuggestionList,
     SuggestionItem,
-    SuggestionListPagination,
     SvgIcon,
     IconMore
   },
@@ -103,16 +66,23 @@ export default {
     onClickaway: onClickaway
   },
   props: {
-    userId: [String, Number]
+    userId: {
+      type: [String, Number],
+      required: true
+    },
+    page: {
+      type: [String, Number],
+      required: true,
+      default: 1
+    }
   },
   data() {
     return {
+      filters: this.$route.query.filters ? this.$route.query.filters : '',
+      searchWord: this.$route.query.search ? this.$route.query.search : '',
+      sort: this.$route.query.sort ? this.$route.query.sort : '',
       userRoleToString,
       userNameInitials: '',
-      paginationMaxCount: 10,
-      openCount: 0,
-      resolvedCount: 0,
-      paginated_items: [],
       showDropdown: false
     };
   },
@@ -122,77 +92,17 @@ export default {
       isAuthenticated: authenticatedUserGetters.GET_IS_AUTHENTICATED
     }),
     ...mapUserGetters({
-      user: userGetters.GET_USER
-    }),
-    ...mapSuggestionGetters({
-      items: suggestionGetters.GET_SUGGESTIONS,
-      filters: suggestionGetters.GET_FILTERS,
-      suggestionsSelectedSort: suggestionGetters.GET_SUGGESTIONS_SELECTED_SORT
+      user: userGetters.GET_AUTHENTICATED_USER
     })
   },
-  async created() {
-    await this.getUser(this.userId);
-    await this.fetchUserNameAndInitials();
-    await this.getSuggestionsByUserId(parseInt(this.userId));
-    await this.handleSuggestionFetching();
-    await this.getSuggestionsSelectedSortKey();
+  created() {
+    this.fetchUserNameAndInitials();
   },
   methods: {
-    ...mapUserActions({
-      getUser: userActions.GET_USER
-    }),
-    ...mapSuggestionActions({
-      getSuggestionsByUserId: suggestionActions.GET_SUGGESTIONS_BY_USER_ID,
-      getSortedSuggestionsByUserId: suggestionActions.GET_SORTED_SUGGESTIONS_BY_USER_ID,
-      getSuggestionsSelectedSortKey: suggestionActions.GET_SUGGESTIONS_SELECTED_SORT
-    }),
     fetchUserNameAndInitials() {
       if (this.user) {
         this.userNameInitials = userNameInitials(this.user.name);
       }
-    },
-    async handleSuggestionFetching() {
-      await this.fetchAndSortAllSuggestions();
-      await this.paginationPageChanged();
-    },
-    async fetchAndSortAllSuggestions() {
-      await this.getSuggestionsSelectedSortKey();
-      // TODO: Ensure that the sortValue is taken into account
-      if (this.suggestionsSelectedSort && this.suggestionsSelectedSort !== '') {
-        await this.getSortedSuggestionsByUserId({
-          userId: parseInt(this.userId),
-          sortValue: this.suggestionsSelectedSort
-        });
-      } else {
-        await this.getSuggestionsByUserId(parseInt(this.userId));
-      }
-    },
-    getPaginationStaringIndex(pageNumber) {
-      return pageNumber > 1 ? this.paginationMaxCount * pageNumber - this.paginationMaxCount : 0;
-    },
-    getPaginationEndingIndex(pageNumber) {
-      const endIndex = this.paginationMaxCount * pageNumber;
-      return endIndex > this.items.length ? this.items.length : endIndex;
-    },
-    async paginationPageChanged(pageNumber = 1, items = null) {
-      const start = this.getPaginationStaringIndex(pageNumber);
-      const end = this.getPaginationEndingIndex(pageNumber);
-      const paginatedItems = items ? items : this.items;
-      // eslint-disable-next-line
-      this.paginated_items = paginatedItems && paginatedItems.length > 0 ? paginatedItems.slice(start, end) : [];
-      this.calculateOpenAndResolvedSuggestionCounts(items);
-      this.calculatePageCountForPagination(items);
-    },
-    calculatePageCountForPagination() {
-      return Math.ceil(this.items.length / this.paginationMaxCount);
-    },
-    calculateOpenAndResolvedSuggestionCounts(items = null) {
-      const counts =
-        items === null
-          ? calculateOpenAndResolvedSuggestionCounts(this.items)
-          : calculateOpenAndResolvedSuggestionCounts(items);
-      this.openCount = counts && counts.openCount ? counts.openCount : 0;
-      this.resolvedCount = counts && counts.resolvedCount ? counts.resolvedCount : 0;
     },
     closeDropdown() {
       this.showDropdown = false;
@@ -202,26 +112,6 @@ export default {
         name: 'settings'
       });
       this.showDropdown = false;
-    }
-  },
-  watch: {
-    async filters() {
-      if (this.filters.length > 0) {
-        let items = this.items;
-        this.filters.forEach(filter => {
-          switch (filter.type) {
-            case filterType.STATUS:
-              items = items.filter(i => i.status === filter.value);
-              break;
-          }
-        });
-        await this.paginationPageChanged(1, items);
-      } else {
-        await this.handleSuggestionFetching();
-      }
-    },
-    async suggestionsSelectedSort() {
-      await this.handleSuggestionFetching();
     }
   },
   mounted: function() {
@@ -257,7 +147,7 @@ export default {
   border-radius: 50px;
   line-height: 52px;
   text-align: center;
-  background-color: #804af2;
+  background-color: #dddddd;
   color: #ffffff;
   font-size: 17px;
   font-weight: 800;
@@ -285,6 +175,25 @@ export default {
   margin: 0;
   margin-top: 4px;
   font-size: 13px;
+}
+
+.profile-image {
+  position: absolute;
+  height: 50px;
+  width: 50px;
+  top: 50%;
+  left: initial;
+  transform: perspective(1px) translateY(calc(-50% - 0.5px));
+  display: inline-block;
+  border-radius: 50px;
+  margin-right: 20px;
+  text-align: center;
+}
+
+.profile-image img {
+  height: 50px;
+  width: 50px;
+  background-color: #eeeeee;
 }
 
 .settings {
@@ -319,25 +228,6 @@ export default {
 
 .user-suggestions {
   margin-bottom: 40px;
-}
-
-ul {
-  list-style: none;
-}
-
-.list {
-  text-align: left;
-  background-color: #ffffff;
-  border: 2px solid #f5f5f5;
-  border-top: none;
-  width: 60vw;
-  margin: 0 20vw 20px;
-  padding-left: 0; /* reset inital padding for ul tags */
-}
-
-.item {
-  margin: 10px 0 10px 0;
-  border-bottom: 2px solid #f5f5f5;
 }
 
 .no-user-suggestions-container {
@@ -379,11 +269,6 @@ ul {
     transform: initial;
     text-align: center;
     padding: 20px 10px 10px;
-  }
-
-  .list {
-    width: 80vw;
-    margin: 0 10vw 20px;
   }
 
   .no-user-suggestions-container {

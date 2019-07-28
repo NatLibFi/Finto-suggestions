@@ -1,7 +1,7 @@
 import connexion
 from ..authentication import admin_only
 from ..models import Tag
-from .common import get_one_or_404, get_all_or_404, create_or_400, delete_or_404, update_or_404
+from .common import get_one_or_404, get_all_or_404, create_or_400, delete_or_404, update_or_404_custom
 
 
 def get_tags(limit: int = None, offset: int = None) -> str:
@@ -51,7 +51,7 @@ def put_tag(tag_label: str) -> str:
     :returns: the created tag as json
     """
 
-    return update_or_404(Tag, tag_label, connexion.request.json)
+    return update_or_404_custom(Tag, tag_label, connexion.request.json)
 
 
 @admin_only

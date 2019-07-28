@@ -78,7 +78,8 @@
     <div v-if="suggestion.groups && suggestion.groups[0]">
       <p class="content-title"><strong>YSA/YSO temaattinen ryhmä</strong></p>
       <p v-for="group in suggestion.groups" :key="group.id">
-        <a :href="group.uri">{{ group.value }}</a>
+        <a v-if="group.value" :href="group.uri">{{ group.value }}</a>
+        <a v-if="group.prefLabel" :href="group.uri">{{ group.prefLabel }}</a>
       </p>
     </div>
 
@@ -96,7 +97,7 @@
     </div>
 
     <div v-if="suggestion.scopeNote">
-      <p class="content-title"><strong>Tarkoitusta täsmentävä selite:</strong></p>
+      <p class="content-title"><strong>Tarkoitusta täsmentävä selite</strong></p>
       <p>{{ suggestion.scopeNote }}</p>
     </div>
 

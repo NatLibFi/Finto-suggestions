@@ -1,8 +1,8 @@
 <template>
   <div class="header-container">
-    <div v-if="!userPage" class="title">
+    <!--TODO: <div v-if="!userPage" class="title">
       <span
-        :class="['open', openSuggestionClicked && isSuggestionListDirty ? 'toggled' : '']"
+        :class="['open', openSuggestionClicked ? 'toggled' : '']"
         @click="showOpenSuggestions()"
       >
         {{ openSuggestionCount }} käsittelemätöntä
@@ -13,14 +13,18 @@
       >
         {{ resolvedSuggestionCount }} käsiteltyä
       </span>
-    </div>
-    <div v-if="userPage" class="title">
+    </div> -->
+    <div v-if="userPage" class="title user-title">
       <span>Käyttäjälle asetut ehdotukset</span>
     </div>
     <div
       v-if="!userPage"
       @click="isDropDownOpened = !isDropDownOpened"
-      :class="[isDropDownOpened ? 'selected' : '', 'drop-down-button']"
+      :class="[
+        isDropDownOpened ? 'selected' : '',
+        selectedSortOptionIndex !== 0 ? 'active' : '',
+        'drop-down-button'
+      ]"
     >
       <span>Järjestä</span>
       <svg-icon icon-name="triangle"><icon-triangle /></svg-icon>
@@ -37,22 +41,12 @@
 </template>
 
 <script>
-import { sortingKeys, getSelectedSortOptionIndex } from '../../utils/sortingHelper.js';
-
 import SortingDropDown from '../common/SortingDropDown';
 import SvgIcon from '../icons/SvgIcon';
 import IconTriangle from '../icons/IconTriangle';
 
-import {
-  mapSuggestionGetters,
-  mapSuggestionActions,
-  mapSuggestionMutations
-} from '../../store/modules/suggestion/suggestionModule.js';
-import {
-  suggestionGetters,
-  suggestionActions,
-  suggestionMutations
-} from '../../store/modules/suggestion/suggestionConsts.js';
+import { sortingKeys } from '../../utils/sortingHelper.js';
+import { handleQueries, findSortSelectionIndex } from '../../utils/suggestionHelpers.js';
 
 export default {
   components: {
@@ -63,8 +57,14 @@ export default {
   props: {
     openSuggestionCount: Number,
     resolvedSuggestionCount: Number,
-    meetingSort: Boolean,
-    userPage: Boolean
+    meetingId: {
+      type: [String, Number],
+      default: null
+    },
+    userPage: Boolean,
+    filters: String,
+    searchWord: String,
+    sort: String
   },
   data: () => ({
     selectedSortOptionIndex: 0,
@@ -72,68 +72,24 @@ export default {
     dropDownOptions: [
       { label: 'Uusin ensin', value: sortingKeys.NEWEST_FIRST },
       { label: 'Vanhin ensin', value: sortingKeys.OLDEST_FIRST },
-      // { label: 'Eniten kommentoitu', value: sortingKeys.MOST_COMMENTS },
-      // { label: 'Vähiten kommentoitu', value: sortingKeys.LEAST_COMMENTS },
+      { label: 'Eniten kommentoitu', value: sortingKeys.MOST_COMMENTS },
+      { label: 'Vähiten kommentoitu', value: sortingKeys.LEAST_COMMENTS },
       { label: 'Viimeksi päivitetty', value: sortingKeys.LAST_UPDATED }
     ],
     openSuggestionClicked: false,
     resolvedSuggestionsClicked: false
   }),
-  computed: {
-    ...mapSuggestionGetters({
-      suggestionSelectedSort: suggestionGetters.GET_SUGGESTIONS_SELECTED_SORT,
-      meetingSuggestionSelectedSort: suggestionGetters.GET_MEETING_SUGGESTIONS_SELECTED_SORT,
-      isSuggestionListDirty: suggestionGetters.GET_DIRTYNESS
-    })
-  },
   created() {
-    if (this.meetingSort) {
-      this.getMeetingSuggestionSelectedSort();
-    } else {
-      this.getSuggestionSelectedSort();
-    }
-    this.handleSortinDropDownIndex();
+    this.parseRouteForSelection();
   },
   methods: {
-    ...mapSuggestionActions({
-      setSuggestionSelectedSort: suggestionActions.SET_SUGGESTIONS_SELECTED_SORT,
-      setMeetingSuggestionSelectedSort: suggestionActions.SET_MEETING_SUGGESTIONS_SELECTED_SORT,
-      getSuggestionSelectedSort: suggestionActions.GET_SUGGESTIONS_SELECTED_SORT,
-      getMeetingSuggestionSelectedSort: suggestionActions.GET_MEETING_SUGGESTIONS_SELECTED_SORT
-    }),
-    ...mapSuggestionMutations({
-      setDirtynessToTrue: suggestionMutations.SET_DIRTYNESS_TO_TRUE,
-      setDirtynessToFalse: suggestionMutations.SET_DIRTYNESS_TO_FALSE
-    }),
     setSelectedSort(selectedSort) {
-      if (this.meetingSort) {
-        this.setMeetingSuggestionSelectedSort(selectedSort);
-        this.getMeetingSuggestionSelectedSort();
-      } else {
-        this.setSuggestionSelectedSort(selectedSort);
-        this.getSuggestionSelectedSort();
-      }
+      handleQueries(this.filters, this.searchWord, selectedSort, this.$router);
     },
     closeDropDown: function() {
       this.isDropDownOpened = false;
     },
-    handleSortinDropDownIndex() {
-      if (this.meetingSort) {
-        this.selectedSortOptionIndex = getSelectedSortOptionIndex(
-          this.dropDownOptions,
-          this.meetingSuggestionSelectedSort,
-          0
-        );
-      } else {
-        this.selectedSortOptionIndex = getSelectedSortOptionIndex(
-          this.dropDownOptions,
-          this.suggestionSelectedSort,
-          0
-        );
-      }
-    },
     showOpenSuggestions() {
-      this.setDirtynessToTrue();
       if (!this.openSuggestionClicked) {
         this.openSuggestionClicked = true;
         this.resolvedSuggestionsClicked = false;
@@ -144,7 +100,6 @@ export default {
       }
     },
     showResolvedSuggestions() {
-      this.setDirtynessToTrue();
       if (!this.resolvedSuggestionsClicked) {
         this.openSuggestionClicked = false;
         this.resolvedSuggestionsClicked = true;
@@ -153,14 +108,12 @@ export default {
         this.resolvedSuggestionsClicked = false;
         this.$emit('showAllSuggestions');
       }
-    }
-  },
-  watch: {
-    suggestionSelectedSort() {
-      this.handleSortinDropDownIndex();
     },
-    meetingSuggestionSelectedSort() {
-      this.handleSortinDropDownIndex();
+    parseRouteForSelection() {
+      let arr = Object.values(this.dropDownOptions);
+      if (this.sort) {
+        this.selectedSortOptionIndex = findSortSelectionIndex(this.sort, arr);
+      }
     }
   }
 };
@@ -193,6 +146,9 @@ export default {
   -moz-user-select: none; /* Firefox */
   -ms-user-select: none; /* IE10+/Edge */
   user-select: none; /* Standard */
+}
+.user-title {
+  color: #353535;
 }
 .open {
   padding-right: 10px;
@@ -259,6 +215,10 @@ export default {
 .selected {
   font-weight: 600;
   color: #111111;
+}
+
+.active {
+  color: #06b1a1;
 }
 
 .hidden-checkmark {

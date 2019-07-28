@@ -14,10 +14,10 @@
         <p>Organisaatio:</p>
         <input v-model="userOrg" @input="$v.$touch()" type="text" />
       </div>
-      <!-- <div>
+      <div>
         <p>Profiilikuvan url-osoite:</p>
-        <input disabled v-model="userImageUrl" @input="$v.$touch()" type="url">
-      </div> -->
+        <input v-model="userImageUrl" @input="$v.$touch()" type="url" />
+      </div>
     </div>
 
     <div @click.stop="submitForm" :class="[$v.$invalid ? 'disabled' : '', 'button']">
@@ -61,7 +61,7 @@ export default {
   },
   computed: {
     ...mapUserGetters({
-      user: userGetters.GET_USER
+      user: userGetters.GET_AUTHENTICATED_USER
     }),
     ...mapAuthenticatedUserGetters({
       userId: authenticatedUserGetters.GET_USER_ID,
@@ -70,7 +70,7 @@ export default {
   },
   async created() {
     await this.getUserIdFromStorage();
-    await this.getUser(this.userId);
+    await this.getAuthenticatedUser(this.userId);
     this.userName = this.user.name;
     if (this.user.title) {
       this.userTitle = this.user.title;
@@ -84,11 +84,10 @@ export default {
   },
   methods: {
     ...mapAuthenticatedUserActions({
-      getUserIdFromStorage: authenticatedUserActions.GET_USER_ID_FROM_STORAGE,
-      getUserName: authenticatedUserActions.GET_USER_NAME
+      getUserIdFromStorage: authenticatedUserActions.GET_USER_ID_FROM_STORAGE
     }),
     ...mapUserActions({
-      getUser: userActions.GET_USER,
+      getAuthenticatedUser: userActions.GET_AUTHENTICATED_USER,
       patchUser: userActions.PATCH_USER
     }),
     async updateUser() {
@@ -122,7 +121,7 @@ export default {
       }
     },
     async updateShowingUserData() {
-      await this.getUser(this.userId);
+      await this.getAuthenticatedUser(this.userId);
     }
   },
   mounted: function() {

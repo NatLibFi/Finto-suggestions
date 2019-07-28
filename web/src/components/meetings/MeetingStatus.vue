@@ -141,7 +141,7 @@ export default {
         name: 'meeting-suggestion-list',
         params: {
           meetingId: this.meetingId,
-          meeting: this.meeting
+          page: 1
         }
       });
     },
@@ -220,6 +220,10 @@ export default {
   position: relative;
   width: 100%;
   text-align: left;
+}
+
+.status-container h2 {
+  width: calc(100% - 30px);
 }
 
 .menu-wrapper {

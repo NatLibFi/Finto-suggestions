@@ -18,15 +18,14 @@ export default {
   namespaced: true,
   state: {
     [storeStateNames.ITEMS]: [],
+    [storeStateNames.COUNT]: 0,
     [storeStateNames.FILTERS]: [],
     [storeStateNames.ITEM]: null,
-    [storeStateNames.SUGGESTIONS_SELECTED_SORT]: null,
-    [storeStateNames.MEETING_SUGGESTIONS_SELECTED_SORT]: null,
-    [storeStateNames.FILTERED_ITEMS]: [],
-    [storeStateNames.IS_DIRTY]: false
+    [storeStateNames.FILTERED_ITEMS]: []
   },
   getters: {
     [suggestionGetters.GET_SUGGESTIONS]: state => state[storeStateNames.ITEMS],
+    [suggestionGetters.GET_SUGGESTIONS_COUNT]: state => state[storeStateNames.COUNT],
     [suggestionGetters.GET_SUGGESTION]: state => state[storeStateNames.ITEM],
     [suggestionGetters.GET_SEARCH_QUERY]: state => state[storeStateNames.SEARCH_QUERY],
     [suggestionGetters.GET_FILTERS]: state => state[storeStateNames.FILTERS],
@@ -34,12 +33,14 @@ export default {
       state[storeStateNames.SUGGESTIONS_SELECTED_SORT],
     [suggestionGetters.GET_MEETING_SUGGESTIONS_SELECTED_SORT]: state =>
       state[storeStateNames.MEETING_SUGGESTIONS_SELECTED_SORT],
-    [suggestionGetters.GET_FILTERED_ITEMS]: state => state[storeStateNames.FILTERED_ITEMS],
-    [suggestionGetters.GET_DIRTYNESS]: state => state[storeStateNames.IS_DIRTY]
+    [suggestionGetters.GET_FILTERED_ITEMS]: state => state[storeStateNames.FILTERED_ITEMS]
   },
   mutations: {
     [suggestionMutations.SET_SUGGESTIONS](state, suggestions) {
       Vue.set(state, storeStateNames.ITEMS, suggestions);
+    },
+    [suggestionMutations.SET_SUGGESTIONS_COUNT](state, count) {
+      Vue.set(state, storeStateNames.COUNT, count);
     },
     [suggestionMutations.SET_SEARCH_QUERY](state, searchQuery) {
       Vue.set(state, storeStateNames.SEARCH_QUERY, searchQuery);
@@ -67,40 +68,30 @@ export default {
     },
     [suggestionMutations.SET_SELECTED_STORAGE_FILTERS](state, filters) {
       Vue.set(sessionStorage, sessionStorageKeyNames.SELECTED_FILTERS, filters);
-    },
-    [suggestionMutations.SET_DIRTYNESS_TO_TRUE](state) {
-      Vue.set(state, storeStateNames.IS_DIRTY, true);
-    },
-    [suggestionMutations.SET_DIRTYNESS_TO_FALSE](state) {
-      Vue.set(state, storeStateNames.IS_DIRTY, false);
     }
   },
   actions: {
-    async [suggestionActions.GET_SUGGESTIONS]({ commit }) {
-      const result = await api.suggestion.getSuggestions();
+    async [suggestionActions.GET_SUGGESTIONS]({ commit }, { offset, sort, filters, searchWord }) {
+      const result = await api.suggestion.getSuggestions(offset, sort, filters, searchWord);
       if (result && result.code == 200) {
         commit(suggestionMutations.SET_SUGGESTIONS, result.data);
+        return result.items;
+      } else {
+        return [];
       }
     },
-    async [suggestionActions.GET_SUGGESTIONS_BY_USER_ID]({ commit }, userId) {
-      const result = await api.suggestion.getSuggestionsByUserId(userId);
+    async [suggestionActions.GET_SUGGESTIONS_COUNT]({ commit }, { filters, searchWord }) {
+      const result = await api.suggestion.getSuggestionsCount(filters, searchWord);
+      if (result && result.code == 200) {
+        commit(suggestionMutations.SET_SUGGESTIONS_COUNT, result.data.count);
+      }
+    },
+    async [suggestionActions.GET_SUGGESTIONS_BY_USER_ID]({ commit }, { userId, offset }) {
+      const result = await api.suggestion.getSuggestionsByUserId(userId, offset);
       if (result && result.code == 200) {
         commit(suggestionMutations.SET_SUGGESTIONS, result.data);
-      }
-    },
-    async [suggestionActions.GET_SORTED_SUGGESTIONS_BY_USER_ID]({ commit }, values) {
-      const result = await api.suggestion.getSortedSuggestionByUserId(
-        values.userId,
-        values.sortValue
-      );
-      if (result && result.code === 200) {
-        commit(suggestionMutations.SET_SUGGESTIONS, result.data);
-      }
-    },
-    async [suggestionActions.GET_SORTED_SUGGESTIONS]({ commit }, sortValue) {
-      const result = await api.suggestion.getSortedSuggestions(sortValue);
-      if (result && result.code == 200) {
-        commit(suggestionMutations.SET_SUGGESTIONS, result.data);
+      } else {
+        return [];
       }
     },
     async [suggestionActions.GET_SUGGESTION_BY_ID]({ commit }, suggestionId) {
@@ -148,15 +139,6 @@ export default {
         commit(suggestionMutations.SET_SUGGESTIONS, result.data);
       }
     },
-    async [suggestionActions.GET_SORTED_SUGGESTIONS_BY_MEETING_ID]({ commit }, values) {
-      const result = await api.suggestion.getSortedSuggestionByMeetingId(
-        values.meetingId,
-        values.sortValue
-      );
-      if (result && result.code === 200) {
-        commit(suggestionMutations.SET_SUGGESTIONS, result.data);
-      }
-    },
     [suggestionActions.GET_MEETING_SUGGESTIONS_SELECTED_SORT]({ commit }) {
       const sortKey = sessionStorage[sessionStorageKeyNames.MEETING_SUGGESTIONS_SELECTED_SORT];
       if (sortKey) {
@@ -182,13 +164,6 @@ export default {
         console.log(`Could not set suggestion state to rejected ${params.suggestionId}, ${error}`);
       }
     },
-    async [suggestionActions.GET_SUGGESTIONS_BY_SEARCH_WORD]({ commit }, searchWord) {
-      const result = await api.suggestion.getSuggestionsBySearchWord(searchWord);
-      if (result && result.code === 200) {
-        commit(suggestionMutations.SET_SUGGESTIONS, result.data);
-        commit(suggestionMutations.SET_DIRTYNESS_TO_TRUE);
-      }
-    },
     [suggestionActions.GET_SELECTED_FILTERS]({ commit }) {
       const filters = sessionStorage[sessionStorageKeyNames.SELECTED_FILTERS];
       if (filters) {
@@ -201,14 +176,14 @@ export default {
         commit(suggestionMutations.SET_FILTERS, filters);
       }
     },
-    async [suggestionActions.GET_OPEN_SUGGESTIONS]({ commit }) {
-      const result = await api.suggestion.getOpenSuggestions();
+    async [suggestionActions.GET_OPEN_SUGGESTIONS]({ commit }, offset) {
+      const result = await api.suggestion.getOpenSuggestions(offset);
       if (result && result.code === 200) {
         commit(suggestionMutations.SET_SUGGESTIONS, result.data);
       }
     },
-    async [suggestionActions.GET_RESOLVED_SUGGESTIONS]({ commit }) {
-      const result = await api.suggestion.getResolvedSuggestions();
+    async [suggestionActions.GET_RESOLVED_SUGGESTIONS]({ commit }, offset) {
+      const result = await api.suggestion.getResolvedSuggestions(offset);
       if (result && result.code === 200) {
         commit(suggestionMutations.SET_SUGGESTIONS, result.data);
       }
@@ -220,7 +195,6 @@ export default {
         commit(suggestionMutations.SET_SUGGESTIONS, result.data);
         commit(suggestionMutations.SET_SELECTED_STORAGE_FILTERS, []);
         commit(suggestionMutations.SET_FILTERS, []);
-        commit(suggestionMutations.SET_DIRTYNESS_TO_FALSE);
       }
     }
   }
