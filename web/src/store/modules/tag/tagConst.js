@@ -14,6 +14,7 @@ export const tagMutations = {
 
 export const tagActions = {
   GET_TAGS: 'getTags',
+  PUT_TAG: 'putTag',
   DELETE_TAG: 'deleteTag',
   ADD_TAG_TO_SUGGESTION: 'addTagToSuggestion',
   REMOVE_TAG_FROM_SUGGESTION: 'removeTagFromSuggestion'

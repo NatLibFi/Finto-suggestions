@@ -25,10 +25,10 @@
             />
             <span
               v-if="showModifyTagButtons"
-              @click="modifyTag(tag.label)"
-              class="delete-btn"
+              @click="modifyTag(tag)"
+              class="modify-btn"
             >
-              Poista
+              Muokkaa
             </span>
           </li>
         </ul>
@@ -57,6 +57,27 @@
         <p><a @click="addNewTag" class="button">Tallenna</a></p>
         <p><a @click="showCreateTagInputs = false" class="button back">Palaa takaisin</a></p>
       </div>
+      <div class="tag-selector-new-tag-form" v-if="showModifyTagInputs">
+        <div class="tag-selector-new-tag-form-input">
+          <p class="input-title">Tunnisteen nimi</p>
+          <input type="text" v-model="tagBeingModified.label" />
+          <p class="input-title">Tunnisteen väri</p>
+          <button
+            v-if="!tagBeingModified.color"
+            @click="tagBeingModified.color = '#4794a2'"
+            class="button">
+            Valitse väri
+          </button>
+          <color-picker
+            v-if="tagBeingModified.color"
+            v-model="tagBeingModified.color"
+            class="color-picker"
+          />
+        </div>
+        <p><a @click="saveTag" class="button">Tallenna</a></p>
+        <p><a @click="deleteSingleTag" class="delete-btn button">Poista tunniste</a></p>
+        <p><a @click="showModifyTagInputs = false" class="button back">Palaa takaisin</a></p>
+      </div>
     </div>
   </div>
 </template>
@@ -69,12 +90,14 @@ import { mapTagActions, mapTagGetters } from '../../store/modules/tag/tagModule'
 import { tagActions, tagGetters } from '../../store/modules/tag/tagConst';
 import { newActionEvent } from '../../utils/tagHelpers';
 import { directive as onClickaway } from 'vue-clickaway';
+import { Slider } from 'vue-color';
 
 export default {
   components: {
     SvgIcon,
     IconTag,
-    IconArrow
+    IconArrow,
+    'color-picker': Slider
   },
   directives: {
     onClickaway: onClickaway
@@ -95,10 +118,14 @@ export default {
     showCreateTagInputs: false,
     showModifyTagInputs: false,
     showModifyTagButtons: false,
+    tagBeingModified: null,
+    tagLabelBeingModified: null,
     newTag: null
   }),
   computed: {
-    ...mapTagGetters({ tags: tagGetters.GET_TAGS })
+    ...mapTagGetters({
+      tags: tagGetters.GET_TAGS
+    })
   },
   created() {
     this.getTags();
@@ -107,6 +134,7 @@ export default {
   methods: {
     ...mapTagActions({
       getTags: tagActions.GET_TAGS,
+      putTag: tagActions.PUT_TAG,
       deleteTag: tagActions.DELETE_TAG,
       addTagToSuggestion: tagActions.ADD_TAG_TO_SUGGESTION,
       removeTagFromSuggestion: tagActions.REMOVE_TAG_FROM_SUGGESTION
@@ -190,14 +218,33 @@ export default {
       this.checkedTags.push(this.newTag.toUpperCase());
       this.newTag = '';
     },
-    modifyTag(label) {
+    modifyTag(tag) {
+      this.showModifyTagInputs = true;
+      this.tagBeingModified = tag;
+      this.tagLabelBeingModified = tag.label;
+      this.tagBeingModified.label = this.tagBeingModified.label.toLowerCase();
+    },
+    async saveTag() {
+      let params = {
+        tagLabel: this.tagLabelBeingModified,
+        tag: {
+          label: this.tagBeingModified.label,
+          color: this.tagBeingModified.color.hex
+        }
+      };
+      await this.putTag(params);
+      this.showModifyTagInputs = false;
+      this.tagBeingModified = null;
+      this.tagLabelBeingModified = null;
+    },
+    deleteSingleTag() {
       const event = newActionEvent(
         'poisti ehdotuksesta tunnisteen',
-        this.label,
+        this.tagBeingModified.label,
         this.userId,
         this.suggestion.id
       );
-      const params = { suggestionId: this.suggestion.id, tagLabel: label, event: event };
+      const params = { suggestionId: this.suggestion.id, tagLabel: this.tagBeingModified.label, event: event };
       this.deleteTag(params);
       this.$router.go();
     }
@@ -259,7 +306,7 @@ export default {
 .tag-selector-tags ul {
   list-style-type: none;
   padding-left: 0;
-  margin-right: 10px;
+  padding-right: 20px;
   max-height: 300px;
   overflow: scroll;
 }
@@ -271,6 +318,7 @@ export default {
   height: 24px;
   position: relative;
   vertical-align: middle;
+  overflow: hidden;
   padding: 1px;
 }
 
@@ -285,6 +333,7 @@ export default {
 .tag-selector-tags li .tag {
   background-color: #4794a2;
   color: #ffffff;
+  font-weight: 600;
   padding: 2px 6px;
   border-radius: 2px;
 }
@@ -306,7 +355,7 @@ export default {
   color: #bfbfbf;
 }
 
-.tag-selector-tags li > .delete-btn {
+.tag-selector-tags li > .modify-btn {
   margin: 0;
   color: #06a798;
   position: absolute;
@@ -316,7 +365,7 @@ export default {
   transition: opacity 0.1s;
 }
 
-.tag-selector-tags li > .delete-btn:hover {
+.tag-selector-tags li > .modify-btn:hover {
   opacity: 0.6;
   cursor: pointer;
   cursor: hand;
@@ -403,10 +452,21 @@ export default {
   opacity: 0.6;
 }
 
+.delete-btn {
+  position: absolute;
+  right: 19px;
+  bottom: 10px;
+  color: red;
+}
+
 .back {
   position: absolute;
-  left: 16px;
+  left: 19px;
   bottom: 10px;
+}
+
+.color-picker {
+  box-shadow: none;
 }
 
 @media (max-width: 700px) {
