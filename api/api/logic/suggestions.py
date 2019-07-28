@@ -409,12 +409,12 @@ def get_open_suggestions_skos() -> str:
     :returns: Suggestions list of open suggestions in skos format
     """
     try:
-      open_suggestions = Suggestion.query.filter(and_(Suggestion.status.notin_(['ACCEPTED', 'REJECTED', 'RETAINED', 'ARCHIVED']), Suggestion.yse_term == None)).all()
-      serialized_objects = [o.as_dict() for o in open_suggestions]
-      return { 'data': serialized_objects, 'code': 200 }, 200
+        open_suggestions = Suggestion.query.filter(and_(Suggestion.status.notin_(['ACCEPTED', 'REJECTED', 'RETAINED', 'ARCHIVED']), Suggestion.yse_term["url"] == None)).all()
+        serialized_objects = [o.as_dict() for o in open_suggestions]
+        return { 'data': serialized_objects, 'code': 200 }, 200
     except Exception as ex:
-      print(str(ex))
-      return { 'code': 404, 'error': str(ex) }, 404
+        print(str(ex))
+        return { 'code': 404, 'error': str(ex) }, 404
 
 
 def get_suggestion_skos(suggestion_id: int) -> str:
