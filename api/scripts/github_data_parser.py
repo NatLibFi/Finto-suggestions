@@ -18,13 +18,13 @@ class GithubDataParser:
       body.preferred_labels['sv'] = { 'value': splitted_values[1].strip() }
     if 'Ehdotettu termi englanniksi' in value:
       splitted_values = value.split('Ehdotettu termi englanniksi')
-      body.preferred_labels['en'] = splitted_values[1].strip()
+      body.preferred_labels['en'] = { 'value': splitted_values[1].strip() }
     if 'preflabel' in value:
       splitted_values = value.split('preflabel')
       splitted_parsed_value = splitted_values[1].replace('[', '').replace(']', '').split('(')
       body.preferred_labels['fi'] = {
         'value': splitted_parsed_value[0].strip(),
-        'uri': splitted_parsed_value[1].replace(')', '').strip()
+        'url': splitted_parsed_value[1].replace(')', '').strip()
       }
 
   def __parse_alternative_labels(self, value, body):
@@ -171,10 +171,10 @@ class GithubDataParser:
 
   def __parse_yse_term(self, value, body):
     splitted_value = value.replace(':', '').split('Termiehdotus Fintossa')
-    splitted_yse_term_value = splitted_value[1].split('\n')[0].split(']')
+    splitted_yse_term_value = splitted_value[1].split(']')
     yse_term = {
       'value': splitted_yse_term_value[0].replace('[','').replace(']','').replace('*','').replace(':','') .strip(),
-      'uri': splitted_yse_term_value[1].replace('(','').replace(')','').strip()
+      'url': splitted_yse_term_value[1].replace('(','').replace(')','').strip()
     }
     body.yse_term = yse_term
 
@@ -197,50 +197,6 @@ class GithubDataParser:
         self.__parse_groups(section, body)
 
     return body
-
-  def __parse_to_json_labels(self, value):
-    values = []
-    splitted_value = value.split('\n')
-
-    for value in splitted_value:
-      if '[' in value:
-        splitted_labels = value.split('[')[1].split(']')
-        if len(splitted_labels) > 1:
-          values.append({
-            'value': splitted_labels[0].strip(),
-            'uri': splitted_labels[1].replace('(', '').replace(')', '').strip()
-          })
-        elif len(splitted_labels) == 1:
-          values.append({
-            'value': splitted_labels[0].strip()
-          })
-    return values
-
-  def __parse_created_datetime(self, value, body):
-    if 'Luontipäivämäärä' in value:
-      splitted_value = value.split('Luontipäivämäärä')
-      date_value = splitted_value[1].replace(':','').replace('*','')
-      splitted_date_value = date_value.split('\n')
-      body.created_date = splitted_date_value[0].strip()
-
-  def __parse_modified_datetime(self, value, body):
-    if 'Muokkauspäivämäärä' in value:
-      splitted_value = value.split('Muokkauspäivämäärä')
-      date_value = splitted_value[1].replace(':','').replace('*','')
-      splitted_date_value = date_value.split('\n')
-
-      if ',' in splitted_date_value[0]:
-        splitted_modified_date = splitted_date_value[0].split(',')
-        body.modified_date = splitted_modified_date.pop().strip()
-      else:
-        body.modified_date = splitted_date_value[0].strip()
-
-  def __parse_voyager_id(self, value, body):
-    if 'Voyager-id' in value:
-      splitted_values = value.split('Voyager-id')
-      raw_value = splitted_values[1].split('\n')[0]
-      voyager_id_value = raw_value.replace(':','').replace('*','').strip()
-      body.voyager_id = voyager_id_value
 
   def __parse_body_strings(self, body_str):
     body = GithubBodyModel()
@@ -396,7 +352,7 @@ class GithubDataParser:
     return 0
 
   ### public methods
-  def handle_response(self, arg_loop_count, id = None):
+  def handle_response(self, arg_loop_count):
     models = []
 
     loop_count = 0
@@ -419,26 +375,6 @@ class GithubDataParser:
         else:
           self.last_request_completed = True
       else:
-        response = self.__fetch_data_from_github()
-        loop_count = self.__parse_count_from_response_headers(response.headers)
-
-      i = 1
-      while i <= loop_count:
-        if self.last_request_completed == False:
-          response = self.__fetch_data_from_github(i)
-          if len(response.json()) > 0:
-            print(f"Issue batch fetch {i}/{loop_count}")
-            i+= 1
-            for json_item in response.json():
-              model = self.__map_response(json_item)
-              models.append(model)
-          else:
-            self.last_request_completed = True
-        else:
-          break
-    else:
-      response = self.__fetch_data_from_github_by_id(id)
-      model = self.__map_response(response.json())
-      models.append(model)
+        break
 
     return models
