@@ -430,7 +430,7 @@ class GithubDataParser:
             print(f"Issue batch fetch {i}/{loop_count}")
             i+= 1
             for json_item in response.json():
-              model = self.__map_reponse(json_item)
+              model = self.__map_response(json_item)
               models.append(model)
           else:
             self.last_request_completed = True
@@ -438,7 +438,7 @@ class GithubDataParser:
           break
     else:
       response = self.__fetch_data_from_github_by_id(id)
-      model = self.__map_reponse(response.json())
+      model = self.__map_response(response.json())
       models.append(model)
 
     return models
