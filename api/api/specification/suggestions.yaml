@@ -270,3 +270,26 @@ paths:
           description: Get all resolved status suggestions
         "400":
           description: Filtering resolved suggestions failed
+  /suggestions/open/skos:
+    get:
+      operationId: api.logic.suggestions.get_open_suggestions_skos
+      responses:
+        "200":
+          description: Get all open status suggestions in skos format
+        "400":
+          description: Filtering open suggestions failed
+  /suggestions/{suggestion_id}/skos:
+    get:
+      operationId: api.logic.suggestions.get_suggestion_skos
+      description: Get a single suggestion by id in skos format
+      parameters:
+        - name: suggestion_id
+          in: path
+          description: Suggestion ID
+          required: true
+          type: integer
+      responses:
+        '200':
+          description: A suggestion matching the given id
+        '404':
+          description: No suggestion could be found with the given ID
