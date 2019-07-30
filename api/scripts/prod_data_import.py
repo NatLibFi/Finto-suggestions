@@ -22,8 +22,6 @@ if __name__ == '__main__':
   print("Handling Github issue fetch and parsing the responses to models...")
 
   arg_loop_count = parse_args()
-  # if you wanna debug single issue
-  # models = parser.handle_response(arg_loop_count, {id_number})
   models = parser.handle_response(arg_loop_count)
   print("Models to handle: ", len(models))
   print("Map models data to db business objects and insert data to database")

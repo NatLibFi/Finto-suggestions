@@ -5,5 +5,7 @@ export default {
   putTag: (tagLabel, params) =>
     put({ resource: `/tags/${tagLabel}`, data: { color: params.color, label: params.label } }),
   deleteTag: tagLabel => del({ resource: `/tags/${tagLabel}` }),
+  // Mika
   addNewTagStraightToDB: data => post({ resource: '/tags', data: data } )
+  // deleteTagStraighFromDB: data => del({ resource: '/tags', data: data } )
 };

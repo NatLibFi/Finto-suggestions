@@ -8,6 +8,7 @@ from .common import (create_response, get_one_or_404, get_all_or_404, get_all_or
                      get_count_or_404_custom, create_or_400, delete_or_404, patch_or_404, update_or_404)
 from .utils import SUGGESTION_FILTER_FUNCTIONS, SUGGESTION_SORT_FUNCTIONS
 from ..models import db, Suggestion, Tag, User
+from .skos import initGraph, suggestionToTriple
 from flask import jsonify
 from rdflib import Graph, URIRef, Literal, Namespace, RDF
 from rdflib.namespace import SKOS
@@ -425,6 +426,10 @@ def get_suggestion_skos(suggestion_id: int) -> str:
     :returns: A single suggestion object as json
     """
 
-    # suggestion = Suggestion.query.filter_by(id=suggestion_id).first()
-
-    return { 'data': '' }, 200
+    try:
+        suggestion = Suggestion.query.filter_by(id=suggestion_id).first()
+        serialized_object = suggestion.as_dict()
+        return { 'data': serialized_object, 'code': 200 }, 200
+    except Exception as ex:
+        print(str(ex))
+        return { 'code': 404, 'error': str(ex) }, 404
