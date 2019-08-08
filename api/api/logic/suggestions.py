@@ -428,7 +428,8 @@ def get_suggestion_skos(suggestion_id: int) -> str:
 
     try:
         suggestion = Suggestion.query.filter_by(id=suggestion_id).first()
-        serialized_object = suggestion.as_dict()
+        # serialized_object = suggestion.as_dict()
+        serialized_object = suggestionToTriple(suggestion.as_dict())
         return { 'data': serialized_object, 'code': 200 }, 200
     except Exception as ex:
         print(str(ex))
