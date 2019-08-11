@@ -75,7 +75,15 @@
           />
         </div>
         <p><a @click="saveTag" class="button">Tallenna</a></p>
-        <p><a @click="deleteSingleTag" class="delete-btn button">Poista tunniste</a></p>
+        <p>
+          <a
+            v-if="!tagBeingModified.color"
+            @click="deleteSingleTag"
+            class="delete-btn button"
+          >
+            Poista tunniste
+          </a>
+        </p>
         <p><a @click="showModifyTagInputs = false" class="button back">Palaa takaisin</a></p>
       </div>
     </div>
