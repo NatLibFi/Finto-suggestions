@@ -107,7 +107,8 @@
               <span
                 :style="{ backgroundColor: tag.color, borderColor: tag.color }"
                 v-for="tag in suggestion.tags"
-                :key="tag.label" class="tag"
+                :key="tag.label"
+                class="tag"
               >
                 {{ tag.label }}
               </span>
@@ -116,6 +117,12 @@
         </div>
         <div class="suggestion-header-buttons" v-if="isAuthenticated && role === userRoles.ADMIN">
           <tag-selector :suggestion="suggestion" :userId="userId" />
+          <emoji-selector
+            @updateReactionList="componentKey += 1"
+            :suggestionId="suggestion.id"
+            :userId="userId"
+            class="emoji"
+          />
           <menu-button :options="menuOptions" name="suggestion-menu" class="menu" ref="menu" />
         </div>
       </div>
@@ -125,6 +132,7 @@
         :user-name="userName"
         :isAuthenticated="isAuthenticated"
         :isAdmin="role === userRoles.ADMIN"
+        :componentKey="componentKey"
       />
     </div>
 
@@ -141,10 +149,12 @@
     <div v-if="events && events.length > 0">
       <div v-for="event in events" :key="event.id">
         <suggestion-event
+          @updateReactionList="componentKey += 1"
           :event="event"
           :type="event.event_type"
           :suggestionId="suggestionId"
           :isAuthenticated="isAuthenticated"
+          :componentKey="componentKey"
         />
       </div>
     </div>
@@ -165,6 +175,8 @@ import SvgIcon from '../icons/SvgIcon';
 import MenuButton from '../common/MenuButton';
 import AddComment from './AddComment';
 import AssignMeeting from './AssignMeeting';
+import EmojiSelector from '../common/EmojiSelector';
+import TagSelector from '../tag/TagSelector';
 
 import {
   suggestionType,
@@ -199,8 +211,6 @@ import { authenticatedUserGetters, authenticatedUserActions } from '../../store/
 
 import { userRoles } from '../../utils/userHelpers';
 
-import TagSelector from '../tag/TagSelector';
-
 export default {
   components: {
     SuggestionContent,
@@ -212,6 +222,7 @@ export default {
     MenuButton,
     AddComment,
     AssignMeeting,
+    EmojiSelector,
     TagSelector
   },
   props: {
@@ -230,6 +241,7 @@ export default {
       dateTimeFormatLabel,
       userName: '',
       suggestionType,
+      componentKey: 0,
       requestedSuggestionId: null,
       dropdownOpen: false,
       noNextSuggestions: false,
@@ -515,7 +527,7 @@ export default {
 .suggestion-header-headline {
   line-height: 45px;
   display: inline-block;
-  width: 80%;
+  width: 65%;
   height: 100px;
 }
 
@@ -532,17 +544,18 @@ h1.suggestion-title {
   right: 0px;
   bottom: 0px;
   display: inline-block;
-  width: 100px;
+  width: 120px;
   height: 30px;
   text-align: right;
 }
 
-.icon-button {
-  margin-left: 20px;
+.emoji {
+  margin-left: 6px;
 }
 
 .menu {
-  margin-left: 20px;
+  margin-left: 10px;
+  position: relative;
 }
 
 .suggestion-header-details {
