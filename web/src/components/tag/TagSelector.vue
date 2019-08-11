@@ -9,7 +9,7 @@
         <h4 v-if="showCreateTagInputs">Luo uusi tunniste</h4>
         <h4 v-if="showModifyTagInputs">Muokkaa tunnistetta</h4>
       </div>
-      <div  v-if="!showCreateTagInputs && !showModifyTagInputs" class="tag-selector-tags">
+      <div v-if="!showCreateTagInputs && !showModifyTagInputs" class="tag-selector-tags">
         <ul v-if="tags && tags.length > 0">
           <li class="tag-label" v-for="tag in tags" :key="tag.label">
             <span :style="{ backgroundColor: tag.color }" class="tag">
@@ -23,11 +23,7 @@
               :id="tag.label"
               :value="tag.label"
             />
-            <span
-              v-if="showModifyTagButtons"
-              @click="modifyTag(tag)"
-              class="modify-btn"
-            >
+            <span v-if="showModifyTagButtons" @click="modifyTag(tag)" class="modify-btn">
               Muokkaa
             </span>
           </li>
@@ -65,7 +61,8 @@
           <button
             v-if="!tagBeingModified.color"
             @click="tagBeingModified.color = '#4794a2'"
-            class="button">
+            class="button"
+          >
             Valitse väri
           </button>
           <color-picker
@@ -120,16 +117,18 @@ export default {
       required: true
     }
   },
-  data: () => ({
-    showTagSelector: false,
-    checkedTags: [],
-    showCreateTagInputs: false,
-    showModifyTagInputs: false,
-    showModifyTagButtons: false,
-    tagBeingModified: null,
-    tagLabelBeingModified: null,
-    newTag: null
-  }),
+  data() {
+    return {
+      showTagSelector: false,
+      checkedTags: [],
+      showCreateTagInputs: false,
+      showModifyTagInputs: false,
+      showModifyTagButtons: false,
+      tagBeingModified: null,
+      tagLabelBeingModified: null,
+      newTag: null
+    };
+  },
   computed: {
     ...mapTagGetters({
       tags: tagGetters.GET_TAGS
@@ -252,7 +251,11 @@ export default {
         this.userId,
         this.suggestion.id
       );
-      const params = { suggestionId: this.suggestion.id, tagLabel: this.tagBeingModified.label, event: event };
+      const params = {
+        suggestionId: this.suggestion.id,
+        tagLabel: this.tagBeingModified.label,
+        event: event
+      };
       this.deleteTag(params);
       this.$router.go();
     }
@@ -280,7 +283,7 @@ export default {
   z-index: 1;
   position: absolute;
   right: 0;
-  border: 2px solid #e1e1e1;
+  border: 1px solid #f0f0f0;
   min-height: 250px;
   min-width: 280px;
   margin: 0 0 0 0;
