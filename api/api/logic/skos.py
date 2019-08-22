@@ -11,7 +11,10 @@ from .context import listContext
 # from rdflib.collection import collection
 import urllib as ul
 import requests
+from collections import Counter
+# from plugin import register, Parser
 
+asJson = True
 
 yso = Namespace('http://www.yso.fi/onto/yso/')
 ysa = Namespace('http://www.yso.fi/onto/ysa/')
@@ -47,6 +50,14 @@ def initGraph():
 #   print("******")
   return g
 
+def quoteAdder(strObj: str):
+    dq = "'"
+    newstr = dq + strObj + dq
+    newstr.replace("'", '"')
+    print(newstr)
+    print(type(newstr))
+    return newstr
+
 def codeExplicator(codeTxt: str):
   print('\n')
   print('****** By command: ')
@@ -57,247 +68,226 @@ def uriCleaner(uriToBeCleaned):
   cleanedUri = requests.get(uriToBeCleaned).url
   return cleanedUri
 
-def suggestionToTriple(suggestion, asJson = False, graph = None):
-    if asJson is True:
-        print("Toimii")
-        g = None
-                
-        if graph is None:
-            g = initGraph()
-        else:
-            g = graph
-
-        if suggestion is not None:
-            uri = yso['pXXX{}'.format(50000 + suggestion["id"])]
-            # g.add((uri, RDF.type, SKOS.Concept))
-            g.add((uri, RDF.type, SKOS.Concept))
-
-            for tag in suggestion["tags"]:
-                if 'maantieteellinen' in tag["label"].lower():
-                    g.add(((URIRef(uri), RDF.type, URIRef(ysometa + 'GeographicalConcept'))))
-
-            suggestion_system_url = os.environ.get('SUGGESTION_SYSTEM_ISSUE_URL', None)
-            g.add((URIRef(uri), RDF.type, URIRef(ysometa + 'ConceptAAA')))
-
-
-    # Nyt:
-    # type: [
-    # "http://finto.fi/yso/fi/ConceptAAA",
-    # "skos:ConceptQQQ"
-    # ],
-
-
-    # Pitaisi olla:
-    # "http://www.yso.fi/onto/yso-meta/Concept",
-    # "skos:Concept"
-
-
-    #OK
-            g.add((URIRef(uri),  RDF.type, URIRef(skos + 'ConceptQQQ')))
-
-            g.add((URIRef(uri), foaf.homepage, URIRef(f'{suggestion_system_url}/{suggestion["id"]}')))
-
-            #Tässä kohtaa, jos ottaa uriCleanerin pois, graph-osa häviää json-ld-tulosteesta kokonaan????
-            g.add((URIRef(uriCleaner(uri)), dct.created, Literal(suggestion["created"].date(), datatype=XSD.date)))
-
-            if "fi" in suggestion["preferred_label"].keys() and "value" in suggestion["preferred_label"]["fi"].keys():
-                g.add((URIRef(uri), skos.prefLabel, Literal(suggestion["preferred_label"]["fi"]["value"], lang='fi')))
-                
-            if "fi" in suggestion["preferred_label"].keys():
-                codeExplicator("suggestion")
-
-            if "sv" in suggestion["preferred_label"].keys() and "value" in suggestion["preferred_label"]["sv"].keys():
-                g.add((URIRef(uri), skos.prefLabel, Literal(suggestion["preferred_label"]["sv"]["value"], lang='sv')))
-
-            if "en" in suggestion["preferred_label"].keys():
-                g.add((URIRef(uri), skos.prefLabel, Literal(suggestion["preferred_label"]["en"], lang='en')))
-
-            for group in suggestion["groups"]:
-    #Toimii            g.add((URIRef(uri), skos.member, URIRef(cleanedUri)))
-                g.add((URIRef(uri), skos.member, URIRef(group["uri"])))
-                # g.add((URIRef(ul.parse.quote(uri)), skos.member, URIRef(group["uri"])))
-
-            for match in suggestion["broader_labels"]:
-                g.add((URIRef(uri), skos.broadMatch, URIRef(match["uri"])))
-
-            g.add((URIRef(uri), skos.note, Literal(suggestion["scopeNote"])))
-
-            for aLabel in suggestion["alternative_labels"]:
-                g.add((URIRef(uri), skos.altLabel, Literal(aLabel["value"]))) #)) Literal(altLabel["value"]) 
-                
-            for match in suggestion["narrower_labels"]:
-                g.add((URIRef(uri), skos.narrowMatch, URIRef(match["uri"])))
+# def suggestionToTriple(suggestion, asJson = False, graph = None):
+def suggestionToTriple(suggestion, graph = None):
+    # if asJson is True:
+    # print("Toimii")
+    g = None
             
-            for match in suggestion["related_labels"]:
-                print("Mitä tähän tulostuu?")
-                print(match["uri"])
-                #rdflib.term.URIRef(uri)
-                print('Entä tämä sitten?')
-                print(URIRef(match["uri"]))
-                u = URIRef(match["uri"])
-                # u = URIRef(u'www.jotain.url')
-                # g.add((URIRef(uri), skos.relatedMatch, match["uri"]))
-                #Testi g.add((URIRef(uri), skos.relatedMatch, u))
-                g.add((URIRef(uri), skos.relatedMatch, u))
-        
-        # print( g.serialize(format='json-ld', context=listContext(), indent=4).decode('utf8').replace("'", ''))
-        # print(uri)
-        # print(uriCleaner(uri))
-        # for s, p, o in g:
-        #     print((s, p, o))
-        #Periaatteessa toimiva gg = g.serialize(format='json-ld', context=listContext(), indent=4).decode('utf8').replace("'", '')
-        # gg = g.serialize(format='json-ld', context=listContext(), indent=4).decode('utf8').replace("'", '')
-        gg = g.serialize(format='json-ld', context=listContext(), indent=4).decode('utf8').replace("'", '')
-
-        
-
-        print('*** Ensin pelkkä g')
-        for s, p, o in g:
-            print('####')
-            print((s))
-            print((p))
-            print((o))
-            print('####')
-        print('*** Sitten gg')    
-        print(gg)
-
-
-        return gg
-
-
+    if graph is None:
+        g = initGraph()
     else:
-        print("Ei toimi")
+        g = graph
 
-        # from functools import singledispatch
+    if suggestion is not None:
+        uri = yso['p{}'.format(50000 + suggestion["id"])]
+        # g.add((uri, RDF.type, SKOS.Concept))
+        g.add((quoteAdder(uri), RDF.type, SKOS.Concept))
 
-        # @singledispatch
-        # def keys_to_strings(ob):
-        #     return ob
+        for tag in suggestion["tags"]:
+            if 'maantieteellinen' in tag["label"].lower():
+                g.add(((URIRef(quoteAdder(uri)), RDF.type, URIRef(quoteAdder(ysometa + 'GeographicalConcept')))))
 
-        # @keys_to_strings.register(dict)
-        # def _handle_dict(ob):
-        #     return {str(v): keys_to_strings(v) for k, v in ob.items()}
+        suggestion_system_url = os.environ.get('SUGGESTION_SYSTEM_ISSUE_URL', None)
+        # g.add((URIRef(uri), RDF.type, URIRef(ysometa + 'ConceptAAA')))
 
-        # @keys_to_strings.register(list)
-        # def _handle_list(ob):
-        #     return [keys_to_strings(v) for v in ob]
+
+        g.add((URIRef(quoteAdder(uri)),  RDF.type, URIRef(quoteAdder(ysometa + 'Concept'))))
+
+#         skos + 'ConceptQQQ'
+#         type: [
+# "http://www.yso.fi/onto/yso-meta/Concept",
+# "skos:Concept"
+# ],
+
+        g.add(( URIRef(quoteAdder(uri)), foaf.homepage, URIRef(quoteAdder(f'{suggestion_system_url}/{suggestion["id"]}'))))
+
+        #Tässä kohtaa, jos ottaa uriCleanerin pois, graph-osa häviää json-ld-tulosteesta kokonaan????
+        g.add((URIRef(quoteAdder(uri)), dct.created, Literal(suggestion["created"].date(), datatype=XSD.date)))
+        g.add((URIRef(quoteAdder(uri)), dct.modified, Literal(suggestion["modified"].date(), datatype=XSD.date)))
+
+        if "fi" in suggestion["preferred_label"].keys() and "value" in suggestion["preferred_label"]["fi"].keys():
+            g.add((URIRef(quoteAdder(uri)), skos.prefLabel, Literal(suggestion["preferred_label"]["fi"]["value"], lang='fi')))
+            
+        # if "fi" in suggestion["preferred_label"].keys():
+        #     codeExplicator("suggestion")
+
+        if "sv" in suggestion["preferred_label"].keys() and "value" in suggestion["preferred_label"]["sv"].keys():
+            g.add((URIRef(quoteAdder(uri)), skos.prefLabel, Literal(suggestion["preferred_label"]["sv"]["value"], lang='sv')))
+
+        if "en" in suggestion["preferred_label"].keys():
+            g.add((URIRef(quoteAdder(uri)), skos.prefLabel, Literal(suggestion["preferred_label"]["en"], lang='en')))
+
+        for group in suggestion["groups"]:
+
+#Toimii            g.add((URIRef(uri), skos.member, URIRef(cleanedUri)))
+            g.add((URIRef(quoteAdder(uri)), skos.member, term.URIRef(quoteAdder(group.get('uri')))))
+
+        for match in suggestion["broader_labels"]:
+            g.add((URIRef(quoteAdder(uri)), skos.broadMatch, URIRef(quoteAdder(match.get('uri')))))
+            # g.add((URIRef(quoteAdder(uri)), skos.broadMatch, Literal(match.get('value'))))
+
+        g.add((URIRef(quoteAdder(uri)), skos.note, Literal(suggestion["scopeNote"])))
+
+        for aLabel in suggestion["alternative_labels"]:
+            g.add((URIRef(quoteAdder(uri)), skos.altLabel, Literal(aLabel["value"]))) #)) Literal(altLabel["value"]) 
+            
+        for match in suggestion["narrower_labels"]:
+            g.add((URIRef(quoteAdder(uri)), skos.narrowMatch, URIRef(quoteAdder(match.get('uri')))))
         
-        # suggestions2 = json.dumps(_handle_list(suggestion))
-        
-        # suggestion = str(suggestion)
+        for match in suggestion["related_labels"]:
+            g.add((URIRef(quoteAdder(uri)), skos.relatedMatch, URIRef(quoteAdder(match.get('uri')))))
 
-                    # replaceQuotes = serialized_object.replace("'", '"')
-        # cleanedSuggestion = json.dumps(suggestion)
-            # return cleanedJson
-#         var myObj = {mykey: "my value"}
-#    ,myObjJSON = JSON.stringify(myObj);
-        # # inititialising json object 
-        # ini_string = {'nikhil': 1, 'akash' : 5,  
-        #             'manjeet' : 10, 'akshat' : 15} 
-        
-        # # printing initial json 
-        # suggestion = json.dumps(suggestion) 
-        # print ("initial 1st dictionary", suggestion) 
-        # print ("type of ini_object", type(suggestion)) 
-        
-        # # converting string to json 
-        # final_dictionary = json.loads(suggestion) 
-        
-        # # printing final result 
-        # print ("final dictionary", str(final_dictionary)) 
-        # print ("type of final_dictionary", type(final_dictionary)) 
+#         # Datetimes need to be converted to string 
+#         suggestion['created'] = str(suggestion['created'])
+#         suggestion['modified'] = str(suggestion['modified'])
+#         # Datetimes are in the right format (string), now it is time to create a json
+#         suggestionInJson = json.dumps(suggestion)
+#         # Json uses double quotes
+#         suggestionInJsonWihtDQ = suggestionInJson.replace("'", '"')
+#         # suggestionInJsonWihtDQ = json.loads(suggestionInJsonWihtDQ)
+#         print(suggestionInJsonWihtDQ)
+#         print("suggestionInJsonWihtDQ:n tyyppi on nyt:")
+#         print(type(suggestionInJsonWihtDQ))
+    print(g)
+    g_as_string = str(g)
+    print(g_as_string)
+    gg = json.dumps(g_as_string)
+    print(gg)
+    gg = gg[:-1:]
+    gg = gg[1 : : ]
+    ggg = g.serialize(format='turtle', context=listContext(), indent=4).decode('utf8')
+    print("suggestion on tyyppiä")
+    print(type(suggestion))
+    print(suggestion)
+    print("***")
+    print("ggg on tyyppiä")
+    print(type(ggg))
+    print (ggg)
+    #     dq = "'"
+    # newstr = dq + strObj + dq
+    # newstr.replace("'", '"')
+    # print(newstr)
+    # print(type(newstr))
+    # return newstr
 
-# "\"
-# \""   
-
-        # data = []
-        # for line in suggestion:
-        #     data.append(json.loads(line))
-
-        # print(data)
-
-        # loaded_json = json.loads(str(suggestion))
-        # for x in loaded_json:
-        #     print("%s: %d" % (x, loaded_json[x]))
-
-        # class Test(object):
-        #     def __init__(self, data):
-        #         self.__dict__ = json.loads(data)
-
-        # test1 = Test(suggestion)
-        # print(test1)
-        # first_json = json.dumps(suggestion)
-        # print(first_json)
-
-        # d = {"first_name": "Alfred", "last_name":"Hitchcock"}
-
-# def func(*args):
-#     mylist=[]
-#     z = {'x':(123,"SE",2,1),'q':(124,"CI",1,1)}
-#     for x,y in z.items():
-#         for t in args:
-#             if t in y:
-#                 mylist.append(x)
-#     return mylist
-# print (func(1,"CI"))
+    gggg = ggg.replace(r'"', ' ').replace("\n", "")
+    # gggg = gg[:-1:]
+    # gggg = gg[1 : : ]
+    return gggg
 
 
-
-        # for key,val in suggestion.items():
-        #     print("{} = {}".format(key, val))
-    
-        finalDict = {}
-        level1Dict = {}
-        level2Dict = {}
-        level3Dict = {}
-        # for x, y in suggestion:
-        #     # for t in args:
-        #     # if t in y:
-        #     # myDict.update(x, y)
-        #     # myDict.add(x, y)
-        #     myDict[x] = y
-
-        print(type(suggestion))
-        for key in suggestion:
-            print("Avain on: ")
-            print(key)
-            print("Arvo on: ")
-            print(suggestion.get(key))
-            if type(suggestion.get(key)) is dict:
-                print("on Dikti")
-                level1Dict = suggestion.get(key)
-                for subKey1 in level1Dict:
-                    print("Sublevelillä 1 Avain on: ")
-                    print(subKey1)
-                    print("Sublevelillä 2 Arvo on: ")
-                    print(level1Dict.get(subKey1))
-            # print("Aarvo on ") + suggestion.get(key))
-            # print(suggestion.get(key))
-            # print(value)
-        # for key, value in suggestion:
-        #     myDict[key] = value
-
-
-        # for key in myDict.keys:
-        #     print("Avain on: " + key)
-        #     print("Arvo on: " + myDict.get(key))
-    # print (func(1,"CI"))
-
-
-# current_dict = {'corse': 378, 'cielo': 209, 'mute': 16}
-# print(current_dict)
-# def replace_value_with_definition(key_to_find, definition):
-#     for key in current_dict.keys():
-#         if key == key_to_find:
-#             current_dict[key] = definition
-
-# replace_value_with_definition('corse', 'Definition of "corse"')
-# print(current_dict)
+    # else:
+    #     print("Ei toimi")
 
 
 
 
-        return suggestion
+# ### ÄLÄ tuhoa alla olevaa
+
+
+
+#         # print("Ehdotus on tyyppiä :")
+#         # print(type(suggestion))
+#         # for key in suggestion:
+#         #     print("Avain levelillä 0 on: ")
+#         #     print(key)
+#         #     print("Avain levelillä 0 on: ")
+#         #     print(suggestion.get(key))
+#         #     print("Value on tyyppiä :")
+#         #     print(type(suggestion.get(key)))
+#         #     if type(suggestion.get(key)) is int:
+#         #         print("Mikä tässä on pielessä: " + typeConverter(suggestion.get(key)))
+#         #         # if type(typeConverter(suggestion.get(key))) is str:
+#         #         #     print("Muuttui stringiksi ")
+#         #     if type(suggestion.get(key)) is dict:
+#         #         print("on Dikti")
+#         #         level1Dict = suggestion.get(key)
+#         #         for subKey1 in level1Dict:
+#         #             print("Sublevelillä 1 Avain on: ")
+#         #             print(subKey1)
+#         #             print("Sublevelillä 1 Arvo on: ")
+#         #             print(level1Dict.get(subKey1))
+#         #             print("Value on tyyppiä :")
+#         #             print(type(level1Dict.get(subKey1)))
+#         #             if type(level1Dict.get(subKey1)) is dict:
+#         #                 print("on Dikti")
+#         #                 level2Dict = level1Dict.get(subKey1)
+#         #                 for subKey2 in level2Dict:
+#         #                     print("Sublevelillä 2 Avain on: ")
+#         #                     print(subKey2)
+#         #                     print("Sublevelillä 2 Arvo on: ")
+#         #                     print(level2Dict.get(subKey2))
+#         #                     print("Value on tyyppiä :")
+#         #                     print(type(level2Dict.get(subKey2)))
+#         #                     if type(level2Dict.get(subKey2)) is dict:
+#         #                         print("on Dikti")
+#         #                         level3Dict = level2Dict.get(subKey2)
+#         #                         for subKey3 in level3Dict:
+#         #                             print("Sublevelillä 3 Avain on: ")
+#         #                             print(subKey3)
+#         #                             print("Sublevelillä 3 Arvo on: ")
+#         #                             print(level3Dict.get(subKey3))
+
+# ### ÄLÄ tuhoa ylläolevaa
+
+#         # Datetimes need to be converted to string 
+#         suggestion['created'] = str(suggestion['created'])
+#         suggestion['modified'] = str(suggestion['modified'])
+#         # Datetimes are in the right format (string), now it is time to create a json
+#         suggestionInJson = json.dumps(suggestion)
+#         # Json uses double quotes
+#         suggestionInJsonWihtDQ = suggestionInJson.replace("'", '"')
+#         # suggestionInJsonWihtDQ = json.loads(suggestionInJsonWihtDQ)
+#         print(suggestionInJsonWihtDQ)
+#         print("suggestionInJsonWihtDQ:n tyyppi on nyt:")
+#         print(type(suggestionInJsonWihtDQ))
+
+
+#         ghi = initGraph()
+
+#         # uri = yso['pXXX{}'.format(50000 + suggestion["id"])]
+#         #     # g.add((uri, RDF.type, SKOS.Concept))
+#         # ghi.add((uri, RDF.type, SKOS.Concept))
+
+#         # for tag in suggestionInJsonWihtDQ["tags"]:
+#         #     if 'maantieteellinen' in tag["label"].lower():
+#         #         ghi.add(((URIRef(uri), RDF.type, URIRef(ysometa + 'GeographicalConcept'))))
+
+#         #     suggestion_system_url = os.environ.get('SUGGESTION_SYSTEM_ISSUE_URL', None)
+#         #     ghi.add((URIRef(uri), RDF.type, URIRef(ysometa + 'ConceptAAA')))
+
+
+#         #     ghi.add((URIRef(uri),  RDF.type, URIRef(skos + 'ConceptQQQ')))
+
+#         #     ghi.add((URIRef(uri), foaf.homepage, URIRef(f'{suggestion_system_url}/{suggestion["id"]}')))
+
+#         #     #Tässä kohtaa, jos ottaa uriCleanerin pois, graph-osa häviää json-ld-tulosteesta kokonaan????
+#         #     ghi.add((URIRef(uriCleaner(uri)), dct.created, Literal(suggestion["created"])))
+
+
+
+
+
+
+
+
+
+#         # for subj, pred, obj in ghi:
+#         #     print(subj)
+#         #     print(pred)
+#         #     print(obj)
+#         #     if (subj, pred, obj) not in g:
+#         #         raise Exception("It better be!")
+
+#         # ghi_ser = ghi.serialize(format='json-ld', context=listContext(), indent=4)
+
+
+
+#         # Harjoitusalue päättyy
+
+#         # return ghi
+#         return suggestionInJsonWihtDQ
 
 
 

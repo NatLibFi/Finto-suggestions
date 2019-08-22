@@ -427,39 +427,39 @@ def get_suggestion_skos(suggestion_id: int) -> str:
     :returns: A single suggestion object as json
     """
 
-    # try:
-    #     suggestion = Suggestion.query.filter_by(id=suggestion_id).first()
-    #     # serialized_object = suggestion.as_dict()
-    #     serialized_object = suggestionToTriple(suggestion.as_dict() )
-    #     # return { 'data': serialized_object, 'code': 200 }, 200
-    #     replaceQueotes = serialized_object.replace("", '"')
-    #     cleanedJson = json.loads(replaceQueotes)
-    #     return cleanedJson
-    #     # return serialized_object
-    # except Exception as ex:
-    #     print(str(ex))
-    #     return { 'code': 404, 'error': str(ex) }, 404
-
-
-
     try:
         suggestion = Suggestion.query.filter_by(id=suggestion_id).first()
         # serialized_object = suggestion.as_dict()
-        prms = {"asJson" : False}
-        serialized_object = suggestionToTriple(suggestion.as_dict(), **prms )
-        # suggestion.asJson
-        # serialized_object = suggestionToTriple(suggestion, **prms )
+        serialized_object = suggestionToTriple(suggestion.as_dict())
         # return { 'data': serialized_object, 'code': 200 }, 200
         # replaceQueotes = serialized_object.replace("", '"')
-        if prms["asJson"]:
-        # if prms is True:
-            print("Jäätiin iffiin")
-            replaceQuotes = serialized_object.replace("'", '"')
-            cleanedJson = json.loads(replaceQuotes)
-            return cleanedJson
-        else: 
-            print("Jäätiin elseen")
-            return serialized_object
+        # cleanedJson = json.loads(replaceQueotes)
+        # return cleanedJson
+        return serialized_object
     except Exception as ex:
         print(str(ex))
         return { 'code': 404, 'error': str(ex) }, 404
+
+
+
+    # try:
+    #     suggestion = Suggestion.query.filter_by(id=suggestion_id).first()
+    #     # serialized_object = suggestion.as_dict()
+    #     prms = {"asJson" : True}
+    #     serialized_object = suggestionToTriple(suggestion.as_dict(), **prms )
+    #     # suggestion.asJson
+    #     # serialized_object = suggestionToTriple(suggestion, **prms )
+    #     # return { 'data': serialized_object, 'code': 200 }, 200
+    #     # replaceQueotes = serialized_object.replace("", '"')
+    #     if prms["asJson"]:
+    #     # if prms is True:
+    #         print("Jäätiin iffiin")
+    #         # replaceQuotes = serialized_object.replace("'", '"')
+    #         cleanedJson = json.loads(replaceQuotes)
+    #         return cleanedJson
+    #     else: 
+    #         print("Jäätiin elseen")
+    #         return serialized_object
+    # except Exception as ex:
+    #     print(str(ex))
+    #     return { 'code': 404, 'error': str(ex) }, 404
