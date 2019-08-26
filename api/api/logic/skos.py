@@ -149,21 +149,21 @@ def suggestionToTriple(suggestion, graph = None):
 #         print(suggestionInJsonWihtDQ)
 #         print("suggestionInJsonWihtDQ:n tyyppi on nyt:")
 #         print(type(suggestionInJsonWihtDQ))
-    print(g)
+    # print(g)
     g_as_string = str(g)
     print(g_as_string)
     gg = json.dumps(g_as_string)
-    print(gg)
+    # print(gg)
     gg = gg[:-1:]
     gg = gg[1 : : ]
-    ggg = g.serialize(format='turtle', context=listContext(), indent=4).decode('utf8')
+    ggg = g.serialize(format='turtle', context=listContext(), indent=4).decode(' ')
     print("suggestion on tyyppiä")
     print(type(suggestion))
     print(suggestion)
     print("***")
     print("ggg on tyyppiä")
     print(type(ggg))
-    print (ggg)
+    # print (ggg)
     #     dq = "'"
     # newstr = dq + strObj + dq
     # newstr.replace("'", '"')
@@ -171,9 +171,17 @@ def suggestionToTriple(suggestion, graph = None):
     # print(type(newstr))
     # return newstr
 
-    gggg = ggg.replace(r'"', ' ').replace("\n", "")
+    # OOKOO gggg = ggg.replace(r"'", '"').replace("\n", "")
+    gggg = ggg.replace(r"''", '"').replace(r"'", '').replace("\n", "") #.replace('"', '') #.replace('\\"', '"')
     # gggg = gg[:-1:]
     # gggg = gg[1 : : ]
+    print("gg")
+    print(gg)
+    print("ggg")
+    print(ggg)
+    print("gggg")
+    print(gggg)
+
     return gggg
 
 
