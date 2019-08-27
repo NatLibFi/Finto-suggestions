@@ -7,12 +7,11 @@ import string
 from flask import jsonify
 import ast
 from .context import listContext
-#
-# from rdflib.collection import collection
 import urllib as ul
 import requests
 from collections import Counter
-# from plugin import register, Parser
+import logging
+import copy
 
 asJson = True
 
@@ -44,13 +43,10 @@ def initGraph():
   g.bind('koko', koko)
   g.bind('dc', dct)
   g.bind('foaf', foaf)
-#   print("******")
-#   print("Situation immediately after an initalization")
-#   print( g.serialize(format='json-ld', context=listContext(), indent=4).decode('utf8').replace("'", ''))
-#   print("******")
   return g
 
 def quoteAdder(strObj: str):
+    return strObj
     dq = "'"
     newstr = dq + strObj + dq
     newstr.replace("'", '"')
@@ -68,122 +64,94 @@ def uriCleaner(uriToBeCleaned):
   cleanedUri = requests.get(uriToBeCleaned).url
   return cleanedUri
 
-# def suggestionToTriple(suggestion, asJson = False, graph = None):
-def suggestionToTriple(suggestion, graph = None):
-    # if asJson is True:
-    # print("Toimii")
+def suggestionToGraph(suggestion, graph = None):
     g = None
-            
-    if graph is None:
+    
+    try:
+      if graph is None:
         g = initGraph()
-    else:
+      else:
         g = graph
+    except Exception as ex:
+      print(str(ex))
 
-    if suggestion is not None:
+    try:
+      if suggestion is not None:
         uri = yso['p{}'.format(50000 + suggestion["id"])]
-        # g.add((uri, RDF.type, SKOS.Concept))
-        g.add((quoteAdder(uri), RDF.type, SKOS.Concept))
+        g.add((uri, RDF.type, SKOS.Concept))
 
-        for tag in suggestion["tags"]:
+        try:
+          for tag in suggestion["tags"]:
             if 'maantieteellinen' in tag["label"].lower():
-                g.add(((URIRef(quoteAdder(uri)), RDF.type, URIRef(quoteAdder(ysometa + 'GeographicalConcept')))))
+              g.add(((URIRef(quoteAdder(uri)), RDF.type, URIRef(quoteAdder(ysometa + 'GeographicalConcept')))))
+        except Exception as ex:
+          print(str(ex))
 
-        suggestion_system_url = os.environ.get('SUGGESTION_SYSTEM_ISSUE_URL', None)
-        # g.add((URIRef(uri), RDF.type, URIRef(ysometa + 'ConceptAAA')))
-
+        try:
+          suggestion_system_url = os.environ.get('SUGGESTION_SYSTEM_ISSUE_URL', 'http://localhost:8080')
+          
+          # g.add((URIRef(uri), RDF.type, URIRef(ysometa + 'ConceptAAA'))).replace("\n", "")
+        except Exception as ex:
+          print(str(ex))
 
         g.add((URIRef(quoteAdder(uri)),  RDF.type, URIRef(quoteAdder(ysometa + 'Concept'))))
 
-#         skos + 'ConceptQQQ'
-#         type: [
-# "http://www.yso.fi/onto/yso-meta/Concept",
-# "skos:Concept"
-# ],
+        try:
+          # g.add(( URIRef(quoteAdder(uri)), foaf.homepage, URIRef(quoteAdder(f'korjaa_tama_ennen_julkaisua/' + str(suggestion["id"])))))
+          g.add(( URIRef(quoteAdder(uri)), foaf.homepage, URIRef(quoteAdder(f'{suggestion_system_url}/{suggestion["id"]}'))))
+          # g.add(( URIRef(quoteAdder(uri)), foaf.homepage, URIRef(quoteAdder(f'korjaa_tama_ennen_julkaisua/' + str(suggestion["id"])))))
+          print("************************* TURHAA, vain debuggia varten")
+          print(URIRef(quoteAdder(f'korjaa_tama_ennen_julkaisua/' + str(suggestion["id"]))))
+        except Exception as ex:
+          print(str(ex))
 
-        g.add(( URIRef(quoteAdder(uri)), foaf.homepage, URIRef(quoteAdder(f'{suggestion_system_url}/{suggestion["id"]}'))))
+        try:
+          g.add((URIRef(quoteAdder(uri)), dct.created, Literal(suggestion["created"].date(), datatype=XSD.date)))
+          g.add((URIRef(quoteAdder(uri)), dct.modified, Literal(suggestion["modified"].date(), datatype=XSD.date)))
+        except Exception as ex:
+          print(str(ex))
 
-        #Tässä kohtaa, jos ottaa uriCleanerin pois, graph-osa häviää json-ld-tulosteesta kokonaan????
-        g.add((URIRef(quoteAdder(uri)), dct.created, Literal(suggestion["created"].date(), datatype=XSD.date)))
-        g.add((URIRef(quoteAdder(uri)), dct.modified, Literal(suggestion["modified"].date(), datatype=XSD.date)))
+        try:
+          for lang in ("fi", "sv", "en"):
+            if lang in suggestion["preferred_label"] and suggestion["preferred_label"][lang].get('value'):
+              g.add((URIRef(quoteAdder(uri)), skos.prefLabel, Literal(suggestion["preferred_label"][lang]["value"].strip(), lang=lang)))
+        except Exception as ex:
+          print(str(ex))
 
-        if "fi" in suggestion["preferred_label"].keys() and "value" in suggestion["preferred_label"]["fi"].keys():
-            g.add((URIRef(quoteAdder(uri)), skos.prefLabel, Literal(suggestion["preferred_label"]["fi"]["value"], lang='fi')))
+        try:
+          for group in suggestion["groups"]:
+            if group.get('uri'):
+              g.add((URIRef(quoteAdder(uri)), skos.member, term.URIRef(quoteAdder(group.get('uri')))))
+
+          for match in suggestion["broader_labels"]:
+            if match.get('uri'):
+              g.add((URIRef(quoteAdder(uri)), skos.broadMatch, URIRef(quoteAdder(match.get('uri')))))
+
+          if suggestion.get('scopeNote'):
+            g.add((URIRef(quoteAdder(uri)), skos.scopeNote, Literal(suggestion["scopeNote"].strip())))
+
+          for aLabel in suggestion["alternative_labels"]:
+            if aLabel.get('value'):
+              g.add((URIRef(quoteAdder(uri)), skos.altLabel, Literal(aLabel["value"].strip()))) #)) Literal(altLabel["value"]) 
             
-        # if "fi" in suggestion["preferred_label"].keys():
-        #     codeExplicator("suggestion")
-
-        if "sv" in suggestion["preferred_label"].keys() and "value" in suggestion["preferred_label"]["sv"].keys():
-            g.add((URIRef(quoteAdder(uri)), skos.prefLabel, Literal(suggestion["preferred_label"]["sv"]["value"], lang='sv')))
-
-        if "en" in suggestion["preferred_label"].keys():
-            g.add((URIRef(quoteAdder(uri)), skos.prefLabel, Literal(suggestion["preferred_label"]["en"], lang='en')))
-
-        for group in suggestion["groups"]:
-
-#Toimii            g.add((URIRef(uri), skos.member, URIRef(cleanedUri)))
-            g.add((URIRef(quoteAdder(uri)), skos.member, term.URIRef(quoteAdder(group.get('uri')))))
-
-        for match in suggestion["broader_labels"]:
-            g.add((URIRef(quoteAdder(uri)), skos.broadMatch, URIRef(quoteAdder(match.get('uri')))))
-            # g.add((URIRef(quoteAdder(uri)), skos.broadMatch, Literal(match.get('value'))))
-
-        g.add((URIRef(quoteAdder(uri)), skos.note, Literal(suggestion["scopeNote"])))
-
-        for aLabel in suggestion["alternative_labels"]:
-            g.add((URIRef(quoteAdder(uri)), skos.altLabel, Literal(aLabel["value"]))) #)) Literal(altLabel["value"]) 
-            
-        for match in suggestion["narrower_labels"]:
-            g.add((URIRef(quoteAdder(uri)), skos.narrowMatch, URIRef(quoteAdder(match.get('uri')))))
+          for match in suggestion["narrower_labels"]:
+            if match.get('uri'):
+              g.add((URIRef(quoteAdder(uri)), skos.narrowMatch, URIRef(quoteAdder(match.get('uri')))))
         
-        for match in suggestion["related_labels"]:
-            g.add((URIRef(quoteAdder(uri)), skos.relatedMatch, URIRef(quoteAdder(match.get('uri')))))
+          for match in suggestion["related_labels"]:
+            if match.get('uri'):
+              g.add((URIRef(quoteAdder(uri)), skos.relatedMatch, URIRef(quoteAdder(match.get('uri')))))
+        except Exception as ex:
+          print(str(ex))
+          
+    except Exception as totalEx:
+      print(str(totalEx))  
 
-#         # Datetimes need to be converted to string 
-#         suggestion['created'] = str(suggestion['created'])
-#         suggestion['modified'] = str(suggestion['modified'])
-#         # Datetimes are in the right format (string), now it is time to create a json
-#         suggestionInJson = json.dumps(suggestion)
-#         # Json uses double quotes
-#         suggestionInJsonWihtDQ = suggestionInJson.replace("'", '"')
-#         # suggestionInJsonWihtDQ = json.loads(suggestionInJsonWihtDQ)
-#         print(suggestionInJsonWihtDQ)
-#         print("suggestionInJsonWihtDQ:n tyyppi on nyt:")
-#         print(type(suggestionInJsonWihtDQ))
-    # print(g)
-    g_as_string = str(g)
-    print(g_as_string)
-    gg = json.dumps(g_as_string)
-    # print(gg)
-    gg = gg[:-1:]
-    gg = gg[1 : : ]
-    ggg = g.serialize(format='turtle', context=listContext(), indent=4).decode(' ')
-    print("suggestion on tyyppiä")
-    print(type(suggestion))
-    print(suggestion)
-    print("***")
-    print("ggg on tyyppiä")
-    print(type(ggg))
-    # print (ggg)
-    #     dq = "'"
-    # newstr = dq + strObj + dq
-    # newstr.replace("'", '"')
-    # print(newstr)
-    # print(type(newstr))
-    # return newstr
+    return g
 
-    # OOKOO gggg = ggg.replace(r"'", '"').replace("\n", "")
-    gggg = ggg.replace(r"''", '"').replace(r"'", '').replace("\n", "") #.replace('"', '') #.replace('\\"', '"')
-    # gggg = gg[:-1:]
-    # gggg = gg[1 : : ]
-    print("gg")
-    print(gg)
-    print("ggg")
-    print(ggg)
-    print("gggg")
-    print(gggg)
 
-    return gggg
 
+############################################
 
     # else:
     #     print("Ei toimi")
@@ -298,6 +266,1257 @@ def suggestionToTriple(suggestion, graph = None):
 #         return suggestionInJsonWihtDQ
 
 
+
+
+
+
+
+
+
+
+
+##############################
+
+
+################################################
+#             |                 |
+#             |   +-------------+--------------+
+#             |   |                            +
+#             |   | Ylin koodi on aina viimeisin
+#             |   |                            |
+#             |   +----------------------------+
+#        +----+--------------------------------+
+#        |                                     |
+#        |  Mikan ja Osman koodi on enimmäkseen|
+#        |  GoForen koodin jälkeen tullutta    |
+#        |                                     |
+#        |                                     |
+#        +-------------------------------------+
+
+
+# from rdflib import Graph, URIRef, Literal, Namespace, RDF, XSD, plugin, term
+# from rdflib.namespace import SKOS, DC
+# from rdflib.serializer import Serializer
+# import json
+# import os
+# import string
+# from flask import jsonify
+# import ast
+# from .context import listContext
+# #
+# # from rdflib.collection import collection
+# import urllib as ul
+# import requests
+# from collections import Counter
+# import logging
+# # from plugin import register, Parser
+
+# asJson = True
+
+# yso = Namespace('http://www.yso.fi/onto/yso/')
+# ysa = Namespace('http://www.yso.fi/onto/ysa/')
+# ysemeta = Namespace('http://www.yso.fi/onto/yse-meta/')
+# ysameta = Namespace('http://www.yso.fi/onto/ysa-meta/')
+# foaf = Namespace('http://xmlns.com/foaf/0.1/')
+# skos = Namespace('http://www.w3.org/2004/02/skos/core#')
+# dct = Namespace('http://purl.org/dc/terms/')
+# ysometa = Namespace('http://www.yso.fi/onto/yso-meta/')
+# allars = Namespace('http://www.yso.fi/onto/allars/')
+# koko = Namespace('http://www.yso.fi/onto/koko/')
+# isothes = Namespace('http://purl.org/iso25964/skos-thes#')
+# rdfs = Namespace('http://www.w3.org/2000/01/rdf-schema#')
+# owl = Namespace('http://www.w3.org/2002/07/owl#')
+# dc11 = Namespace('http://purl.org/dc/elements/1.1/')
+
+# def initGraph():
+#   g = Graph()
+#   g.bind('yso', yso)
+#   g.bind('ysa', ysa)
+#   g.bind('skos', skos)
+#   g.bind('allars', allars)
+#   g.bind('ysometa', ysometa)
+#   g.bind('ysometa', ysometa)
+#   g.bind('ysameta', ysameta)
+#   g.bind('ysemeta', ysemeta)
+#   g.bind('koko', koko)
+#   g.bind('dc', dct)
+#   g.bind('foaf', foaf)
+# #   print("******")
+# #   print("Situation immediately after an initalization")
+
+# from rdflib import Graph, URIRef, Literal, Namespace, RDF, XSD, plugin, term
+# from rdflib.namespace import SKOS, DC
+# from rdflib.serializer import Serializer
+# import json
+# import os
+# import string
+# from flask import jsonify
+# import ast
+# from .context import listContext
+# #
+# # from rdflib.collection import collection
+# import urllib as ul
+# import requests
+# from collections import Counter
+# import logging
+# # from plugin import register, Parser
+
+# asJson = True
+
+# yso = Namespace('http://www.yso.fi/onto/yso/')
+# ysa = Namespace('http://www.yso.fi/onto/ysa/')
+# ysemeta = Namespace('http://www.yso.fi/onto/yse-meta/')
+# ysameta = Namespace('http://www.yso.fi/onto/ysa-meta/')
+# foaf = Namespace('http://xmlns.com/foaf/0.1/')
+# skos = Namespace('http://www.w3.org/2004/02/skos/core#')
+# dct = Namespace('http://purl.org/dc/terms/')
+# ysometa = Namespace('http://www.yso.fi/onto/yso-meta/')
+# allars = Namespace('http://www.yso.fi/onto/allars/')
+# koko = Namespace('http://www.yso.fi/onto/koko/')
+# isothes = Namespace('http://purl.org/iso25964/skos-thes#')
+# rdfs = Namespace('http://www.w3.org/2000/01/rdf-schema#')
+# owl = Namespace('http://www.w3.org/2002/07/owl#')
+# dc11 = Namespace('http://purl.org/dc/elements/1.1/')
+
+# def initGraph():
+#   g = Graph()
+#   g.bind('yso', yso)
+#   g.bind('ysa', ysa)
+#   g.bind('skos', skos)
+#   g.bind('allars', allars)
+#   g.bind('ysometa', ysometa)
+#   g.bind('ysometa', ysometa)
+#   g.bind('ysameta', ysameta)
+#   g.bind('ysemeta', ysemeta)
+#   g.bind('koko', koko)
+#   g.bind('dc', dct)
+#   g.bind('foaf', foaf)
+# #   print("******")
+# #   print("Situation immediately after an initalization")
+# #   print( g.serialize(foode('utf8').replace("'", ''))
+# #   print("******")
+#   return g
+
+# def quoteAdder(strObj: str):
+#     dq = "'"
+#     newstr = dq + strObj + dq
+#     newstr.replace("'", '"')
+#     print(newstr)
+#     print(type(newstr))
+#     return newstr
+
+# def codeExplicator(codeTxt: str):
+#   print('\n')
+#   print('****** By command: ')
+#   print(codeTxt)  
+#   print('******')
+
+# def uriCleaner(uriToBeCleaned):
+#   cleanedUri = requests.get(uriToBeCleaned).url
+#   return cleanedUri
+
+# # def suggestionToTriple(suggestion, asJson = False, graph = None):
+
+# def suggestionToTriple(suggestion, graph = None):
+#     # if asJson is True:
+#     # print("Toimii")
+#     g = None
+    
+#     try:
+#       if graph is None:
+#         g = initGraph()
+#       else:
+#         g = graph
+#     except Exception as ex:
+#       print(str(ex))
+
+#     if suggestion is not None:
+#         uri = yso['p{}'.format(50000 + suggestion["id"])]
+#         # g.add((uri, RDF.type, SKOS.Concept))
+#         g.add((quoteAdder(uri), RDF.type, SKOS.Concept))
+
+#         try:
+#           for tag in suggestion["tags"]:
+#             if 'maantieteellinen' in tag["label"].lower():
+#               g.add(((URIRef(quoteAdder(uri)), RDF.type, URIRef(quoteAdder(ysometa + 'GeographicalConcept')))))
+#         except Exception as ex:
+#           print(str(ex))
+
+#         try:
+#           #Selvitä tarkemmin ennen julkaisua
+#           # suggestion_system_url = os.environ.get('SUGGESTION_SYSTEM_ISSUE_URL', None)
+#           suggestion_system_url = os.environ.get('SUGGESTION_SYSTEM_ISSUE_URL', 'http://localhost:8080')
+#           # print("SUGGESTION_SYSTEM_ISSUE_URL:")
+#           # print(suggestion_system_url)
+#           # g.add((URIRef(uri), RDF.type, URIRef(ysometa + 'ConceptAAA')))
+#         except Exception as ex:
+#           print(str(ex))
+
+#         g.add((URIRef(quoteAdder(uri)),  RDF.type, URIRef(quoteAdder(ysometa + 'Concept'))))
+#         #         skos + 'ConceptQQQ'
+#         #         type: [
+#         # "http://www.yso.fi/onto/yso-meta/Concept",
+#         # "skos:Concept"
+#         # ],
+#         try:
+#           # korjaa g.add(( URIRef(quoteAdder(uri)), foaf.homepage, URIRef(quoteAdder(f'{suggestion_system_url}/{suggestion["id"]}'))))
+#           g.add(( URIRef(quoteAdder(uri)), foaf.homepage, URIRef(quoteAdder(f'korjaa_tama_ennen_julkaisua/' + str(suggestion["id"])))))
+#           print("************************* TURHAA, vain debuggia varten")
+#           # lprkaaprint(URIRef(quoteAdder(f'{suggestion_system_url}/{suggestion["id"]}')))
+#           print(URIRef(quoteAdder(f'korjaa_tama_ennen_julkaisua/' + str(suggestion["id"]))))
+#         except Exception as ex:
+#           print(str(ex))
+
+#         #Tässä kohtaa, jos ottaa uriCleanerin pois, graph-osa häviää json-ld-tulosteesta kokonaan????
+#         try:
+#           g.add((URIRef(quoteAdder(uri)), dct.created, Literal(suggestion["created"].date(), datatype=XSD.date)))
+#           g.add((URIRef(quoteAdder(uri)), dct.modified, Literal(suggestion["modified"].date(), datatype=XSD.date)))
+#         except Exception as ex:
+#           print(str(ex))
+
+#         try:
+#           if "fi" in suggestion["preferred_label"].keys() and "value" in suggestion["preferred_label"]["fi"].keys():
+#             g.add((URIRef(quoteAdder(uri)), skos.prefLabel, Literal(suggestion["preferred_label"]["fi"]["value"], lang='fi')))
+            
+#           #  if "fi" in suggestion["preferred_label"].keys():
+#           #     codeExplicator("suggestion")
+
+#           if "sv" in suggestion["preferred_label"].keys() and "value" in suggestion["preferred_label"]["sv"].keys():
+#             g.add((URIRef(quoteAdder(uri)), skos.prefLabel, Literal(suggestion["preferred_label"]["sv"]["value"], lang='sv')))
+
+#           if "en" in suggestion["preferred_label"].keys():
+#             g.add((URIRef(quoteAdder(uri)), skos.prefLabel, Literal(suggestion["preferred_label"]["en"], lang='en')))
+#         except Exception as ex:
+#           print(str(ex))
+
+#         try:
+#           for group in suggestion["groups"]:
+
+# # #Toimii            g.add((URIRef(uri), skos.member, URIRef(cleanedUri)))
+#             g.add((URIRef(quoteAdder(uri)), skos.member, term.URIRef(quoteAdder(group.get('uri')))))
+
+#           for match in suggestion["broader_labels"]:
+#             g.add((URIRef(quoteAdder(uri)), skos.broadMatch, URIRef(quoteAdder(match.get('uri')))))
+#             # g.add((URIRef(quoteAdder(uri)), skos.broadMatch, Literal(match.get('value'))))
+
+#             g.add((URIRef(quoteAdder(uri)), skos.note, Literal(suggestion["scopeNote"])))
+
+#           for aLabel in suggestion["alternative_labels"]:
+#             g.add((URIRef(quoteAdder(uri)), skos.altLabel, Literal(aLabel["value"]))) #)) Literal(altLabel["value"]) 
+            
+#           for match in suggestion["narrower_labels"]:
+#             g.add((URIRef(quoteAdder(uri)), skos.narrowMatch, URIRef(quoteAdder(match.get('uri')))))
+        
+#           for match in suggestion["related_labels"]:
+#             g.add((URIRef(quoteAdder(uri)), skos.relatedMatch, URIRef(quoteAdder(match.get('uri')))))
+#         except Exception as ex:
+#           print(str(ex))
+#     try:
+#       g_as_string = str(g)
+#       print(g_as_string)
+#       gg = json.dumps(g_as_string)
+#       # print(gg)
+#       gg = gg[:-1:]
+#       gg = gg[1 : : ]
+#       ggg = g.serialize(format='turtle', context=listContext(), indent=4).decode('utf8')
+#       print("suggestion on tyyppiä")
+#       print(type(suggestion))
+#       print(suggestion)
+#       print("***")
+#       print("ggg on tyyppiä")
+#       print(type(ggg))
+#       # print (ggg)
+#       #     dq = "'"
+#       # newstr = dq + strObj + dq
+#       # newstr.replace("'", '"')
+#       # print(newstr)
+#       # print(type(newstr))
+#       # return newstr
+
+#       # OOKOO gggg = ggg.replace(r"'", '"').replace("\n", "")
+#       gggg = ggg.replace(r"''", '"').replace(r"'", '').replace("\n", "") #.replace('"', '') #.replace('\\"', '"')
+#       # gggg = gg[:-1:]
+#       # gggg = gg[1 : : ]
+#       print("gg")
+#       print(gg)
+#       print("ggg")
+#       print(ggg)
+#       print("gggg")
+#       print(gggg)
+
+#       return gggg
+#     except Exception as ex:
+#       print(str(ex))
+# #   print( g.serialize(foode('utf8').replace("'", ''))
+# #   print("******")
+#   return g
+
+# def quoteAdder(strObj: str):
+#     dq = "'"
+#     newstr = dq + strObj + dq
+#     newstr.replace("'", '"')
+#     print(newstr)
+#     print(type(newstr))
+#     return newstr
+
+# def codeExplicator(codeTxt: str):
+#   print('\n')
+#   print('****** By command: ')
+#   print(codeTxt)  
+#   print('******')
+
+# def uriCleaner(uriToBeCleaned):
+#   cleanedUri = requests.get(uriToBeCleaned).url
+#   return cleanedUri
+
+# # def suggestionToTriple(suggestion, asJson = False, graph = None):
+
+# def suggestionToTriple(suggestion, graph = None):
+#     # if asJson is True:
+#     # print("Toimii")
+#     g = None
+    
+#     try:
+#       if graph is None:
+#         g = initGraph()
+#       else:
+#         g = graph
+#     except Exception as ex:
+#       print(str(ex))
+
+#     if suggestion is not None:
+#         uri = yso['p{}'.format(50000 + suggestion["id"])]
+#         # g.add((uri, RDF.type, SKOS.Concept))
+#         g.add((quoteAdder(uri), RDF.type, SKOS.Concept))
+
+#         try:
+#           for tag in suggestion["tags"]:
+#             if 'maantieteellinen' in tag["label"].lower():
+#               g.add(((URIRef(quoteAdder(uri)), RDF.type, URIRef(quoteAdder(ysometa + 'GeographicalConcept')))))
+#         except Exception as ex:
+#           print(str(ex))
+
+#         try:
+#           #Selvitä tarkemmin ennen julkaisua
+#           # suggestion_system_url = os.e
+
+# from rdflib import Graph, URIRef, Literal, Namespace, RDF, XSD, plugin, term
+# from rdflib.namespace import SKOS, DC
+# from rdflib.serializer import Serializer
+# import json
+# import os
+# import string
+# from flask import jsonify
+# import ast
+# from .context import listContext
+# #
+# # from rdflib.collection import collection
+# import urllib as ul
+# import requests
+# from collections import Counter
+# import logging
+# # from plugin import register, Parser
+
+# asJson = True
+
+# yso = Namespace('http://www.yso.fi/onto/yso/')
+# ysa = Namespace('http://www.yso.fi/onto/ysa/')
+# ysemeta = Namespace('http://www.yso.fi/onto/yse-meta/')
+# ysameta = Namespace('http://www.yso.fi/onto/ysa-meta/')
+# foaf = Namespace('http://xmlns.com/foaf/0.1/')
+# skos = Namespace('http://www.w3.org/2004/02/skos/core#')
+# dct = Namespace('http://purl.org/dc/terms/')
+# ysometa = Namespace('http://www.yso.fi/onto/yso-meta/')
+# allars = Namespace('http://www.yso.fi/onto/allars/')
+# koko = Namespace('http://www.yso.fi/onto/koko/')
+# isothes = Namespace('http://purl.org/iso25964/skos-thes#')
+# rdfs = Namespace('http://www.w3.org/2000/01/rdf-schema#')
+# owl = Namespace('http://www.w3.org/2002/07/owl#')
+# dc11 = Namespace('http://purl.org/dc/elements/1.1/')
+
+# def initGraph():
+#   g = Graph()
+#   g.bind('yso', yso)
+#   g.bind('ysa', ysa)
+#   g.bind('skos', skos)
+#   g.bind('allars', allars)
+#   g.bind('ysometa', ysometa)
+#   g.bind('ysometa', ysometa)
+#   g.bind('ysameta', ysameta)
+#   g.bind('ysemeta', ysemeta)
+#   g.bind('koko', koko)
+#   g.bind('dc', dct)
+#   g.bind('foaf', foaf)
+# #   print("******")
+# #   print("Situation immediately after an initalization")
+# #   print( g.serialize(foode('utf8').replace("'", ''))
+# #   print("******")
+#   return g
+
+# def quoteAdder(strObj: str):
+#     dq = "'"
+#     newstr = dq + strObj + dq
+#     newstr.replace("'", '"')
+#     print(newstr)
+#     print(type(newstr))
+#     return newstr
+
+# def codeExplicator(codeTxt: str):
+#   print('\n')
+#   print('****** By command: ')
+#   print(codeTxt)  
+#   print('******')
+
+# def uriCleaner(uriToBeCleaned):
+#   cleanedUri = requests.get(uriToBeCleaned).url
+#   return cleanedUri
+
+# # def suggestionToTriple(suggestion, asJson = False, graph = None):
+
+# def suggestionToTriple(suggestion, graph = None):
+#     # if asJson is True:
+#     # print("Toimii")
+#     g = None
+    
+#     try:
+#       if graph is None:
+#         g = initGraph()
+#       else:
+#         g = graph
+#     except Exception as ex:
+#       print(str(ex))
+
+#     if suggestion is not None:
+#         uri = yso['p{}'.format(50000 + suggestion["id"])]
+#         # g.add((uri, RDF.type, SKOS.Concept))
+#         g.add((quoteAdder(uri), RDF.type, SKOS.Concept))
+
+#         try:
+#           for tag in suggestion["tags"]:
+#             if 'maantieteellinen' in tag["label"].lower():
+#               g.add(((URIRef(quoteAdder(uri)), RDF.type, URIRef(quoteAdder(ysometa + 'GeographicalConcept')))))
+#         except Exception as ex:
+#           print(str(ex))
+
+#         try:
+#           #Selvitä tarkemmin ennen julkaisua
+#           # suggestion_system_url = os.environ.get('SUGGESTION_SYSTEM_ISSUE_URL', None)
+#           suggestion_system_url = os.environ.get('SUGGESTION_SYSTEM_ISSUE_URL', 'http://localhost:8080')
+#           # print("SUGGESTION_SYSTEM_ISSUE_URL:")
+#           # print(suggestion_system_url)
+#           # g.add((URIRef(uri), RDF.type, URIRef(ysometa + 'ConceptAAA')))
+#         except Exception as ex:
+#           print(str(ex))
+
+#         g.add((URIRef(quoteAdder(uri)),  RDF.type, URIRef(quoteAdder(ysometa + 'Concept'))))
+#         #         skos + 'ConceptQQQ'
+#         #         type: [
+#         # "http://www.yso.fi/onto/yso-meta/Concept",
+#         # "skos:Concept"
+#         # ],
+#         try:
+#           # korjaa g.add(( URIRef(quoteAdder(uri)), foaf.homepage, URIRef(quoteAdder(f'{suggestion_system_url}/{suggestion["id"]}'))))
+#           g.add(( URIRef(quoteAdder(uri)), foaf.homepage, URIRef(quoteAdder(f'korjaa_tama_ennen_julkaisua/' + str(suggestion["id"])))))
+#           print("************************* TURHAA, vain debuggia varten")
+#           # lprkaaprint(URIRef(quoteAdder(f'{suggestion_system_url}/{suggestion["id"]}')))
+#           print(URIRef(quoteAdder(f'korjaa_tama_ennen_julkaisua/' + str(suggestion["id"]))))
+#         except Exception as ex:
+#           print(str(ex))
+
+#         #Tässä kohtaa, jos ottaa uriCleanerin pois, graph-osa häviää json-ld-tulosteesta kokonaan????
+#         try:
+#           g.add((URIRef(quoteAdder(uri)), dct.created, Literal(suggestion["created"].date(), datatype=XSD.date)))
+#           g.add((URIRef(quoteAdder(uri)), dct.modified, Literal(suggestion["modified"].date(), datatype=XSD.date)))
+#         except Exception as ex:
+#           print(str(ex))
+
+#         try:
+#           if "fi" in suggestion["preferred_label"].keys() and "value" in suggestion["preferred_label"]["fi"].keys():
+#             g.add((URIRef(quoteAdder(uri)), skos.prefLabel, Literal(suggestion["preferred_label"]["fi"]["value"], lang='fi')))
+            
+#           #  if "fi" in suggestion["preferred_label"].keys():
+#           #     codeExplicator("suggestion")
+
+#           if "sv" in suggestion["preferred_label"].keys() and "value" in suggestion["preferred_label"]["sv"].keys():
+#             g.add((URIRef(quoteAdder(uri)), skos.prefLabel, Literal(suggestion["preferred_label"]["sv"]["value"], lang='sv')))
+
+#           if "en" in suggestion["preferred_label"].keys():
+#             g.add((URIRef(quoteAdder(uri)), skos.prefLabel, Literal(suggestion["preferred_label"]["en"], lang='en')))
+#         except Exception as ex:
+#           print(str(ex))
+
+#         try:
+#           for group in suggestion["groups"]:
+
+# # #Toimii            g.add((URIRef(uri), skos.member, URIRef(cleanedUri)))
+#             g.add((URIRef(quoteAdder(uri)), skos.member, term.URIRef(quoteAdder(group.get('uri')))))
+
+#           for match in suggestion["broader_labels"]:
+#             g.add((URIRef(quoteAdder(uri)), skos.broadMatch, URIRef(quoteAdder(match.get('uri')))))
+#             # g.add((URIRef(quoteAdder(uri)), skos.broadMatch, Literal(match.get('value'))))
+
+#             g.add((URIRef(quoteAdder(uri)), skos.note, Literal(suggestion["scopeNote"])))
+
+#           for aLabel in suggestion["alternative_labels"]:
+#             g.add((URIRef(quoteAdder(uri)), skos.altLabel, Literal(aLabel["value"]))) #)) Literal(altLabel["value"]) 
+            
+#           for match in suggestion["narrower_labels"]:
+#             g.add((URIRef(quoteAdder(uri)), skos.narrowMatch, URIRef(quoteAdder(match.get('uri')))))
+        
+#           for match in suggestion["related_labels"]:
+#             g.add((URIRef(quoteAdder(uri)), skos.relatedMatch, URIRef(quoteAdder(match.get('uri')))))
+#         except Exception as ex:
+#           print(str(ex))
+#     try:
+#       g_as_string = str(g)
+#       print(g_as_string)
+#       gg = json.dumps(g_as_string)
+#       # print(gg)
+#       gg = gg[:-1:]
+#       gg = gg[1 : : ]
+#       ggg = g.serialize(format='turtle', context=listContext(), indent=4).decode('utf8')
+#       print("suggestion on tyyppiä")
+#       print(type(suggestion))
+#       print(suggestion)
+#       print("***")
+#       print("ggg on tyyppiä")
+#       print(type(ggg))
+#       # print (ggg)
+#       #     dq = "'"
+#       # newstr = dq + strObj + dq
+#       # newstr.replace("'", '"')
+#       # print(newstr)
+#       # print(type(newstr))
+#       # return newstr
+
+#       # OOKOO gggg = ggg.replace(r"'", '"').replace("\n", "")
+#       gggg = ggg.replace(r"''", '"').replace(r"'", '').replace("\n", "") #.replace('"', '') #.replace('\\"', '"')
+#       # gggg = gg[:-1:]
+#       # gggg = gg[1 : : ]
+#       print("gg")
+#       print(gg)
+#       print("ggg")
+#       print(ggg)
+#       print("gggg")
+#       print(gggg)
+
+#       return gggg
+#     except Exception as ex:
+#       print(str(ex))
+#           suggestion_system_url = os.env
+
+# from rdflib import Graph, URIRef, Literal, Namespace, RDF, XSD, plugin, term
+# from rdflib.namespace import SKOS, DC
+# from rdflib.serializer import Serializer
+# import json
+# import os
+# import string
+# from flask import jsonify
+# import ast
+# from .context import listContext
+# #
+# # from rdflib.collection import collection
+# import urllib as ul
+# import requests
+# from collections import Counter
+# import logging
+# # from plugin import register, Parser
+
+# asJson = True
+
+# yso = Namespace('http://www.yso.fi/onto/yso/')
+# ysa = Namespace('http://www.yso.fi/onto/ysa/')
+# ysemeta = Namespace('http://www.yso.fi/onto/yse-meta/')
+# ysameta = Namespace('http://www.yso.fi/onto/ysa-meta/')
+# foaf = Namespace('http://xmlns.com/foaf/0.1/')
+# skos = Namespace('http://www.w3.org/2004/02/skos/core#')
+# dct = Namespace('http://purl.org/dc/terms/')
+# ysometa = Namespace('http://www.yso.fi/onto/yso-meta/')
+# allars = Namespace('http://www.yso.fi/onto/allars/')
+# koko = Namespace('http://www.yso.fi/onto/koko/')
+# isothes = Namespace('http://purl.org/iso25964/skos-thes#')
+# rdfs = Namespace('http://www.w3.org/2000/01/rdf-schema#')
+# owl = Namespace('http://www.w3.org/2002/07/owl#')
+# dc11 = Namespace('http://purl.org/dc/elements/1.1/')
+
+# def initGraph():
+#   g = Graph()
+#   g.bind('yso', yso)
+#   g.bind('ysa', ysa)
+#   g.bind('skos', skos)
+#   g.bind('allars', allars)
+#   g.bind('ysometa', ysometa)
+#   g.bind('ysometa', ysometa)
+#   g.bind('ysameta', ysameta)
+#   g.bind('ysemeta', ysemeta)
+#   g.bind('koko', koko)
+#   g.bind('dc', dct)
+#   g.bind('foaf', foaf)
+# #   print("******")
+# #   print("Situation immediately after an initalization")
+# #   print( g.serialize(foode('utf8').replace("'", ''))
+# #   print("******")
+#   return g
+
+# def quoteAdder(strObj: str):
+#     dq = "'"
+#     newstr = dq + strObj + dq
+#     newstr.replace("'", '"')
+#     print(newstr)
+#     print(type(newstr))
+#     return newstr
+
+# def codeExplicator(codeTxt: str):
+#   print('\n')
+#   print('****** By command: ')
+#   print(codeTxt)  
+#   print('******')
+
+# def uriCleaner(uriToBeCleaned):
+#   cleanedUri = requests.get(uriToBeCleaned).url
+#   return cleanedUri
+
+# # def suggestionToTriple(suggestion, asJson = False, graph = None):
+
+# def suggestionToTriple(suggestion, graph = None):
+#     # if asJson is True:
+#     # print("Toimii")
+#     g = None
+    
+#     try:
+#       if graph is None:
+#         g = initGraph()
+#       else:
+#         g = graph
+#     except Exception as ex:
+#       print(str(ex))
+
+#     if suggestion is not None:
+#         uri = yso['p{}'.format(50000 + suggestion["id"])]
+#         # g.add((uri, RDF.type, SKOS.Concept))
+#         g.add((quoteAdder(uri), RDF.type, SKOS.Concept))
+
+#         try:
+#           for tag in suggestion["tags"]:
+#             if 'maantieteellinen' in tag["label"].lower():
+#               g.add(((URIRef(quoteAdder(uri)), RDF.type, URIRef(quoteAdder(ysometa + 'GeographicalConcept')))))
+#         except Exception as ex:
+#           print(str(ex))
+
+#         try:
+#           #Selvitä tarkemmin ennen julkaisua
+#           # suggestion_system_url = os.environ.get('SUGGESTION_SYSTEM_ISSUE_URL', None)
+#           suggestion_system_url = os.environ.get('SUGGESTION_SYSTEM_ISSUE_URL', 'http://localhost:8080')
+#           # print("SUGGESTION_SYSTEM_ISSUE_URL:")
+#           # print(suggestion_system_url)
+#           # g.add((URIRef(uri), RDF.type, URIRef(ysometa + 'ConceptAAA')))
+#         except Exception as ex:
+#           print(str(ex))
+
+#         g.add((URIRef(quoteAdder(uri)),  RDF.type, URIRef(quoteAdder(ysometa + 'Concept'))))
+#         #         skos + 'ConceptQQQ'
+#         #         type: [
+#         # "http://www.yso.fi/onto/yso-meta/Concept",
+#         # "skos:Concept"
+#         # ],
+#         try:
+#           # korjaa g.add(( URIRef(quoteAdder(uri)), foaf.homepage, URIRef(quoteAdder(f'{suggestion_system_url}/{suggestion["id"]}'))))
+#           g.add(( URIRef(quoteAdder(uri)), foaf.homepage, URIRef(quoteAdder(f'korjaa_tama_ennen_julkaisua/' + str(suggestion["id"])))))
+#           print("************************* TURHAA, vain debuggia varten")
+#           # lprkaaprint(URIRef(quoteAdder(f'{suggestion_system_url}/{suggestion["id"]}')))
+#           print(URIRef(quoteAdder(f'korjaa_tama_ennen_julkaisua/' + str(suggestion["id"]))))
+#         except Exception as ex:
+#           print(str(ex))
+
+#         #Tässä kohtaa, jos ottaa uriCleanerin pois, graph-osa häviää json-ld-tulosteesta kokonaan????
+#         try:
+#           g.add((URIRef(quoteAdder(uri)), dct.created, Literal(suggestion["created"].date(), datatype=XSD.date)))
+#           g.add((URIRef(quoteAdder(uri)), dct.modified, Literal(suggestion["modified"].date(), datatype=XSD.date)))
+#         except Exception as ex:
+#           print(str(ex))
+
+#         try:
+#           if "fi" in suggestion["preferred_label"].keys() and "value" in suggestion["preferred_label"]["fi"].keys():
+#             g.add((URIRef(quoteAdder(uri)), skos.prefLabel, Literal(suggestion["preferred_label"]["fi"]["value"], lang='fi')))
+            
+#           #  if "fi" in suggestion["preferred_label"].keys():
+#           #     codeExplicator("suggestion")
+
+#           if "sv" in suggestion["preferred_label"].keys() and "value" in suggestion["preferred_label"]["sv"].keys():
+#             g.add((URIRef(quoteAdder(uri)), skos.prefLabel, Literal(suggestion["preferred_label"]["sv"]["value"], lang='sv')))
+
+#           if "en" in suggestion["preferred_label"].keys():
+#             g.add((URIRef(quoteAdder(uri)), skos.prefLabel, Literal(suggestion["preferred_label"]["en"], lang='en')))
+#         except Exception as ex:
+#           print(str(ex))
+
+#         try:
+#           for group in suggestion["groups"]:
+
+# # #Toimii            g.add((URIRef(uri), skos.member, URIRef(cleanedUri)))
+#             g.add((URIRef(quoteAdder(uri)), skos.member, term.URIRef(quoteAdder(group.get('uri')))))
+
+#           for match in suggestion["broader_labels"]:
+#             g.add((URIRef(quoteAdder(uri)), skos.broadMatch, URIRef(quoteAdder(match.get('uri')))))
+#             # g.add((URIRef(quoteAdder(uri)), skos.broadMatch, Literal(match.get('value'))))
+
+#             g.add((URIRef(quoteAdder(uri)), skos.note, Literal(suggestion["scopeNote"])))
+
+#           for aLabel in suggestion["alternative_labels"]:
+#             g.add((URIRef(quoteAdder(uri)), skos.altLabel, Literal(aLabel["value"]))) #)) Literal(altLabel["value"]) 
+            
+#           for match in suggestion["narrower_labels"]:
+#             g.add((URIRef(quoteAdder(uri)), skos.narrowMatch, URIRef(quoteAdder(match.get('uri')))))
+        
+#           for match in suggestion["related_labels"]:
+#             g.add((URIRef(quoteAdder(uri)), skos.relatedMatch, URIRef(quoteAdder(match.get('uri')))))
+#         except Exception as ex:
+#           print(str(ex))
+#     try:
+#       g_as_string = str(g)
+#       print(g_as_string)
+#       gg = json.dumps(g_as_string)
+#       # print(gg)
+#       gg = gg[:-1:]
+#       gg = gg[1 : : ]
+#       ggg = g.serialize(format='turtle', context=listContext(), indent=4).decode('utf8')
+#       print("suggestion on tyyppiä")
+#       print(type(suggestion))
+#       print(suggestion)
+#       print("***")
+#       print("ggg on tyyppiä")
+#       print(type(ggg))
+#       # print (ggg)
+#       #     dq = "'"
+#       # newstr = dq + strObj + dq
+#       # newstr.replace("'", '"')
+#       # print(newstr)
+#       # print(type(newstr))
+#       # return newstr
+
+#       # OOKOO gggg = ggg.replace(r"'", '"').replace("\n", "")
+#       gggg = ggg.replace(r"''", '"').replace(r"'", '').replace("\n", "") #.replace('"', '') #.replace('\\"', '"')
+#       # gggg = gg[:-1:]
+#       # gggg = gg[1 : : ]
+#       print("gg")
+#       print(gg)
+#       print("ggg")
+#       print(ggg)
+#       print("gggg")
+#       print(gggg)
+
+#       return gggg
+#     except Exception as ex:
+#       print(str(ex))t:8080')
+#           # print("SUGGESTION_SYSTEM_ISS
+
+# from rdflib import Graph, URIRef, Literal, Namespace, RDF, XSD, plugin, term
+# from rdflib.namespace import SKOS, DC
+# from rdflib.serializer import Serializer
+# import json
+# import os
+# import string
+# from flask import jsonify
+# import ast
+# from .context import listContext
+# #
+# # from rdflib.collection import collection
+# import urllib as ul
+# import requests
+# from collections import Counter
+# import logging
+# # from plugin import register, Parser
+
+# asJson = True
+
+# yso = Namespace('http://www.yso.fi/onto/yso/')
+# ysa = Namespace('http://www.yso.fi/onto/ysa/')
+# ysemeta = Namespace('http://www.yso.fi/onto/yse-meta/')
+# ysameta = Namespace('http://www.yso.fi/onto/ysa-meta/')
+# foaf = Namespace('http://xmlns.com/foaf/0.1/')
+# skos = Namespace('http://www.w3.org/2004/02/skos/core#')
+# dct = Namespace('http://purl.org/dc/terms/')
+# ysometa = Namespace('http://www.yso.fi/onto/yso-meta/')
+# allars = Namespace('http://www.yso.fi/onto/allars/')
+# koko = Namespace('http://www.yso.fi/onto/koko/')
+# isothes = Namespace('http://purl.org/iso25964/skos-thes#')
+# rdfs = Namespace('http://www.w3.org/2000/01/rdf-schema#')
+# owl = Namespace('http://www.w3.org/2002/07/owl#')
+# dc11 = Namespace('http://purl.org/dc/elements/1.1/')
+
+# def initGraph():
+#   g = Graph()
+#   g.bind('yso', yso)
+#   g.bind('ysa', ysa)
+#   g.bind('skos', skos)
+#   g.bind('allars', allars)
+#   g.bind('ysometa', ysometa)
+#   g.bind('ysometa', ysometa)
+#   g.bind('ysameta', ysameta)
+#   g.bind('ysemeta', ysemeta)
+#   g.bind('koko', koko)
+#   g.bind('dc', dct)
+#   g.bind('foaf', foaf)
+# #   print("******")
+# #   print("Situation immediately after an initalization")
+# #   print( g.serialize(foode('utf8').replace("'", ''))
+# #   print("******")
+#   return g
+
+# def quoteAdder(strObj: str):
+#     dq = "'"
+#     newstr = dq + strObj + dq
+#     newstr.replace("'", '"')
+#     print(newstr)
+#     print(type(newstr))
+#     return newstr
+
+# def codeExplicator(codeTxt: str):
+#   print('\n')
+#   print('****** By command: ')
+#   print(codeTxt)  
+#   print('******')
+
+# def uriCleaner(uriToBeCleaned):
+#   cleanedUri = requests.get(uriToBeCleaned).url
+#   return cleanedUri
+
+# # def suggestionToTriple(suggestion, asJson = False, graph = None):
+
+# def suggestionToTriple(suggestion, graph = None):
+#     # if asJson is True:
+#     # print("Toimii")
+#     g = None
+    
+#     try:
+#       if graph is None:
+#         g = initGraph()
+#       else:
+#         g = graph
+#     except Exception as ex:
+#       print(str(ex))
+
+#     if suggestion is not None:
+#         uri = yso['p{}'.format(50000 + suggestion["id"])]
+#         # g.add((uri, RDF.type, SKOS.Concept))
+#         g.add((quoteAdder(uri), RDF.type, SKOS.Concept))
+
+#         try:
+#           for tag in suggestion["tags"]:
+#             if 'maantieteellinen' in tag["label"].lower():
+#               g.add(((URIRef(quoteAdder(uri)), RDF.type, URIRef(quoteAdder(ysometa + 'GeographicalConcept')))))
+#         except Exception as ex:
+#           print(str(ex))
+
+#         try:
+#           #Selvitä tarkemmin ennen julkaisua
+#           # suggestion_system_url = os.environ.get('SUGGESTION_SYSTEM_ISSUE_URL', None)
+#           suggestion_system_url = os.environ.get('SUGGESTION_SYSTEM_ISSUE_URL', 'http://localhost:8080')
+#           # print("SUGGESTION_SYSTEM_ISSUE_URL:")
+#           # print(suggestion_system_url)
+#           # g.add((URIRef(uri), RDF.type, URIRef(ysometa + 'ConceptAAA')))
+#         except Exception as ex:
+#           print(str(ex))
+
+#         g.add((URIRef(quoteAdder(uri)),  RDF.type, URIRef(quoteAdder(ysometa + 'Concept'))))
+#         #         skos + 'ConceptQQQ'
+#         #         type: [
+#         # "http://www.yso.fi/onto/yso-meta/Concept",
+#         # "skos:Concept"
+#         # ],
+#         try:
+#           # korjaa g.add(( URIRef(quoteAdder(uri)), foaf.homepage, URIRef(quoteAdder(f'{suggestion_system_url}/{suggestion["id"]}'))))
+#           g.add(( URIRef(quoteAdder(uri)), foaf.homepage, URIRef(quoteAdder(f'korjaa_tama_ennen_julkaisua/' + str(suggestion["id"])))))
+#           print("************************* TURHAA, vain debuggia varten")
+#           # lprkaaprint(URIRef(quoteAdder(f'{suggestion_system_url}/{suggestion["id"]}')))
+#           print(URIRef(quoteAdder(f'korjaa_tama_ennen_julkaisua/' + str(suggestion["id"]))))
+#         except Exception as ex:
+#           print(str(ex))
+
+#         #Tässä kohtaa, jos ottaa uriCleanerin pois, graph-osa häviää json-ld-tulosteesta kokonaan????
+#         try:
+#           g.add((URIRef(quoteAdder(uri)), dct.created, Literal(suggestion["created"].date(), datatype=XSD.date)))
+#           g.add((URIRef(quoteAdder(uri)), dct.modified, Literal(suggestion["modified"].date(), datatype=XSD.date)))
+#         except Exception as ex:
+#           print(str(ex))
+
+#         try:
+#           if "fi" in suggestion["preferred_label"].keys() and "value" in suggestion["preferred_label"]["fi"].keys():
+#             g.add((URIRef(quoteAdder(uri)), skos.prefLabel, Literal(suggestion["preferred_label"]["fi"]["value"], lang='fi')))
+            
+#           #  if "fi" in suggestion["preferred_label"].keys():
+#           #     codeExplicator("suggestion")
+
+#           if "sv" in suggestion["preferred_label"].keys() and "value" in suggestion["preferred_label"]["sv"].keys():
+#             g.add((URIRef(quoteAdder(uri)), skos.prefLabel, Literal(suggestion["preferred_label"]["sv"]["value"], lang='sv')))
+
+#           if "en" in suggestion["preferred_label"].keys():
+#             g.add((URIRef(quoteAdder(uri)), skos.prefLabel, Literal(suggestion["preferred_label"]["en"], lang='en')))
+#         except Exception as ex:
+#           print(str(ex))
+
+#         try:
+#           for group in suggestion["groups"]:
+
+# # #Toimii            g.add((URIRef(uri), skos.member, URIRef(cleanedUri)))
+#             g.add((URIRef(quoteAdder(uri)), skos.member, term.URIRef(quoteAdder(group.get('uri')))))
+
+#           for match in suggestion["broader_labels"]:
+#             g.add((URIRef(quoteAdder(uri)), skos.broadMatch, URIRef(quoteAdder(match.get('uri')))))
+#             # g.add((URIRef(quoteAdder(uri)), skos.broadMatch, Literal(match.get('value'))))
+
+#             g.add((URIRef(quoteAdder(uri)), skos.note, Literal(suggestion["scopeNote"])))
+
+#           for aLabel in suggestion["alternative_labels"]:
+#             g.add((URIRef(quoteAdder(uri)), skos.altLabel, Literal(aLabel["value"]))) #)) Literal(altLabel["value"]) 
+            
+#           for match in suggestion["narrower_labels"]:
+#             g.add((URIRef(quoteAdder(uri)), skos.narrowMatch, URIRef(quoteAdder(match.get('uri')))))
+        
+#           for match in suggestion["related_labels"]:
+#             g.add((URIRef(quoteAdder(uri)), skos.relatedMatch, URIRef(quoteAdder(match.get('uri')))))
+#         except Exception as ex:
+#           print(str(ex))
+#     try:
+#       g_as_string = str(g)
+#       print(g_as_string)
+#       gg = json.dumps(g_as_string)
+#       # print(gg)
+#       gg = gg[:-1:]
+#       gg = gg[1 : : ]
+#       ggg = g.serialize(format='turtle', context=listContext(), indent=4).decode('utf8')
+#       print("suggestion on tyyppiä")
+#       print(type(suggestion))
+#       print(suggestion)
+#       print("***")
+#       print("ggg on tyyppiä")
+#       print(type(ggg))
+#       # print (ggg)
+#       #     dq = "'"
+#       # newstr = dq + strObj + dq
+#       # newstr.replace("'", '"')
+#       # print(newstr)
+#       # print(type(newstr))
+#       # return newstr
+
+#       # OOKOO gggg = ggg.replace(r"'", '"').replace("\n", "")
+#       gggg = ggg.replace(r"''", '"').replace(r"'", '').replace("\n", "") #.replace('"', '') #.replace('\\"', '"')
+#       # gggg = gg[:-1:]
+#       # gggg = gg[1 : : ]
+#       print("gg")
+#       print(gg)
+#       print("ggg")
+#       print(ggg)
+#       print("gggg")
+#       print(gggg)
+
+#       return gggg
+#     except Exception as ex:
+#       print(str(ex))
+#           # print(suggestion_system_url)
+
+# from rdflib import Graph, URIRef, Literal, Namespace, RDF, XSD, plugin, term
+# from rdflib.namespace import SKOS, DC
+# from rdflib.serializer import Serializer
+# import json
+# import os
+# import string
+# from flask import jsonify
+# import ast
+# from .context import listContext
+# #
+# # from rdflib.collection import collection
+# import urllib as ul
+# import requests
+# from collections import Counter
+# import logging
+# # from plugin import register, Parser
+
+# asJson = True
+
+# yso = Namespace('http://www.yso.fi/onto/yso/')
+# ysa = Namespace('http://www.yso.fi/onto/ysa/')
+# ysemeta = Namespace('http://www.yso.fi/onto/yse-meta/')
+# ysameta = Namespace('http://www.yso.fi/onto/ysa-meta/')
+# foaf = Namespace('http://xmlns.com/foaf/0.1/')
+# skos = Namespace('http://www.w3.org/2004/02/skos/core#')
+# dct = Namespace('http://purl.org/dc/terms/')
+# ysometa = Namespace('http://www.yso.fi/onto/yso-meta/')
+# allars = Namespace('http://www.yso.fi/onto/allars/')
+# koko = Namespace('http://www.yso.fi/onto/koko/')
+# isothes = Namespace('http://purl.org/iso25964/skos-thes#')
+# rdfs = Namespace('http://www.w3.org/2000/01/rdf-schema#')
+# owl = Namespace('http://www.w3.org/2002/07/owl#')
+# dc11 = Namespace('http://purl.org/dc/elements/1.1/')
+
+# def initGraph():
+#   g = Graph()
+#   g.bind('yso', yso)
+#   g.bind('ysa', ysa)
+#   g.bind('skos', skos)
+#   g.bind('allars', allars)
+#   g.bind('ysometa', ysometa)
+#   g.bind('ysometa', ysometa)
+#   g.bind('ysameta', ysameta)
+#   g.bind('ysemeta', ysemeta)
+#   g.bind('koko', koko)
+#   g.bind('dc', dct)
+#   g.bind('foaf', foaf)
+# #   print("******")
+# #   print("Situation immediately after an initalization")
+# #   print( g.serialize(foode('utf8').replace("'", ''))
+# #   print("******")
+#   return g
+
+# def quoteAdder(strObj: str):
+#     dq = "'"
+#     newstr = dq + strObj + dq
+#     newstr.replace("'", '"')
+#     print(newstr)
+#     print(type(newstr))
+#     return newstr
+
+# def codeExplicator(codeTxt: str):
+#   print('\n')
+#   print('****** By command: ')
+#   print(codeTxt)  
+#   print('******')
+
+# def uriCleaner(uriToBeCleaned):
+#   cleanedUri = requests.get(uriToBeCleaned).url
+#   return cleanedUri
+
+# # def suggestionToTriple(suggestion, asJson = False, graph = None):
+
+# def suggestionToTriple(suggestion, graph = None):
+#     # if asJson is True:
+#     # print("Toimii")
+#     g = None
+    
+#     try:
+#       if graph is None:
+#         g = initGraph()
+#       else:
+#         g = graph
+#     except Exception as ex:
+#       print(str(ex))
+
+#     if suggestion is not None:
+#         uri = yso['p{}'.format(50000 + suggestion["id"])]
+#         # g.add((uri, RDF.type, SKOS.Concept))
+#         g.add((quoteAdder(uri), RDF.type, SKOS.Concept))
+
+#         try:
+#           for tag in suggestion["tags"]:
+#             if 'maantieteellinen' in tag["label"].lower():
+#               g.add(((URIRef(quoteAdder(uri)), RDF.type, URIRef(quoteAdder(ysometa + 'GeographicalConcept')))))
+#         except Exception as ex:
+#           print(str(ex))
+
+#         try:
+#           #Selvitä tarkemmin ennen julkaisua
+#           # suggestion_system_url = os.environ.get('SUGGESTION_SYSTEM_ISSUE_URL', None)
+#           suggestion_system_url = os.environ.get('SUGGESTION_SYSTEM_ISSUE_URL', 'http://localhost:8080')
+#           # print("SUGGESTION_SYSTEM_ISSUE_URL:")
+#           # print(suggestion_system_url)
+#           # g.add((URIRef(uri), RDF.type, URIRef(ysometa + 'ConceptAAA')))
+#         except Exception as ex:
+#           print(str(ex))
+
+#         g.add((URIRef(quoteAdder(uri)),  RDF.type, URIRef(quoteAdder(ysometa + 'Concept'))))
+#         #         skos + 'ConceptQQQ'
+#         #         type: [
+#         # "http://www.yso.fi/onto/yso-meta/Concept",
+#         # "skos:Concept"
+#         # ],
+#         try:
+#           # korjaa g.add(( URIRef(quoteAdder(uri)), foaf.homepage, URIRef(quoteAdder(f'{suggestion_system_url}/{suggestion["id"]}'))))
+#           g.add(( URIRef(quoteAdder(uri)), foaf.homepage, URIRef(quoteAdder(f'korjaa_tama_ennen_julkaisua/' + str(suggestion["id"])))))
+#           print("************************* TURHAA, vain debuggia varten")
+#           # lprkaaprint(URIRef(quoteAdder(f'{suggestion_system_url}/{suggestion["id"]}')))
+#           print(URIRef(quoteAdder(f'korjaa_tama_ennen_julkaisua/' + str(suggestion["id"]))))
+#         except Exception as ex:
+#           print(str(ex))
+
+#         #Tässä kohtaa, jos ottaa uriCleanerin pois, graph-osa häviää json-ld-tulosteesta kokonaan????
+#         try:
+#           g.add((URIRef(quoteAdder(uri)), dct.created, Literal(suggestion["created"].date(), datatype=XSD.date)))
+#           g.add((URIRef(quoteAdder(uri)), dct.modified, Literal(suggestion["modified"].date(), datatype=XSD.date)))
+#         except Exception as ex:
+#           print(str(ex))
+
+#         try:
+#           if "fi" in suggestion["preferred_label"].keys() and "value" in suggestion["preferred_label"]["fi"].keys():
+#             g.add((URIRef(quoteAdder(uri)), skos.prefLabel, Literal(suggestion["preferred_label"]["fi"]["value"], lang='fi')))
+            
+#           #  if "fi" in suggestion["preferred_label"].keys():
+#           #     codeExplicator("suggestion")
+
+#           if "sv" in suggestion["preferred_label"].keys() and "value" in suggestion["preferred_label"]["sv"].keys():
+#             g.add((URIRef(quoteAdder(uri)), skos.prefLabel, Literal(suggestion["preferred_label"]["sv"]["value"], lang='sv')))
+
+#           if "en" in suggestion["preferred_label"].keys():
+#             g.add((URIRef(quoteAdder(uri)), skos.prefLabel, Literal(suggestion["preferred_label"]["en"], lang='en')))
+#         except Exception as ex:
+#           print(str(ex))
+
+#         try:
+#           for group in suggestion["groups"]:
+
+# # #Toimii            g.add((URIRef(uri), skos.member, URIRef(cleanedUri)))
+#             g.add((URIRef(quoteAdder(uri)), skos.member, term.URIRef(quoteAdder(group.get('uri')))))
+
+#           for match in suggestion["broader_labels"]:
+#             g.add((URIRef(quoteAdder(uri)), skos.broadMatch, URIRef(quoteAdder(match.get('uri')))))
+#             # g.add((URIRef(quoteAdder(uri)), skos.broadMatch, Literal(match.get('value'))))
+
+#             g.add((URIRef(quoteAdder(uri)), skos.note, Literal(suggestion["scopeNote"])))
+
+#           for aLabel in suggestion["alternative_labels"]:
+#             g.add((URIRef(quoteAdder(uri)), skos.altLabel, Literal(aLabel["value"]))) #)) Literal(altLabel["value"]) 
+            
+#           for match in suggestion["narrower_labels"]:
+#             g.add((URIRef(quoteAdder(uri)), skos.narrowMatch, URIRef(quoteAdder(match.get('uri')))))
+        
+#           for match in suggestion["related_labels"]:
+#             g.add((URIRef(quoteAdder(uri)), skos.relatedMatch, URIRef(quoteAdder(match.get('uri')))))
+#         except Exception as ex:
+#           print(str(ex))
+#     try:
+#       g_as_string = str(g)
+#       print(g_as_string)
+#       gg = json.dumps(g_as_string)
+#       # print(gg)
+#       gg = gg[:-1:]
+#       gg = gg[1 : : ]
+#       ggg = g.serialize(format='turtle', context=listContext(), indent=4).decode('utf8')
+#       print("suggestion on tyyppiä")
+#       print(type(suggestion))
+#       print(suggestion)
+#       print("***")
+#       print("ggg on tyyppiä")
+#       print(type(ggg))
+#       # print (ggg)
+#       #     dq = "'"
+#       # newstr = dq + strObj + dq
+#       # newstr.replace("'", '"')
+#       # print(newstr)
+#       # print(type(newstr))
+#       # return newstr
+
+#       # OOKOO gggg = ggg.replace(r"'", '"').replace("\n", "")
+#       gggg = ggg.replace(r"''", '"').replace(r"'", '').replace("\n", "") #.replace('"', '') #.replace('\\"', '"')
+#       # gggg = gg[:-1:]
+#       # gggg = gg[1 : : ]
+#       print("gg")
+#       print(gg)
+#       print("ggg")
+#       print(ggg)
+#       print("gggg")
+#       print(gggg)
+
+#       return gggg
+#     except Exception as ex:
+#       print(str(ex))
+#           # g.add((URIRef(uri), RDF.type, URIRef(ysometa + 'ConceptAAA')))
+#         except Exception as ex:
+#           print(str(ex))
+
+#         g.add((URIRef(quoteAdder(uri)),  RDF.type, URIRef(quoteAdder(ysometa + 'Concept'))))
+#         #         skos + 'ConceptQQQ'
+#         #         type: [
+#         # "http://www.yso.fi/onto/yso-meta/Concept",
+#         # "skos:Concept"
+#         # ],
+#         try:
+#           # korjaa g.add(( URIRef(quoteAdder(uri)), foaf.homepage, URIRef(quoteAdder(f'{suggestion_system_url}/{suggestion["id"]}'))))
+#           g.add(( URIRef(quoteAdder(uri)), foaf.homepage, URIRef(quoteAdder(f'korjaa_tama_ennen_julkaisua/' + str(suggestion["id"])))))
+#           print("************************* TURHAA, vain debuggia varten")
+#           # lprkaaprint(URIRef(quoteAdder(f'{suggestion_system_url}/{suggestion["id"]}')))
+#           print(URIRef(quoteAdder(f'korjaa_tama_ennen_julkaisua/' + str(suggestion["id"]))))
+#         except Exception as ex:
+#           print(str(ex))
+
+#         #Tässä kohtaa, jos ottaa uriCleanerin pois, graph-osa häviää json-ld-tulosteesta kokonaan????
+#         try:
+#           g.add((URIRef(quoteAdder(uri)), dct.created, Literal(suggestion["created"].date(), datatype=XSD.date)))
+#           g.add((URIRef(quoteAdder(uri)), dct.modified, Literal(suggestion["modified"].date(), datatype=XSD.date)))
+#         except Exception as ex:
+#           print(str(ex))
+
+#         try:
+#           if "fi" in suggestion["preferred_label"].keys() and "value" in suggestion["preferred_label"]["fi"].keys():
+#             g.add((URIRef(quoteAdder(uri)), skos.prefLabel, Literal(suggestion["preferred_label"]["fi"]["value"], lang='fi')))
+            
+#           #  if "fi" in suggestion["preferred_label"].keys():
+#           #     codeExplicator("suggestion")
+
+#           if "sv" in suggestion["preferred_label"].keys() and "value" in suggestion["preferred_label"]["sv"].keys():
+#             g.add((URIRef(quoteAdder(uri)), skos.prefLabel, Literal(suggestion["preferred_label"]["sv"]["value"], lang='sv')))
+
+#           if "en" in suggestion["preferred_label"].keys():
+#             g.add((URIRef(quoteAdder(uri)), skos.prefLabel, Literal(suggestion["preferred_label"]["en"], lang='en')))
+#         except Exception as ex:
+#           print(str(ex))
+
+#         try:
+#           for group in suggestion["groups"]:
+
+# # #Toimii            g.add((URIRef(uri), skos.member, URIRef(cleanedUri)))
+#             g.add((URIRef(quoteAdder(uri)), skos.member, term.URIRef(quoteAdder(group.get('uri')))))
+
+#           for match in suggestion["broader_labels"]:
+#             g.add((URIRef(quoteAdder(uri)), skos.broadMatch, URIRef(quoteAdder(match.get('uri')))))
+#             # g.add((URIRef(quoteAdder(uri)), skos.broadMatch, Literal(match.get('value'))))
+
+#             g.add((URIRef(quoteAdder(uri)), skos.note, Literal(suggestion["scopeNote"])))
+
+#           for aLabel in suggestion["alternative_labels"]:
+#             g.add((URIRef(quoteAdder(uri)), skos.altLabel, Literal(aLabel["value"]))) #)) Literal(altLabel["value"]) 
+            
+#           for match in suggestion["narrower_labels"]:
+#             g.add((URIRef(quoteAdder(uri)), skos.narrowMatch, URIRef(quoteAdder(match.get('uri')))))
+        
+#           for match in suggestion["related_labels"]:
+#             g.add((URIRef(quoteAdder(uri)), skos.relatedMatch, URIRef(quoteAdder(match.get('uri')))))
+#         except Exception as ex:
+#           print(str(ex))
+#     try:
+#       g_as_string = str(g)
+#       print(g_as_string)
+#       gg = json.dumps(g_as_string)
+#       # print(gg)
+#       gg = gg[:-1:]
+#       gg = gg[1 : : ]
+#       ggg = g.serialize(format='turtle', context=listContext(), indent=4).decode('utf8')
+#       print("suggestion on tyyppiä")
+#       print(type(suggestion))
+#       print(suggestion)
+#       print("***")
+#       print("ggg on tyyppiä")
+#       print(type(ggg))
+#       # print (ggg)
+#       #     dq = "'"
+#       # newstr = dq + strObj + dq
+#       # newstr.replace("'", '"')
+#       # print(newstr)
+#       # print(type(newstr))
+#       # return newstr
+
+#       # OOKOO gggg = ggg.replace(r"'", '"').replace("\n", "")
+#       gggg = ggg.replace(r"''", '"').replace(r"'", '').replace("\n", "") #.replace('"', '') #.replace('\\"', '"')
+#       # gggg = gg[:-1:]
+#       # gggg = gg[1 : : ]
+#       print("gg")
+#       print(gg)
+#       print("ggg")
+#       print(ggg)
+#       print("gggg")
+#       print(gggg)
+
+#       return gggg
+#     except Exception as ex:
+#       print(str(ex))
 
 
 
