@@ -111,7 +111,7 @@ class Event(db.Model, SerializableMixin):
 
     def as_dict(self, strip=True):
         serialized = super(Event, self).as_dict()
-        serialized['reactions'] = [e.as_dict() for e in self.reactions]
+        serialized['reactions'] = [e.id for e in self.reactions] # only ids
         serialized['tags'] = [e.as_dict(strip=strip) for e in self.tags]
         return serialized
 
@@ -220,8 +220,8 @@ class Suggestion(db.Model, SerializableMixin):
     def as_dict(self, strip=True):
         # relationships (joins) should be expanded carefully
         serialized = super(Suggestion, self).as_dict()
-        serialized['events'] = [e.as_dict() for e in self.events]  # only ids
-        serialized['reactions'] = [e.as_dict(strip=strip) for e in self.reactions]
+        serialized['events'] = [e.as_dict() for e in self.events]
+        serialized['reactions'] = [e.id for e in self.reactions] # only ids
         serialized['tags'] = [e.as_dict(strip=strip) for e in self.tags]
         return serialized
 

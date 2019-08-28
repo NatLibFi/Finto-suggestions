@@ -1,9 +1,9 @@
 import connexion
 from ..authentication import authorized
 from .validators import reaction_parameter_validator
-from ..models import Reaction
-from .common import (get_one_or_404, get_all_or_404, create_or_400,
-                     delete_or_404, update_or_404, patch_or_404)
+from ..models import Reaction, Event, Suggestion, db
+from .common import (get_one_or_404, get_all_or_404, get_all_or_404_custom,
+                     create_or_400, delete_or_404, update_or_404, patch_or_404)
 
 
 def get_reactions(limit: int = None, offset: int = None) -> str:
@@ -29,6 +29,42 @@ def get_reaction(reaction_id: int) -> str:
     """
 
     return get_one_or_404(Reaction, reaction_id)
+
+
+def get_reactions_by_suggestion(limit: int = None, offset: int = None, suggestion_id: int = None):
+    """
+    Returns all reactions for a certain suggestion.
+    """
+
+    def filter_func():
+        query = Reaction.query
+        if suggestion_id:
+            query = query.filter(Reaction.suggestion_id == suggestion_id)
+        if limit:
+            query = query.limit(limit)
+        if offset:
+            query = query.offset(offset)
+        return query.all()
+
+    return get_all_or_404_custom(filter_func)
+
+
+def get_reactions_by_event(limit: int = None, offset: int = None, event_id: int = None):
+    """
+    Returns all reactions for a certain event.
+    """
+
+    def filter_func():
+        query = Reaction.query
+        if event_id:
+            query = query.filter(Reaction.event_id == event_id)
+        if limit:
+            query = query.limit(limit)
+        if offset:
+            query = query.offset(offset)
+        return query.all()
+
+    return get_all_or_404_custom(filter_func)
 
 
 @authorized
