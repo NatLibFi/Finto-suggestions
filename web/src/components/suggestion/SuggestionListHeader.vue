@@ -249,21 +249,17 @@ export default {
   }
 }
 @media (max-width: 420px) {
-  .header-container {
-    height: 70px;
-  }
-
   .title {
     position: initial;
     display: block;
     height: 40px;
+    display: none;
   }
 
   .drop-down-button {
-    position: initial;
     display: block;
     text-align: left;
-    height: 40px;
+    left: 4px;
     margin-left: 20px;
   }
 }

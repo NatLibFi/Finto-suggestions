@@ -807,4 +807,4 @@ definitions:
 
   code:
     type: string
-    example: ":thumbsup:"
+    example: "THUMBS_UP"
