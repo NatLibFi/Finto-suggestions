@@ -34,6 +34,7 @@
 <script>
 import UserSettingsForm from './UserSettingsForm';
 // Mika
+//There will be smoothly adjustable colorpicker later on...
 import SettingsAdministratedByUserForm from './SettingsAdministratedByUserForm.vue';
 import { userNameInitials } from '../../utils/userHelpers.js';
 import { userRoleToString } from '../../utils/userMappings.js';
