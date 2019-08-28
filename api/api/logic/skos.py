@@ -13,8 +13,6 @@ from collections import Counter
 import logging
 import copy
 
-asJson = True
-
 yso = Namespace('http://www.yso.fi/onto/yso/')
 ysa = Namespace('http://www.yso.fi/onto/ysa/')
 ysemeta = Namespace('http://www.yso.fi/onto/yse-meta/')
@@ -45,25 +43,6 @@ def initGraph():
   g.bind('foaf', foaf)
   return g
 
-def quoteAdder(strObj: str):
-    return strObj
-    dq = "'"
-    newstr = dq + strObj + dq
-    newstr.replace("'", '"')
-    print(newstr)
-    print(type(newstr))
-    return newstr
-
-def codeExplicator(codeTxt: str):
-  print('\n')
-  print('****** By command: ')
-  print(codeTxt)  
-  print('******')
-
-def uriCleaner(uriToBeCleaned):
-  cleanedUri = requests.get(uriToBeCleaned).url
-  return cleanedUri
-
 def suggestionToGraph(suggestion, graph = None):
     g = None
     
@@ -83,64 +62,58 @@ def suggestionToGraph(suggestion, graph = None):
         try:
           for tag in suggestion["tags"]:
             if 'maantieteellinen' in tag["label"].lower():
-              g.add(((URIRef(quoteAdder(uri)), RDF.type, URIRef(quoteAdder(ysometa + 'GeographicalConcept')))))
+              g.add(((URIRef(uri), RDF.type, URIRef(ysometa + 'GeographicalConcept'))))
         except Exception as ex:
           print(str(ex))
 
         try:
-          suggestion_system_url = os.environ.get('SUGGESTION_SYSTEM_ISSUE_URL', 'http://localhost:8080')
-          
-          # g.add((URIRef(uri), RDF.type, URIRef(ysometa + 'ConceptAAA'))).replace("\n", "")
+          suggestion_system_url = os.environ.get('SUGGESTION_SYSTEM_ISSUE_URL', None)
         except Exception as ex:
           print(str(ex))
 
-        g.add((URIRef(quoteAdder(uri)),  RDF.type, URIRef(quoteAdder(ysometa + 'Concept'))))
+        g.add((URIRef(uri),  RDF.type, URIRef(ysometa + 'Concept')))
 
         try:
-          # g.add(( URIRef(quoteAdder(uri)), foaf.homepage, URIRef(quoteAdder(f'korjaa_tama_ennen_julkaisua/' + str(suggestion["id"])))))
-          g.add(( URIRef(quoteAdder(uri)), foaf.homepage, URIRef(quoteAdder(f'{suggestion_system_url}/{suggestion["id"]}'))))
-          # g.add(( URIRef(quoteAdder(uri)), foaf.homepage, URIRef(quoteAdder(f'korjaa_tama_ennen_julkaisua/' + str(suggestion["id"])))))
-          print("************************* TURHAA, vain debuggia varten")
-          print(URIRef(quoteAdder(f'korjaa_tama_ennen_julkaisua/' + str(suggestion["id"]))))
+          g.add(( URIRef(uri), foaf.homepage, URIRef(f'{suggestion_system_url}/api/suggestions/{suggestion["id"]}/skos')))
         except Exception as ex:
           print(str(ex))
 
         try:
-          g.add((URIRef(quoteAdder(uri)), dct.created, Literal(suggestion["created"].date(), datatype=XSD.date)))
-          g.add((URIRef(quoteAdder(uri)), dct.modified, Literal(suggestion["modified"].date(), datatype=XSD.date)))
+          g.add((URIRef(uri), dct.created, Literal(suggestion["created"].date(), datatype=XSD.date)))
+          g.add((URIRef(uri), dct.modified, Literal(suggestion["modified"].date(), datatype=XSD.date)))
         except Exception as ex:
           print(str(ex))
 
         try:
           for lang in ("fi", "sv", "en"):
             if lang in suggestion["preferred_label"] and suggestion["preferred_label"][lang].get('value'):
-              g.add((URIRef(quoteAdder(uri)), skos.prefLabel, Literal(suggestion["preferred_label"][lang]["value"].strip(), lang=lang)))
+              g.add((URIRef(uri), skos.prefLabel, Literal(suggestion["preferred_label"][lang]["value"].strip(), lang=lang)))
         except Exception as ex:
           print(str(ex))
 
         try:
           for group in suggestion["groups"]:
             if group.get('uri'):
-              g.add((URIRef(quoteAdder(uri)), skos.member, term.URIRef(quoteAdder(group.get('uri')))))
+              g.add((URIRef(uri), skos.member, term.URIRef(group.get('uri'))))
 
           for match in suggestion["broader_labels"]:
             if match.get('uri'):
-              g.add((URIRef(quoteAdder(uri)), skos.broadMatch, URIRef(quoteAdder(match.get('uri')))))
+              g.add((URIRef(uri), skos.broadMatch, URIRef(match.get('uri'))))
 
           if suggestion.get('scopeNote'):
-            g.add((URIRef(quoteAdder(uri)), skos.scopeNote, Literal(suggestion["scopeNote"].strip())))
+            g.add((URIRef(uri), skos.scopeNote, Literal(suggestion["scopeNote"].strip())))
 
           for aLabel in suggestion["alternative_labels"]:
             if aLabel.get('value'):
-              g.add((URIRef(quoteAdder(uri)), skos.altLabel, Literal(aLabel["value"].strip()))) #)) Literal(altLabel["value"]) 
+              g.add((URIRef(uri), skos.altLabel, Literal(aLabel["value"].strip())))
             
           for match in suggestion["narrower_labels"]:
             if match.get('uri'):
-              g.add((URIRef(quoteAdder(uri)), skos.narrowMatch, URIRef(quoteAdder(match.get('uri')))))
+              g.add((URIRef(uri), skos.narrowMatch, URIRef(match.get('uri'))))
         
           for match in suggestion["related_labels"]:
             if match.get('uri'):
-              g.add((URIRef(quoteAdder(uri)), skos.relatedMatch, URIRef(quoteAdder(match.get('uri')))))
+              g.add((URIRef(uri), skos.relatedMatch, URIRef(match.get('uri'))))
         except Exception as ex:
           print(str(ex))
           

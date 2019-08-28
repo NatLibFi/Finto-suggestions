@@ -8,7 +8,6 @@
   VAR.serialize(format='YOUR_FORMAT', context=listContext(), indent=N)
 
 """
-
 import string, os, json
 
 def listContext():
@@ -49,6 +48,10 @@ def listContext():
   'relatedMatch': 'skos:relatedMatch'
 }
   return contextInUseCommon
+
+
+
+
 
 
 
