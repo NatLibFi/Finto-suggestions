@@ -12,6 +12,9 @@ RUN apk update \
   && apk add libpq postgresql-dev \
   && apk add build-base
 
+# Intall and register frdlib-jsonld
+RUN pip install rdflib-jsonld
+
 # Manage dependencies using pipenv
 RUN pip install pipenv \
   && pipenv install --system

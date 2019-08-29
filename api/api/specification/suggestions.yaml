@@ -273,6 +273,8 @@ paths:
   /suggestions/open/skos:
     get:
       operationId: api.logic.suggestions.get_open_suggestions_skos
+      produces:
+        - text/turtle
       responses:
         "200":
           description: Get all open status suggestions in skos format
@@ -282,6 +284,8 @@ paths:
     get:
       operationId: api.logic.suggestions.get_suggestion_skos
       description: Get a single suggestion by id in skos format
+      produces:
+        - text/turtle
       parameters:
         - name: suggestion_id
           in: path
