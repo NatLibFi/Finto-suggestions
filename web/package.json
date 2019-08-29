@@ -11,6 +11,8 @@
     "docker:build": "docker-compose exec web npm run build"
   },
   "dependencies": {
+    "@caohenghu/colorpicker": "^1.0.1",
+    "@caohenghu/vue-colorpicker": "^1.2.2",
     "@vue/cli-service-global": "^3.7.0",
     "ajv": "^6.10.0",
     "axios": "^0.19.0",

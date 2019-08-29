@@ -78,7 +78,9 @@
             @click="deleteSingleTag"
             class="delete-btn button"
           >
-            Poista tunniste
+            Poista tunniste 
+            <!--Tee ylös tarkistus iffillä, jotta voi poistaa tyhjän. Tyhjän poisto ei onnistu, 
+            kun on jokin tarkistus missä ilmeisesti nimi on se pointti tarkistettaessa tms..-->
           </a>
         </p>
         <p><a @click="showModifyTagInputs = false" class="button back">Palaa takaisin</a></p>

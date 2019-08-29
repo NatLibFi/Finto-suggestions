@@ -28,8 +28,15 @@
     </div>
     <div class="tag-selector-new-tag-form-input">
       <p class="input-title">Anna uudelle tunnisteelle väri (#heksakoodi)</p>
-        <input type="text" v-model="transitColor" />
-      <span> {{ transitColor }} </span>
+        <!-- 4 -->
+
+        <color-picker
+          v-if="tags"
+          v-model="transitColor"
+          class="color-picker"
+        />
+        <input type="text" v-model="transitColor.hex" />
+      <span> {{ transitColor.hex }} </span>
     </div>
     <p>
       <strong>
@@ -53,12 +60,14 @@ import { mapTagActions, mapTagGetters } from '../../store/modules/tag/tagModule'
 import { tagActions, tagGetters } from '../../store/modules/tag/tagConst';
 import { newActionEvent, newAddingEvent } from '../../utils/tagHelpers';
 import { directive as onClickaway } from 'vue-clickaway';
+import { Slider } from 'vue-color'; // 1
 
 export default {
   components: {
     SvgIcon,
     IconTag,
-    IconArrow
+    IconArrow,
+    'color-picker': Slider // 2
   },
   directives: {
     onClickaway: onClickaway
@@ -73,17 +82,19 @@ export default {
       required: true
     }
   },
-  data: () => ({
-    showTagSelector: false,
-    checkedTags: [],
-    showCreateTagInputs: false,
-    showModifyTagButtons: false,
-    newTag: null,
-    // Mika
-    listForNewTags: [],
-    transitLabel: null,
-    transitColor: null
-  }),
+  data() {
+    return {
+      showTagSelector: false,
+      checkedTags: [],
+      showCreateTagInputs: false,
+      showModifyTagButtons: false,
+      newTag: null,
+      // Mika
+      listForNewTags: [],
+      transitLabel: null,
+      transitColor: '#RRGGBB'
+    };
+  },
   computed: {
     ...mapTagGetters({ tags: tagGetters.GET_TAGS })
   },
@@ -108,8 +119,8 @@ export default {
 },
     getItClear() {
       this.listForNewTags = [] //Tarvitaanko
-      this.transitLabel = null,
-      this.transitColor = null
+      this.transitLabel = "",
+      this.transitColor = ""
 },
     toggleTagSelector() {
       this.showTagSelector = !this.showTagSelector;
@@ -183,11 +194,21 @@ export default {
     },
     // Mika
     async addNewTagStraightToDB() {
+      if (this.transitLabel) {
         await this.newTagStraightToDB({
-          color: this.transitColor,
+          color: this.transitColor.hex,
           label: this.transitLabel
         });
+      }
     },
+    // async addNewTagStraightToDB() {
+    //   if (this.transitColor.hex && transitLabel) {
+    //     await this.newTagStraightToDB({
+    //       color: this.transitColor.hex,
+    //       label: this.transitLabel
+    //     })
+    //   }
+    // },
     // Mika
     async removeTagStraightFromDB(label) {
         await this.deleteTagStraighFromDB(label);
@@ -201,8 +222,6 @@ export default {
     async refreshTagPage() {
       await this.getTags();
     },
-
-
     modifyTag(label) {
       const event = newActionEvent(
         'poisti ehdotuksesta tunnisteen',
@@ -223,17 +242,14 @@ export default {
   position: relative;
   display: inline-block;
 }
-
 .select-tag-box:focus,
 .select-tag-box button:focus {
   outline: none;
 }
-
 .select-tag-box button {
   background-color: rgba(0, 0, 0, 0);
   border-width: 0;
 }
-
 .tag-selector {
   z-index: 1;
   position: absolute;
@@ -245,30 +261,25 @@ export default {
   padding: 5px;
   background-color: #ffffff;
 }
-
 .tag-selector-header {
   border-bottom: 1px solid #f5f5f5;
 }
-
 .tag-selector-header > h4 {
   color: #444444;
   font-size: 9pt;
   text-align: center;
   margin: 5px 0 5px 0;
 }
-
 .tag-selector-search {
   padding-top: 10px;
   padding-left: 10px;
 }
-
 .tag-selector-search > input {
   max-width: 90%;
   width: 90%;
   height: 20px;
   float: left;
 }
-
 .tag-selector-tags ul {
   list-style-type: none;
   padding-left: 0;
@@ -276,7 +287,6 @@ export default {
   max-height: 300px;
   overflow: scroll;
 }
-
 .tag-selector-tags li {
   text-align: left;
   margin-left: 10px;
@@ -286,39 +296,36 @@ export default {
   vertical-align: middle;
   padding: 1px;
 }
-
 .tag-selector-tags .tag-color-picker-btn {
   height: 19px;
   width: 19x;
   z-index: 12;
   border: 1px solid #eeeeee;
   background-color: #eeeeee;
+} 
+.color-picker {
+  box-shadow: none;
 }
-
 .tag-selector-tags li .tag {
   background-color: #4794a2;
   color: #ffffff;
   padding: 2px 6px;
   border-radius: 2px;
 }
-
 .tag-selector-tags li span {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
 }
-
 .tag-selector-tags li > input {
   position: absolute;
   top: 50%;
   transform: translateY(-72%);
   right: 0;
 }
-
 .tag-selector-tags li > input::placeholder {
   color: #bfbfbf;
 }
-
 .tag-selector-tags li > .delete-btn {
   margin: 0;
   color: #06a798;
@@ -328,20 +335,17 @@ export default {
   transform: translateY(-50%);
   transition: opacity 0.1s;
 }
-
 .tag-selector-tags li > .delete-btn:hover {
   opacity: 0.6;
   cursor: pointer;
   cursor: hand;
 }
-
 .tag-selector-new-tag {
   text-align: left;
   font-size: 10pt;
   color: #06a798;
   padding-left: 10px;
 }
-
 .tag-selector-new-tag > p > button {
   background: none;
   color: inherit;
@@ -350,39 +354,32 @@ export default {
   font: inherit;
   cursor: pointer;
 }
-
 .tag-selector-new-tag > p > button:hover {
   color: #21baac;
   outline: none;
 }
-
 .tag-selector-new-tag > p > button:active {
   color: #ababab;
   outline: none;
 }
-
 .tag-selector-new-tag > p > button:focus {
   outline: none;
 }
-
 .tag-selector-new-tag-form {
   text-align: left;
   padding-top: 10px;
   padding-left: 14px;
 }
-
 .input-title {
   font-size: 11px;
   font-weight: 600;
   margin: 10px 0 3px;
 }
-
 .tag-selector-new-tag-form > .tag-selector-new-tag-form-input input {
   padding: 5px 4px;
   width: 70%;
   font-size: 12px;
 }
-
 .tag-selector-new-tag-form-submit button {
   padding: 0;
   margin: 0;
@@ -392,13 +389,11 @@ export default {
   transition: opacity 0.1s;
   color: #06a798;
 }
-
 .tag-selector-new-tag-form-submit button:hover {
   opacity: 0.6;
   cursor: pointer;
   cursor: hand;
 }
-
 .button {
   font-size: 12px;
   background: none;
@@ -411,17 +406,14 @@ export default {
   cursor: hand;
   transition: opacity 0.1s;
 }
-
 .button:hover {
   opacity: 0.6;
 }
-
 .back {
   position: absolute;
   left: 16px;
   bottom: 10px;
 }
-
 @media (max-width: 700px) {
   .tag-selector {
     right: initial;
