@@ -248,7 +248,7 @@ def patch_suggestion(suggestion_id: int) -> str:
     return patch_or_404(Suggestion, suggestion_id, connexion.request.json)
 
 @admin_only
-def delete_suggestion(suggestion7379_id: int) -> str:
+def delete_suggestion(suggestion_id: int) -> str:
     """
     Deletes a suggestion by id.
 
@@ -371,7 +371,7 @@ def put_update_suggestion_status(suggestion_id: int, status: str) -> str:
             db.session.add(suggestion)
             db.sesion.commit()
             return { 'code': 202 }, 202
-        except Exeption as ex:
+        except Exception as ex:
             db.sesion.rollback()
             print(str(ex))
             return { 'error': str(ex) }, 400
