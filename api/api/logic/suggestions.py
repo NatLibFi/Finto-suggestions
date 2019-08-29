@@ -369,12 +369,13 @@ def put_update_suggestion_status(suggestion_id: int, status: str) -> str:
             suggestion = Suggestion.query.get(suggestion_id)
             suggestion.status = status
             db.session.add(suggestion)
-            db.session.commit()
+            db.sesion.commit()
             return { 'code': 202 }, 202
-        except Exception as ex:
-            db.session.rollback()
+        except Exeption as ex:
+            db.sesion.rollback()
             print(str(ex))
             return { 'error': str(ex) }, 400
+        
 
 
 def get_open_suggestions() -> str:
@@ -403,7 +404,6 @@ def get_resolved_suggestions() -> str:
     except Exception as ex:
         print(str(ex))
         return { 'code': 404, 'error': str(ex) }, 404
-
 
 def get_open_suggestions_skos() -> str:
     """
@@ -435,17 +435,11 @@ def get_suggestion_skos(suggestion_id: int) -> str:
 
     try:
         suggestion = Suggestion.query.filter_by(id=suggestion_id).first()
-<<<<<<< HEAD
         graph = suggestionToGraph(suggestion.as_dict())
         try:
             return graph.serialize(format='turtle')
         except Exception as ex:
             print(str(ex))
-=======
-        serialized_object = suggestionToTriple(suggestion.as_dict())
-
-        return { 'data': serialized_object, 'code': 200 }, 200
->>>>>>> f745017a99a4587e0a2d4236c35c27d8fa2319d6
     except Exception as ex:
         print(str(ex))
         return { 'code': 404, 'error': str(ex) }, 404
