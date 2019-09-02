@@ -10,9 +10,10 @@
       <div >
         <ul v-if="tags && tags.length > 0">
           <ol v-for="tag in tags" :key="tag.label">
-            <span class="tag" style="position: absolute; left: 35px; "> Label: {{ tag.label }} </span>
+            <span class="tag" style="position: absolute; left: 35px; "> Label: {{ tag.label}}</span>
             <span style="position: absolute; left: 265px; ">
-              <a @click="removeTagStraightFromDB(tag.label); refreshTagPage()" class="delete-btn">Poista</a>
+              <!-- <a @click="removeTagStraightFromDB(tag.label); refreshTagPage()" class="delete-btn">Poista</a> -->
+              <a v-on:click="removeTagStraightFromDB(tag.label)" onClick="return confirm('Oletko varma?');">Poista</a>
             </span>
             <span class="tag" :style="{ backgroundColor: tag.color }" style="position: relative; left: 240px; "> Väri:</span>
             <span class="tag" style="position: relative; left: 240px; "> {{ tag.color }} </span>
@@ -27,10 +28,10 @@
       <span> {{ transitLabel }} </span>
     </div>
     <div class="tag-selector-new-tag-form-input">
-      <p class="input-title">Anna uudelle tunnisteelle väri (#heksakoodi)</p>
+      <p class="input-title">Anna uudelle tunnisteelle väri (#heksakoodi)</p  >
         <!-- 4 -->
 
-        <color-picker
+        <color-picker 
           v-if="tags"
           v-model="transitColor"
           class="color-picker"
@@ -61,6 +62,8 @@ import { tagActions, tagGetters } from '../../store/modules/tag/tagConst';
 import { newActionEvent, newAddingEvent } from '../../utils/tagHelpers';
 import { directive as onClickaway } from 'vue-clickaway';
 import { Slider } from 'vue-color'; // 1
+import Vue from 'vue';
+// import VuejsDialog from 'vuejs-dialog';
 
 export default {
   components: {
@@ -102,6 +105,7 @@ export default {
     this.getTags();
     this.handleSuggestionTagsChecked();
     this.refreshTagPage();
+    // Vue.use(VuejsDialog);
   },
   methods: {
     ...mapTagActions({
@@ -114,6 +118,8 @@ export default {
       addTagToSuggestion: tagActions.ADD_TAG_TO_SUGGESTION,
       removeTagFromSuggestion: tagActions.REMOVE_TAG_FROM_SUGGESTION
     }),
+    // Jatka tästä ja tuo tähän ehkä forceUpdate
+    // 
     adder() {
       this.listForNewTags.push({ color: "#ffffff", label: "Testailua1"})
 },
@@ -199,6 +205,8 @@ export default {
           color: this.transitColor.hex,
           label: this.transitLabel
         });
+        this.getTags();
+        // refreshTagPage();
       }
     },
     // async addNewTagStraightToDB() {
@@ -212,6 +220,7 @@ export default {
     // Mika
     async removeTagStraightFromDB(label) {
         await this.deleteTagStraighFromDB(label);
+        this.getTags();
     },
     async handleUpdateNewTagToPage() {
       await this.getTags();

@@ -74,7 +74,7 @@
         <p><a @click="saveTag" class="button">Tallenna</a></p>
         <p>
           <a
-            v-if="!tagBeingModified.color"
+            v-if="tagBeingModified.color"
             @click="deleteSingleTag"
             class="delete-btn button"
           >
