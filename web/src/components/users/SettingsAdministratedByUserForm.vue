@@ -17,6 +17,31 @@
             </span>
             <span class="tag" :style="{ backgroundColor: tag.color }" style="position: relative; left: 240px; "> Väri:</span>
             <span class="tag" style="position: relative; left: 240px; "> {{ tag.color }} </span>
+            <!-- <button @click="swapBetween">
+              Muokkaa
+            </button>
+            <div v-if="showTagSelector" v-on-clickaway="swapBetween" class="tag-selector">
+              <input type="hidden" value="3487"> -->
+            <button @click="tagLabelForSwappingThePicker = tag.label">
+              Muokkaa
+            </button>
+            <span> {{ tagLabelForSwappingThePicker }} </span>
+            <div v-if="tagLabelForSwappingThePicker == tag.label"  class="tag-selector">
+              <!-- <input type="hidden" value="3487"> -->
+              <span> {{ tagLabelForSwappingThePicker }} </span>
+              <color-picker 
+                v-if="tags"
+                v-model="modifyingColor"
+                class="color-picker"
+              />
+              <input type="text" v-model="modifyingColor.hex" />
+            </div>
+            <span> {{ showColorPickerInTheList }} </span>
+
+
+
+
+            <!-- <p><span> {{ tag }} </span></p> -->
           </ol>
         </ul>
       </div>
@@ -28,7 +53,7 @@
       <span> {{ transitLabel }} </span>
     </div>
     <div class="tag-selector-new-tag-form-input">
-      <p class="input-title">Anna uudelle tunnisteelle väri (#heksakoodi)</p  >
+      <p class="input-title">Anna uudelle tunnisteelle väri työkalulla tai #heksakoodina</p>
         <!-- 4 -->
 
         <color-picker 
@@ -43,18 +68,29 @@
       <strong>
         <p><a @click="addNewTagStraightToDB">Lisää tunniste</a></p>
         <a @click="getItClear">Tyhjennä!</a>
+
+        <span> {{ modifyingOrigLabel }} </span>
+        <span> {{ modifyingColor }} </span>
+
+        <!-- <input type="text" v-model="transitLabel" /> -->
+        <!-- <input type="text" v-model="modifyingColor"/> -->
+        <span> {{ modifyingColor.hex }} </span>
+        <span> {{ modifyingGoalLabel }} </span>
+        <p><a @click="modifyTag">Testaa muokkausta</a></p>
+
       </strong>
     </p>
-      <li v-for="tagNewbie in listForNewTags" :key="tagNewbie.label">
-        <p><span> Label: {{ tagNewbie.label }} </span></p>
-        <span> Väri: {{ tagNewbie.color }} </span>
-      </li>
+       <p>
+      <strong>
+
+        <!-- <p><a v-on:click="modifyTag" onClick="return confirm('Oletko varma?');">Muokkaa</a></p> -->
+      </strong>
+    </p>
     </div>
   </div>
 </template>
 
 <script>
-import SvgIcon from '../icons/SvgIcon';
 import IconTag from '../icons/IconTag';
 import IconArrow from '../icons/IconArrow';
 import { mapTagActions, mapTagGetters } from '../../store/modules/tag/tagModule';
@@ -63,11 +99,9 @@ import { newActionEvent, newAddingEvent } from '../../utils/tagHelpers';
 import { directive as onClickaway } from 'vue-clickaway';
 import { Slider } from 'vue-color'; // 1
 import Vue from 'vue';
-// import VuejsDialog from 'vuejs-dialog';
 
 export default {
   components: {
-    SvgIcon,
     IconTag,
     IconArrow,
     'color-picker': Slider // 2
@@ -87,15 +121,16 @@ export default {
   },
   data() {
     return {
-      showTagSelector: false,
-      checkedTags: [],
-      showCreateTagInputs: false,
-      showModifyTagButtons: false,
+      // showCreateTagInputs: false,
+      showColorPickerInTheList: false,
+      tagLabelForSwappingThePicker: false,
       newTag: null,
-      // Mika
       listForNewTags: [],
       transitLabel: null,
-      transitColor: '#RRGGBB'
+      transitColor: '#RRGGBB',
+      modifyingOrigLabel: 'PPPP',
+      modifyingColor: '#RRGGBB',
+      modifyingGoalLabel: 'PLACEHOLDER'
     };
   },
   computed: {
@@ -105,100 +140,32 @@ export default {
     this.getTags();
     this.handleSuggestionTagsChecked();
     this.refreshTagPage();
-    // Vue.use(VuejsDialog);
   },
   methods: {
     ...mapTagActions({
       getTags: tagActions.GET_TAGS,
       deleteTag: tagActions.DELETE_TAG,
-      // Mika
       newTagStraightToDB: tagActions.ADD_TAG_STRAIGHT_TO_DB,
-      //Mika
       deleteTagStraighFromDB: tagActions.DELETE_TAG_STRAIGHT_FROM_DB,
+      putTag: tagActions.PUT_TAG,
       addTagToSuggestion: tagActions.ADD_TAG_TO_SUGGESTION,
       removeTagFromSuggestion: tagActions.REMOVE_TAG_FROM_SUGGESTION
     }),
-    // Jatka tästä ja tuo tähän ehkä forceUpdate
-    // 
-    adder() {
-      this.listForNewTags.push({ color: "#ffffff", label: "Testailua1"})
-},
+
+    swapBetween() {
+      this.showColorPickerInTheList = !this.showColorPickerInTheList;
+    },
+
     getItClear() {
       this.listForNewTags = [] //Tarvitaanko
       this.transitLabel = "",
       this.transitColor = ""
 },
-    toggleTagSelector() {
-      this.showTagSelector = !this.showTagSelector;
-      this.showCreateTagInputs = false;
-    },
     normalizeText(text) {
       const firstCharacter = text.substring(0, 1);
       const restOfTheText = text.substring(1, text.length).toLowerCase();
       return `${firstCharacter}${restOfTheText}`;
     },
-    async handleTagUpdateToSuggestion(tagLabel) {
-      if (this.isTagSetToSuggestion(tagLabel)) {
-        const event = newActionEvent(
-          'poisti ehdotuksesta tunnisteen',
-          tagLabel,
-          this.userId,
-          this.suggestion.id
-        );
-        const params = { suggestionId: this.suggestion.id, tagLabel: tagLabel, event: event };
-        await this.removeTagFromSuggestion(params);
-      } else {
-        const event = newActionEvent(
-          'lisäsi ehdotukseen tunnisteen',
-          tagLabel,
-          this.userId,
-          this.suggestion.id
-        );
-        const params = {
-          suggestionId: this.suggestion.id,
-          tagLabel: tagLabel,
-          event: event
-        };
-        await this.addTagToSuggestion(params);
-      }
-    },
-    isTagSetToSuggestion(tagLabel) {
-      if (
-        this.suggestion.tags &&
-        this.suggestion.tags.length > 0 &&
-        tagLabel &&
-        tagLabel.length > 0
-      ) {
-        return this.suggestion.tags.find(tag => tag.label === tagLabel.toUpperCase())
-          ? true
-          : false;
-      }
-      return false;
-    },
-    handleSuggestionTagsChecked() {
-      this.suggestion.tags.forEach(tag => {
-        this.checkedTags.push(tag.label.toUpperCase());
-      });
-    },
-    toggleNewTagInputs() {
-      this.showCreateTagInputs = !this.showCreateTagInputs;
-    },
-    toggleTagModifying() {
-      this.showModifyTagButtons = !this.showModifyTagButtons;newTagStraightToDB
-    },
-    async addNewTag() {
-      const event = newActionEvent(
-        'lisäsi ehdotukseen tunnisteen',
-        this.newTag,
-        this.userId,
-        this.suggestion.id
-      );
-      const params = { suggestionId: this.suggestion.id, tagLabel: this.newTag, event: event };
-      await this.addTagToSuggestion(params);
-      this.toggleNewTagInputs();
-      await this.handleUpdateNewTagToPage();
-    },
-    // Mika
     async addNewTagStraightToDB() {
       if (this.transitLabel) {
         await this.newTagStraightToDB({
@@ -206,41 +173,54 @@ export default {
           label: this.transitLabel
         });
         this.getTags();
-        // refreshTagPage();
       }
     },
-    // async addNewTagStraightToDB() {
-    //   if (this.transitColor.hex && transitLabel) {
-    //     await this.newTagStraightToDB({
-    //       color: this.transitColor.hex,
-    //       label: this.transitLabel
-    //     })
-    //   }
-    // },
-    // Mika
     async removeTagStraightFromDB(label) {
         await this.deleteTagStraighFromDB(label);
         this.getTags();
     },
-    async handleUpdateNewTagToPage() {
-      await this.getTags();
-      this.checkedTags.push(this.newTag.toUpperCase());
-      this.newTag = '';
-    },
-// Mika
     async refreshTagPage() {
       await this.getTags();
     },
-    modifyTag(label) {
-      const event = newActionEvent(
-        'poisti ehdotuksesta tunnisteen',
-        this.label,
-        this.userId,
-        this.suggestion.id
-      );
-      const params = { suggestionId: this.suggestion.id, tagLabel: label, event: event };
-      this.deleteTag(params);
-      this.$router.go();
+
+    async modifyTag() {
+      if (this.modifyingOrigLabel) {
+        // document.write(5 + 6);
+        // document.writeln(params.tagLabel);
+        // await this.putTag(this.modifyingOrigLabel, 
+        await this.putTag(
+          {
+            color: this.modifyingColor.hex,
+            label: this.modifyingOrigLabel
+          }
+        );
+        this.getTags();
+      }
+
+// Toistaiseksi toimivin
+    // async modifyTag() {
+    //   if (this.modifyingOrigLabel) {
+    //     // document.write(5 + 6);
+    //     // document.writeln(params.tagLabel);
+    //     await this.putTag(this.modifyingOrigLabel, 
+    //       {
+    //         color: this.modifyingColor,
+    //         label: this.modifyingGoalLabel
+    //       });
+    //     this.getTags();
+    //   }
+      
+
+
+      // const event = newActionEvent(
+      //   'poisti ehdotuksesta tunnisteen',
+      //   this.label,
+      //   this.userId,
+      //   this.suggestion.id
+      // );
+      // const params = { suggestionId: this.suggestion.id, tagLabel: label, event: event };
+      // this.deleteTag(params);
+      // this.$router.go();
     }
   }
 };
