@@ -12,36 +12,27 @@
           <ol v-for="tag in tags" :key="tag.label">
             <span class="tag" style="position: absolute; left: 35px; "> Label: {{ tag.label}}</span>
             <span style="position: absolute; left: 265px; ">
-              <!-- <a @click="removeTagStraightFromDB(tag.label); refreshTagPage()" class="delete-btn">Poista</a> -->
-              <a v-on:click="removeTagStraightFromDB(tag.label)" onClick="return confirm('Oletko varma?');">Poista</a>
+              <a class="button" v-on:click="removeTagStraightFromDB(tag.label)" onClick="return confirm('Oletko varma?');">Poista</a>
             </span>
             <span class="tag" :style="{ backgroundColor: tag.color }" style="position: relative; left: 240px; "> Väri:</span>
             <span class="tag" style="position: relative; left: 240px; "> {{ tag.color }} </span>
-            <!-- <button @click="swapBetween">
-              Muokkaa
-            </button>
-            <div v-if="showTagSelector" v-on-clickaway="swapBetween" class="tag-selector">
-              <input type="hidden" value="3487"> -->
-            <button @click="tagLabelForSwappingThePicker = tag.label">
-              Muokkaa
-            </button>
-            <span> {{ tagLabelForSwappingThePicker }} </span>
-            <div v-if="tagLabelForSwappingThePicker == tag.label"  class="tag-selector">
-              <!-- <input type="hidden" value="3487"> -->
-              <span> {{ tagLabelForSwappingThePicker }} </span>
-              <color-picker 
-                v-if="tags"
-                v-model="modifyingColor"
-                class="color-picker"
-              />
-              <input type="text" v-model="modifyingColor.hex" />
-            </div>
-            <span> {{ showColorPickerInTheList }} </span>
-
-
-
-
-            <!-- <p><span> {{ tag }} </span></p> -->
+            <span style="position: absolute; left: 465px; ">
+              <button class="button" @click="tagLabelForSwappingThePicker = tag.label">
+                Muokkaa väriä
+              </button>
+            </span>
+              <!-- <span> {{ tagLabelForSwappingThePicker }} </span> -->
+              <div v-if="tagLabelForSwappingThePicker == tag.label"  class="tag-selector">
+                <span> {{ tagLabelForSwappingThePicker }} </span>
+                <color-picker 
+                  v-if="tags"
+                  v-model="modifyingColor"
+                  class="color-picker"
+                />
+                <input type="text" v-model="modifyingColor.hex"/>
+                <p><a @click="modifyTag">Vaihda väri</a></p>
+                <p><a @click="tagLabelForSwappingThePicker = null">Sulje</a></p>
+              </div>
           </ol>
         </ul>
       </div>
@@ -71,20 +62,14 @@
 
         <span> {{ modifyingOrigLabel }} </span>
         <span> {{ modifyingColor }} </span>
-
-        <!-- <input type="text" v-model="transitLabel" /> -->
-        <!-- <input type="text" v-model="modifyingColor"/> -->
         <span> {{ modifyingColor.hex }} </span>
         <span> {{ modifyingGoalLabel }} </span>
-        <p><a @click="modifyTag">Testaa muokkausta</a></p>
+        <span> {{ showColorPickerInTheList }} </span>
+        <!-- <p><a @click="modifyTag">Testaa muokkausta</a></p> -->
 
       </strong>
     </p>
        <p>
-      <strong>
-
-        <!-- <p><a v-on:click="modifyTag" onClick="return confirm('Oletko varma?');">Muokkaa</a></p> -->
-      </strong>
     </p>
     </div>
   </div>
@@ -185,9 +170,6 @@ export default {
 
     async modifyTag() {
       if (this.modifyingOrigLabel) {
-        // document.write(5 + 6);
-        // document.writeln(params.tagLabel);
-        // await this.putTag(this.modifyingOrigLabel, 
         await this.putTag(
           {
             color: this.modifyingColor.hex,
