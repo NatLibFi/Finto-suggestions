@@ -1,50 +1,60 @@
 <template>
   <div>
-    <div>
-      <span>Syötä uuden tunnisteen tiedot ja klikkaa "Lisää tunniste"</span>
-     </div>
-    <div>
-      <span>Poistaessasi tunnistetta, tuplaklikkaa Poista-linkkiä</span>
-    </div>
+    <hr v-bind:style="hrSmooth">
+    <h5>Muokkaa nykyisiä tunnisteita</h5>
     <div>
       <div >
         <ul v-if="tags && tags.length > 0">
           <ol v-for="tag in tags" :key="tag.label">
-            <span class="tag" style="position: absolute; left: 35px; "> Label: {{ tag.label}}</span>
-            <span style="position: absolute; left: 265px; ">
+            <span class="tag" v-bind:style="tab1"> {{ tag.label}}</span>
+
+<!-- <p v-bind:style="{ fontSize: fontSize + 'px' }"> -->
+
+
+            <span v-bind:style="tab2">
               <a class="button" v-on:click="removeTagStraightFromDB(tag.label)" onClick="return confirm('Oletko varma?');">Poista</a>
             </span>
-            <span class="tag" :style="{ backgroundColor: tag.color }" style="position: relative; left: 207px; "> RGB </span>
-            <span class="tag" style="position: relative; left: 212px;"> {{ tag.color }} </span>
-            <span style="position: absolute; left: 445px; ">
+            <span v-bind:style="tab3">
+              <span class="tag" :style="{backgroundColor: tag.color}"> RGB </span>
+            </span>
+            <span class="tag" v-bind:style="tab4"> {{ tag.color }} </span>
+            <span v-bind:style="tab5">
               <button class="button" @click="tagLabelForSwappingThePicker = tag.label">
                 Muokkaa väriä
               </button>
             </span>
               <!-- <span> {{ tagLabelForSwappingThePicker }} </span> -->
               <div v-if="tagLabelForSwappingThePicker == tag.label"  class="tag-selector">
-                <span> {{ tagLabelForSwappingThePicker }} </span>
+                <p>
+                  <span> Olet muokkaamassa tunnistetta: {{ tagLabelForSwappingThePicker }} </span>
+                </p>
                 <color-picker 
                   v-if="tags"
                   v-model="modifyingColor"
                   class="color-picker"
                 />
-                <input type="text" v-model="modifyingColor.hex"/>
-                <p><a @click="modifyTag(tag.label)">Vaihda väri</a></p>
-                <p><a @click="tagLabelForSwappingThePicker = null">Sulje</a></p>
+                <input hidden type="text" v-model="modifyingColor.hex"/>
+                <p>
+                  <strong>
+                    <a class="button" @click="modifyTag(tag.label)">Tallenna</a>
+                  </strong>
+                </p>
+                <p><a @click="tagLabelForSwappingThePicker = null">[ Sulje ]</a></p>
               </div>
           </ol>
         </ul>
       </div>
     </div>
     <div>   
+    <hr v-bind:style="hrSmooth">
+    <h5>Luo uusi tunniste</h5>
     <div class="tag-selector-new-tag-form-input">
       <p class="input-title">Anna uudelle tunnisteelle nimi</p>
         <input type="text" v-model="transitLabel" />
-      <span> {{ transitLabel }} </span>
+      <!-- <span> {{ transitLabel }} </span> -->
     </div>
     <div class="tag-selector-new-tag-form-input">
-      <p class="input-title">Anna uudelle tunnisteelle väri työkalulla tai #heksakoodina</p>
+      <p class="input-title">Liu'uta ylempää palkkia ja valitse alimmaisesta väri </p>
         <!-- 4 -->
 
         <color-picker 
@@ -52,22 +62,40 @@
           v-model="transitColor"
           class="color-picker"
         />
-        <input type="text" v-model="transitColor.hex" />
-      <span> {{ transitColor.hex }} </span>
+        <p>
+          <input hidden type="text" v-model="transitColor.hex" />
+          <strong>
+            <a class="button" @click="addNewTagStraightToDB"> Lisää tunniste</a>
+          </strong>
+            <a class="button" @click="getItClear"> [ Tyhjennä valinnat ]</a>
+        </p>
+      <!-- <span> {{ transitColor.hex }} </span> -->
     </div>
     <p>
-      <strong>
-        <p><a @click="addNewTagStraightToDB">Lisää tunniste</a></p>
+      <!-- <strong>
+        <p><a class="save" @click="addNewTagStraightToDB">Lisää tunniste</a></p>
         <a @click="getItClear">Tyhjennä!</a>
+      </strong>> -->
 
-        <span> {{ modifyingOrigLabel }} </span>
+
+      <!-- <span class="save">
+        Tallenna muutokset
+      </span> -->
+
+         <!-- <div @click.stop="submitForm" :class="[$v.$invalid ? 'disabled' : '', 'button']">
+      <span class="save">
+        Tallenna muutokset
+      </span> -->
+
+
+        <!-- <span> {{ modifyingOrigLabel }} </span>
         <span> {{ modifyingColor }} </span>
         <span> {{ modifyingColor.hex }} </span>
         <span> {{ modifyingGoalLabel }} </span>
-        <span> {{ showColorPickerInTheList }} </span>
+        <span> {{ showColorPickerInTheList }} </span> -->
         <!-- <p><a @click="modifyTag">Testaa muokkausta</a></p> -->
 
-      </strong>
+      <!-- </strong> -->
     </p>
        <p>
     </p>
@@ -115,7 +143,32 @@ export default {
       transitColor: '#RRGGBB',
       modifyingOrigLabel: 'PPPP',
       modifyingColor: '#RRGGBB',
-      modifyingGoalLabel: 'PLACEHOLDER'
+      modifyingGoalLabel: 'PLACEHOLDER',
+      tab1: {
+        position: 'absolute', 
+        left: '41px'
+      },
+      tab2: {
+        position: 'relative', 
+        left: '80px'
+      },
+      tab3: {
+        position: 'relative', 
+        left: '100px'
+      },
+      tab4: {
+        position: 'relative', 
+        left: '120px'
+      },
+      tab5: {
+        position: 'absolute', 
+        left: '400px'
+      },
+      hrSmooth: {
+        border: '0.5px dashed',
+        color: '#D3D3D3'
+        // border-radius: '5px'
+      }
     };
   },
   computed: {
@@ -378,9 +431,30 @@ export default {
   cursor: hand;
   transition: opacity 0.1s;
 }
-.button:hover {
+/* .button:hover {
   opacity: 0.6;
+} */
+
+.button:hover {
+  background-color: #44bdb2;
+  border: 3px solid #44bdb2;
+  cursor: pointer;
+  cursor: hand;
 }
+
+.a .save {
+  color: #ffffff;
+  transition: background-color, 0.1s;
+  transition: border, 0.1s;
+}
+
+.a:hover {
+  background-color: #44bdb2;
+  border: 3px solid #44bdb2;
+  cursor: pointer;
+  cursor: hand;
+}
+
 .back {
   position: absolute;
   left: 16px;
