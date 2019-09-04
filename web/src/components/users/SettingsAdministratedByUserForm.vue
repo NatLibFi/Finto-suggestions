@@ -3,14 +3,10 @@
     <hr v-bind:style="hrSmooth">
     <h5>Muokkaa nykyisiä tunnisteita</h5>
     <div>
-      <div >
+      <div v-if="reloadComponent">
         <ul v-if="tags && tags.length > 0">
           <ol v-for="tag in tags" :key="tag.label">
             <span class="tag" v-bind:style="tab1"> {{ tag.label}}</span>
-
-<!-- <p v-bind:style="{ fontSize: fontSize + 'px' }"> -->
-
-
             <span v-bind:style="tab2">
               <a class="button" v-on:click="removeTagStraightFromDB(tag.label)" onClick="return confirm('Oletko varma?');">Poista</a>
             </span>
@@ -23,45 +19,42 @@
                 Muokkaa väriä
               </button>
             </span>
-              <!-- <span> {{ tagLabelForSwappingThePicker }} </span> -->
-              <div v-if="tagLabelForSwappingThePicker == tag.label"  class="tag-selector">
-                <p>
-                  <span> Olet muokkaamassa tunnistetta: {{ tagLabelForSwappingThePicker }} </span>
-                </p>
-                <color-picker 
-                  v-if="tags"
-                  v-model="modifyingColor"
-                  class="color-picker"
-                />
-                <input hidden type="text" v-model="modifyingColor.hex"/>
-                <p>
-                  <strong>
-                    <a class="button" @click="modifyTag(tag.label)">Tallenna</a>
-                  </strong>
-                </p>
-                <p><a @click="tagLabelForSwappingThePicker = null">[ Sulje ]</a></p>
-              </div>
+            <div v-if="tagLabelForSwappingThePicker == tag.label"  class="tag-selector">
+              <p>
+                <span> Olet muokkaamassa tunnistetta: {{ tagLabelForSwappingThePicker }} </span>
+              </p>
+              <color-picker 
+                v-if="tags"
+                v-model="modifyingColor"
+                class="color-picker"
+              />
+              <input hidden type="text" v-model="modifyingColor.hex"/>
+              <p>
+                <strong>
+                  <a class="button" @click="modifyTag(tag.label)">Tallenna</a>
+                </strong>
+              </p>
+              <p><a @click="tagLabelForSwappingThePicker = null">[ Sulje ]</a></p>
+            </div>
           </ol>
         </ul>
       </div>
     </div>
     <div>   
-    <hr v-bind:style="hrSmooth">
-    <h5>Luo uusi tunniste</h5>
-    <div class="tag-selector-new-tag-form-input">
-      <p class="input-title">Anna uudelle tunnisteelle nimi</p>
-        <input type="text" v-model="transitLabel" />
-      <!-- <span> {{ transitLabel }} </span> -->
-    </div>
-    <div class="tag-selector-new-tag-form-input">
-      <p class="input-title">Liu'uta ylempää palkkia ja valitse alimmaisesta väri </p>
-        <!-- 4 -->
-
-        <color-picker 
-          v-if="tags"
-          v-model="transitColor"
-          class="color-picker"
-        />
+      <hr v-bind:style="hrSmooth">
+      <h5>Luo uusi tunniste</h5>
+      <div class="tag-selector-new-tag-form-input">
+        <p class="input-title">Anna uudelle tunnisteelle nimi</p>
+          <input type="text" v-model="transitLabel" />
+        <!-- <span> {{ transitLabel }} </span> -->
+      </div>
+      <div class="tag-selector-new-tag-form-input">
+        <p class="input-title">Liu'uta ylempää palkkia ja valitse alimmaisesta väri </p>
+          <color-picker 
+            v-if="tags"
+            v-model="transitColor"
+            class="color-picker"
+          />
         <p>
           <input hidden type="text" v-model="transitColor.hex" />
           <strong>
@@ -69,36 +62,8 @@
           </strong>
             <a class="button" @click="getItClear"> [ Tyhjennä valinnat ]</a>
         </p>
-      <!-- <span> {{ transitColor.hex }} </span> -->
-    </div>
-    <p>
-      <!-- <strong>
-        <p><a class="save" @click="addNewTagStraightToDB">Lisää tunniste</a></p>
-        <a @click="getItClear">Tyhjennä!</a>
-      </strong>> -->
-
-
-      <!-- <span class="save">
-        Tallenna muutokset
-      </span> -->
-
-         <!-- <div @click.stop="submitForm" :class="[$v.$invalid ? 'disabled' : '', 'button']">
-      <span class="save">
-        Tallenna muutokset
-      </span> -->
-
-
-        <!-- <span> {{ modifyingOrigLabel }} </span>
-        <span> {{ modifyingColor }} </span>
-        <span> {{ modifyingColor.hex }} </span>
-        <span> {{ modifyingGoalLabel }} </span>
-        <span> {{ showColorPickerInTheList }} </span> -->
-        <!-- <p><a @click="modifyTag">Testaa muokkausta</a></p> -->
-
-      <!-- </strong> -->
-    </p>
-       <p>
-    </p>
+        <!-- <span> {{ transitColor.hex }} </span> -->
+      </div>
     </div>
   </div>
 </template>
@@ -136,7 +101,7 @@ export default {
     return {
       // showCreateTagInputs: false,
       showColorPickerInTheList: false,
-      tagLabelForSwappingThePicker: false,
+      tagLabelForSwappingThePicker: null,
       newTag: null,
       listForNewTags: [],
       transitLabel: null,
@@ -144,6 +109,7 @@ export default {
       modifyingOrigLabel: 'PPPP',
       modifyingColor: '#RRGGBB',
       modifyingGoalLabel: 'PLACEHOLDER',
+      reloadComponent: true,
       tab1: {
         position: 'absolute', 
         left: '41px'
@@ -158,11 +124,12 @@ export default {
       },
       tab4: {
         position: 'relative', 
-        left: '120px'
+        left: '118px',
+        color: 'lightgrey'
       },
       tab5: {
         position: 'absolute', 
-        left: '400px'
+        left: '390px'
       },
       hrSmooth: {
         border: '0.5px dashed',
@@ -190,6 +157,16 @@ export default {
       removeTagFromSuggestion: tagActions.REMOVE_TAG_FROM_SUGGESTION
     }),
 
+    reRerender() {
+        // Remove my-component from the DOM
+        this.reloadComponent = false;
+        
+        this.$nextTick(() => {
+          // Add the component back in
+          this.reloadComponent = true;
+        });
+      },
+
     swapBetween() {
       this.showColorPickerInTheList = !this.showColorPickerInTheList;
     },
@@ -211,11 +188,13 @@ export default {
           label: this.transitLabel
         });
         this.getTags();
+        this.reRerender();
       }
     },
     async removeTagStraightFromDB(label) {
         await this.deleteTagStraighFromDB(label);
         this.getTags();
+        this.reRerender();
     },
     async refreshTagPage() {
       await this.getTags();
@@ -231,32 +210,8 @@ export default {
           }
         );
         this.getTags();
+        this.reRerender();
       }
-
-// Toistaiseksi toimivin
-    // async modifyTag() {
-    //   if (this.modifyingOrigLabel) {
-    //     // document.write(5 + 6);
-    //     // document.writeln(params.tagLabel);
-    //     await this.putTag(this.modifyingOrigLabel, 
-    //       {
-    //         color: this.modifyingColor,
-    //         label: this.modifyingGoalLabel
-    //       });
-    //     this.getTags();
-    //   }
-      
-
-
-      // const event = newActionEvent(
-      //   'poisti ehdotuksesta tunnisteen',
-      //   this.label,
-      //   this.userId,
-      //   this.suggestion.id
-      // );
-      // const params = { suggestionId: this.suggestion.id, tagLabel: label, event: event };
-      // this.deleteTag(params);
-      // this.$router.go();
     }
   }
 };
