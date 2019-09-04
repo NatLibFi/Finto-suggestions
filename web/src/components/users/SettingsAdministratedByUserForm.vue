@@ -14,9 +14,9 @@
             <span style="position: absolute; left: 265px; ">
               <a class="button" v-on:click="removeTagStraightFromDB(tag.label)" onClick="return confirm('Oletko varma?');">Poista</a>
             </span>
-            <span class="tag" :style="{ backgroundColor: tag.color }" style="position: relative; left: 240px; "> Väri:</span>
-            <span class="tag" style="position: relative; left: 240px; "> {{ tag.color }} </span>
-            <span style="position: absolute; left: 465px; ">
+            <span class="tag" :style="{ backgroundColor: tag.color }" style="position: relative; left: 207px; "> RGB </span>
+            <span class="tag" style="position: relative; left: 212px;"> {{ tag.color }} </span>
+            <span style="position: absolute; left: 445px; ">
               <button class="button" @click="tagLabelForSwappingThePicker = tag.label">
                 Muokkaa väriä
               </button>
@@ -30,7 +30,7 @@
                   class="color-picker"
                 />
                 <input type="text" v-model="modifyingColor.hex"/>
-                <p><a @click="modifyTag">Vaihda väri</a></p>
+                <p><a @click="modifyTag(tag.label)">Vaihda väri</a></p>
                 <p><a @click="tagLabelForSwappingThePicker = null">Sulje</a></p>
               </div>
           </ol>
@@ -168,7 +168,8 @@ export default {
       await this.getTags();
     },
 
-    async modifyTag() {
+    async modifyTag(label) {
+      this.modifyingOrigLabel = label;
       if (this.modifyingOrigLabel) {
         await this.putTag(
           {
