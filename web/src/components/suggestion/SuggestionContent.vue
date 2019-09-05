@@ -156,11 +156,18 @@
         </p>
       </div>
     </transition>
+    <reaction-list
+      :suggestionId="suggestion.id"
+      :reactions="suggestion.reactions"
+      :key="componentKey"
+      class="reaction-list"
+    />
   </div>
 </template>
 
 <script>
 import AssignUser from './AssignUser';
+import ReactionList from '../reaction/ReactionList';
 import {
   suggestionType,
   suggestionStateStatus,
@@ -171,7 +178,8 @@ import { mapSuggestionActions } from '../../store/modules/suggestion/suggestionM
 
 export default {
   components: {
-    AssignUser
+    AssignUser,
+    ReactionList
   },
   props: {
     suggestion: {
@@ -180,6 +188,7 @@ export default {
     },
     userName: { type: String, default: '' },
     isAuthenticated: Boolean,
+    componentKey: [Number, String],
     isAdmin: Boolean
   },
   data() {
@@ -235,6 +244,12 @@ a.remove-button:hover {
 .content-title {
   font-size: 13px;
   margin-bottom: 3px;
+}
+
+.reaction-list {
+  border-top: 1px solid #f4f4f4;
+  width: 100%;
+  padding-top: 20px;
 }
 
 @media (max-width: 700px) {

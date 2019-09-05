@@ -1,5 +1,6 @@
 <template>
   <div class="user">
+    <!-- <span> Onko käyttäjä autentikoitu: {{ isAuthenticated }} </span> -->
     <div class="profile-container">
       <div v-if="user.imageUrl" class="profile-image">
         <img :src="user.imageUrl" :alt="userNameInitials" />
@@ -25,11 +26,17 @@
     <div class="setting-container">
       <user-settings-form />
     </div>
+        <div class="setting-container">
+      <settings-administrated-by-user-form />
+    </div>
   </div>
 </template>
 
 <script>
 import UserSettingsForm from './UserSettingsForm';
+// Mika
+//There will be smoothly adjustable colorpicker later on...
+import SettingsAdministratedByUserForm from './SettingsAdministratedByUserForm.vue';
 import { userNameInitials } from '../../utils/userHelpers.js';
 import { userRoleToString } from '../../utils/userMappings.js';
 
@@ -42,7 +49,8 @@ import { mapAuthenticatedUserGetters } from '../../store/modules/authenticatedUs
 
 export default {
   components: {
-    UserSettingsForm
+    UserSettingsForm,
+    SettingsAdministratedByUserForm
   },
   data() {
     return {

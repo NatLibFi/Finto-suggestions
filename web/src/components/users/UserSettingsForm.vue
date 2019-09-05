@@ -1,5 +1,6 @@
 <template>
   <div class="form-container">
+    <!-- <span> Onko käyttäjä autentikoitu: {{ isAuthenticated }} </span> -->
     <h5>Muokkaa asetuksiasi</h5>
     <div class="setting-inputs">
       <div>

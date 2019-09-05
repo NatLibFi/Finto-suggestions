@@ -11,7 +11,7 @@
       :class="[filterStrings.status.length > 0 ? 'active-filter' : '', 'filter-item']"
     >
       <div :class="[isDropDownOpened.STATUS ? 'selected' : '', 'drop-down-button']">
-        <span>Käsittelyn tila</span>
+        <span>Tila: {{ suggestionStateStatuses[selectedOptionIndex.STATUS].label }}</span>
         <svg-icon icon-name="triangle"><icon-triangle /></svg-icon>
       </div>
       <filter-drop-down
@@ -29,7 +29,7 @@
       :class="[filterStrings.type.length > 0 ? 'active-filter' : '', 'filter-item']"
     >
       <div :class="[isDropDownOpened.TYPE ? 'selected' : '', 'drop-down-button']">
-        <span>Ehdotustyyppi</span>
+        <span>Tyyppi: {{ suggestionTypes[selectedOptionIndex.TYPE].label }}</span>
         <svg-icon icon-name="triangle"><icon-triangle /></svg-icon>
       </div>
       <filter-drop-down
@@ -47,8 +47,8 @@
       :class="[filterStrings.tags.length > 0 ? 'active-filter' : '', 'filter-item']"
     >
       <div :class="[isDropDownOpened.TAG ? 'selected' : '', 'drop-down-button']">
-        <span>Tunniste</span>
-        <svg-icon icon-name="triangle"><icon-triangle /></svg-icon>
+        <span>{{ selectedOptionIndex.TAGS.length }} tunnistetta valittu</span>
+         <svg-icon icon-name="triangle"><icon-triangle /></svg-icon>
       </div>
       <multiple-choice-drop-down
         :selectedIndexes="selectedOptionIndex.TAGS"
@@ -66,8 +66,13 @@
       @click="isDropDownOpened.MEETING = !isDropDownOpened.MEETING"
       :class="[filterStrings.meeting.length > 0 ? 'active-filter' : '', 'filter-item']"
     >
-      <div :class="[isDropDownOpened.MEETING ? 'selected' : '', 'drop-down-button']">
-        <span>Kokous</span>
+     <div :class="[isDropDownOpened.MEETING ? 'selected' : '', 'drop-down-button']">
+        <span>Kokous: </span>
+        <span v-for="item in mapMeetingsToDropDown()" :key="item.value">
+          <span v-if="'meeting_id:' + item.value==filterStrings.meeting">
+            {{ item.label }}
+          </span>
+        </span>
         <svg-icon icon-name="triangle"><icon-triangle /></svg-icon>
       </div>
       <filter-drop-down
@@ -441,7 +446,7 @@ h5 {
 .filter-item {
   position: relative;
   height: 35px;
-  width: 135px;
+  width: 185px;
   display: inline-block;
   border: 2px solid #eeeeee;
   margin: 6px 10px 6px 0;
@@ -470,7 +475,7 @@ h5 {
   left: 14px;
   transform: perspective(1px) translateY(calc(-56% - 0.5px));
   overflow: hidden;
-  font-size: 13px;
+  font-size: 11px;
   font-weight: 600;
   color: #606060;
   cursor: pointer;
@@ -495,6 +500,10 @@ h5 {
 .selected {
   font-weight: 600;
   color: #111111;
+}
+
+.drop-down-header {
+  font-size: 12.5px;
 }
 
 @media (max-width: 700px) {

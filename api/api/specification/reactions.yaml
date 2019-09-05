@@ -91,3 +91,50 @@ paths:
         '404':
           description: No reaction found
 
+  /suggestions/{suggestion_id}/reactions:
+    get:
+      operationId: api.logic.reactions.get_reactions_by_suggestion
+      parameters:
+        - name: suggestion_id
+          in: path
+          type: integer
+          required: true
+        - name: limit
+          in: query
+          description: Maximum number of returned reactions
+          required: false
+          type: integer
+        - name: offset
+          in: query
+          description: Offset of the results (e.g. for paging)
+          required: false
+          type: integer
+      responses:
+        "200":
+          description: Get suggestion's reactions
+        "400":
+          description: Getting suggestion's reactions failed
+
+  /events/{event_id}/reactions:
+    get:
+      operationId: api.logic.reactions.get_reactions_by_event
+      parameters:
+        - name: event_id
+          in: path
+          type: integer
+          required: true
+        - name: limit
+          in: query
+          description: Maximum number of returned reactions
+          required: false
+          type: integer
+        - name: offset
+          in: query
+          description: Offset of the results (e.g. for paging)
+          required: false
+          type: integer
+      responses:
+        "200":
+          description: Get event's reactions
+        "400":
+          description: Getting event's reactions failed

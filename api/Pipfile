@@ -15,6 +15,8 @@ flask-jwt-extended = "*"
 flask-cors = "*"
 pgcli = "*"
 swagger-ui-bundle = "*"
+rdflib = "*"
+rdflib-jsonld = "*"
 
 [dev-packages]
 pytest = "*"

@@ -4,6 +4,7 @@ import tag from './tag/tag';
 import event from './event/event';
 import user from './user/user';
 import authenticate from './authenticate/authenticate';
+import reaction from './reaction/reaction';
 
 export default {
   suggestion,
@@ -11,5 +12,6 @@ export default {
   tag,
   event,
   user,
-  authenticate
+  authenticate,
+  reaction
 };

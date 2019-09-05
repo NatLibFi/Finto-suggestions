@@ -42,6 +42,14 @@
           "
           class="menu-wrapper"
         >
+          <emoji-selector
+            v-if="type === eventTypes.COMMENT"
+            @updateReactionList="updateReactionList()"
+            :eventId="event.id"
+            :suggestionId="event.suggestion_id"
+            :userId="authedUserId"
+            class="emoji"
+            />
           <menu-button
             v-if="type === eventTypes.COMMENT"
             :options="commentOptions"
@@ -71,12 +79,21 @@
           </div>
         </div>
       </div>
+      <reaction-list
+        :eventId="event.id"
+        :userId="event.user_id"
+        :reactions="event.reactions"
+        :key="componentKey"
+        class="reaction-list"
+      />
     </div>
   </div>
 </template>
 
 <script>
 import MenuButton from '../common/MenuButton';
+import EmojiSelector from '../common/EmojiSelector';
+import ReactionList from '../reaction/ReactionList';
 import markdownEditor from 'vue-simplemde/src/markdown-editor';
 import { dateTimeFormatLabel } from '../../utils/dateHelper';
 import { userRoles } from '../../utils/userHelpers';
@@ -96,6 +113,8 @@ import { userNameInitials } from '../../utils/userHelpers';
 export default {
   components: {
     MenuButton,
+    EmojiSelector,
+    ReactionList,
     markdownEditor
   },
   props: {
@@ -107,7 +126,8 @@ export default {
       type: String,
       required: true
     },
-    suggestionId: [String, Number],
+    componentKey: [Number, String],
+    suggestionId: [Number, String],
     isAuthenticated: Boolean
   },
   data() {
@@ -212,6 +232,9 @@ export default {
     },
     async removeEvent() {
       await this.deleteEvent({ eventId: this.event.id, suggestionId: this.suggestionId });
+    },
+    updateReactionList() {
+      this.$emit('updateReactionList');
     }
   }
 };
@@ -332,6 +355,11 @@ export default {
   right: 20px;
 }
 
+.emoji {
+  position: absolute;
+  right: 60px;
+}
+
 .event-comment {
   border-top: 1px solid #f5f5f5;
   padding: 10px 40px;
@@ -372,14 +400,23 @@ export default {
   background-color: #44bdb2;
 }
 
+.reaction-list {
+  border-top: 1px solid #f4f4f4;
+  padding: 12px 40px 10px;
+}
+
 @media (max-width: 700px) {
   .event-header {
-    padding: 20px 60px 20px 20px;
+    padding: 20px 100px 20px 20px;
   }
 
   .event-comment {
     padding-left: 20px;
     padding-right: 20px;
+  }
+
+  .emoji {
+
   }
 }
 
