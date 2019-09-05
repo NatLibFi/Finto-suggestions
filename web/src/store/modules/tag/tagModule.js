@@ -41,8 +41,6 @@ export default {
     //   dispatch(tagActions.GET_TAGS);
     // },
 
-
-
     async [tagActions.DELETE_TAG]({ dispatch }, params) {
       await api.tag.deleteTag(params.tagLabel);
       dispatch(tagActions.GET_TAGS);
@@ -87,47 +85,13 @@ export default {
       }
     },
 
-// Mika - toistaiseksi lähimpänä toimivaa
+// Mika
     async [tagActions.PUT_TAG]({ dispatch }, params) {
-      // Tähän normaalisti jumiutuu, mutta paramsilla menee alla oleva läpi
       const result = await api.tag.putTag(params);
-      // Tällä luulisi menevän, mutta ei mene const result = await api.tag.putTag('params.tagLabel', params.tag);
-      // document.writeln(params.tagLabel)
-      // console.log("098765432098765439876543298765432987654");
-      // print('Moi')
       if (result && result.code === 200) {
         dispatch(tagActions.GET_TAGS);
       }
     },
-
-
-
-    // async [tagActions.PUT_TAG]({ dispatch }, params) {
-    //   await api.tag.putTag(params.tagLabel, params.tag);
-    //   dispatch(tagActions.GET_TAGS);
-    // },
-
-
-
-
-    // async [tagActions.PUT_TAG]({ dispatch }, params) {
-    //   const response = await api.tag.putTag(
-    //     params.tagLabel,
-    //     {
-    //       color: params.tag.color,
-    //       label: params.tag.label}
-
-    //   );
-    //   if (response && response.code === 200) {
-    //     dispatch(
-    //       `${eventNamespace}/${eventActions.PUT_TAG}`,
-    //         params.tagLabel,
-    //       {
-    //         root: true
-    //       }
-    //     );
-    //   }
-    // },
 
     async [tagActions.REMOVE_TAG_FROM_SUGGESTION]({ dispatch }, params) {
       const response = await api.suggestion.removeTagFromSuggestion(

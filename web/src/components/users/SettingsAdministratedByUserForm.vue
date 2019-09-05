@@ -1,5 +1,11 @@
 <template>
   <div>
+
+            <!-- <div v-if="checkIfUserIsAuthenticated"> Käyttäjä on autentikoitu </div>
+            <div v-else> Käyttäjää ei ole autentikoitu </div>
+            <div v-if="checkIfUserIsLogged"> Käyttäjä on kirjautunut </div>
+            <div v-else> Käyttäjä on kirjautunut </div> -->
+
     <hr v-bind:style="hrSmooth">
     <h5>Muokkaa nykyisiä tunnisteita</h5>
     <div>
@@ -49,7 +55,7 @@
         <!-- <span> {{ transitLabel }} </span> -->
       </div>
       <div class="tag-selector-new-tag-form-input">
-        <p class="input-title">Liu'uta ylempää palkkia ja valitse alimmaisesta väri </p>
+        <p class="input-title">Liu'uta ylempää palkkia ja valitse alemmasta väri </p>
           <color-picker 
             v-if="tags"
             v-model="transitColor"
@@ -71,6 +77,12 @@
 <script>
 import IconTag from '../icons/IconTag';
 import IconArrow from '../icons/IconArrow';
+import { userGetters } from '../../store/modules/user/userConsts';
+import { mapUserGetters } from '../../store/modules/user/userModule';
+// eslint-disable-next-line
+import { authenticatedUserGetters } from '../../store/modules/authenticatedUser/authenticatedUserConsts.js';
+// eslint-disable-next-line
+import { mapAuthenticatedUserGetters } from '../../store/modules/authenticatedUser/authenticatedUserModule.js';
 import { mapTagActions, mapTagGetters } from '../../store/modules/tag/tagModule';
 import { tagActions, tagGetters } from '../../store/modules/tag/tagConst';
 import { newActionEvent, newAddingEvent } from '../../utils/tagHelpers';
@@ -139,8 +151,17 @@ export default {
     };
   },
   computed: {
-    ...mapTagGetters({ tags: tagGetters.GET_TAGS })
+    ...mapTagGetters({ tags: tagGetters.GET_TAGS }),
+    ...mapAuthenticatedUserGetters({
+    userId: authenticatedUserGetters.GET_USER_ID,
+    isAuthenticated: authenticatedUserGetters.GET_IS_AUTHENTICATED,
+    loggedInUserId: authenticatedUserGetters.GET_USER_ID
+    }),
+    ...mapUserGetters({
+      user: userGetters.GET_AUTHENTICATED_USER
+    })
   },
+  
   created() {
     this.getTags();
     this.handleSuggestionTagsChecked();
@@ -157,12 +178,23 @@ export default {
       removeTagFromSuggestion: tagActions.REMOVE_TAG_FROM_SUGGESTION
     }),
 
-    reRerender() {
-        // Remove my-component from the DOM
+    checkIfUserIsLogged() {
+      if (this.loggedInUserId) {
+        // this.$route.router.go('/');
+        return true;
+      }
+    },
+
+    checkIfUserIsAuthenticated() {
+      if (this.isAuthenticated) {
+        // this.$route.router.go('/');
+        return true;
+      }
+    },
+
+    reRender() {
         this.reloadComponent = false;
-        
         this.$nextTick(() => {
-          // Add the component back in
           this.reloadComponent = true;
         });
       },
@@ -188,13 +220,13 @@ export default {
           label: this.transitLabel
         });
         this.getTags();
-        this.reRerender();
+        this.reRender();
       }
     },
     async removeTagStraightFromDB(label) {
         await this.deleteTagStraighFromDB(label);
         this.getTags();
-        this.reRerender();
+        this.reRender();
     },
     async refreshTagPage() {
       await this.getTags();
@@ -210,7 +242,8 @@ export default {
           }
         );
         this.getTags();
-        this.reRerender();
+        this.reRender();
+        // this.checkIfUseriIsAuthenticated();
       }
     }
   }
