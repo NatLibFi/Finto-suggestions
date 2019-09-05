@@ -1,7 +1,7 @@
 from rdflib import Graph, URIRef, Literal, Namespace, RDF, XSD, plugin, term
 from rdflib.namespace import SKOS, DC
 from rdflib.serializer import Serializer
-import json, rdflib_jsonld
+import json
 import os
 import string
 from flask import jsonify
