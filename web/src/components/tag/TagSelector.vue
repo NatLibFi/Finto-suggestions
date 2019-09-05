@@ -9,7 +9,7 @@
         <h4 v-if="showCreateTagInputs">Luo uusi tunniste</h4>
         <h4 v-if="showModifyTagInputs">Muokkaa tunnistetta</h4>
       </div>
-      <div v-if="!showCreateTagInputs && !showModifyTagInputs" class="tag-selector-tags">
+      <div  v-if="!showCreateTagInputs && !showModifyTagInputs" class="tag-selector-tags">
         <ul v-if="tags && tags.length > 0">
           <li class="tag-label" v-for="tag in tags" :key="tag.label">
             <span :style="{ backgroundColor: tag.color }" class="tag">
@@ -23,7 +23,11 @@
               :id="tag.label"
               :value="tag.label"
             />
-            <span v-if="showModifyTagButtons" @click="modifyTag(tag)" class="modify-btn">
+            <span
+              v-if="showModifyTagButtons"
+              @click="modifyTag(tag)"
+              class="modify-btn"
+            >
               Muokkaa
             </span>
           </li>
@@ -61,8 +65,7 @@
           <button
             v-if="!tagBeingModified.color"
             @click="tagBeingModified.color = '#4794a2'"
-            class="button"
-          >
+            class="button">
             Valitse väri
           </button>
           <color-picker
@@ -72,17 +75,7 @@
           />
         </div>
         <p><a @click="saveTag" class="button">Tallenna</a></p>
-        <p>
-          <a
-            v-if="tagBeingModified.color"
-            @click="deleteSingleTag"
-            class="delete-btn button"
-          >
-            Poista tunniste 
-            <!--Tee ylös tarkistus iffillä, jotta voi poistaa tyhjän. Tyhjän poisto ei onnistu, 
-            kun on jokin tarkistus missä ilmeisesti nimi on se pointti tarkistettaessa tms..-->
-          </a>
-        </p>
+        <p><a @click="deleteSingleTag" class="delete-btn button">Poista tunniste</a></p>
         <p><a @click="showModifyTagInputs = false" class="button back">Palaa takaisin</a></p>
       </div>
     </div>
@@ -98,7 +91,6 @@ import { tagActions, tagGetters } from '../../store/modules/tag/tagConst';
 import { newActionEvent } from '../../utils/tagHelpers';
 import { directive as onClickaway } from 'vue-clickaway';
 import { Slider } from 'vue-color';
-
 export default {
   components: {
     SvgIcon,
@@ -119,18 +111,16 @@ export default {
       required: true
     }
   },
-  data() {
-    return {
-      showTagSelector: false,
-      checkedTags: [],
-      showCreateTagInputs: false,
-      showModifyTagInputs: false,
-      showModifyTagButtons: false,
-      tagBeingModified: null,
-      tagLabelBeingModified: null,
-      newTag: null
-    };
-  },
+  data: () => ({
+    showTagSelector: false,
+    checkedTags: [],
+    showCreateTagInputs: false,
+    showModifyTagInputs: false,
+    showModifyTagButtons: false,
+    tagBeingModified: null,
+    tagLabelBeingModified: null,
+    newTag: null
+  }),
   computed: {
     ...mapTagGetters({
       tags: tagGetters.GET_TAGS
@@ -253,11 +243,7 @@ export default {
         this.userId,
         this.suggestion.id
       );
-      const params = {
-        suggestionId: this.suggestion.id,
-        tagLabel: this.tagBeingModified.label,
-        event: event
-      };
+      const params = { suggestionId: this.suggestion.id, tagLabel: this.tagBeingModified.label, event: event };
       this.deleteTag(params);
       this.$router.go();
     }
@@ -270,52 +256,44 @@ export default {
   position: relative;
   display: inline-block;
 }
-
 .select-tag-box:focus,
 .select-tag-box button:focus {
   outline: none;
 }
-
 .select-tag-box button {
   background-color: rgba(0, 0, 0, 0);
   border-width: 0;
 }
-
 .tag-selector {
   z-index: 1;
   position: absolute;
   right: 0;
-  border: 1px solid #f0f0f0;
+  border: 2px solid #e1e1e1;
   min-height: 250px;
   min-width: 280px;
   margin: 0 0 0 0;
   padding: 5px;
   background-color: #ffffff;
 }
-
 .tag-selector-header {
   border-bottom: 1px solid #f5f5f5;
 }
-
 .tag-selector-header > h4 {
   color: #444444;
   font-size: 9pt;
   text-align: center;
   margin: 5px 0 5px 0;
 }
-
 .tag-selector-search {
   padding-top: 10px;
   padding-left: 10px;
 }
-
 .tag-selector-search > input {
   max-width: 90%;
   width: 90%;
   height: 20px;
   float: left;
 }
-
 .tag-selector-tags ul {
   list-style-type: none;
   padding-left: 0;
@@ -323,7 +301,6 @@ export default {
   max-height: 300px;
   overflow: scroll;
 }
-
 .tag-selector-tags li {
   text-align: left;
   margin-left: 10px;
@@ -334,7 +311,6 @@ export default {
   overflow: hidden;
   padding: 1px;
 }
-
 .tag-selector-tags .tag-color-picker-btn {
   height: 19px;
   width: 19x;
@@ -342,7 +318,6 @@ export default {
   border: 1px solid #eeeeee;
   background-color: #eeeeee;
 }
-
 .tag-selector-tags li .tag {
   background-color: #4794a2;
   color: #ffffff;
@@ -350,24 +325,20 @@ export default {
   padding: 2px 6px;
   border-radius: 2px;
 }
-
 .tag-selector-tags li span {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
 }
-
 .tag-selector-tags li > input {
   position: absolute;
   top: 50%;
   transform: translateY(-72%);
   right: 0;
 }
-
 .tag-selector-tags li > input::placeholder {
   color: #bfbfbf;
 }
-
 .tag-selector-tags li > .modify-btn {
   margin: 0;
   color: #06a798;
@@ -377,20 +348,17 @@ export default {
   transform: translateY(-50%);
   transition: opacity 0.1s;
 }
-
 .tag-selector-tags li > .modify-btn:hover {
   opacity: 0.6;
   cursor: pointer;
   cursor: hand;
 }
-
 .tag-selector-new-tag {
   text-align: left;
   font-size: 10pt;
   color: #06a798;
   padding-left: 10px;
 }
-
 .tag-selector-new-tag > p > button {
   background: none;
   color: inherit;
@@ -399,39 +367,32 @@ export default {
   font: inherit;
   cursor: pointer;
 }
-
 .tag-selector-new-tag > p > button:hover {
   color: #21baac;
   outline: none;
 }
-
 .tag-selector-new-tag > p > button:active {
   color: #ababab;
   outline: none;
 }
-
 .tag-selector-new-tag > p > button:focus {
   outline: none;
 }
-
 .tag-selector-new-tag-form {
   text-align: left;
   padding-top: 10px;
   padding-left: 14px;
 }
-
 .input-title {
   font-size: 11px;
   font-weight: 600;
   margin: 10px 0 3px;
 }
-
 .tag-selector-new-tag-form > .tag-selector-new-tag-form-input input {
   padding: 5px 4px;
   width: 70%;
   font-size: 12px;
 }
-
 .tag-selector-new-tag-form-submit button {
   padding: 0;
   margin: 0;
@@ -441,13 +402,11 @@ export default {
   transition: opacity 0.1s;
   color: #06a798;
 }
-
 .tag-selector-new-tag-form-submit button:hover {
   opacity: 0.6;
   cursor: pointer;
   cursor: hand;
 }
-
 .button {
   font-size: 12px;
   background: none;
@@ -460,28 +419,23 @@ export default {
   cursor: hand;
   transition: opacity 0.1s;
 }
-
 .button:hover {
   opacity: 0.6;
 }
-
 .delete-btn {
   position: absolute;
   right: 19px;
   bottom: 10px;
   color: red;
 }
-
 .back {
   position: absolute;
   left: 19px;
   bottom: 10px;
 }
-
 .color-picker {
   box-shadow: none;
 }
-
 @media (max-width: 700px) {
   .tag-selector {
     right: initial;
