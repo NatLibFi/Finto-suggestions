@@ -7,6 +7,10 @@ COPY ./web/package*.json /tmp/
 # RUN cd /tmp && npm install && mkdir -p /app && cp -a /tmp/node_modules /app/ && npm install -g http-server
 RUN cd /tmp && npm install && npm audit fix
 
+#RUN npm install -g yarn
+
+#RUN yarn add @caohenghu/vue-colorpicker
+
 WORKDIR /app
 
 RUN cp -a /tmp/node_modules /app/

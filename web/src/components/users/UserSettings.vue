@@ -1,5 +1,6 @@
 <template>
   <div class="user">
+    <!-- <span> Onko käyttäjä autentikoitu: {{ isAuthenticated }} </span> -->
     <div class="profile-container">
       <div v-if="user.imageUrl" class="profile-image">
         <img :src="user.imageUrl" :alt="userNameInitials" />
