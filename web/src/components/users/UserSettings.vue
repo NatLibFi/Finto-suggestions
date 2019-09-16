@@ -1,6 +1,17 @@
 <template>
   <div class="user">
+    <!-- User text block -->
     <!-- <span> Onko käyttäjä autentikoitu: {{ isAuthenticated }} </span> -->
+    <span> UserNameInitials (imports) {{ userNameInitials }} </span>
+    <!-- <span> userRoleToString  (imports) {{ userRoleToString }} </span> -->
+    <span> userId (imports) {{ userId }} </span>
+    <span> User  (imports) {{ user }} </span>
+    <!-- <span> authenticatedUserGetters  (imports) {{ authenticatedUserGetters }} </span>
+    <span> mapAuthenticatedUserGetters  (imports) {{ mapAuthenticatedUserGetters }} </span> -->
+
+      
+
+
     <div class="profile-container">
       <div v-if="user.imageUrl" class="profile-image">
         <img :src="user.imageUrl" :alt="userNameInitials" />
@@ -26,9 +37,9 @@
     <div class="setting-container">
       <user-settings-form />
     </div>
-      <!-- <div class="setting-container">
+      <div class="setting-container">
         <settings-administrated-by-user-form />
-      </div> -->
+      </div>
   </div>
 </template>
 
