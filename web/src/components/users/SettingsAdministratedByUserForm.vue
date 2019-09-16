@@ -1,10 +1,14 @@
 <template>
   <div>
 
-            <!-- <div v-if="checkIfUserIsAuthenticated"> Käyttäjä on autentikoitu </div>
-            <div v-else> Käyttäjää ei ole autentikoitu </div>
-            <div v-if="checkIfUserIsLogged"> Käyttäjä on kirjautunut </div>
-            <div v-else> Käyttäjä on kirjautunut </div> -->
+    <!-- User text block -->
+    <!-- <span> Onko käyttäjä autentikoitu: {{ isAuthenticated }} </span> -->
+    <span> UserNameInitials (imports) {{ userNameInitials }} </span>
+    <!-- <span> userRoleToString  (imports) {{ userRoleToString }} </span> -->
+    <span> userId (imports) {{ userId }} </span>
+    <span> User  (imports) {{ user }} </span>
+    <!-- <span> authenticatedUserGetters  (imports) {{ authenticatedUserGetters }} </span>
+    <span> mapAuthenticatedUserGetters  (imports) {{ mapAuthenticatedUserGetters }} </span> --> -->
 
     <hr v-bind:style="hrSmooth">
     <h5>Muokkaa nykyisiä tunnisteita</h5>
