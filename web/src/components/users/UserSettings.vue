@@ -26,9 +26,9 @@
     <div class="setting-container">
       <user-settings-form />
     </div>
-        <div class="setting-container">
-      <settings-administrated-by-user-form />
-    </div>
+      <!-- <div class="setting-container">
+        <settings-administrated-by-user-form />
+      </div> -->
   </div>
 </template>
 
