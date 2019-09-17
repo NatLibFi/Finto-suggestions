@@ -1,5 +1,12 @@
 <template>
   <div class="header-container">
+
+    <!-- User text block -->
+    <span> selectedSort: {{ selectedSort }} </span>
+
+
+
+
     <div class="counts">
       <span class="open">{{ futureMeetingCount }} tulevaa</span>
       <span class="resolved">{{ pastMeetingCount }} mennyttä</span>

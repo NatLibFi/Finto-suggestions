@@ -7,8 +7,10 @@
     <!-- <span> userRoleToString  (imports) {{ userRoleToString }} </span> -->
     <span> userId (imports) {{ userId }} </span>
     <span> User  (imports) {{ user }} </span>
+    <span> selectedSort: {{ selectedSort }} </span>
     <!-- <span> authenticatedUserGetters  (imports) {{ authenticatedUserGetters }} </span>
     <span> mapAuthenticatedUserGetters  (imports) {{ mapAuthenticatedUserGetters }} </span> -->
+
 
     <div class="nav-content">
       <div class="nav-title">
@@ -136,6 +138,10 @@ import { authenticatedUserGetters, authenticatedUserActions, storeKeyNames, auth
 
 import { userNameInitials } from '../../utils/userHelpers.js';
 
+//The following two lines are for testing purposes at the moment
+import { mapMeetingGetters, mapMeetingActions } from '../../store/modules/meeting/meetingModule.js';
+import { meetingGetters, meetingActions } from '../../store/modules/meeting/meetingConsts.js';
+
 export default {
   components: {
     CenteredDialog,
@@ -152,6 +158,7 @@ export default {
   data() {
     return {
       userInitials: '',
+      userNameInitials: '',
       loginProvider: '',
       registerData: null,
       showDropdown: false,
@@ -174,6 +181,9 @@ export default {
     }),
     ...mapUserGetters({
       user: userGetters.GET_AUTHENTICATED_USER
+    }),
+    ...mapMeetingGetters({
+      selectedSort: meetingGetters.GET_MEETINGS_SELECTED_SORT
     })
   },
   async created() {
@@ -182,6 +192,7 @@ export default {
       await this.refreshToken();
       await this.getUserIdFromStorage();
       await this.handleUserFetch();
+      await this.handleUserInitialsFetch
     }
   },
   methods: {
@@ -277,7 +288,7 @@ export default {
       }
     },
     handleUserInitialsFetch() {
-      this.userInitials = userNameInitials(this.user.name);
+      this.userNameInitials = userNameInitials(this.user.name);
     },
     async resetPassword(email) {
       await this.resetPasswordByEmail(email)
@@ -299,7 +310,7 @@ export default {
         this.closeMobileDropdown();
       }
     });
-  }
+  },
 };
 </script>
 
