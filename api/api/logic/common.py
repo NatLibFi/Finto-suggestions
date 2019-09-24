@@ -216,7 +216,6 @@ def update_or_404(model: object, primary_key: int, payload: Dict) -> str:
 
     return create_response(db_obj.as_dict(), 200)
 
-
 def update_or_404_custom(model: object, primary_key: int, payload: Dict) -> str:
     """
     Updates a single sqlalchemy model by label.
