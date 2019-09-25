@@ -2,11 +2,11 @@
   <div class="navigation">
 
     <!-- User text block -->
-    <!-- <span> Onko käyttäjä autentikoitu: {{ isAuthenticated }} </span> -->
-    <!-- <span> UserNameInitials (imports) {{ userNameInitials }} </span> -->
+    <!-- <span> Onko käyttäjä autentikoitu: {{ isAuthenticated }} </span>
+    <span> UserNameInitials (imports) {{ userNameInitials }} </span> -->
     <!-- <span> UserIdFromStorage: {{ getUserIdFromStorage }} </span> -->
-    <!-- <span> userRoleToString  (imports) {{ userRoleToString }} </span> -->
-    <!-- <span> userId (imports) {{ userId }} </span> -->
+    <!-- <span> userRoleToString  (imports) {{ userRoleToString }} </span>
+    <span> userId (imports) {{ userId }} </span> -->
     <!-- <span> User  (imports) {{ user }} </span> -->
     <!-- <span> selectedSort: {{ selectedSort }} </span> -->
     <!-- <span> authenticatedUserGetters  (imports) {{ authenticatedUserGetters }} </span>

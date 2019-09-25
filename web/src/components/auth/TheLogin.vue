@@ -4,11 +4,12 @@
     <!-- TODO: uncomment this when google oauth2 is ready -->
     <!-- <p>Voit kirjautua sisään Github- ja Google-tunnuksilla</p> -->
     <div v-if="!showForgottenPasswordForm" class="login-services">
-      <div @click="login('github')" class="login-service-button">
-        <svg-icon icon-name="github"><icon-github /></svg-icon>
-        <span class="normal">Kirjaudu GitHub-tunnuksilla</span>
-        <span class="mobile">GitHub-tunnukset</span>
-      </div>
+      <!-- Next div for GitHub -->
+      <!-- <div @click="login('github')" class="login-service-button"> -->
+        <!-- <svg-icon icon-name="github"><icon-github /></svg-icon> -->
+        <!-- <span class="normal">Kirjaudu GitHub-tunnuksilla</span> -->
+        <!-- <span class="mobile">GitHub-tunnukset</span> -->
+      <!-- </div> -->
       <!-- TODO: uncomment this when google oauth2 is ready -->
       <!-- <div @click="login('google')" class="login-service-button">
         <svg-icon icon-name="google"><icon-google /></svg-icon>
@@ -73,8 +74,19 @@
 import SvgIcon from '../icons/SvgIcon';
 import IconGithub from '../icons/IconGithub';
 import IconGoogle from '../icons/IconGoogle';
-
+import router from '../../router/index';
 import { required, minLength, email } from 'vuelidate/lib/validators';
+// Mika 250919
+import { userActions, userGetters } from '../../store/modules/user/userConsts';
+import { mapUserActions, mapUserGetters } from '../../store/modules/user/userModule';
+// eslint-disable-next-line
+import { authenticatedUserGetters, authenticatedUserActions } from '../../store/modules/authenticatedUser/authenticatedUserConsts.js';
+// eslint-disable-next-line
+import { mapAuthenticatedUserGetters, mapAuthenticatedUserActions } from '../../store/modules/authenticatedUser/authenticatedUserModule.js';
+// Mika 250919
+
+
+
 
 export default {
   components: {
@@ -101,7 +113,13 @@ export default {
       showForgottenPasswordForm: false,
       showResetPasswordSuccess: false,
       resetEmail: '',
-      hasFailedLogin: false
+      hasFailedLogin: false,
+      userName: '',
+      userTitle: '',
+      userOrg: '',
+      userRole: '',
+      hasSucceeded: false,
+      hasFailed: false
     };
   },
   validations: {
@@ -120,6 +138,21 @@ export default {
       email
     }
   },
+  computed: {
+    ...mapUserGetters({
+      user: userGetters.GET_AUTHENTICATED_USER
+    }),
+    ...mapAuthenticatedUserGetters({
+      userId: authenticatedUserGetters.GET_USER_ID,
+      isAuthenticated: authenticatedUserGetters.GET_IS_AUTHENTICATED
+    })
+  },
+  ...mapUserActions({
+    getAuthenticatedUser: userActions.GET_AUTHENTICATED_USER,
+    patchUser: userActions.PATCH_USER
+  }),
+
+
   created() {
     if (this.showResetPasswordForm) {
       this.showResetPasswordInputs();
@@ -131,10 +164,55 @@ export default {
       const data = { service, loginData };
       if (!this.$v.email.$invalid && !this.$v.password.$invalid && service === 'local') {
         this.$emit('login', data);
+        this.getUserBasics();
+        this.updateUser();
+        // this.goToSettingsPage();
       } else {
         this.$emit('login', data);
       }
     },
+
+
+    async updateUser() {
+      const params = {
+        userId: this.userId,
+        data: {
+          name: this.$sanitize(this.userName),
+          title: this.$sanitize(this.userTitle),
+          organization: this.$sanitize(this.userOrg),
+          imageUrl: this.$sanitize(this.userImageUrl),
+          role: this.$sanitize(this.userRole)
+        }
+      };
+      await this.patchUser(params)
+        .then(() => {
+          this.hasSucceeded = true;
+          setTimeout(() => {
+            this.hasSucceeded = false;
+          }, 2000);
+        })
+        .catch(() => {
+          this.hasFailed = true;
+          setTimeout(() => {
+            this.hasFailed = false;
+          }, 3000);
+        });
+      // await this.updateShowingUserData();
+    },
+
+    getUserBasics() {
+      this.userName = this.user.name;
+      if (this.user.title) {
+        this.userTitle = this.user.title;
+      }
+      if (this.user.organization) {
+        this.userOrg = this.user.organization;
+      }
+      if (this.user.role) {
+        this.userRole = this.user.role;
+      }
+    },
+
     gatherLoginData() {
       return { email: this.email, password: this.password };
     },
@@ -151,6 +229,9 @@ export default {
         this.$emit('resetPassword', this.resetEmail);
         this.showResetPasswordSuccess = true;
       }
+    },
+    goToSettingsPage() {
+      router.push('/settings');
     }
   },
   mounted: function() {
@@ -344,7 +425,7 @@ export default {
 
 .fade-enter-active,
 .fade-leave-active {
-  transition: opacity 0.5s;
+  transition: opacity 10.5s;
 }
 .fade-enter,
 .fade-leave-to {
