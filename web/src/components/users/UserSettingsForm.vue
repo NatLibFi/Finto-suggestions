@@ -14,6 +14,15 @@
     <!-- <span> Onko käyttäjä autentikoitu: {{ isAuthenticated }} </span> -->
     <h5>Muokkaa asetuksiasi</h5>
     <div class="setting-inputs">
+      <!-- <div>
+        <span> {{ userId}} </span>
+        <span> {{ user.name}} </span>
+        <span> {{ user.role}} </span>
+        <span> {{ user.title}} </span>
+        <span> {{ user.organization}} </span>
+        <span> {{ isAuthenticated }} </span> -->
+        <!-- <span> {{ userNameInitials }} </span> -->
+      <!-- </div>   -->
       <div>
         <p>Nimi:</p>
         <input v-model="userName" type="text" />
@@ -53,6 +62,7 @@ import { authenticatedUserGetters, authenticatedUserActions } from '../../store/
 import { mapAuthenticatedUserGetters, mapAuthenticatedUserActions } from '../../store/modules/authenticatedUser/authenticatedUserModule.js';
 
 import { required, minLength } from 'vuelidate/lib/validators';
+import router from '../../router/index';
 
 export default {
   data() {
@@ -81,6 +91,7 @@ export default {
     })
   },
   async created() {
+    // await this.updateUser();
     await this.getUserIdFromStorage();
     await this.getAuthenticatedUser(this.userId);
     this.userName = this.user.name;
@@ -134,8 +145,16 @@ export default {
     },
     async updateShowingUserData() {
       await this.getAuthenticatedUser(this.userId);
+    },
+    goToSettingsPage() {
+      router.push('/settings');
     }
   },
+  // beforeMount(){
+  //   // setTimeout(function(){}, 3000);
+  //   // document.write("**************************** ");
+  //   this.goToSettingsPage();
+  // },
   mounted: function() {
     document.addEventListener('keydown', e => {
       if (e.keyCode == 13) {
