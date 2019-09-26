@@ -18,7 +18,8 @@ class BaseConfig:
     JWT_ERROR_MESSAGE_KEY = 'message'
     JWT_BLACKLIST_ENABLED = True
 
-    ENABLE_SWAGGER_UI = False
+    # Was not enabled on thu 26.9.19 ENABLE_SWAGGER_UI = False
+    ENABLE_SWAGGER_UI = True
 
     DEBUG = False
 
