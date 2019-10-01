@@ -166,12 +166,10 @@ export default {
         this.$emit('login', data);
         this.getUserBasics();
         this.updateUser();
-        // this.goToSettingsPage();
       } else {
         this.$emit('login', data);
       }
     },
-
 
     async updateUser() {
       const params = {
@@ -197,7 +195,6 @@ export default {
             this.hasFailed = false;
           }, 3000);
         });
-      // await this.updateShowingUserData();
     },
 
     getUserBasics() {

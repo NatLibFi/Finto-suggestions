@@ -66,8 +66,9 @@ def login() -> str:
             # this time, skip overriden as_dict() to disable event
             # serialization
             serialized_user = super(User, user).as_dict()
-            access_token = create_access_token(identity=serialized_user)
-            refresh_token = create_refresh_token(identity=serialized_user)
+            # Mika 270919
+            access_token = create_access_token(identity=serialized_user, expires_delta=False)
+            refresh_token = create_refresh_token(identity=serialized_user, expires_delta=False)
 
             return {'access_token': access_token, 'refresh_token': refresh_token, 'user_id': user.id, 'code': 200}, 200
 
@@ -86,9 +87,10 @@ def refresh() -> str:
     """
 
     current_user = get_jwt_identity()
-    access_token = create_access_token(identity=current_user)
+    # MIka 270919
+    access_token = create_access_token(identity=current_user, expires_delta=False)
 
-    return create_response({}, 200, access_token=access_token)
+    return create_response({}, 200, access_token=access_token, expires_delta=False)
 
 
 @jwt_required
@@ -255,7 +257,8 @@ def handle_user_creation(code, oauth_data) -> str:
             raise ex
 
     serialized_user = super(User, user).as_dict()
-    local_access_token = create_access_token(identity=serialized_user)
-    local_refresh_token = create_refresh_token(identity=serialized_user)
+    # Mika 270919
+    local_access_token = create_access_token(identity=serialized_user, expires_delta=False)
+    local_refresh_token = create_refresh_token(identity=serialized_user, expires_delta=False)
 
     return {'access_token' : local_access_token, 'refresh_token': local_refresh_token, 'user_id': user.id, 'code': 200}, 200
