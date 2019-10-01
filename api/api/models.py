@@ -1,4 +1,5 @@
-from flask_sqlalchemy import SQLAlchemy
+from flask_sqlalchemy import SQLAlchemy as _NSQLAlc
+# from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.ext.hybrid import hybrid_property, hybrid_method
 from sqlalchemy.orm import validates, column_property
 from sqlalchemy import select, column, table
@@ -7,7 +8,16 @@ from datetime import datetime
 from collections import Counter
 import enum
 
+# Mika 011019 also added _BaseSQLAlchemy in the import
+class SQLAlchemy(_NSQLAlc):
+    def apply_pool_defaults(self, app, options):
+        super(SQLAlchemy, self).apply_pool_defaults(app, options)
+        options["pool_pre_ping"] = True
+
 db = SQLAlchemy()
+
+# Mika 011019
+# db.options.pool_pre_ping = True
 
 class EventTypes(enum.IntEnum):
     ACTION = 0
