@@ -164,38 +164,39 @@ export default {
       const data = { service, loginData };
       if (!this.$v.email.$invalid && !this.$v.password.$invalid && service === 'local') {
         this.$emit('login', data);
-        this.getUserBasics();
-        this.updateUser();
+        // Mika 011019
+        // this.getUserBasics();
+        // this.updateUser();
       } else {
         this.$emit('login', data);
       }
     },
-
-    async updateUser() {
-      const params = {
-        userId: this.userId,
-        data: {
-          name: this.$sanitize(this.userName),
-          title: this.$sanitize(this.userTitle),
-          organization: this.$sanitize(this.userOrg),
-          imageUrl: this.$sanitize(this.userImageUrl),
-          role: this.$sanitize(this.userRole)
-        }
-      };
-      await this.patchUser(params)
-        .then(() => {
-          this.hasSucceeded = true;
-          setTimeout(() => {
-            this.hasSucceeded = false;
-          }, 2000);
-        })
-        .catch(() => {
-          this.hasFailed = true;
-          setTimeout(() => {
-            this.hasFailed = false;
-          }, 3000);
-        });
-    },
+// Mika 011019 Testi
+    // async updateUser() {
+    //   const params = {
+    //     userId: this.userId,
+    //     data: {
+    //       name: this.$sanitize(this.userName),
+    //       title: this.$sanitize(this.userTitle),
+    //       organization: this.$sanitize(this.userOrg),
+    //       imageUrl: this.$sanitize(this.userImageUrl),
+    //       role: this.$sanitize(this.userRole)
+    //     }
+    //   };
+    //   await this.patchUser(params)
+    //     .then(() => {
+    //       this.hasSucceeded = true;
+    //       setTimeout(() => {
+    //         this.hasSucceeded = false;
+    //       }, 2000);
+    //     })
+    //     .catch(() => {
+    //       this.hasFailed = true;
+    //       setTimeout(() => {
+    //         this.hasFailed = false;
+    //       }, 3000);
+    //     });
+    // },
 
     getUserBasics() {
       this.userName = this.user.name;
