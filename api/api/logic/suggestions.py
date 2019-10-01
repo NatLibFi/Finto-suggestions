@@ -369,10 +369,11 @@ def put_update_suggestion_status(suggestion_id: int, status: str) -> str:
             suggestion = Suggestion.query.get(suggestion_id)
             suggestion.status = status
             db.session.add(suggestion)
-            db.sesion.commit()
+            # Mika 011019
+            db.session.commit()
             return { 'code': 202 }, 202
         except Exception as ex:
-            db.sesion.rollback()
+            db.session.rollback()
             print(str(ex))
             return { 'error': str(ex) }, 400
         

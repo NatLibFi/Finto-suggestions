@@ -103,11 +103,12 @@ export default {
   directives: {
     onClickaway: onClickaway
   },
+  // Mika 300919
   props: {
-    suggestion: {
-      type: Object,
-      required: true
-    },
+    // suggestion: {
+    //   type: Object,
+    //   required: true
+    // },
     userId: {
       type: [Number, String],
       required: true
@@ -168,7 +169,8 @@ export default {
   
   created() {
     this.getTags();
-    this.handleSuggestionTagsChecked();
+    // Mika 300919
+    // this.handleSuggestionTagsChecked();
     this.refreshTagPage();
   },
   methods: {
