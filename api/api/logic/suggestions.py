@@ -197,6 +197,26 @@ def post_suggestion() -> str:
         payload_tags = payload_dict['tags']
         payload_dict['tags'] = []
 
+    # Mika's test area for getting missing lists inserted into the db with at least brackets
+    if 'broader_labels' not in payload_dict:
+        payload_dict['broader_labels'] = []
+        # print(payload_dict['broader_labels'])
+    
+    if 'exactMatches' not in payload_dict:
+        payload_dict['exactMatches'] = []
+
+    if 'groups' not in payload_dict:
+        payload_dict['groups'] = []
+
+    if 'narrower_labels' not in payload_dict:
+        payload_dict['narrower_labels'] = []
+
+    if 'related_labels' not in payload_dict:
+        payload_dict['related_labels'] = []
+
+    if 'alternative_labels' not in payload_dict:
+        payload_dict['alternative_labels'] = []
+
     created_response = create_or_400(Suggestion, payload_dict)
     response = created_response[0]
 
