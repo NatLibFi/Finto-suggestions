@@ -1,12 +1,14 @@
 <template>
   <div class="suggestion-content">
+    <div> For test purposes 
+
+    </div>
     <div v-if="suggestion.status && suggestion.status.length > 0">
       <p class="content-title">
         <strong>Tila</strong>
       </p>
       <p>{{ suggestionStateStatusToString[suggestion.status] }}</p>
     </div>
-
     <div v-if="suggestion.preferred_label.fi && suggestion.preferred_label.fi.value">
       <p v-if="suggestion.suggestion_type == suggestionType.NEW" class="content-title">
         <strong>Ehdotettu termi suomeksi</strong>
@@ -101,29 +103,33 @@
       <p>{{ suggestion.scopeNote }}</p>
     </div>
 
-    <div v-if="suggestion.description">
+    <!-- orig <div v-if="suggestion.description"> -->
+    <div v-if="suggestion">
       <p v-if="suggestion.suggestion_type == suggestionType.NEW" class="content-title">
         <strong>Perustelut ehdotukselle</strong>
       </p>
       <p v-if="suggestion.suggestion_type == suggestionType.MODIFY" class="content-title">
         <strong>Ehdotettu muutos</strong>
       </p>
-      <p>{{ suggestion.description }}</p>
+      <!-- orig <p>{{ suggestion.description }}</p> -->
+      <p>{{ suggestion.reason }}</p>
     </div>
-
     <div v-if="suggestion.reason">
       <p v-if="suggestion.suggestion_type == suggestionType.NEW" class="content-title">
-        <strong>Aineisto jonka kuvailussa käsitettä tarvitaan (esim. nimeke tai URL)</strong>
+        <strong>Perustelut ehdotukselle</strong>
       </p>
       <p v-if="suggestion.suggestion_type == suggestionType.MODIFY" class="content-title">
-        <strong>Perustelut ehdotukselle</strong>
+        <strong>Perustelut muutosehdotukselle</strong>
       </p>
       <p>{{ suggestion.reason }}</p>
     </div>
 
     <div v-if="suggestion.neededFor">
-      <p class="content-title">
-        <strong>Aineisto jonka kuvailussa käsitettä tarvitaan (esim. nimeke tai URL)</strong>
+      <p v-if="suggestion.suggestion_type == suggestionType.NEW" class="content-title">
+        <strong>Tarve ehdotukselle</strong>
+      </p>
+      <p v-if="suggestion.suggestion_type == suggestionType.MODIFY" class="content-title">
+        <strong>Tarve muutosehdotukselle</strong>
       </p>
       <p>{{ suggestion.neededFor }}</p>
     </div>

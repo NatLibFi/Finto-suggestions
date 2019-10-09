@@ -7,8 +7,12 @@ from passlib.hash import pbkdf2_sha256 as hash_algorithm
 from datetime import datetime
 from collections import Counter
 import enum
+# Mika 021019
+# import logging
+# logging.basicConfig()
+# logging.getLogger('sqlachemy.engine').setLevel(logging.ERROR)
 
-# Mika 011019 also added _BaseSQLAlchemy in the import
+# Mika 011019 also added _NSQLAlc in the import
 class SQLAlchemy(_NSQLAlc):
     def apply_pool_defaults(self, app, options):
         super(SQLAlchemy, self).apply_pool_defaults(app, options)

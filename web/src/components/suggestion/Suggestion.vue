@@ -1,5 +1,6 @@
 <template>
   <div class="suggestion">
+        
     <div class="arrow-button">
       <a @click="goBack()" unselectable="on">
         <svg-icon icon-name="arrow"><icon-arrow /></svg-icon>
@@ -127,13 +128,23 @@
         </div>
       </div>
 
-      <suggestion-content
-        :suggestion="suggestion"
-        :user-name="userName"
-        :isAuthenticated="isAuthenticated"
-        :isAdmin="role === userRoles.ADMIN"
-        :componentKey="componentKey"
-      />
+      <div name="testMika"> 
+        <suggestion-content
+          :suggestion="suggestion"
+          :userName="userName"
+          :isAuthenticated="isAuthenticated"
+          :isAdmin="role === userRoles.ADMIN"
+          :componentKey="componentKey"
+        />
+      </div> <!--Added by Mika -->
+
+        <!-- orig <suggestion-content
+          :suggestion="suggestion"
+          :userName="userName"
+          :isAuthenticated="isAuthenticated"
+          :isAdmin="role === userRoles.ADMIN"
+          :componentKey="componentKey"
+        /> -->
     </div>
 
     <div v-if="meetingId" class="meeting-actions">
