@@ -92,9 +92,10 @@ Go to the api container console and run migration upgrade the database, if every
 DISCLAIMER: this should be run only once, if this is not 100% run end whole database should be truncated.
 To this run correctly, GITHUB_USERNAME and GITHUB_PERSONAL_TOKEN environments need to be set before running.
 
-1. Open api service container console
-2. Run `python -m scripts.prod_data_import`, which should fetch all the issues in the issue tracker and upload them to suggestion system's database
-3. When the import is completed, close the console and you can check on the frontend page is everything correctly imported.
+1. Go to the frontpage (**localhost:8080**) and create a new user for comments originally imported from GitHub. This must be done in an empty but previously upgraded database. The user must be the first user in the system. It's user role is 'NORMAL' and id must be 1 (automatically set up by next val -function in the db).
+2. Open api service container console
+3. Run `python -m scripts.prod_data_import`, which should fetch all the issues in the issue tracker and upload them to suggestion system's database
+4. When the import is completed, close the console and you can check on the frontend page is everything correctly imported.
 
 ### 2.6 Create new GitHub app for environment
 

@@ -73,8 +73,9 @@ http://asciiflow.com/
 6.  Start the freshly installed Docker
 7.  Run `docker-compose up --build` in project's **root** folder (you can add `-d` to run this in the background). This command builds the required containers (api, web and nginx) and starts them. You can check the container status with a command `docker ps` in another command line tab.
 8.  Initialize the database. In the api directory (while the containers are running), run `pipenv run upgrade-db`
-9.  In web/.env.local, set VUE_APP_GITHUB_CLIENT_ID if you wanna use GitHub-based login/signup – the developer team will provide this for you.
-10. Also, please see that all other environment keys are supplied, as some missing ones might make the system crash if not added.
+9. Go to the frontpage (**localhost:8080**) and create a new user for comments originally imported from GitHub. This must be done in an empty but previously upgraded database. The user must be the first user in the system. It's user role is 'NORMAL' and id must be 1 (automatically set up by next val -function in the db).
+10.  In web/.env.local, set VUE_APP_GITHUB_CLIENT_ID if you wanna use GitHub-based login/signup – the developer team will provide this for you.
+11. Also, please see that all other environment keys are supplied, as some missing ones might make the system crash if not added.
 
 When the application is running, you should find the application running on **localhost:8080**. The web frontend (a Vue.js app) can be found on the root url (localhost:8080/) and the API on localhost:8080/api. The API's visual documentation (Swagger UI) can be found on localhost:8080/api/ui/#/.
 
