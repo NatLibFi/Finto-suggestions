@@ -1,8 +1,5 @@
 <template>
   <div class="suggestion-content">
-    <div> For test purposes 
-
-    </div>
     <div v-if="suggestion.status && suggestion.status.length > 0">
       <p class="content-title">
         <strong>Tila</strong>
