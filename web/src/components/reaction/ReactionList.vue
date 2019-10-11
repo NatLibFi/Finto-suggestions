@@ -1,7 +1,6 @@
 <template>
   <div>
     <div class="emoji-list">
-      <p>Näkyykö</p>
       <div v-for="(emoji, index) in emojiList" :key="index" class="single-emoji">
         <span class="count">{{ emoji.count }}</span>
         <span class="emoji">
