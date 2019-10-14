@@ -2,6 +2,7 @@
   <div class="event">
     <div class="event-divider"></div>
     <div class="event-container">
+      <!-- <div v-if="event.user_id || type === eventTypes.ACTION" class="event-header"> -->
       <div v-if="event.user_id || type === eventTypes.ACTION" class="event-header">
         <div v-if="userImage" class="event-user-image">
           <img :src="userImage" :alt="userNameInitials" />
@@ -35,13 +36,23 @@
             {{ dateTimeFormatLabel(this.event.created) }}
           </p>
         </div>
-        <div
+        <!-- Mika 111019 orig <div
           v-if="
             isAuthenticated &&
               (role === userRoles.ADMIN || parseInt(authedUserId) === event.user_id)
           "
           class="menu-wrapper"
+        > -->
+
+        <!-- Test begins -->
+        <div
+          v-if="
+            isAuthenticated"
+          class="menu-wrapper"
         >
+
+        <!-- Test until here -->
+
           <emoji-selector
             v-if="type === eventTypes.COMMENT"
             @updateReactionList="updateReactionList()"
