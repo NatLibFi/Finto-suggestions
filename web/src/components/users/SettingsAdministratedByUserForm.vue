@@ -1,18 +1,19 @@
 <template>
+  
   <div>
-
+    <!-- <span> {{ userRoles.ADMIN }} </span>
+    <span> {{ isAuthenticated }} </span> -->
     <!-- User text block -->
     <!-- <span> Onko käyttäjä autentikoitu: {{ isAuthenticated }} </span> -->
     <!-- <span> UserNameInitials (imports) {{ userNameInitials }} </span> -->
     <!-- <span> userRoleToString  (imports) {{ userRoleToString }} </span> -->
     <!-- <span> userId (imports) {{ userId }} </span> -->
-    <!-- <span> User  (imports) {{ user }} </span> -->
     <!-- <span> authenticatedUserGetters  (imports) {{ authenticatedUserGetters }} </span>
     <span> mapAuthenticatedUserGetters  (imports) {{ mapAuthenticatedUserGetters }} </span> -->
 
     <hr v-bind:style="hrSmooth">
-    <h5>Muokkaa nykyisiä tunnisteita</h5>
     <div>
+      <h5>Muokkaa nykyisiä tunnisteita</h5>
       <div v-if="reloadComponent">
         <ul v-if="tags && tags.length > 0">
           <ol v-for="tag in tags" :key="tag.label">
@@ -50,7 +51,7 @@
         </ul>
       </div>
     </div>
-    <div>   
+    <div >   
       <hr v-bind:style="hrSmooth">
       <h5>Luo uusi tunniste</h5>
       <div class="tag-selector-new-tag-form-input">

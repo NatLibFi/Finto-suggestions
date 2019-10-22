@@ -87,6 +87,10 @@ Other things than update configs and environment variables in docker-compose fil
 
 Go to the api container console and run migration upgrade the database, if everything went ok continue to next section.
 
+You can also drop entire database and then run the migration. This can be done in the database by running next following commands:
+DROP SCHEMA public CASCADE;
+CREATE SCHEMA public;
+
 ### 2.5 OPTIONAL: Fetch old data from GitHub issue tracker
 
 DISCLAIMER: this should be run only once, if this is not 100% run end whole database should be truncated.
