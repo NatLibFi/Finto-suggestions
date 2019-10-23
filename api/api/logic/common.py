@@ -4,6 +4,7 @@ from sqlalchemy import exists
 from sqlalchemy.exc import IntegrityError
 from ..models import db
 from ..authentication import verify_user_access_to_resource
+import smtplib, os
 
 
 class InvalidFilterException(Exception):
@@ -141,7 +142,7 @@ def get_one_or_404(model: object, primary_key: int) -> str:
 def create_or_400(model: object, payload: Dict, error_msg: str = None) -> str:
     """
     Creates a new object and commits it to the database.
-
+    Checks if there is a need to send email. The sending depends always on Model
     :param model: database model to create
     :param payload: a single object
     :returns: the created user as json
@@ -159,7 +160,20 @@ def create_or_400(model: object, payload: Dict, error_msg: str = None) -> str:
             msg = error_msg
         db.session.rollback()
         return create_response(None, 400, msg)
+# Mika's testing begins
 
+    if db_obj.email:
+        print("The email in use is " + db_obj.email )
+        send_email_while_signing_up(db_obj.email)
+
+        # if password_update_success is True:
+        #   sending_status = send_email(new_password, user.email)
+        #   if sending_status:
+        #     return { 'code': 200 }, 200
+        #   else:
+        #     return { 'code': 404, 'error': 'Could not send email' }, 404
+
+# Mika's testing ends
     return create_response(db_obj.as_dict(), 201)
 
 
@@ -280,3 +294,50 @@ def patch_or_404(model: object, primary_key: int, payload: Dict) -> str:
         return create_response(None, 404, msg)
 
     return create_response(db_obj.as_dict(), 200)
+
+
+
+def send_email_while_signing_up(email: str) -> str:
+    """
+    Method for sending email messages
+    """
+
+    if email:
+      email_server_address = os.environ.get('EMAIL_SERVER_ADDRESS')
+      email_server_port = os.environ.get('EMAIL_SERVER_PORT')
+      default_sender = os.environ.get('EMAIL_SERVER_DEFAULT_SENDER_EMAIL')
+      email_server_username = os.environ.get('EMAIL_SERVER_USERNAME')
+      email_server_password = os.environ.get('EMAIL_SERVER_PASSWORD')
+
+      print(email_server_address)
+      print(email_server_port)
+      print(default_sender)
+      print(email_server_username)
+
+      body = """
+      Mikan testiteksti
+      """
+
+    #   message = 'Subject: Tervetuloa Ehdotusjärjestelmän käyttäjäksi'.format(body)
+
+
+      message = 'Subject: {}\n\n{}'.format(
+        'Tervetuloa systeemiin',
+        body)
+
+
+
+      try:
+        mailserver = smtplib.SMTP(email_server_address, email_server_port)
+        mailserver.ehlo()
+        mailserver.starttls()
+
+        if email_server_username and email_server_password:
+          mailserver.login(email_server_username, email_server_password)
+
+        mailserver.sendmail(default_sender, [email], message)
+        mailserver.quit()
+        return True
+      except Exception as ex:
+        print(str(ex))
+    return False

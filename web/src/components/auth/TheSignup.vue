@@ -38,6 +38,7 @@
           <p class="hint">Salasanan tulee olla 6 merkkiä tai pitempi.</p>
         </div>
         <div v-if="password === password2" @click="signup('local')" :class="[!$v.$invalid ? '' : 'disabled', 'login-submit']">
+        <!-- <div @click="signup('local')" :class="[!$v.$invalid ? '' : 'disabled', 'login-submit']"> -->
           <span>Luo tili</span>
         </div>
       </div>
