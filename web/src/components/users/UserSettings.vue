@@ -34,11 +34,10 @@
         </p>
       </div>
     </div>
-
     <div class="setting-container">
       <user-settings-form />
     </div>
-      <div class="setting-container">
+      <div v-if="isAuthenticated && user.role === userRoles.ADMIN"  class="setting-container">
         <settings-administrated-by-user-form />
       </div>
   </div>
@@ -58,6 +57,7 @@ import { mapUserGetters } from '../../store/modules/user/userModule';
 import { authenticatedUserGetters } from '../../store/modules/authenticatedUser/authenticatedUserConsts.js';
 // eslint-disable-next-line
 import { mapAuthenticatedUserGetters } from '../../store/modules/authenticatedUser/authenticatedUserModule.js';
+import { userRoles } from '../../utils/userHelpers';
 
 export default {
   components: {
@@ -68,7 +68,8 @@ export default {
     return {
       userRoleToString,
       userNameInitials: '',
-      isTouched: false
+      isTouched: false,
+      userRoles
     };
   },
   computed: {

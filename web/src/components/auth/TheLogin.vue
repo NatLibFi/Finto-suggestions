@@ -2,14 +2,14 @@
   <div class="login-dialog">
     <h3 v-if="!showForgottenPasswordForm">Kirjaudu sisään</h3>
     <!-- TODO: uncomment this when google oauth2 is ready -->
-    <!-- <p>Voit kirjautua sisään Github- ja Google-tunnuksilla</p> -->
+    <p>Voit kirjautua sisään Github- ja Google-tunnuksilla</p> <!--241019-->
     <div v-if="!showForgottenPasswordForm" class="login-services">
       <!-- Next div for GitHub -->
-      <!-- <div @click="login('github')" class="login-service-button"> -->
-        <!-- <svg-icon icon-name="github"><icon-github /></svg-icon> -->
-        <!-- <span class="normal">Kirjaudu GitHub-tunnuksilla</span> -->
-        <!-- <span class="mobile">GitHub-tunnukset</span> -->
-      <!-- </div> -->
+      <div @click="login('github')" class="login-service-button"> <!--241019-->
+        <svg-icon icon-name="github"><icon-github /></svg-icon> <!--241019-->
+        <span class="normal">Kirjaudu GitHub-tunnuksilla</span> <!--241019-->
+        <span class="mobile">GitHub-tunnukset</span> <!--241019-->
+      </div> <!--241019-->
       <!-- TODO: uncomment this when google oauth2 is ready -->
       <!-- <div @click="login('google')" class="login-service-button">
         <svg-icon icon-name="google"><icon-google /></svg-icon>
