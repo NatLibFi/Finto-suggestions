@@ -33,9 +33,12 @@
         <div class="login-input">
           <span>Salasana</span>
           <input type="password" v-model="password" />
+          <span>Syötä salasana toisen kerran</span>
+          <input type="password" v-model="password2" />
           <p class="hint">Salasanan tulee olla 6 merkkiä tai pitempi.</p>
         </div>
-        <div @click="signup('local')" :class="[!$v.$invalid ? '' : 'disabled', 'login-submit']">
+        <div v-if="password === password2" @click="signup('local')" :class="[!$v.$invalid ? '' : 'disabled', 'login-submit']">
+        <!-- <div @click="signup('local')" :class="[!$v.$invalid ? '' : 'disabled', 'login-submit']"> -->
           <span>Luo tili</span>
         </div>
       </div>
@@ -60,7 +63,8 @@ export default {
     showOwnCredentialSignup: false,
     name: '',
     email: '',
-    password: ''
+    password: '',
+    password2: ''
   }),
   validations: {
     name: {
