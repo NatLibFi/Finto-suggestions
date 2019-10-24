@@ -308,21 +308,30 @@ def send_email_while_signing_up(email: str) -> str:
       default_sender = os.environ.get('EMAIL_SERVER_DEFAULT_SENDER_EMAIL')
       email_server_username = os.environ.get('EMAIL_SERVER_USERNAME')
       email_server_password = os.environ.get('EMAIL_SERVER_PASSWORD')
+      
+      body = os.environ.get('WELCOME_MESSAGE_BODY')
+      subject_text = os.environ.get('WELCOME_SUBJECT')
+
+# WELCOME_SUBJECT='Tervetuloa systeemiin'
+# WELCOME_MESSAGE_BODY="""Mikan testiteksti"""
+
 
       print(email_server_address)
       print(email_server_port)
       print(default_sender)
       print(email_server_username)
 
-      body = """
-      Mikan testiteksti
-      """
+# Toimiva
+    #   body = """
+    #   Mikan testiteksti
+    #   """
 
     #   message = 'Subject: Tervetuloa Ehdotusjärjestelmän käyttäjäksi'.format(body)
 
 
       message = 'Subject: {}\n\n{}'.format(
-        'Tervetuloa systeemiin',
+        # TOIMIVA 'Tervetuloa systeemiin',
+        subject_text,
         body)
 
 
