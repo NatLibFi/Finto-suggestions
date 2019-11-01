@@ -228,8 +228,16 @@ class Suggestion(db.Model, SerializableMixin):
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
 
     def __repr__(self):
+
+        # A - This was the situation on 1.10.19 and is there in the Master branch
         label = self.preferred_label.get('fi')
         return '<Suggestion \'{}\'>'.format(label)
+        # A - end
+
+        #label = self.preferred_label.get('fi').decode('utf-8')
+        # Toimii maybe label = self.preferred_label.get('fi')
+        # Toimii maybe return '<Suggestion \'{}\'>'.format(label)
+        # return '<Suggestion \'{}\'>'.decode('utf-8').format(label)
 
     def as_dict(self, strip=True):
         # relationships (joins) should be expanded carefully

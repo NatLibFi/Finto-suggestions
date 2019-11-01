@@ -270,6 +270,7 @@ class GithubDataParser:
     else:
       return None
 
+# Marker 2
   def __parse_status(self, status, tags):
     mapped_status = 'RECEIVED'
     if status is 'closed':
@@ -291,6 +292,7 @@ class GithubDataParser:
     personal_token = os.environ.get('GITHUB_PERSONAL_TOKEN')
     return requests.get(comment_url, auth=(user, personal_token))
 
+# Marker 1
   def __fetch_data_from_github(self, page = 1):
     user = os.environ.get('GITHUB_USERNAME')
     personal_token = os.environ.get('GITHUB_PERSONAL_TOKEN')

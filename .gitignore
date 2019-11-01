@@ -9,3 +9,4 @@ web/dist
 *.code-workspace
 api/.idea/
 .idea/
+tests

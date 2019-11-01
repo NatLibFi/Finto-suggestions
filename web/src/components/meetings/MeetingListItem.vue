@@ -3,7 +3,7 @@
     <div class="item-summary">
       <div class="title">
         <p class="title-row">
-          <span class="item-name">Kokous {{ meeting.id }} – {{ meeting.name }}</span>
+          <span class="item-name">{{ meeting.name }}</span>
         </p>
       </div>
       <div class="label">
