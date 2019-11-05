@@ -17,6 +17,7 @@ pgcli = "*"
 swagger-ui-bundle = "*"
 rdflib = "*"
 rdflib-jsonld = "*"
+ujson = "*"
 
 [dev-packages]
 pytest = "*"

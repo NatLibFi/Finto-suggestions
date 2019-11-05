@@ -20,6 +20,7 @@ import unicodedata
 ##### Tests
 from sqlalchemy import JSON
 from sqlalchemy import cast
+import string
 
 
 def compare_caseless(s1, s2):
@@ -82,7 +83,13 @@ def get_suggestions(limit: int = None, offset: int = None, filters: str = None, 
                 # Mika's and Alex's testing func.lower(str(Suggestion)).contains(search.lower())
                 # func.lower(Suggestion.preferred_label['fi'].astext.matches(search)),
                 # func.lower(Suggestion.preferred_label['fi']['value'].cast(Unicode)).contains(searchEscaped.lower()),
-                func.lower(Suggestion.preferred_label['fi'].cast(Unicode)).contains(search.lower()),
+                # Almost working version 
+                # func.lower(Suggestion.preferred_label['fi'].cast(Unicode)).contains(search.lower()),
+                #
+                #
+                func.lower(Suggestion.preferred_label['fi']['value'].cast(Unicode)).contains(search.lower()),
+                # func.lower(Suggestion.preferred_label.cast(Unicode)).contains(search.lower()),
+
                 func.lower(Suggestion.preferred_label['sv'].cast(Unicode)).contains(search.lower()),
                 func.lower(Suggestion.preferred_label['en'].cast(Unicode)).contains(search.lower()),
                 # func.lower(Suggestion.alternative_labels.cast(Unicode)).contains(search.lower()),
