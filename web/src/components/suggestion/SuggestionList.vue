@@ -14,6 +14,18 @@
       :searchWord="searchWord"
       :sort="sort"
     />
+    <!-- <div> -->
+      <!-- {{ suggestionCount }} : {{ archivedSuggestionCount }} : {{ aCount }} -->
+      <!-- {{ suggestions }}  -->
+
+    <!-- </div> -->
+    <!-- <div class="list-container">
+      <suggestions-filtered-by-archived
+      
+      />
+    </div> -->
+
+
     <div class="list-container">
       <ul class="list">
         <transition-group name="fade">
@@ -47,6 +59,7 @@ import SuggestionSearch from './SuggestionSearch';
 import SuggestionListHeader from './SuggestionListHeader';
 import SuggestionItem from './SuggestionItem';
 import SuggestionListPagination from './SuggestionListPagination';
+import SuggestionsFilteredByArchived from './SuggestionsFilteredByArchived';
 
 import {
   suggestionGetters,
@@ -65,7 +78,8 @@ export default {
     SuggestionSearch,
     SuggestionListHeader,
     SuggestionItem,
-    SuggestionListPagination
+    SuggestionListPagination,
+    SuggestionsFilteredByArchived
   },
   props: {
     userId: {
@@ -85,33 +99,55 @@ export default {
   data() {
     return {
       filters: this.$route.query.filters ? this.$route.query.filters : '',
+      aFilters: 'status:ARCHIVED',
       searchWord: this.$route.query.search ? this.$route.query.search : '',
       sort: this.$route.query.sort ? this.$route.query.sort : '',
       offsetByPagination,
       pageCount: 400,
-      pageCountLoading: false
+      pageCountLoading: false,
+      aCount: 0,
+      suggestionsAsArray: []
     };
   },
   computed: {
     ...mapSuggestionGetters({
       suggestions: suggestionGetters.GET_SUGGESTIONS,
-      suggestionCount: suggestionGetters.GET_SUGGESTIONS_COUNT
-    })
+      suggestionCount: suggestionGetters.GET_SUGGESTIONS_COUNT,
+      archivedSuggestionCount: suggestionGetters.GET_ARCHIVED_SUGGESTIONS_COUNT
+    }),
+    
   },
   async created() {
     this.pageCountLoading = true;
     await this.fetchSuggestions();
-    this.pageCount = Math.ceil(this.suggestionCount / 15);
+    this.pageCount = Math.ceil(this.suggestionCount / 25);
+    // this.aCount = 123;
+    // Toimi molemmilla
+    // this.aCount = this.archivedSuggestionCount.length;
+    this.aCount = this.archivedSuggestionCount.length;
+
+    // console.log("***********************************")
+    // console.log(this.filters);
+    // console.log(this.searchWord);
+    // console.log(this.sort);
+
+
     if (this.pageCount < this.page) {
       this.goToFirstPage();
     }
     this.pageCountLoading = false;
   },
+
+  // async mounted() {
+  //   console.log(pageCount);
+
+  // },
   methods: {
     ...mapSuggestionActions({
       getSuggestions: suggestionActions.GET_SUGGESTIONS,
       getSuggestionsByUserId: suggestionActions.GET_SUGGESTIONS_BY_USER_ID,
-      getSuggestionsCount: suggestionActions.GET_SUGGESTIONS_COUNT
+      getSuggestionsCount: suggestionActions.GET_SUGGESTIONS_COUNT,
+      getArchivedSuggestionsCount: suggestionActions.GET_ARCHIVED_SUGGESTIONS_COUNT
     }),
     async fetchSuggestions() {
       if (this.userId) {
@@ -119,10 +155,12 @@ export default {
           userId: this.userId,
           offset: offsetByPagination(this.page)
         });
+
         await this.getSuggestionsCount({
           filters: 'user_id:' + this.userId,
           searchWord: ''
         });
+
       } else {
         this.getSuggestions({
           offset: offsetByPagination(this.page),
@@ -130,16 +168,27 @@ export default {
           filters: this.filters,
           searchWord: this.searchWord
         });
+        // this.aFilters = this.suggestions.filter(obj => obj.status === 'ARCHIVED').length;
+
         await this.getSuggestionsCount({
           filters: this.filters,
           searchWord: this.searchWord
         });
+// Toimisi muuten, mutta tallentaa storeen kaikki samat tiedot kuin ilman ARCHIVED-rajaustakin
+        // await this.getArchivedSuggestionsCount({
+        //   aFilters: 'status:ARCHIVED',
+        //   searchWord: ''
+        // });
+
       }
     },
     async updateSuggestionList() {
       this.pageCountLoading = true;
       await this.fetchSuggestions();
-      this.pageCount = Math.ceil(this.suggestionCount / 15);
+      this.pageCount = Math.ceil(this.suggestionCount / 25);
+      // Toimi molemmilla
+      // this.aCount = this.archivedSuggestionCount.length;
+      this.aCount = this.archivedSuggestionCount.length;
       if (this.pageCount < this.page) {
         this.goToFirstPage();
       }
@@ -166,7 +215,7 @@ export default {
             userId: this.userId,
             page: 1
           }
-        })
+        });
       } else if (this.suggestions.length > 0) {
         this.$router.push({
           name: 'suggestions',
@@ -189,6 +238,7 @@ export default {
   watch: {
     $route() {
       this.filters = this.$route.query.filters ? this.$route.query.filters : '';
+      this.aFilters = 'status:ARCHIVED';
       this.searchWord = this.$route.query.search ? this.$route.query.search : '';
       this.sort = this.$route.query.sort ? this.$route.query.sort : '';
       this.updateSuggestionList();

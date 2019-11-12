@@ -7,7 +7,7 @@ from passlib.hash import pbkdf2_sha256 as hash_algorithm
 from datetime import datetime
 from collections import Counter
 import enum
-import ujson
+# import ujson
 import json
 # Mika 021019
 # import logging

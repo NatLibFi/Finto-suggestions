@@ -1,6 +1,7 @@
 import { get, put, post, del, patch } from '../utils';
 
-const defaultLimit = 15;
+// For adjusting a list lengt on the front page. Remember to set this also at the SuggestionsList.vue
+const defaultLimit = 25;
 
 // function toUnicode(value){
 //   value = value.toLowerCase();
@@ -21,8 +22,12 @@ export default {
       resource: `/suggestions?limit=${defaultLimit}&offset=${offset}&sort=${sort}&filters=${filters}&search=${searchWord}`
       // resource: `/suggestions?search=${toUnicode(searchWord)}`
     }),
+  // getSuggestionsCount: (filters, searchWord) =>
+  //   get({ resource: `/suggestions/count?filters=status:ARCHIVED&search=${searchWord}` }),
   getSuggestionsCount: (filters, searchWord) =>
     get({ resource: `/suggestions/count?filters=${filters}&search=${searchWord}` }),
+  getArchivedSuggestionsCount: (filters, searchWord) =>
+    get({ resource: `/suggestions/archcount?filters=status:ARCHIVED&search=${searchWord}` }),
   getSuggestionsByUserId: (userId, offset = 0) =>
     get({ resource: `/suggestions/user=${userId}?limit=${defaultLimit}&offset=${offset}` }),
   getSuggestionById: suggestionId => get({ resource: `/suggestions/${suggestionId}` }),
