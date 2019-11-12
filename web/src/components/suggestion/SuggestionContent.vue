@@ -111,7 +111,7 @@
       <!-- orig <p>{{ suggestion.description }}</p> -->
       <p>{{ suggestion.reason }}</p>
     </div>
-    <div v-if="suggestion.reason">
+    <!-- <div v-if="suggestion.reason">
       <p v-if="suggestion.suggestion_type == suggestionType.NEW" class="content-title">
         <strong>Perustelut ehdotukselle</strong>
       </p>
@@ -119,7 +119,7 @@
         <strong>Perustelut muutosehdotukselle</strong>
       </p>
       <p>{{ suggestion.reason }}</p>
-    </div>
+    </div> -->
 
     <div v-if="suggestion.neededFor">
       <p v-if="suggestion.suggestion_type == suggestionType.NEW" class="content-title">
