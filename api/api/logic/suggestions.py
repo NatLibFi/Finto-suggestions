@@ -6,7 +6,7 @@ from ..authentication import admin_only
 from .validators import suggestion_parameter_validator, suggestion_id_validator, _error_messagify
 from .common import (create_response, get_one_or_404, get_all_or_404, get_all_or_404_custom,
                      get_count_or_404_custom, create_or_400, delete_or_404, patch_or_404, update_or_404)
-from .utils import SUGGESTION_FILTER_FUNCTIONS, SUGGESTION_SORT_FUNCTIONS
+from .utils import SUGGESTION_FILTER_FUNCTIONS, SUGGESTION_SORT_FUNCTIONS, logMarker
 from ..models import db, Suggestion, Tag, User
 from .skos import initGraph, suggestionToGraph
 from flask import jsonify
@@ -45,6 +45,7 @@ def get_suggestions(limit: int = None, offset: int = None, filters: str = None, 
     :returns: All suggestion matching the query in json format
     """
 
+
     def query_func():
         if sort in SUGGESTION_SORT_FUNCTIONS:
             query = SUGGESTION_SORT_FUNCTIONS.get(sort)(db.session)
@@ -54,6 +55,16 @@ def get_suggestions(limit: int = None, offset: int = None, filters: str = None, 
         if filters and _validate_filters(filters):
             for name, value in filters:
                 filter_func = SUGGESTION_FILTER_FUNCTIONS.get(name.upper())
+
+                # Area 51 131119
+                logMarker("***********************************")
+                print(filters)
+
+
+                # Area 51 131119
+
+
+
                 if filter_func:
                     query = filter_func(query, value.upper())
 
@@ -118,10 +129,6 @@ def get_suggestions(limit: int = None, offset: int = None, filters: str = None, 
                 # func.lower(Suggestion.yse_term.cast(Unicode)).contains(search.lower()),
             ))
 
-            # print("****")
-            # print("****")
-            # print("****")
-            # print("****")
             # print(searchEscaped)
             # print(Suggestion.preferred_label['fi'])
             # print(func.lower(Suggestion.preferred_label['fi'].cast(Unicode)).contains(searchEscaped))

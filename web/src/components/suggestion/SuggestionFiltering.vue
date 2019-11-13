@@ -6,6 +6,7 @@
         Tyhjennä valinnat
       </a>
     </h5>
+
     <div
       @click="isDropDownOpened.STATUS = !isDropDownOpened.STATUS"
       :class="[filterStrings.status.length > 0 ? 'active-filter' : '', 'filter-item']"
@@ -50,6 +51,7 @@
         <span>{{ selectedOptionIndex.TAGS.length }} tunnistetta valittu</span>
          <svg-icon icon-name="triangle"><icon-triangle /></svg-icon>
       </div>
+
       <multiple-choice-drop-down
         :selectedIndexes="selectedOptionIndex.TAGS"
         :isOpened="isDropDownOpened.TAG"
@@ -60,6 +62,7 @@
         @resetTags="resetTags()"
         @closeDropDown="closeDropDown"
       />
+
     </div>
     <div
       v-if="!meetingId && mapMeetingsToDropDown().length > 0"
@@ -375,7 +378,8 @@ export default {
         if (str.length === 0) {
           str = str.concat(this.tags[indexes[i]].label.toLowerCase());
         } else {
-          str = str.concat('-', this.tags[indexes[i]].label.toLowerCase());
+          // Mika 121119 a starting point in finding of better delimiters for the tags
+          str = str.concat('\b', this.tags[indexes[i]].label.toLowerCase());
         }
       }
       if (str.length > 0) {
