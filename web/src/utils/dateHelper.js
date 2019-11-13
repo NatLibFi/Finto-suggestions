@@ -18,16 +18,16 @@ export const dateTimeFormatLabel = (date, isMeeting = false) => {
   if (!isMeeting) {
     if (whenSended === 0) {
       // return `Lähetetty tänään`;
-      return `Lähetetty ${format(date, 'DD.MM.YYYY HH.mm')}`;
+      return `(${format(date, 'DD.MM.YYYY HH.mm')})`;
     }
     if (whenSended === 1) {
       // return `Lähetetty eilen`;
-      return `Lähetetty ${format(date, 'DD.MM.YYYY HH.mm')}`;
+      return `(${format(date, 'DD.MM.YYYY HH.mm')})`;
     }
     return whenSended > 1 && whenSended < 30
       // ? `Lähetetty ${whenSended} päivää sitten`
-      ? `Lähetetty ${format(date, 'DD.MM.YYYY HH.mm')}`
-      : `Lähetetty ${format(date, 'DD.MM.YYYY HH.mm')}`;
+      ? `(${format(date, 'DD.MM.YYYY HH.mm')})`
+      : `(${format(date, 'DD.MM.YYYY HH.mm')})`;
   }
   if (isMeeting) {
     return format(date, 'DD.MM.YYYY HH.mm');
