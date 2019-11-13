@@ -88,6 +88,13 @@
         @closeDropDown="closeDropDown"
       />
     </div>
+
+      <!-- <a v-if="filters && filters.length > 0" @click="resetFilters()" class="clear-button">
+        aTyhjennä valinnat
+      </a> -->
+
+
+
   </div>
 </template>
 

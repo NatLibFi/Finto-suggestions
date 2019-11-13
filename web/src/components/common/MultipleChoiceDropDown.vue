@@ -6,17 +6,12 @@
       </div>
     </div>
     <div v-if="dropDownOptions.length > 0">
-
-
-        <!-- Area 69 -->
-        <p>X {{ selectedIndexes }}</p>
-        <p>Y {{ selectedValue }}</p>
-
-
-
-        <!-- Area 69 -->
-
-
+      <div @click="resetSelections()" class="option reset">
+        <div class="svg-wrapper">
+          <svg-icon icon-name="cross"><icon-cross /></svg-icon>
+        </div>
+        <p>Tyhjennä valinnat</p>
+      </div>
       <div v-for="(option, i) in dropDownOptions" :key="option.id">
         <div
           @click="filterValueSelected(option, i)"
