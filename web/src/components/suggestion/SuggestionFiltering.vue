@@ -268,7 +268,7 @@ export default {
 
       if (this.meetings && this.meetings.length > 0) {
         this.meetings.forEach(meeting => {
-          if (meeting.meeting_date) {
+          if (meeting) {
             meetings.push({
               label: meeting.name,
               value: meeting.id
@@ -276,6 +276,7 @@ export default {
           }
         });
       }
+      meetings.reverse();
       return meetings;
     },
     mapTagsToDropDown() {
