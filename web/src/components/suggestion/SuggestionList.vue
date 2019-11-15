@@ -14,16 +14,19 @@
       :searchWord="searchWord"
       :sort="sort"
     />
-    <!-- <div> -->
+    <div>
       <!-- {{ suggestionCount }} : {{ archivedSuggestionCount }} : {{ aCount }} -->
-      <!-- {{ suggestions }}  -->
+      Hakusana parentissa {{ searchWord }} 
 
-    <!-- </div> -->
-    <!-- <div class="list-container">
+    </div>
+    <div class="list-container">
       <suggestions-filtered-by-archived
+      :filters="filters"
+      :searchWord="searchWord"
+      
       
       />
-    </div> -->
+    </div>
 
 
     <div class="list-container">
@@ -102,6 +105,7 @@ export default {
       aFilters: 'status:ARCHIVED',
       searchWord: this.$route.query.search ? this.$route.query.search : '',
       sort: this.$route.query.sort ? this.$route.query.sort : '',
+      searchWordForRemoteUse: String,
       offsetByPagination,
       pageCount: 400,
       pageCountLoading: false,
@@ -136,7 +140,9 @@ export default {
       this.goToFirstPage();
     }
     this.pageCountLoading = false;
+  
   },
+  
 
   // async mounted() {
   //   console.log(pageCount);
@@ -149,6 +155,9 @@ export default {
       getSuggestionsCount: suggestionActions.GET_SUGGESTIONS_COUNT,
       getArchivedSuggestionsCount: suggestionActions.GET_ARCHIVED_SUGGESTIONS_COUNT
     }),
+    test: function() {
+      this.searchWordForRemoteUse = this.searchWord; 
+    },
     async fetchSuggestions() {
       if (this.userId) {
         this.getSuggestionsByUserId({
@@ -183,6 +192,12 @@ export default {
       }
     },
     async updateSuggestionList() {
+
+      $router.push({name: 'searchWordForTesting',
+        search: this.searchWord});
+
+
+
       this.pageCountLoading = true;
       await this.fetchSuggestions();
       this.pageCount = Math.ceil(this.suggestionCount / 25);
