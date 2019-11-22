@@ -36,11 +36,23 @@
             {{ suggestion.preferred_label.fi.value }}
           </h1>
           <h1
+            v-else-if="suggestion.preferred_label.sv && suggestion.preferred_label.sv.value"
+            class="suggestion-title"
+          >
+            {{ suggestion.preferred_label.sv.value }}
+          </h1>
+          <h1
+            v-else class="suggestion-title"
+          >
+            Ei otsikkoa
+          </h1>
+          <h1
             v-if="suggestion.preferred_label.fi && !suggestion.preferred_label.fi.value"
             class="suggestion-title"
           >
             {{ suggestion.preferred_label.fi }}
           </h1>
+
           <transition name="fade">
             <div class="suggestion-header-details">
               <span>

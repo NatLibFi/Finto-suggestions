@@ -6,6 +6,7 @@
         Tyhjennä valinnat
       </a>
     </h5>
+
     <div
       @click="isDropDownOpened.STATUS = !isDropDownOpened.STATUS"
       :class="[filterStrings.status.length > 0 ? 'active-filter' : '', 'filter-item']"
@@ -50,6 +51,7 @@
         <span>{{ selectedOptionIndex.TAGS.length }} tunnistetta valittu</span>
          <svg-icon icon-name="triangle"><icon-triangle /></svg-icon>
       </div>
+
       <multiple-choice-drop-down
         :selectedIndexes="selectedOptionIndex.TAGS"
         :isOpened="isDropDownOpened.TAG"
@@ -60,6 +62,7 @@
         @resetTags="resetTags()"
         @closeDropDown="closeDropDown"
       />
+
     </div>
     <div
       v-if="!meetingId && mapMeetingsToDropDown().length > 0"
@@ -85,6 +88,13 @@
         @closeDropDown="closeDropDown"
       />
     </div>
+
+      <!-- <a v-if="filters && filters.length > 0" @click="resetFilters()" class="clear-button">
+        aTyhjennä valinnat
+      </a> -->
+
+
+
   </div>
 </template>
 
@@ -265,7 +275,7 @@ export default {
 
       if (this.meetings && this.meetings.length > 0) {
         this.meetings.forEach(meeting => {
-          if (meeting.meeting_date) {
+          if (meeting) {
             meetings.push({
               label: meeting.name,
               value: meeting.id
@@ -273,6 +283,7 @@ export default {
           }
         });
       }
+      meetings.reverse();
       return meetings;
     },
     mapTagsToDropDown() {
@@ -375,7 +386,8 @@ export default {
         if (str.length === 0) {
           str = str.concat(this.tags[indexes[i]].label.toLowerCase());
         } else {
-          str = str.concat('-', this.tags[indexes[i]].label.toLowerCase());
+          // Mika 121119 a starting point in finding of better delimiters for the tags
+          str = str.concat('\b', this.tags[indexes[i]].label.toLowerCase());
         }
       }
       if (str.length > 0) {

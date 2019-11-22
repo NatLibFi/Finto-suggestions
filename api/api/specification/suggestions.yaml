@@ -72,6 +72,23 @@ paths:
       responses:
         "200":
           description: Object containing number of suggestions
+  /suggestions/archcount:
+    get:
+      operationId: api.logic.suggestions.get_archived_suggestions_count
+      parameters:
+        - name: filters
+          in: query
+          description: 'Pipe-separated filter string, i.e. status:ARCHIVED'
+          required: false
+          type: string
+        - name: search
+          in: query
+          description: Search string
+          required: false
+          type: string
+      responses:
+        "200":
+          description: Object containing number of suggestions
   /suggestions/user={user_id}:
     get:
       operationId: api.logic.suggestions.get_user_suggestions

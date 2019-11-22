@@ -11,6 +11,10 @@ def _raise_exception(value, filter_type, valid_types=None):
 
     raise InvalidFilterException(msg)
 
+def logMarker(markerString):
+    for itemX in "1234567890":
+        print(markerString)
+
 
 def _meeting_id_filter(query, value):
     if value == 'NULL':
@@ -22,8 +26,19 @@ def _meeting_id_filter(query, value):
 
     return query.filter(Suggestion.meeting_id == value)
 
+
+
 def _tags_filter(query, value):
-    values = value.split('-')
+    # values = value.split('-')
+    values = value.split('\b')
+
+    # # Area 51 131119
+    # logMarker("***********************************")
+    # print(values)
+
+
+    # # Area 51 131119
+
 
     for value in values:
         query = query.filter(Suggestion.tags.any(Tag.label == value))

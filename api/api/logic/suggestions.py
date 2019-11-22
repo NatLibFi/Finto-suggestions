@@ -6,7 +6,7 @@ from ..authentication import admin_only
 from .validators import suggestion_parameter_validator, suggestion_id_validator, _error_messagify
 from .common import (create_response, get_one_or_404, get_all_or_404, get_all_or_404_custom,
                      get_count_or_404_custom, create_or_400, delete_or_404, patch_or_404, update_or_404)
-from .utils import SUGGESTION_FILTER_FUNCTIONS, SUGGESTION_SORT_FUNCTIONS
+from .utils import SUGGESTION_FILTER_FUNCTIONS, SUGGESTION_SORT_FUNCTIONS, logMarker
 from ..models import db, Suggestion, Tag, User
 from .skos import initGraph, suggestionToGraph
 from flask import jsonify
@@ -16,6 +16,18 @@ from rdflib.namespace import SKOS
 from ..tools.profiler import profiler
 import json
 import logging
+import unicodedata 
+##### Tests
+from sqlalchemy import JSON
+from sqlalchemy import cast
+import string
+
+
+def compare_caseless(s1, s2):
+    def NFD(s):
+        return unicodedata.normalize('NFD', s)
+    return NFD(NFD(s1).casefold()) == NFD(NFD(s2).casefold())
+
 
 # Profiler decorator, enable if needed
 # @profiler
@@ -33,6 +45,7 @@ def get_suggestions(limit: int = None, offset: int = None, filters: str = None, 
     :returns: All suggestion matching the query in json format
     """
 
+
     def query_func():
         if sort in SUGGESTION_SORT_FUNCTIONS:
             query = SUGGESTION_SORT_FUNCTIONS.get(sort)(db.session)
@@ -42,30 +55,83 @@ def get_suggestions(limit: int = None, offset: int = None, filters: str = None, 
         if filters and _validate_filters(filters):
             for name, value in filters:
                 filter_func = SUGGESTION_FILTER_FUNCTIONS.get(name.upper())
+
+                # Area 51 131119
+                # logMarker("***********************************")
+                # print(filters)
+
+
+                # Area 51 131119
+
+
+
                 if filter_func:
                     query = filter_func(query, value.upper())
 
         if search:
+            searchEscaped = unicodedata.normalize("NFD", unicodedata.normalize('NFD', search).casefold())
+            # print("****************************")
+            # print(limit)
+            # print(offset)
+            # print(filters)
+            # print(search)
+            # print(sort)
+
+
+
+            print("***************************")
+            print(compare_caseless("å", "\u00e5"))
+            print(searchEscaped)
+            # testString1 = "moi"
+            # if testString1 c conta
+
+            # searchWithUnicodes = search
+            # searchWithUnicodes = checkSpecialChars(search)
+            # print("#############################")
+            # print(searchWithUnicodes)
             # Please append more fields, if you'd like to include in search
             # Currently the JSON field search is a bit dumb.
             # Ideally, you would like to search matches in each language separately,
             # instead of the whole json blob (cast as string)
+            # print(Suggestion.preferred_label['fi']['value'].cast(Unicode))
+            # print("Alex TEST >>>>>>>>>>>>>>>>>")
+            # print(db.session.query(Suggestion.preferred_label['fi']['value'] .contains("valta".lower())))
+            # print(db.session.query(Suggestion).filter(Suggestion.preferred_label['fi']['value'].contains('aarteet')))
+# records = db_session.query(Resource).filter(Resources.data["lastname"] == cast("Doe", JSON)).all()
+            
             query = query.filter(or_(
-                func.lower(Suggestion.preferred_label.cast(Unicode)).contains(search.lower()),
-                func.lower(Suggestion.alternative_labels.cast(Unicode)).contains(search.lower()),
-                func.lower(Suggestion.description).contains(search.lower()),
-                func.lower(Suggestion.reason).contains(search.lower()),
-                func.lower(Suggestion.uri).contains(search.lower()),
-                func.lower(Suggestion.organization).contains(search.lower()),
-                func.lower(Suggestion.broader_labels.cast(Unicode)).contains(search.lower()),
-                func.lower(Suggestion.narrower_labels.cast(Unicode)).contains(search.lower()),
-                func.lower(Suggestion.related_labels.cast(Unicode)).contains(search.lower()),
-                func.lower(Suggestion.groups.cast(Unicode)).contains(search.lower()),
-                func.lower(Suggestion.scopeNote).contains(search.lower()),
-                func.lower(Suggestion.exactMatches.cast(Unicode)).contains(search.lower()),
-                func.lower(Suggestion.neededFor).contains(search.lower()),
-                func.lower(Suggestion.yse_term.cast(Unicode)).contains(search.lower()),
+                # Mika's and Alex's testing func.lower(str(Suggestion)).contains(search.lower())
+                # func.lower(Suggestion.preferred_label['fi'].astext.matches(search)),
+                # func.lower(Suggestion.preferred_label['fi']['value'].cast(Unicode)).contains(searchEscaped.lower()),
+                # Almost working version 
+                # func.lower(Suggestion.preferred_label['fi'].cast(Unicode)).contains(search.lower()),
+                #
+                #
+                func.lower(Suggestion.preferred_label['fi']['value'].cast(Unicode)).contains(search.lower()),
+                # func.lower(Suggestion.preferred_label.cast(Unicode)).contains(search.lower()),
+
+                func.lower(Suggestion.preferred_label['sv'].cast(Unicode)).contains(search.lower()),
+                func.lower(Suggestion.preferred_label['en'].cast(Unicode)).contains(search.lower()),
+                # func.lower(Suggestion.alternative_labels.cast(Unicode)).contains(search.lower()),
+                func.lower(Suggestion.id.cast(Unicode)).contains(search),
+                # func.lower(Suggestion.id.cast(Unicode)).contains(searchEscaped),
+                # func.lower(Suggestion.description).contains(search.lower()),
+                # func.lower(Suggestion.reason).contains(search.lower()),
+                # func.lower(Suggestion.uri).contains(search.lower()),
+                # func.lower(Suggestion.organization).contains(search.lower()),
+                # func.lower(Suggestion.broader_labels.cast(Unicode)).contains(search.lower()),
+                # func.lower(Suggestion.narrower_labels.cast(Unicode)).contains(search.lower()),
+                # func.lower(Suggestion.related_labels.cast(Unicode)).contains(search.lower()),
+                # func.lower(Suggestion.groups.cast(Unicode)).contains(search.lower()),
+                # func.lower(Suggestion.scopeNote).contains(search.lower()),
+                # func.lower(Suggestion.exactMatches.cast(Unicode)).contains(search.lower()),
+                # func.lower(Suggestion.neededFor).contains(search.lower()),
+                # func.lower(Suggestion.yse_term.cast(Unicode)).contains(search.lower()),
             ))
+
+            # print(searchEscaped)
+            # print(Suggestion.preferred_label['fi'])
+            # print(func.lower(Suggestion.preferred_label['fi'].cast(Unicode)).contains(searchEscaped))
 
         if limit:
             query = query.limit(limit)
@@ -73,6 +139,7 @@ def get_suggestions(limit: int = None, offset: int = None, filters: str = None, 
             query = query.offset(offset)
 
         return query.all()
+
 
     def _validate_filters(f):
         return all([f[0].upper() in SUGGESTION_FILTER_FUNCTIONS.keys() for f in filters])
@@ -111,20 +178,25 @@ def get_suggestions_count(filters: str = None, search: str = None) -> str:
             # Ideally, you would like to search matches in each language separately,
             # instead of the whole json blob (cast as string)
             query = query.filter(or_(
-                func.lower(Suggestion.preferred_label.cast(Unicode)).contains(search.lower()),
-                func.lower(Suggestion.alternative_labels.cast(Unicode)).contains(search.lower()),
-                func.lower(Suggestion.description).contains(search.lower()),
-                func.lower(Suggestion.reason).contains(search.lower()),
-                func.lower(Suggestion.uri).contains(search.lower()),
-                func.lower(Suggestion.organization).contains(search.lower()),
-                func.lower(Suggestion.broader_labels.cast(Unicode)).contains(search.lower()),
-                func.lower(Suggestion.narrower_labels.cast(Unicode)).contains(search.lower()),
-                func.lower(Suggestion.related_labels.cast(Unicode)).contains(search.lower()),
-                func.lower(Suggestion.groups.cast(Unicode)).contains(search.lower()),
-                func.lower(Suggestion.scopeNote).contains(search.lower()),
-                func.lower(Suggestion.exactMatches.cast(Unicode)).contains(search.lower()),
-                func.lower(Suggestion.neededFor).contains(search.lower()),
-                func.lower(Suggestion.yse_term.cast(Unicode)).contains(search.lower()),
+                func.lower(Suggestion.preferred_label['fi']['value'].cast(Unicode)).contains(search.lower()),
+                # func.lower(Suggestion.preferred_label.cast(Unicode)).contains(search.lower()),
+
+                func.lower(Suggestion.preferred_label['sv'].cast(Unicode)).contains(search.lower()),
+                func.lower(Suggestion.preferred_label['en'].cast(Unicode)).contains(search.lower()),
+                # func.lower(Suggestion.alternative_labels.cast(Unicode)).contains(search.lower()),
+                func.lower(Suggestion.id.cast(Unicode)).contains(search),
+                # func.lower(Suggestion.description).contains(search.lower()),
+                # func.lower(Suggestion.reason).contains(search.lower()),
+                # func.lower(Suggestion.uri).contains(search.lower()),
+                # func.lower(Suggestion.organization).contains(search.lower()),
+                # func.lower(Suggestion.broader_labels.cast(Unicode)).contains(search.lower()),
+                # func.lower(Suggestion.narrower_labels.cast(Unicode)).contains(search.lower()),
+                # func.lower(Suggestion.related_labels.cast(Unicode)).contains(search.lower()),
+                # func.lower(Suggestion.groups.cast(Unicode)).contains(search.lower()),
+                # func.lower(Suggestion.scopeNote).contains(search.lower()),
+                # func.lower(Suggestion.exactMatches.cast(Unicode)).contains(search.lower()),
+                # func.lower(Suggestion.neededFor).contains(search.lower()),
+                # func.lower(Suggestion.yse_term.cast(Unicode)).contains(search.lower()),
             ))
 
         return query.count()
@@ -136,6 +208,70 @@ def get_suggestions_count(filters: str = None, search: str = None) -> str:
         # status:accepted|type:new|meeting:12
         # -> [['status', 'accepted'], ['type', 'new'], ['meeting', '12']]
         filters = [f.split(':') for f in filters.split('|')]
+
+    return get_count_or_404_custom(query_func)
+
+
+def get_archived_suggestions_count(filters: str = None, search: str = None) -> str:
+    """
+    Returns the amount of suggestions for pagination purposes.
+
+    As the request query can be limited with additional parameters, we take those into account.
+
+    :param filters: Filter the results based on filter selections
+    :param search: Filter the results based on search word
+    :returns: All suggestion matching the query in json format
+    """
+
+    def query_func():
+        query = db.session.query(Suggestion)
+
+        if filters and _validate_filters(filters):
+            for name, value in filters:
+                filter_func = SUGGESTION_FILTER_FUNCTIONS.get(name.upper())
+                if filter_func:
+                    query = filter_func(query, value.upper())
+
+        if search:
+            # Please append more fields, if you'd like to include in search
+            # Currently the JSON field search is a bit dumb.
+            # Ideally, you would like to search matches in each language separately,
+            # instead of the whole json blob (cast as string)
+            query = query.filter(or_(
+                func.lower(Suggestion.preferred_label['fi']['value'].cast(Unicode)).contains(search.lower()),
+                # func.lower(Suggestion.preferred_label.cast(Unicode)).contains(search.lower()),
+
+                func.lower(Suggestion.preferred_label['sv'].cast(Unicode)).contains(search.lower()),
+                func.lower(Suggestion.preferred_label['en'].cast(Unicode)).contains(search.lower()),
+                # func.lower(Suggestion.alternative_labels.cast(Unicode)).contains(search.lower()),
+                func.lower(Suggestion.id.cast(Unicode)).contains(search),
+                # func.lower(Suggestion.description).contains(search.lower()),
+                # func.lower(Suggestion.reason).contains(search.lower()),
+                # func.lower(Suggestion.uri).contains(search.lower()),
+                # func.lower(Suggestion.organization).contains(search.lower()),
+                # func.lower(Suggestion.broader_labels.cast(Unicode)).contains(search.lower()),
+                # func.lower(Suggestion.narrower_labels.cast(Unicode)).contains(search.lower()),
+                # func.lower(Suggestion.related_labels.cast(Unicode)).contains(search.lower()),
+                # func.lower(Suggestion.groups.cast(Unicode)).contains(search.lower()),
+                # func.lower(Suggestion.scopeNote).contains(search.lower()),
+                # func.lower(Suggestion.exactMatches.cast(Unicode)).contains(search.lower()),
+                # func.lower(Suggestion.neededFor).contains(search.lower()),
+                # func.lower(Suggestion.yse_term.cast(Unicode)).contains(search.lower()),
+            ))
+
+        return query.count()
+
+    def _validate_filters(f):
+        return all([f[0].upper() in SUGGESTION_FILTER_FUNCTIONS.keys() for f in filters])
+
+    if filters:
+        # status:accepted|type:new|meeting:12
+        # -> [['status', 'accepted'], ['type', 'new'], ['meeting', '12']]
+        filters = [f.split(':') for f in filters.split('|')]
+        print("XXXXXXXXXXXXXXXXXXXXXXXXXXX")
+        print("XXXXXXXXXXXXXXXXXXXXXXXXXXX")
+        print("XXXXXXXXXXXXXXXXXXXXXXXXXXX")
+        print(filters)
 
     return get_count_or_404_custom(query_func)
 
@@ -432,6 +568,7 @@ def get_open_suggestions_skos() -> str:
     :returns: Suggestions list of open suggestions in skos format
     """
     try:
+        # Retruns all except...
         open_suggestions = Suggestion.query.filter(and_(Suggestion.status.notin_(['ACCEPTED', 'REJECTED', 'RETAINED', 'ARCHIVED']), Suggestion.yse_term["url"] == None)).all()
         graph = None
         for suggestion in open_suggestions:
