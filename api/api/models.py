@@ -7,18 +7,51 @@ from passlib.hash import pbkdf2_sha256 as hash_algorithm
 from datetime import datetime
 from collections import Counter
 import enum
+# import ujson
+import json
 # Mika 021019
 # import logging
 # logging.basicConfig()
 # logging.getLogger('sqlachemy.engine').setLevel(logging.ERROR)
 
 # Mika 011019 also added _NSQLAlc in the import
+
+
+def mDecoder(obj):
+    return json.dumps(obj, ensure_ascii=False)
+    
+
 class SQLAlchemy(_NSQLAlc):
+    # def __init__(self, ):
+
     def apply_pool_defaults(self, app, options):
         super(SQLAlchemy, self).apply_pool_defaults(app, options)
         options["pool_pre_ping"] = True
 
-db = SQLAlchemy()
+#Jatka tästä
+# class HackSQLAlchemy(SQLAlchemy):
+#     """ Ugly way to get SQLAlchemy engine to pass the Flask JSON serializer
+#     to `create_engine`.
+
+#     See https://github.com/mitsuhiko/flask-sqlalchemy/pull/67/files
+
+#     """
+
+#     def apply_driver_hacks(self, app, info, options):
+#         options.update(json_serializer=json.dumps({}, ensure_ascii=False))
+#         super(HackSQLAlchemy, self).apply_driver_hacks(app, info, options)
+
+#db = HackSQLAlchemy()
+
+
+# This is the one to used originally
+# If you want go switch a logging on, do it here: 'echo': False
+db = SQLAlchemy(engine_options={'encoding': 'utf-8', 'echo': False, 'json_serializer': mDecoder})
+
+# Tests
+# db.register_default_json(loads=ujson.loads, globally=True)
+# db.register_default_jsonb(loads=ujson.loads, globally=True)
+# _NSQLAlc.re
 
 # Mika 011019
 # db.options.pool_pre_ping = True
@@ -51,10 +84,8 @@ class UserRoles(enum.IntEnum):
 class SerializableMixin():
     """
     Adds the method ´as_dict´ to an sqlalchemy model.
-
     Calling the method requires a special __public__ attribute,
     which acts as a whitelist for serializable columns.
-
     e.g. __public__ = ['id', 'created', 'modified']
     """
 

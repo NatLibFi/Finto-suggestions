@@ -162,9 +162,35 @@ def create_or_400(model: object, payload: Dict, error_msg: str = None) -> str:
         return create_response(None, 400, msg)
 # Mika's testing begins
 
-    if db_obj.email:
-        print("The email in use is " + db_obj.email )
-        send_email_while_signing_up(db_obj.email)
+    try:
+        print("*** If User Object has an email it is used to send a Welcome email ***")
+        # if db_obj.attributes:
+        #     print(db_obj.attributes)
+        #     if 'email' in db_obj.attributes:
+        if db_obj.email:
+            print("The email in use is " + db_obj.email )
+            send_email_while_signing_up(db_obj.email)
+    except Exception as exx:
+        print("The object has no attribute --> " + str(exx))
+
+
+    # if db_obj.attributes:
+
+    #     if db_obj.
+    #     if 'User' in db_obj.attributes:
+    #         print("ja kaikki sanoo moooooi")
+    #     else:
+    #         print(db_obj.attributes)
+
+#Tarvitaan, mutta korjaa
+    # if db_obj.email:
+    #     print("***********************")
+    #     print("***********************")
+    #     print("***********************")
+    #     print("***********************")
+    #     print(model.__str__())
+    #     print("The email in use is " + db_obj.email )
+    #     send_email_while_signing_up(db_obj.email)
 
         # if password_update_success is True:
         #   sending_status = send_email(new_password, user.email)

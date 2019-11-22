@@ -1,8 +1,10 @@
 import os
 
+
 user = os.environ.get('POSTGRES_USER')
 pw = os.environ.get('POSTGRES_PASSWORD')
 db = os.environ.get('POSTGRES_DB')
+
 
 
 class BaseConfig:
@@ -11,8 +13,8 @@ class BaseConfig:
     Rather, overwrite the DevelopmentConfig and ProductionConfig values.
     """
     # Mika 271919
-    SQLALCHEMY_DATABASE_URI = f'postgresql+psycopg2://{user}:{pw}@db:5432/{db}'
     # SQLALCHEMY_DATABASE_URI = f'postgresql+psycopg2://{user}:{pw}@db:5432/{db}'
+    SQLALCHEMY_DATABASE_URI = f'postgresql://{user}:{pw}@db:5432/{db}?client_encoding=utf8'
 
     # Disable signals. http://flask-sqlalchemy.pocoo.org/2.1/signals/
     SQLALCHEMY_TRACK_MODIFICATIONS = False
@@ -27,13 +29,18 @@ class BaseConfig:
 
 
 class DevelopmentConfig(BaseConfig):
+    # db_container_name = 'db'
     ENABLE_SWAGGER_UI = True
     DEBUG = True
+    # SQLALCHEMY_DATABASE_URI = f'postgresql+psycopg2://{user}:{pw}@{db_container_name}:5432/{db}?charset=utf8mb4'
+    #json_serializer=lambda 
+    #obj: json.dumps(obj, ensure_ascii=False)
 
 class TestingConfig(BaseConfig):
     # testdb db will be created upon test initialization
     db_container_name = 'db'
-    SQLALCHEMY_DATABASE_URI = f'postgresql+psycopg2://{user}:{pw}@{db_container_name}:5432/{db}'
+    SQLALCHEMY_DATABASE_URI = f'postgresql://{user}:{pw}@{db_container_name}:5432/{db}'
+    # SQLALCHEMY_DATABASE_URI = f'postgresql+psycopg2://{user}:{pw}@{db_container_name}:5432/{db}?charset=utf8mb4'
     DEBUG = True
 
 class ProductionConfig(BaseConfig):

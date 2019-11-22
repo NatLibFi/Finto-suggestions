@@ -2,6 +2,7 @@
   <div class="event">
     <div class="event-divider"></div>
     <div class="event-container">
+      <!-- Area 51 131119 -->
       <!-- <div v-if="event.user_id || type === eventTypes.ACTION" class="event-header"> -->
       <div v-if="event.user_id || type === eventTypes.ACTION" class="event-header">
         <div v-if="userImage" class="event-user-image">
@@ -19,6 +20,7 @@
         <div class="event-info">
           <p class="event-user">
             <span v-if="!event.sub_type" class="user-name">{{ userName }}</span>
+            {{ dateTimeFormatLabel(this.event.created) }}
             <span v-if="type === eventTypes.ACTION">
               {{ event.text }}
               <span
@@ -75,6 +77,7 @@
           />
         </div>
       </div>
+      <!-- Area 51 131119 ends -->
       <div v-if="type === eventTypes.COMMENT">
         <div v-if="!isEditable" class="event-comment">
           <p v-if="content.length > 0" v-html="$sanitize(content)"></p>
