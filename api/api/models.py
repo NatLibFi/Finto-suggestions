@@ -45,7 +45,8 @@ class SQLAlchemy(_NSQLAlc):
 
 
 # This is the one to used originally
-db = SQLAlchemy(engine_options={'encoding': 'utf-8', 'echo': True, 'json_serializer': mDecoder})
+# If you want go switch a logging on, do it here: 'echo': False
+db = SQLAlchemy(engine_options={'encoding': 'utf-8', 'echo': False, 'json_serializer': mDecoder})
 
 # Tests
 # db.register_default_json(loads=ujson.loads, globally=True)

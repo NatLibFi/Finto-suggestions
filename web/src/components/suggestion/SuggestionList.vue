@@ -15,10 +15,11 @@
       :sort="sort"
     />
     <div>
-      <!-- {{ suggestionCount }} : {{ archivedSuggestionCount }} : {{ aCount }} -->
-      Hakusana parentissa {{ searchWord }} 
+
 
     </div>
+
+<!-- Area 51
     <div class="list-container">
       <suggestions-filtered-by-archived
       :filters="filters"
@@ -26,7 +27,7 @@
       
       
       />
-    </div>
+    </div> -->
 
 
     <div class="list-container">
@@ -62,7 +63,7 @@ import SuggestionSearch from './SuggestionSearch';
 import SuggestionListHeader from './SuggestionListHeader';
 import SuggestionItem from './SuggestionItem';
 import SuggestionListPagination from './SuggestionListPagination';
-import SuggestionsFilteredByArchived from './SuggestionsFilteredByArchived';
+// import SuggestionsFilteredByArchived from './SuggestionsFilteredByArchived';
 
 import {
   suggestionGetters,
@@ -82,7 +83,7 @@ export default {
     SuggestionListHeader,
     SuggestionItem,
     SuggestionListPagination,
-    SuggestionsFilteredByArchived
+    // SuggestionsFilteredByArchived,
   },
   props: {
     userId: {
@@ -117,23 +118,19 @@ export default {
     ...mapSuggestionGetters({
       suggestions: suggestionGetters.GET_SUGGESTIONS,
       suggestionCount: suggestionGetters.GET_SUGGESTIONS_COUNT,
-      archivedSuggestionCount: suggestionGetters.GET_ARCHIVED_SUGGESTIONS_COUNT
+      // archivedSuggestionCount: suggestionGetters.GET_ARCHIVED_SUGGESTIONS_COUNT
     }),
     
+  },
+  beforeUpdate() {
+    // this.getArchivedSuggestionsCount();
   },
   async created() {
     this.pageCountLoading = true;
     await this.fetchSuggestions();
     this.pageCount = Math.ceil(this.suggestionCount / 25);
-    // this.aCount = 123;
-    // Toimi molemmilla
-    // this.aCount = this.archivedSuggestionCount.length;
-    this.aCount = this.archivedSuggestionCount.length;
 
-    // console.log("***********************************")
-    // console.log(this.filters);
-    // console.log(this.searchWord);
-    // console.log(this.sort);
+    // this.aCount = this.$router.archivedSuggestionCount.name('archivedCounts');
 
 
     if (this.pageCount < this.page) {
@@ -144,16 +141,12 @@ export default {
   },
   
 
-  // async mounted() {
-  //   console.log(pageCount);
-
-  // },
   methods: {
     ...mapSuggestionActions({
       getSuggestions: suggestionActions.GET_SUGGESTIONS,
       getSuggestionsByUserId: suggestionActions.GET_SUGGESTIONS_BY_USER_ID,
       getSuggestionsCount: suggestionActions.GET_SUGGESTIONS_COUNT,
-      getArchivedSuggestionsCount: suggestionActions.GET_ARCHIVED_SUGGESTIONS_COUNT
+      // getArchivedSuggestionsCount: suggestionActions.GET_ARCHIVED_SUGGESTIONS_COUNT
     }),
     test: function() {
       this.searchWordForRemoteUse = this.searchWord; 
@@ -183,18 +176,10 @@ export default {
           filters: this.filters,
           searchWord: this.searchWord
         });
-// Toimisi muuten, mutta tallentaa storeen kaikki samat tiedot kuin ilman ARCHIVED-rajaustakin
-        // await this.getArchivedSuggestionsCount({
-        //   aFilters: 'status:ARCHIVED',
-        //   searchWord: ''
-        // });
 
       }
     },
     async updateSuggestionList() {
-
-      $router.push({name: 'searchWordForTesting',
-        search: this.searchWord});
 
 
 
@@ -203,7 +188,7 @@ export default {
       this.pageCount = Math.ceil(this.suggestionCount / 25);
       // Toimi molemmilla
       // this.aCount = this.archivedSuggestionCount.length;
-      this.aCount = this.archivedSuggestionCount.length;
+      // this.aCount = this.archivedSuggestionCount.length;
       if (this.pageCount < this.page) {
         this.goToFirstPage();
       }
@@ -257,6 +242,7 @@ export default {
       this.searchWord = this.$route.query.search ? this.$route.query.search : '';
       this.sort = this.$route.query.sort ? this.$route.query.sort : '';
       this.updateSuggestionList();
+
     }
   }
 };

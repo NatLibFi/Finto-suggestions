@@ -15,8 +15,10 @@ from flask.json import JSONEncoder
 import logging
 # import ujson
 
-logging.basicConfig()   # log messages to stdout
-logging.getLogger('sqlalchemy.dialects.postgresql').setLevel(logging.ERROR)
+
+# Here you can adjust error logging levels
+# logging.basicConfig()   # log messages to stdout
+# logging.getLogger('sqlalchemy.dialects.postgresql').setLevel(logging.DEBUG)
 
 # psycopg2.extras.register_default_json(globally=True, loads=loads)
 # conn = psycopg2.connect(...)

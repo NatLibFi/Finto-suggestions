@@ -57,8 +57,8 @@ def get_suggestions(limit: int = None, offset: int = None, filters: str = None, 
                 filter_func = SUGGESTION_FILTER_FUNCTIONS.get(name.upper())
 
                 # Area 51 131119
-                logMarker("***********************************")
-                print(filters)
+                # logMarker("***********************************")
+                # print(filters)
 
 
                 # Area 51 131119
@@ -70,12 +70,12 @@ def get_suggestions(limit: int = None, offset: int = None, filters: str = None, 
 
         if search:
             searchEscaped = unicodedata.normalize("NFD", unicodedata.normalize('NFD', search).casefold())
-            print("****************************")
-            print(limit)
-            print(offset)
-            print(filters)
-            print(search)
-            print(sort)
+            # print("****************************")
+            # print(limit)
+            # print(offset)
+            # print(filters)
+            # print(search)
+            # print(sort)
 
 
 
@@ -268,6 +268,10 @@ def get_archived_suggestions_count(filters: str = None, search: str = None) -> s
         # status:accepted|type:new|meeting:12
         # -> [['status', 'accepted'], ['type', 'new'], ['meeting', '12']]
         filters = [f.split(':') for f in filters.split('|')]
+        print("XXXXXXXXXXXXXXXXXXXXXXXXXXX")
+        print("XXXXXXXXXXXXXXXXXXXXXXXXXXX")
+        print("XXXXXXXXXXXXXXXXXXXXXXXXXXX")
+        print(filters)
 
     return get_count_or_404_custom(query_func)
 
