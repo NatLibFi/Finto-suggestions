@@ -1,6 +1,7 @@
 <template>
   <li @click="goToSuggestion()" class="item">
     <div class="item-summary">
+      {{ suggestions }}
       <div class="title">
         <p class="title-row">
           <span
@@ -110,7 +111,8 @@ export default {
     meetingId: {
       type: [Number, String],
       default: null
-    }
+    },
+    suggestions: String
   },
   data: () => ({
     suggestionTypeToStyleClass,

@@ -13,10 +13,17 @@ RUN apk update \
   && apk add build-base
 
 # Intall and register frdlib-jsonld
+# EXTRA 
+RUN pip install --upgrade pip
 RUN pip install rdflib-jsonld
+
 
 # Manage dependencies using pipenv
 RUN pip install pipenv \
+  #ORIGINAL 
+  # && pipenv install --system
+  && pipenv lock --clear \
+  && pipenv lock \
   && pipenv install --system
 
 EXPOSE 8050 587

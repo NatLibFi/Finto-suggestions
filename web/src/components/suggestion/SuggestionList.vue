@@ -1,5 +1,11 @@
 <template>
   <div>
+    <!-- <div>
+      {{ suggestions }}
+    </div> -->
+
+
+
     <suggestion-search
       v-if="!isUserPage"
       :meetingId="meetingId"
@@ -31,8 +37,8 @@
 
 
     <div class="list-container">
-      <ul class="list">
-        <transition-group name="fade">
+      <ul v-if="suggestions.length" class="list">
+        <!-- <transition-group name="fade"> -->
           <suggestion-item
             class="suggestion"
             v-for="suggestion in suggestions"
@@ -40,7 +46,7 @@
             :suggestion="suggestion"
             :meetingId="meetingId"
           />
-        </transition-group>
+        <!-- </transition-group> -->
       </ul>
       <suggestion-list-pagination
         :pageCount="pageCount"
@@ -98,7 +104,8 @@ export default {
     page: {
       type: [String, Number],
       default: 1
-    }
+    },
+    suggesions: String
   },
   data() {
     return {
@@ -152,10 +159,10 @@ export default {
       this.searchWordForRemoteUse = this.searchWord; 
     },
     async fetchSuggestions() {
-      if (this.userId) {
-        this.getSuggestionsByUserId({
+      if (this.userId) {a
+        this.getSuggestionsByUaserId({
           userId: this.userId,
-          offset: offsetByPagination(this.page)
+          offset: offsetByPagianation(this.page)
         });
 
         await this.getSuggestionsCount({
@@ -175,20 +182,15 @@ export default {
         await this.getSuggestionsCount({
           filters: this.filters,
           searchWord: this.searchWord
-        });
+          });
 
       }
     },
     async updateSuggestionList() {
 
-
-
       this.pageCountLoading = true;
       await this.fetchSuggestions();
       this.pageCount = Math.ceil(this.suggestionCount / 25);
-      // Toimi molemmilla
-      // this.aCount = this.archivedSuggestionCount.length;
-      // this.aCount = this.archivedSuggestionCount.length;
       if (this.pageCount < this.page) {
         this.goToFirstPage();
       }

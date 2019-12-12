@@ -16,7 +16,6 @@ import json
 
 # Mika 011019 also added _NSQLAlc in the import
 
-
 def mDecoder(obj):
     return json.dumps(obj, ensure_ascii=False)
     
