@@ -18,6 +18,8 @@ swagger-ui-bundle = "*"
 rdflib = "*"
 rdflib-jsonld = "*"
 ujson = "*"
+pyyaml = ">=4.2b1"
+
 
 [dev-packages]
 pytest = "*"
