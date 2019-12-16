@@ -18,6 +18,7 @@ RUN pip install pipenv \
   && pipenv lock -r \
   && pipenv install --deploy --system
 
+#Testing
 EXPOSE 8050
 
 ENTRYPOINT ["gunicorn", "--config", "gunicorn_config_stagging.conf", "wsgi:connexion_app"]

@@ -24,6 +24,8 @@ RUN pip install pipenv \
   && pipenv lock -r \
   && pipenv install --deploy --system
 
+  #Testing
+
 EXPOSE 8050 587
 
 
