@@ -23,9 +23,7 @@ RUN pip install pipenv \
   && pipenv lock --clear \
   && pipenv lock -r \
   && pipenv install --deploy --system
-
+  
 EXPOSE 8050 587
-
-
 
 ENTRYPOINT ["gunicorn", "--config", "gunicorn_config_dev.conf", "wsgi:connexion_app"]
