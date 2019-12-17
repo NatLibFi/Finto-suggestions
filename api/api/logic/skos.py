@@ -13,6 +13,7 @@ from collections import Counter
 import logging
 import copy
 
+
 yso = Namespace('http://www.yso.fi/onto/yso/')
 ysa = Namespace('http://www.yso.fi/onto/ysa/')
 ysemeta = Namespace('http://www.yso.fi/onto/yse-meta/')

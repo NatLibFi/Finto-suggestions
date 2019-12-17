@@ -17,7 +17,6 @@ RUN apk update \
 RUN pip install --upgrade pip
 RUN pip install rdflib-jsonld
 
-
 # Manage dependencies using pipenv
 RUN pip install pipenv \
   && pipenv lock --clear \
