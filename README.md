@@ -65,6 +65,8 @@ http://asciiflow.com/
 
 ### Setting up Development Environment
 
+FIRST: Copy or clone Git repository and checkout the `develop` branch
+
 1.  Copy the .env.default file and rename it to .env (from project root)
 2.  Modify the environment variables in .env as desired
 3.  Download and install [Docker CE](https://docs.docker.com/install/) to your computer. Docker-compose should be included with the installation. If not, (download and install it separately)[https://github.com/docker/compose/releases].
