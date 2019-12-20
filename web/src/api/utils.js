@@ -6,9 +6,17 @@ const client = axios.create({
   json: true
 });
 
+
+
 const execute = async (method, resource, data, useRefreshToken) => {
+  console.log("API resource is: " + resource);
+  console.log("Data: " + data);
+  console.log("Is RefreshToken used: "+ useRefreshToken);
   // eslint-disable-next-line no-undef
   const access_token = $cookies.get(storeKeyNames.ACCESS_TOKEN);
+  // const access_token = $cookies.get(storeKeyNames.ACCESS_TOKEN.concat(Math.random().toString(36).substring(7)));
+  // alert(storeKeyNames.ACCESS_TOKEN.concat(Math.random().toString(36).substring(7)));
+  // alert(Math.random().toString(36).substring(7));
   // eslint-disable-next-line no-undef
   const refreshToken = $cookies.get(storeKeyNames.REFRESH_TOKEN);
 
@@ -16,8 +24,10 @@ const execute = async (method, resource, data, useRefreshToken) => {
 
   if (useRefreshToken) {
     AuthHeaderValue = refreshToken && refreshToken.length > 0 ? `Bearer ${refreshToken}` : '';
+    console.log("RefreshToken is: " + AuthHeaderValue);
   } else {
     AuthHeaderValue = access_token && access_token.length > 0 ? `Bearer ${access_token}` : '';
+    console.log("AccessToken is: " + AuthHeaderValue);
   }
 
   return client({
