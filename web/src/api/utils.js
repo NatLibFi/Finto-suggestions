@@ -6,9 +6,14 @@ const client = axios.create({
   json: true
 });
 
+
+
 const execute = async (method, resource, data, useRefreshToken) => {
   // eslint-disable-next-line no-undef
   const access_token = $cookies.get(storeKeyNames.ACCESS_TOKEN);
+  // const access_token = $cookies.get(storeKeyNames.ACCESS_TOKEN.concat(Math.random().toString(36).substring(7)));
+  // alert(storeKeyNames.ACCESS_TOKEN.concat(Math.random().toString(36).substring(7)));
+  // alert(Math.random().toString(36).substring(7));
   // eslint-disable-next-line no-undef
   const refreshToken = $cookies.get(storeKeyNames.REFRESH_TOKEN);
 
