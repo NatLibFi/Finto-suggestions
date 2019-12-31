@@ -16,22 +16,24 @@ export default {
   reaction
 };
 
-var getAllCookies = function(){
-  // var regExpert = /access_token=(.[^;]*)/ig;
-  // var neededCookieValue = regExpert.exec(document.cookie);
-  // console.log("AAAAAAAAAAAAAAAAAAA " + neededCookieValue[1]);
-
-
+var handleCookiesAndSessionStorage = function(){
   if (document.cookie.includes("access_token")) {
-    console.log("On access_token");
-    // document.cookie = "bridgeCookieForAccess=abc";
-    var regExpert = /access_token=(.[^;]*)/ig;
-    var neededCookieValue = regExpert.exec(document.cookie);
-    document.cookie = "bridgeCookieForAccess=" + neededCookieValue[1];
-    // console.log("HALOOOOOOO: " + document.cookie.indexOf("bridgeCookieForAccess"));
+    var regExpString = /access_token=(.[^;]*)/ig;
+    var neededCookieValue = regExpString.exec(document.cookie);
+    var expirationDateForAccess = "expires=expires=Fri, 31 Dec 2049 11:00:00 UTC";
+    var pathForAccess = "path=/";
+    document.cookie = "bridgeCookieForAccess=" + neededCookieValue[1] + ";" + expirationDateForAccess +";" + pathForAccess;
   } else {
-    console.log("Ei ollut access_tokenia");
-
+    console.log("Didn't find access_token");
+  }
+  if (document.cookie.includes("refresh_token")) {
+    var regExpString = /refresh_token=(.[^;]*)/ig;
+    var neededCookieValue = regExpString.exec(document.cookie);
+    var expirationDateForRefresh = "expires=expires=Fri, 31 Dec 2049 11:00:00 UTC";
+    var pathForRefresh = "path=/";
+    document.cookie = "bridgeCookieForRefresh=" + neededCookieValue[1] + ";" + expirationDateForRefresh +";" + pathForRefresh;
+  } else {
+    console.log("Didn't find refresh_token");
   }
   var keyValuePairs = document.cookie.split(";");
   var cookiesList = [];
@@ -39,34 +41,26 @@ var getAllCookies = function(){
     var iterablePair = keyValuePairs[i].split("=");
     cookiesList[(iterablePair[0]+'').trim()] = unescape(iterablePair.slice(1).join('=').trim());
   }
-  // console.log(cookiesList)
+  if (sessionStorage.userId) {
+    if (!(sessionStorage.getItem("userId") === "0")) {
+      var userIdData = parseInt(sessionStorage.getItem("userId")); 
+      var parsedUserIdData = userIdData;
+      localStorage.setItem("userIdTemp", JSON.stringify(parsedUserIdData));
+    } 
+    if (sessionStorage.getItem("userId") === "0") {
+      if (localStorage.userIdTemp) {
+        var userIdTempData = localStorage.getItem("userIdTemp");
+        var parsedUserIdTempData = JSON.parse(userIdTempData);
+        sessionStorage.setItem("userId", parsedUserIdTempData);
+      }
+    } 
+  } else {
+    sessionStorage.setItem("userId", 1);
+    console.log("Something went wrong and userId is: " + sessionStorage.userId);
+  }
   return cookiesList;
 }
 
-function check_cookie_name(name) 
-    {
-      var match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
-      if (match) {
-        console.log(match[2]);
-      }
-      else{
-           console.log('--something went wrong---');
-      }
-   }
-
-// console.log("Onko tässä järkeä?" + check_cookie_name("refresh_token"));
+console.log(handleCookiesAndSessionStorage());
 
 
-console.log(getAllCookies());
-
-
-// var cookiesInUse = getAllCookies();
-
-
-// alert(JSON.stringify(cookiesInUse));
-
-
-// var array = [" hello"," goodbye"," no"];
-// array = array.map(function (el) {
-//   return el.trim();
-// });

@@ -239,6 +239,14 @@ export default {
             .catch(() => {
               this.showLocalLoginError = true;
             });
+            if(window.localStorage) {
+              if(!localStorage.getItem('loadedOnce')) {
+                localStorage['loadedOnce'] = true;
+                window.location.reload();
+              }  
+              else
+                localStorage.removeItem('firstLoad');
+            }
         }
       }
     },
