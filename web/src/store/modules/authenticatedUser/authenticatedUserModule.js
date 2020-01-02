@@ -112,7 +112,6 @@ export default {
 
         // eslint-disable-next-line no-undef
         $cookies.set(storeKeyNames.ACCESS_TOKEN, response.access_token);
-        console.log("mita tama tarkkaan ottaen sisaltaa?" + JSON.stringify(response.access_token));
         // eslint-disable-next-line no-undef
         $cookies.set(storeKeyNames.REFRESH_TOKEN, response.refresh_token);
       } else {
