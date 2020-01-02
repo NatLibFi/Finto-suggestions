@@ -1,6 +1,5 @@
 <template>
   <div class="navigation">
-
     <div class="nav-content">
       <div class="nav-title">
         <img @click="returnToHome" src="../assets/finto-logo.svg" alt="" />
