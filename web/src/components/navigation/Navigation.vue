@@ -18,6 +18,11 @@
         <img @click="returnToHome" src="../assets/finto-logo.svg" alt="" />
         <span @click="returnToHome">Finto – Käsite-ehdotukset</span>
       </div>
+      <div class="refresh-button">
+        <p>[
+          <a href="javascript:location.reload(true)">Refresh</a>
+        ]</p>
+      </div>
       <transition name="fade">
         <div v-if="isAuthenticated && user.name" class="nav-menu" @click="showDropdown = true">
           <transition name="fade">
@@ -239,6 +244,14 @@ export default {
             .catch(() => {
               this.showLocalLoginError = true;
             });
+            if(window.localStorage) {
+              if(!localStorage.getItem('loadedOnce')) {
+                localStorage['loadedOnce'] = true;
+                window.location.reload();
+              }  
+              else
+                localStorage.removeItem('firstLoad');
+            }
         }
       }
     },
@@ -340,6 +353,21 @@ export default {
   height: 60px;
   line-height: 60px;
   width: 45%;
+}
+
+.refresh-button {
+  position: absolute;
+  top: 25%;
+  right: 20%;
+  transform: perspective(1px) translateX(calc(-50% - 10.5px));
+  transform: perspective(1px) translateY(calc(-50% - 0.5px));
+  height: 60px;
+  line-height: 60px;
+  width: 45%;
+}
+
+.refresh-button a {
+  text-decoration: none;
 }
 
 .nav-title img {

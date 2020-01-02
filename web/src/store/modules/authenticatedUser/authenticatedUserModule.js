@@ -66,13 +66,9 @@ export default {
       }
     },
     async [authenticatedUserActions.VALIDATE_AUTHENTICATION]({ commit, dispatch }) {
-      // eslint-disable-next-line no-undef
-      const access_token = $cookies.get(storeKeyNames.ACCESS_TOKEN);
-      // eslint-disable-next-line no-unused-vars
-      const userId =
-        this.state.user[storeStateNames.USER_ID] || sessionStorage.getItem(storeKeyNames.USER_ID);
+      const userId = localStorage.getItem("userIdTemp");
       //TODO: needs to validate token from backend and also check that token has correct userid
-      if (access_token && access_token.length > 0 && parseInt(userId) > 0) {
+      if (parseInt(userId) > 0) {
         const response = await api.user.getUser(userId);
         if (response && response.code === 200) {
           commit(authenticatedUserMutations.SET_AUTHENTICATION, {
@@ -87,6 +83,7 @@ export default {
         dispatch(authenticatedUserActions.REVOKE_AUTHENTICATION);
       }
     },
+    
     async [authenticatedUserActions.REVOKE_AUTHENTICATION]({ commit }) {
       // eslint-disable-next-line no-undef
       $cookies.remove(storeKeyNames.ACCESS_TOKEN);
@@ -94,7 +91,8 @@ export default {
       $cookies.remove(storeKeyNames.REFRESH_TOKEN);
       commit(authenticatedUserMutations.SET_AUTHENTICATION, {
         authenticated: false,
-        user_id: 0
+        // user_id: 0
+        user_id: localStorage.userIdTemp
       });
     },
     async [authenticatedUserActions.GET_USER_NAME]({ commit }, userId) {
@@ -105,7 +103,7 @@ export default {
     },
     async [authenticatedUserActions.AUTHENTICATE_LOCAL_USER]({ commit }, authenticateData) {
       const response = await api.user.authenticateLocalUser(authenticateData);
-
+      console.log("authenticateData is: " + JSON.stringify(authenticateData)); //Mika
       if (response && response.code === 200) {
         commit(authenticatedUserMutations.SET_AUTHENTICATION, {
           authenticated: true,
@@ -123,7 +121,7 @@ export default {
     },
     [authenticatedUserActions.GET_USER_ID_FROM_STORAGE]({ commit }) {
       const userId = sessionStorage.getItem(storeKeyNames.USER_ID);
-      if (userId && userId > 0) {
+      if (userId) {
         commit(authenticatedUserMutations.SET_USER_ID, userId);
       }
     },
