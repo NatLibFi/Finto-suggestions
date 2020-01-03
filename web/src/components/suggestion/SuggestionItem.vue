@@ -1,7 +1,7 @@
 <template>
   <li @click="goToSuggestion()" class="item">
     <div class="item-summary">
-      {{ suggestions }}
+      {{ suggestion.id }}
       <div class="title">
         <p class="title-row">
           <span
@@ -278,4 +278,5 @@ li.item:hover {
     display: block;
   }
 }
+
 </style>

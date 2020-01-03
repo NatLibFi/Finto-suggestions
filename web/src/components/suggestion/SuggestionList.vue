@@ -1,11 +1,5 @@
 <template>
   <div>
-    <!-- <div>
-      {{ suggestions }}
-    </div> -->
-
-
-
     <suggestion-search
       v-if="!isUserPage"
       :meetingId="meetingId"
@@ -20,24 +14,14 @@
       :searchWord="searchWord"
       :sort="sort"
     />
-    <div>
-
-
-    </div>
-
-<!-- Area 51
-    <div class="list-container">
-      <suggestions-filtered-by-archived
-      :filters="filters"
-      :searchWord="searchWord"
-      
-      
-      />
-    </div> -->
-
 
     <div class="list-container">
-      <ul v-if="suggestions.length" class="list">
+      <ul class="list">
+        <div id="progressBar">
+          <div id="greenLine"></div>
+        </div>
+        <div id="itemListContainer">
+        {{ suggestions.length }}
         <!-- <transition-group name="fade"> -->
           <suggestion-item
             class="suggestion"
@@ -46,6 +30,7 @@
             :suggestion="suggestion"
             :meetingId="meetingId"
           />
+        </div>
         <!-- </transition-group> -->
       </ul>
       <suggestion-list-pagination
@@ -118,7 +103,7 @@ export default {
       pageCount: 400,
       pageCountLoading: false,
       aCount: 0,
-      suggestionsAsArray: []
+      suggestionsAsArray: [],
     };
   },
   computed: {
@@ -146,6 +131,33 @@ export default {
     this.pageCountLoading = false;
   
   },
+
+
+  mounted() {
+    // window.addEventListener('load', () => {
+         // run after everything is in-place
+    // })
+    setTimeout(function(){
+      document.getElementById('itemListContainer').style.visibility = "visible";
+    },4000);
+    setTimeout(function(){
+      document.getElementById('progressBar').style.visibility = "hidden";
+    },4000);
+    setTimeout(function(){
+      document.getElementById('greenLine').style.visibility = "hidden";
+    },4000);
+    this.move();
+
+
+
+  
+
+  },
+
+
+
+
+
   
 
   methods: {
@@ -155,6 +167,27 @@ export default {
       getSuggestionsCount: suggestionActions.GET_SUGGESTIONS_COUNT,
       // getArchivedSuggestionsCount: suggestionActions.GET_ARCHIVED_SUGGESTIONS_COUNT
     }),
+    move() {
+      var i = 0;
+      if (i == 0) {
+        i = 1;
+        var elem = document.getElementById("greenLine");
+        var width = 1;
+        var id = setInterval(frame, 40);
+        function frame() {
+          if (width >= 100) {
+            clearInterval(id);
+            i = 0;
+          } else {
+            width++;
+            elem.style.width = width + "%";
+          }
+        }
+      }
+    },
+
+
+
     test: function() {
       this.searchWordForRemoteUse = this.searchWord; 
     },
@@ -177,6 +210,7 @@ export default {
           filters: this.filters,
           searchWord: this.searchWord
         });
+        console.log("4");
         // this.aFilters = this.suggestions.filter(obj => obj.status === 'ARCHIVED').length;
 
         await this.getSuggestionsCount({
@@ -209,7 +243,9 @@ export default {
             search: this.searchWord,
             sort: this.sort
           }
-        });
+        })
+        console.log("1");
+        ;
       } else if (this.userId) {
         this.$router.push({
           name: 'user',
@@ -229,7 +265,8 @@ export default {
             search: this.searchWord,
             sort: this.sort
           }
-        });
+        })
+        console.log("2");
       } else if (this.suggestions.length === 0 && !this.$route.query) {
         this.$router.push({
           name: 'index'
@@ -243,11 +280,13 @@ export default {
       this.aFilters = 'status:ARCHIVED';
       this.searchWord = this.$route.query.search ? this.$route.query.search : '';
       this.sort = this.$route.query.sort ? this.$route.query.sort : '';
+      console.log("3");
       this.updateSuggestionList();
 
     }
   }
 };
+
 </script>
 
 <style scoped>
@@ -290,5 +329,22 @@ ul {
 .fade-enter,
 .fade-leave-to {
   opacity: 0.75;
+}
+
+#itemListContainer {
+  visibility: hidden;
+}
+
+#progressBar {
+  visibility: visible;
+  width: 100%;
+  background-color: #f5f5f5;
+}
+
+#greenLine {
+  visibility: visible;
+  width: 1%;
+  height: 8px;
+  background-color: #66bea9;
 }
 </style>

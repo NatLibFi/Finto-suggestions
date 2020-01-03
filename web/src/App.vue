@@ -1,4 +1,5 @@
 <template>
+<!-- <div v-if="$auth.ready()" id="app"> -->
   <div id="app">
     <router-view />
   </div>
@@ -6,6 +7,12 @@
 
 <script>
 export default {};
+
+// function ready() {
+//   alert('DOM is ready');
+// }
+
+// document.addEventListener("DOMContentLoaded", ready);
 </script>
 
 <style>

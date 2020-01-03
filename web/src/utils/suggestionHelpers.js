@@ -87,14 +87,16 @@ export const handleSortedQueries = (filters, searchWord, sort, router) => {
         search: searchWord,
         sort: sort
       }
-    });
+    })
+    console.log("5");
   } else if (filters.length > 0 && searchWord.length === 0) {
     router.push({
       query: {
         filters: filters,
         sort: sort
       }
-    });
+    })
+    console.log("6");
   } else if (filters.length === 0 && searchWord.length > 0) {
     router.push({
       query: {

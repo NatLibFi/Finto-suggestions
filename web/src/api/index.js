@@ -62,5 +62,5 @@ var handleCookiesAndSessionStorage = function(){
 }
 
 console.log(handleCookiesAndSessionStorage());
-
+// console.log(setTimeout());
 
