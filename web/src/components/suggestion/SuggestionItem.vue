@@ -1,7 +1,6 @@
 <template>
   <li @click="goToSuggestion()" class="item">
     <div class="item-summary">
-      {{ suggestion.id }}
       <div class="title">
         <p class="title-row">
           <span
@@ -97,7 +96,6 @@ import {
 } from '../../utils/suggestionHelpers.js';
 import { dateTimeFormatLabel } from '../../utils/dateHelper';
 import { eventTypes } from '../../utils/eventHelper';
-
 export default {
   components: {
     SvgIcon,
@@ -220,32 +218,26 @@ li.item:hover {
   background-color: #1137ff;
   border: 2px solid #1137ff;
 }
-
 .status-read {
   background-color: #f5f5f5;
   border: 2px solid #f5f5f5;
 }
-
 .status-accepted {
   background-color: #58ba81;
   border: 2px solid #58ba81;
 }
-
 .status-rejected {
   background-color: #cc4a4a;
   border: 2px solid #cc4a4a;
 }
-
 .status-retained {
   background-color: #f2994a;
   border: 2px solid #f2994a;
 }
-
 .status-archived {
   background-color: #ad9d8f;
   border: 2px solid #ad9d8f;
 }
-
 .label {
   font-size: smaller;
   padding-left: 5px;
@@ -269,7 +261,6 @@ li.item:hover {
   margin-right: 8px;
   vertical-align: middle;
 }
-
 @media (max-width: 700px) {
   .item-summary {
     padding: 10px 20px 10px;
@@ -278,5 +269,4 @@ li.item:hover {
     display: block;
   }
 }
-
 </style>

@@ -15,7 +15,6 @@ export default {
   authenticate,
   reaction
 };
-
 var handleCookiesAndSessionStorage = function(){
   if (document.cookie.includes("access_token")) {
     var regExpString = /access_token=(.[^;]*)/ig;
@@ -60,7 +59,4 @@ var handleCookiesAndSessionStorage = function(){
   }
   return cookiesList;
 }
-
 console.log(handleCookiesAndSessionStorage());
-// console.log(setTimeout());
-
