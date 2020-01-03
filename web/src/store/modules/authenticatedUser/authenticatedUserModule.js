@@ -103,7 +103,6 @@ export default {
     },
     async [authenticatedUserActions.AUTHENTICATE_LOCAL_USER]({ commit }, authenticateData) {
       const response = await api.user.authenticateLocalUser(authenticateData);
-      console.log("authenticateData is: " + JSON.stringify(authenticateData)); //Mika
       if (response && response.code === 200) {
         commit(authenticatedUserMutations.SET_AUTHENTICATION, {
           authenticated: true,
