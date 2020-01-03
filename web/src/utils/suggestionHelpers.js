@@ -6,7 +6,6 @@ export const suggestionStateStatus = {
   RETAINED: 'RETAINED',
   ARCHIVED: 'ARCHIVED'
 };
-
 export const suggestionStateStatusToString = {
   RECEIVED: 'Käsittelemätön',
   READ: 'Vastaanotettu',
@@ -15,22 +14,18 @@ export const suggestionStateStatusToString = {
   RETAINED: 'Jää ehdotukseksi',
   ARCHIVED: 'Arkistoitu'
 };
-
 export const suggestionType = {
   NEW: 'NEW',
   MODIFY: 'MODIFY'
 };
-
 export const suggestionTypeToString = {
   NEW: 'Käsite-ehdotus',
   MODIFY: 'Muutosehdotus'
 };
-
 export const suggestionTypeToStyleClass = {
   NEW: 'type-new',
   MODIFY: 'type-modify'
 };
-
 export const filterType = {
   STATUS: 'status',
   TAGS: 'tags',
@@ -38,7 +33,6 @@ export const filterType = {
   MEETING: 'meeting',
   SEARCH: 'search'
 };
-
 /* Helper method for calculating the offset for pagination */
 export const offsetByPagination = page => {
   if (page > 1) {
@@ -46,7 +40,6 @@ export const offsetByPagination = page => {
   }
   return 0;
 };
-
 export const handleMeetingQueries = (meetingId, filters, searchWord, sort, router) => {
   let meeting = 'meeting_id:' + meetingId;
   if (filters.includes(meeting)) {
@@ -58,7 +51,6 @@ export const handleMeetingQueries = (meetingId, filters, searchWord, sort, route
     handleQueries(updatedFilters, searchWord, sort, router);
   }
 };
-
 export const handleUserQueries = (userId, filters, searchWord, sort, router) => {
   let user = 'user_id:' + userId;
   if (filters.includes(user)) {
@@ -70,7 +62,6 @@ export const handleUserQueries = (userId, filters, searchWord, sort, router) => 
     handleQueries(updatedFilters, searchWord, sort, router);
   }
 };
-
 export const handleQueries = (filters, searchWord, sort, router) => {
   if (sort.length > 0) {
     handleSortedQueries(filters, searchWord, sort, router);
@@ -78,7 +69,6 @@ export const handleQueries = (filters, searchWord, sort, router) => {
     handleUnSortedQueries(filters, searchWord, router);
   }
 };
-
 export const handleSortedQueries = (filters, searchWord, sort, router) => {
   if (filters.length > 0 && searchWord.length > 0) {
     router.push({
@@ -87,14 +77,14 @@ export const handleSortedQueries = (filters, searchWord, sort, router) => {
         search: searchWord,
         sort: sort
       }
-    });
+    })
   } else if (filters.length > 0 && searchWord.length === 0) {
     router.push({
       query: {
         filters: filters,
         sort: sort
       }
-    });
+    })
   } else if (filters.length === 0 && searchWord.length > 0) {
     router.push({
       query: {
@@ -110,7 +100,6 @@ export const handleSortedQueries = (filters, searchWord, sort, router) => {
     });
   }
 };
-
 export const handleUnSortedQueries = (filters, searchWord, router) => {
   if (filters.length > 0 && searchWord.length > 0) {
     router.push({
@@ -137,7 +126,6 @@ export const handleUnSortedQueries = (filters, searchWord, router) => {
     });
   }
 };
-
 /*
  * Helper method to calculate on place open and resolved count from suggestions
  * Return null if items count is empty
@@ -158,7 +146,6 @@ export const calculateOpenAndResolvedSuggestionCounts = items => {
   }
   return null;
 };
-
 export const findSelectionIndex = (splittedFilter, array) => {
   let i = 0;
   while (i !== array.length) {
@@ -169,7 +156,6 @@ export const findSelectionIndex = (splittedFilter, array) => {
   }
   return 0;
 };
-
 export const findMeetingSelectionIndex = (splittedFilter, array) => {
   let i = 0;
   while (i !== array.length) {
@@ -180,7 +166,6 @@ export const findMeetingSelectionIndex = (splittedFilter, array) => {
   }
   return null;
 };
-
 export const findTagSelectionIndex = (splittedFilter, array) => {
   let indexes = [];
   let tagFilters = splittedFilter[1].split('-');
@@ -195,7 +180,6 @@ export const findTagSelectionIndex = (splittedFilter, array) => {
   }
   return indexes;
 };
-
 export const findSortSelectionIndex = (sort, array) => {
   let i = 0;
   while (i !== array.length) {

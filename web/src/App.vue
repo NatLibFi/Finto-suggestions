@@ -5,23 +5,20 @@
 </template>
 
 <script>
-export default {};
+  export default {};
 </script>
-
 <style>
+
 body {
   margin: 0;
   background-color: #f9f9f9;
 }
-
 a {
   color: #06a798;
 }
-
 a:hover {
   color: #21baac;
 }
-
 #app {
   font-family: 'Fira Sans', 'Avenir', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;

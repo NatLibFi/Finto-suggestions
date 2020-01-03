@@ -5,26 +5,16 @@ const client = axios.create({
   baseURL: '/api',
   json: true
 });
-
-
-
 const execute = async (method, resource, data, useRefreshToken) => {
   // eslint-disable-next-line no-undef
   const access_token = $cookies.get(storeKeyNames.ACCESS_TOKEN);
-  // const access_token = $cookies.get(storeKeyNames.ACCESS_TOKEN.concat(Math.random().toString(36).substring(7)));
-  // alert(storeKeyNames.ACCESS_TOKEN.concat(Math.random().toString(36).substring(7)));
-  // alert(Math.random().toString(36).substring(7));
-  // eslint-disable-next-line no-undef
   const refreshToken = $cookies.get(storeKeyNames.REFRESH_TOKEN);
-
   let AuthHeaderValue;
-
   if (useRefreshToken) {
     AuthHeaderValue = refreshToken && refreshToken.length > 0 ? `Bearer ${refreshToken}` : '';
   } else {
     AuthHeaderValue = access_token && access_token.length > 0 ? `Bearer ${access_token}` : '';
   }
-
   return client({
     method,
     url: resource,
@@ -43,7 +33,6 @@ const execute = async (method, resource, data, useRefreshToken) => {
       return error.response.data;
     });
 };
-
 export const get = async options => execute('get', options.resource, null);
 export const post = async options =>
   execute('post', options.resource, options.data, options.useRefreshToken);

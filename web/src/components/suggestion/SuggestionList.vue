@@ -1,11 +1,5 @@
 <template>
   <div>
-    <!-- <div>
-      {{ suggestions }}
-    </div> -->
-
-
-
     <suggestion-search
       v-if="!isUserPage"
       :meetingId="meetingId"
@@ -20,25 +14,12 @@
       :searchWord="searchWord"
       :sort="sort"
     />
-    <div>
-
-
-    </div>
-
-<!-- Area 51
     <div class="list-container">
-      <suggestions-filtered-by-archived
-      :filters="filters"
-      :searchWord="searchWord"
-      
-      
-      />
-    </div> -->
-
-
-    <div class="list-container">
-      <ul v-if="suggestions.length" class="list">
-        <!-- <transition-group name="fade"> -->
+      <ul class="list">
+        <div id="progressBar">
+          <div id="greenLine"></div>
+        </div>
+        <div id="itemListContainer">
           <suggestion-item
             class="suggestion"
             v-for="suggestion in suggestions"
@@ -46,7 +27,7 @@
             :suggestion="suggestion"
             :meetingId="meetingId"
           />
-        <!-- </transition-group> -->
+        </div>
       </ul>
       <suggestion-list-pagination
         :pageCount="pageCount"
@@ -69,27 +50,21 @@ import SuggestionSearch from './SuggestionSearch';
 import SuggestionListHeader from './SuggestionListHeader';
 import SuggestionItem from './SuggestionItem';
 import SuggestionListPagination from './SuggestionListPagination';
-// import SuggestionsFilteredByArchived from './SuggestionsFilteredByArchived';
-
 import {
   suggestionGetters,
   suggestionActions
 } from '../../store/modules/suggestion/suggestionConsts.js';
-
 import {
   mapSuggestionGetters,
   mapSuggestionActions
 } from '../../store/modules/suggestion/suggestionModule.js';
-
 import { offsetByPagination } from '../../utils/suggestionHelpers.js';
-
 export default {
   components: {
     SuggestionSearch,
     SuggestionListHeader,
     SuggestionItem,
     SuggestionListPagination,
-    // SuggestionsFilteredByArchived,
   },
   props: {
     userId: {
@@ -118,14 +93,13 @@ export default {
       pageCount: 400,
       pageCountLoading: false,
       aCount: 0,
-      suggestionsAsArray: []
+      suggestionsAsArray: [],
     };
   },
   computed: {
     ...mapSuggestionGetters({
       suggestions: suggestionGetters.GET_SUGGESTIONS,
       suggestionCount: suggestionGetters.GET_SUGGESTIONS_COUNT,
-      // archivedSuggestionCount: suggestionGetters.GET_ARCHIVED_SUGGESTIONS_COUNT
     }),
     
   },
@@ -136,18 +110,23 @@ export default {
     this.pageCountLoading = true;
     await this.fetchSuggestions();
     this.pageCount = Math.ceil(this.suggestionCount / 25);
-
-    // this.aCount = this.$router.archivedSuggestionCount.name('archivedCounts');
-
-
     if (this.pageCount < this.page) {
       this.goToFirstPage();
     }
     this.pageCountLoading = false;
-  
   },
-  
-
+  mounted() {
+    setTimeout(function(){
+      document.getElementById('itemListContainer').style.visibility = "visible";
+    },4000);
+    setTimeout(function(){
+      document.getElementById('progressBar').style.visibility = "hidden";
+    },4000);
+    setTimeout(function(){
+      document.getElementById('greenLine').style.visibility = "hidden";
+    },4000);
+    this.barToRight();
+  },
   methods: {
     ...mapSuggestionActions({
       getSuggestions: suggestionActions.GET_SUGGESTIONS,
@@ -155,6 +134,24 @@ export default {
       getSuggestionsCount: suggestionActions.GET_SUGGESTIONS_COUNT,
       // getArchivedSuggestionsCount: suggestionActions.GET_ARCHIVED_SUGGESTIONS_COUNT
     }),
+    barToRight() {
+      var i = 0;
+      if (i == 0) {
+        i = 1;
+        var elementOfGreenLine = document.getElementById("greenLine");
+        var width = 1;
+        var id = setInterval(perPulse, 40);
+        function perPulse() {
+          if (width >= 100) {
+            clearInterval(id);
+            i = 0;
+          } else {
+            width++;
+            elementOfGreenLine.style.width = width + "%";
+          }
+        }
+      }
+    },
     test: function() {
       this.searchWordForRemoteUse = this.searchWord; 
     },
@@ -164,12 +161,10 @@ export default {
           userId: this.userId,
           offset: offsetByPagianation(this.page)
         });
-
         await this.getSuggestionsCount({
           filters: 'user_id:' + this.userId,
           searchWord: ''
         });
-
       } else {
         this.getSuggestions({
           offset: offsetByPagination(this.page),
@@ -177,17 +172,13 @@ export default {
           filters: this.filters,
           searchWord: this.searchWord
         });
-        // this.aFilters = this.suggestions.filter(obj => obj.status === 'ARCHIVED').length;
-
         await this.getSuggestionsCount({
           filters: this.filters,
           searchWord: this.searchWord
           });
-
       }
     },
     async updateSuggestionList() {
-
       this.pageCountLoading = true;
       await this.fetchSuggestions();
       this.pageCount = Math.ceil(this.suggestionCount / 25);
@@ -244,7 +235,6 @@ export default {
       this.searchWord = this.$route.query.search ? this.$route.query.search : '';
       this.sort = this.$route.query.sort ? this.$route.query.sort : '';
       this.updateSuggestionList();
-
     }
   }
 };
@@ -254,12 +244,10 @@ export default {
 .list-container {
   margin-bottom: 40px;
 }
-
 ul {
   list-style: none;
   min-height: 760px;
 }
-
 .list {
   text-align: left;
   background-color: #ffffff;
@@ -270,19 +258,16 @@ ul {
   margin: 0 20vw;
   padding-left: 0; /* reset inital padding for ul tags */
 }
-
 .suggestion {
   margin: 10px 0 10px 0;
   border-bottom: 2px solid #f5f5f5;
 }
-
 @media (max-width: 700px) {
   .list {
     width: 80vw;
     margin: 0 10vw 20px;
   }
 }
-
 .fade-enter-active,
 .fade-leave-active {
   transition: opacity 3s;
@@ -290,5 +275,19 @@ ul {
 .fade-enter,
 .fade-leave-to {
   opacity: 0.75;
+}
+#itemListContainer {
+  visibility: hidden;
+}
+#progressBar {
+  visibility: visible;
+  width: 100%;
+  background-color: #f5f5f5;
+}
+#greenLine {
+  visibility: visible;
+  width: 1%;
+  height: 8px;
+  background-color: #66bea9;
 }
 </style>
