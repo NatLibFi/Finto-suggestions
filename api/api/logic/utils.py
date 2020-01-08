@@ -1,4 +1,5 @@
-from sqlalchemy import or_, func
+from sqlalchemy import or_
+
 from ..models import db, Event, Tag, Reaction, Suggestion, SuggestionTypes, SuggestionStatusTypes
 from .common import InvalidFilterException
 
@@ -12,7 +13,7 @@ def _raise_exception(value, filter_type, valid_types=None):
     raise InvalidFilterException(msg)
 
 def logMarker(markerString):
-    for itemX in "1234567890":
+    for itemX in "1234567890": #pylint: disable=unused-variable
         print(markerString)
 
 

@@ -18,6 +18,7 @@
 
 from functools import wraps
 import connexion
+
 from .common import create_response, id_exists
 from ..models import db, Event, Meeting, Suggestion, Tag, User
 

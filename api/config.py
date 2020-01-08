@@ -1,11 +1,8 @@
 import os
 
-
 user = os.environ.get('POSTGRES_USER')
 pw = os.environ.get('POSTGRES_PASSWORD')
 db = os.environ.get('POSTGRES_DB')
-
-
 
 class BaseConfig:
     """
@@ -27,14 +24,11 @@ class BaseConfig:
 
     DEBUG = False
 
-
 class DevelopmentConfig(BaseConfig):
     # db_container_name = 'db'
     ENABLE_SWAGGER_UI = True
     DEBUG = True
     # SQLALCHEMY_DATABASE_URI = f'postgresql+psycopg2://{user}:{pw}@{db_container_name}:5432/{db}?charset=utf8mb4'
-    #json_serializer=lambda 
-    #obj: json.dumps(obj, ensure_ascii=False)
 
 class TestingConfig(BaseConfig):
     # testdb db will be created upon test initialization

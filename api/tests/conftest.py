@@ -2,6 +2,7 @@ import pytest
 import sqlalchemy
 from sqlalchemy.exc import ProgrammingError, IntegrityError
 from flask_jwt_extended import create_access_token
+
 from app import create_app
 from api.models import db as _db
 from api.models import User, UserRoles
@@ -135,7 +136,7 @@ def _initialize_users(app, db):
         try:
             db.session.add(admin)
             db.session.commit()
-        except IntegrityError as e:
+        except IntegrityError:
             db.session().rollback()
 
         return {

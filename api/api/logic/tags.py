@@ -1,4 +1,5 @@
 import connexion
+
 from ..authentication import admin_only
 from ..models import Tag
 from .common import get_one_or_404, get_all_or_404, create_or_400, delete_or_404, update_or_404_custom

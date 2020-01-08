@@ -1,4 +1,5 @@
 import pytest
+
 from api.authentication import authorized, admin_only
 from api.models import User, TokenBlacklist
 from .conftest import NORMAL_USER
@@ -15,17 +16,17 @@ def auhtorized_endpoints(app, session):
     """
 
     @app.route('/public', methods=['GET'])
-    def protected():
+    def protected(): #pylint: disable=unused-variable
         return "SUCCESS"
 
     @app.route('/logged_in', methods=['GET'])
     @authorized
-    def authorized_test():
+    def authorized_test(): #pylint: disable=unused-variable
         return "SUCCESS"
 
     @app.route('/admin_only', methods=['GET'])
     @admin_only
-    def admin_only_test():
+    def admin_only_test(): #pylint: disable=unused-variable
         return "SUCCESS"
 
 
