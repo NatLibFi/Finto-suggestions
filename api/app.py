@@ -1,19 +1,13 @@
 import os
+
 import connexion
 import click
-from datetime import timedelta
 from flask_migrate import Migrate
-from flask.cli import with_appcontext
 from flask_cors import CORS
 from specsynthase.specbuilder import SpecBuilder
-from api.models import *
-from api.authentication import jwt, prune_expired_tokens
-#
-import json
-# from flask import json
-from flask.json import JSONEncoder
-import logging
-# import ujson
+
+from api.models import db, User, UserRoles
+from api.authentication import JWT, prune_expired_tokens
 
 
 # Here you can adjust error logging levels
@@ -52,7 +46,7 @@ def create_app(config_object='config.DevelopmentConfig'):
 
     db.init_app(flask_app)
     # flask_app.OPTIONS.psycopg2.register_default_json.
-    jwt.init_app(flask_app)
+    JWT.init_app(flask_app)
     migrate = Migrate(flask_app, db, compare_type=True)
 
     # CORS settings for allowing suggestions from a Skosmos client
@@ -63,9 +57,11 @@ def create_app(config_object='config.DevelopmentConfig'):
     }})
 
     @flask_app.shell_context_processor
-    def shell_context():
-        import api.models as models
+    def shell_context(): #pylint: disable=unused-variable
+        #pylint: disable=import-outside-toplevel
         from pprint import pprint
+        from api import models
+        #pylint: enable=import-outside-toplevel
         return {
             'app': app,
             'db': models.db,
@@ -75,7 +71,7 @@ def create_app(config_object='config.DevelopmentConfig'):
         # models.db.
 
     @flask_app.cli.command(db.JSON)
-    def prune():
+    def prune(): #pylint: disable=unused-variable
         """
         Prunes the JWT token blacklist.
 
@@ -90,9 +86,8 @@ def create_app(config_object='config.DevelopmentConfig'):
     @flask_app.cli.command()
     # def json_testing();
 
-
     @click.argument('name')
-    @click.argument('email')
+    @click.argument('email') #pylint: disable=unused-variable
     @click.argument('password')
     def create_admin(name, email, password):
         """

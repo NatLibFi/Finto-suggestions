@@ -1,26 +1,17 @@
-import os
+import unicodedata
+
 import connexion
+from flask import jsonify
 from sqlalchemy import or_, func, and_
 from sqlalchemy.types import Unicode
+
 from ..authentication import admin_only
 from .validators import suggestion_parameter_validator, suggestion_id_validator, _error_messagify
 from .common import (create_response, get_one_or_404, get_all_or_404, get_all_or_404_custom,
                      get_count_or_404_custom, create_or_400, delete_or_404, patch_or_404, update_or_404)
-from .utils import SUGGESTION_FILTER_FUNCTIONS, SUGGESTION_SORT_FUNCTIONS, logMarker
+from .utils import SUGGESTION_FILTER_FUNCTIONS, SUGGESTION_SORT_FUNCTIONS
 from ..models import db, Suggestion, Tag, User
-from .skos import initGraph, suggestionToGraph
-from flask import jsonify
-from rdflib import Graph, URIRef, Literal, Namespace, RDF
-from rdflib.namespace import SKOS
-
-from ..tools.profiler import profiler
-import json
-import logging
-import unicodedata 
-##### Tests
-from sqlalchemy import JSON
-from sqlalchemy import cast
-import string
+from .skos import suggestionToGraph
 
 
 def compare_caseless(s1, s2):
@@ -45,7 +36,6 @@ def get_suggestions(limit: int = None, offset: int = None, filters: str = None, 
     :returns: All suggestion matching the query in json format
     """
 
-
     def query_func():
         if sort in SUGGESTION_SORT_FUNCTIONS:
             query = SUGGESTION_SORT_FUNCTIONS.get(sort)(db.session)
@@ -60,24 +50,20 @@ def get_suggestions(limit: int = None, offset: int = None, filters: str = None, 
                 # logMarker("***********************************")
                 # print(filters)
 
-
                 # Area 51 131119
-
-
 
                 if filter_func:
                     query = filter_func(query, value.upper())
 
         if search:
-            searchEscaped = unicodedata.normalize("NFD", unicodedata.normalize('NFD', search).casefold())
+            searchEscaped = unicodedata.normalize(
+                "NFD", unicodedata.normalize('NFD', search).casefold())
             # print("****************************")
             # print(limit)
             # print(offset)
             # print(filters)
             # print(search)
             # print(sort)
-
-
 
             print("***************************")
             print(compare_caseless("å", "\u00e5"))
@@ -98,20 +84,23 @@ def get_suggestions(limit: int = None, offset: int = None, filters: str = None, 
             # print(db.session.query(Suggestion.preferred_label['fi']['value'] .contains("valta".lower())))
             # print(db.session.query(Suggestion).filter(Suggestion.preferred_label['fi']['value'].contains('aarteet')))
 # records = db_session.query(Resource).filter(Resources.data["lastname"] == cast("Doe", JSON)).all()
-            
+
             query = query.filter(or_(
                 # Mika's and Alex's testing func.lower(str(Suggestion)).contains(search.lower())
                 # func.lower(Suggestion.preferred_label['fi'].astext.matches(search)),
                 # func.lower(Suggestion.preferred_label['fi']['value'].cast(Unicode)).contains(searchEscaped.lower()),
-                # Almost working version 
+                # Almost working version
                 # func.lower(Suggestion.preferred_label['fi'].cast(Unicode)).contains(search.lower()),
                 #
                 #
-                func.lower(Suggestion.preferred_label['fi']['value'].cast(Unicode)).contains(search.lower()),
+                func.lower(Suggestion.preferred_label['fi']['value'].cast(
+                    Unicode)).contains(search.lower()),
                 # func.lower(Suggestion.preferred_label.cast(Unicode)).contains(search.lower()),
 
-                func.lower(Suggestion.preferred_label['sv'].cast(Unicode)).contains(search.lower()),
-                func.lower(Suggestion.preferred_label['en'].cast(Unicode)).contains(search.lower()),
+                func.lower(Suggestion.preferred_label['sv'].cast(
+                    Unicode)).contains(search.lower()),
+                func.lower(Suggestion.preferred_label['en'].cast(
+                    Unicode)).contains(search.lower()),
                 # func.lower(Suggestion.alternative_labels.cast(Unicode)).contains(search.lower()),
                 func.lower(Suggestion.id.cast(Unicode)).contains(search),
                 # func.lower(Suggestion.id.cast(Unicode)).contains(searchEscaped),
@@ -139,7 +128,6 @@ def get_suggestions(limit: int = None, offset: int = None, filters: str = None, 
             query = query.offset(offset)
 
         return query.all()
-
 
     def _validate_filters(f):
         return all([f[0].upper() in SUGGESTION_FILTER_FUNCTIONS.keys() for f in filters])
@@ -178,11 +166,14 @@ def get_suggestions_count(filters: str = None, search: str = None) -> str:
             # Ideally, you would like to search matches in each language separately,
             # instead of the whole json blob (cast as string)
             query = query.filter(or_(
-                func.lower(Suggestion.preferred_label['fi']['value'].cast(Unicode)).contains(search.lower()),
+                func.lower(Suggestion.preferred_label['fi']['value'].cast(
+                    Unicode)).contains(search.lower()),
                 # func.lower(Suggestion.preferred_label.cast(Unicode)).contains(search.lower()),
 
-                func.lower(Suggestion.preferred_label['sv'].cast(Unicode)).contains(search.lower()),
-                func.lower(Suggestion.preferred_label['en'].cast(Unicode)).contains(search.lower()),
+                func.lower(Suggestion.preferred_label['sv'].cast(
+                    Unicode)).contains(search.lower()),
+                func.lower(Suggestion.preferred_label['en'].cast(
+                    Unicode)).contains(search.lower()),
                 # func.lower(Suggestion.alternative_labels.cast(Unicode)).contains(search.lower()),
                 func.lower(Suggestion.id.cast(Unicode)).contains(search),
                 # func.lower(Suggestion.description).contains(search.lower()),
@@ -238,11 +229,14 @@ def get_archived_suggestions_count(filters: str = None, search: str = None) -> s
             # Ideally, you would like to search matches in each language separately,
             # instead of the whole json blob (cast as string)
             query = query.filter(or_(
-                func.lower(Suggestion.preferred_label['fi']['value'].cast(Unicode)).contains(search.lower()),
+                func.lower(Suggestion.preferred_label['fi']['value'].cast(
+                    Unicode)).contains(search.lower()),
                 # func.lower(Suggestion.preferred_label.cast(Unicode)).contains(search.lower()),
 
-                func.lower(Suggestion.preferred_label['sv'].cast(Unicode)).contains(search.lower()),
-                func.lower(Suggestion.preferred_label['en'].cast(Unicode)).contains(search.lower()),
+                func.lower(Suggestion.preferred_label['sv'].cast(
+                    Unicode)).contains(search.lower()),
+                func.lower(Suggestion.preferred_label['en'].cast(
+                    Unicode)).contains(search.lower()),
                 # func.lower(Suggestion.alternative_labels.cast(Unicode)).contains(search.lower()),
                 func.lower(Suggestion.id.cast(Unicode)).contains(search),
                 # func.lower(Suggestion.description).contains(search.lower()),
@@ -275,6 +269,7 @@ def get_archived_suggestions_count(filters: str = None, search: str = None) -> s
 
     return get_count_or_404_custom(query_func)
 
+
 def get_user_suggestions(user_id: int, limit: int = None, offset: int = None) -> str:
     """
     Gets suggestions by user id
@@ -283,16 +278,17 @@ def get_user_suggestions(user_id: int, limit: int = None, offset: int = None) ->
     """
 
     if user_id > 0:
-        query = Suggestion.query.filter_by(user_id=user_id).order_by(Suggestion.created.desc())
+        query = Suggestion.query.filter_by(
+            user_id=user_id).order_by(Suggestion.created.desc())
         if limit:
             query = query.limit(limit)
         if offset:
             query = query.offset(offset)
         user_suggestions = query.all()
         serialized_objects = [o.as_dict() for o in user_suggestions]
-        return { 'data': serialized_objects, 'code': 200 }, 200
+        return {'data': serialized_objects, 'code': 200}, 200
 
-    return { 'error': 'user_id was not valid', 'code': 400}, 400
+    return {'error': 'user_id was not valid', 'code': 400}, 400
 
 
 def get_suggestion(suggestion_id: int) -> str:
@@ -337,7 +333,7 @@ def post_suggestion() -> str:
     if 'broader_labels' not in payload_dict:
         payload_dict['broader_labels'] = []
         # print(payload_dict['broader_labels'])
-    
+
     if 'exactMatches' not in payload_dict:
         payload_dict['exactMatches'] = []
 
@@ -402,6 +398,7 @@ def patch_suggestion(suggestion_id: int) -> str:
     """
 
     return patch_or_404(Suggestion, suggestion_id, connexion.request.json)
+
 
 @admin_only
 def delete_suggestion(suggestion_id: int) -> str:
@@ -472,7 +469,7 @@ def remove_tags_from_suggestion(suggestion_id: int) -> str:
 
     db.session.commit()
 
-    return { 'code': 202 }, 202
+    return {'code': 202}, 202
 
 
 @admin_only
@@ -506,11 +503,12 @@ def get_meeting_suggestions(meeting_id: int) -> str:
     """
 
     if meeting_id > 0:
-        meeting_suggestions = Suggestion.query.filter_by(meeting_id=meeting_id).all()
+        meeting_suggestions = Suggestion.query.filter_by(
+            meeting_id=meeting_id).all()
         serialized_objects = [o.as_dict() for o in meeting_suggestions]
-        return { 'data': serialized_objects, 'code': 200 }, 200
+        return {'data': serialized_objects, 'code': 200}, 200
 
-    return { 'error': 'meeting_id was not valid', 'code': 400}, 400
+    return {'error': 'meeting_id was not valid', 'code': 400}, 400
 
 
 @admin_only
@@ -527,12 +525,11 @@ def put_update_suggestion_status(suggestion_id: int, status: str) -> str:
             db.session.add(suggestion)
             # Mika 011019
             db.session.commit()
-            return { 'code': 202 }, 202
+            return {'code': 202}, 202
         except Exception as ex:
             db.session.rollback()
             print(str(ex))
-            return { 'error': str(ex) }, 400
-        
+            return {'error': str(ex)}, 400
 
 
 def get_open_suggestions() -> str:
@@ -541,12 +538,13 @@ def get_open_suggestions() -> str:
     :returns: Suggestions list of open suggestions
     """
     try:
-        open_suggestions = Suggestion.query.filter(Suggestion.status.notin_(['ACCEPTED', 'REJECTED', 'RETAINED', 'ARCHIVED'])).all()
+        open_suggestions = Suggestion.query.filter(Suggestion.status.notin_(
+            ['ACCEPTED', 'REJECTED', 'RETAINED', 'ARCHIVED'])).all()
         serialized_objects = [o.as_dict() for o in open_suggestions]
-        return { 'data': serialized_objects, 'code': 200 }, 200
+        return {'data': serialized_objects, 'code': 200}, 200
     except Exception as ex:
         print(str(ex))
-        return { 'code': 404, 'error': str(ex) }, 404
+        return {'code': 404, 'error': str(ex)}, 404
 
 
 def get_resolved_suggestions() -> str:
@@ -555,12 +553,14 @@ def get_resolved_suggestions() -> str:
     :returns: Suggestions list of resolved suggestions
     """
     try:
-        resolved_suggestions = Suggestion.query.filter(Suggestion.status.in_(['ACCEPTED', 'REJECTED', 'RETAINED', 'ARCHIVED'])).all()
+        resolved_suggestions = Suggestion.query.filter(Suggestion.status.in_(
+            ['ACCEPTED', 'REJECTED', 'RETAINED', 'ARCHIVED'])).all()
         serialized_objects = [o.as_dict() for o in resolved_suggestions]
-        return { 'data': serialized_objects, 'code': 200 }, 200
+        return {'data': serialized_objects, 'code': 200}, 200
     except Exception as ex:
         print(str(ex))
-        return { 'code': 404, 'error': str(ex) }, 404
+        return {'code': 404, 'error': str(ex)}, 404
+
 
 def get_open_suggestions_skos() -> str:
     """
@@ -569,7 +569,8 @@ def get_open_suggestions_skos() -> str:
     """
     try:
         # Retruns all except...
-        open_suggestions = Suggestion.query.filter(and_(Suggestion.status.notin_(['ACCEPTED', 'REJECTED', 'RETAINED', 'ARCHIVED']), Suggestion.yse_term["url"] == None)).all()
+        open_suggestions = Suggestion.query.filter(and_(Suggestion.status.notin_(
+            ['ACCEPTED', 'REJECTED', 'RETAINED', 'ARCHIVED']), Suggestion.yse_term["url"] == None)).all()
         graph = None
         for suggestion in open_suggestions:
             graph = suggestionToGraph(suggestion.as_dict(), graph)
@@ -580,7 +581,7 @@ def get_open_suggestions_skos() -> str:
 
     except Exception as ex:
         print(str(ex))
-        return { 'code': 404, 'error': str(ex) }, 404
+        return {'code': 404, 'error': str(ex)}, 404
 
 
 def get_suggestion_skos(suggestion_id: int) -> str:
@@ -600,5 +601,4 @@ def get_suggestion_skos(suggestion_id: int) -> str:
             print(str(ex))
     except Exception as ex:
         print(str(ex))
-        return { 'code': 404, 'error': str(ex) }, 404
-
+        return {'code': 404, 'error': str(ex)}, 404

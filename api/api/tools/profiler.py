@@ -9,10 +9,7 @@ import cProfile
 import tempfile
 import pstats
 
-
-"""
-Import this to where you wanna use this, and add @profiler decorator before method
-"""
+# Import this to where you want to use this, and add @profiler decorator before method
 def profiler(sort='cumulative', lines=50, strip_dirs=False):
     def outer(fun):
         def inner(*args, **kwargs):

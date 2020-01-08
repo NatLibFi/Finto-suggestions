@@ -23,7 +23,7 @@ For additional configuration and features,
 please see http://flask-jwt-extended.readthedocs.io/en/latest/
 """
 
-
+import os
 import connexion
 
 from flask_jwt_extended import (
@@ -34,13 +34,11 @@ from flask_jwt_extended import (
     jwt_refresh_token_required
 )
 
+import requests
+
 from .common import create_response
 from ..models import db, User, UserRoles
 from ..authentication import blacklist_token
-
-import requests
-import os
-
 
 def login() -> str:
     """
@@ -142,8 +140,8 @@ def revokeAuthentication() -> str:
         blacklist_token(access_token)
         blacklist_token(refresh_token)
     except Exception as ex:
-      print(ex)
-      return { 'error': str(ex) }, 400
+        print(ex)
+        return {'error': str(ex)}, 400
 
     return create_response({}, 200, 'There was errors while trying to blacklist and remove tokens ')
 
@@ -159,11 +157,11 @@ def post_github() -> str:
 
     oauth_data = ()
     try:
-      oauth_data = handle_github_request(code)
-      return handle_user_creation(code, oauth_data)
+        oauth_data = handle_github_request(code)
+        return handle_user_creation(code, oauth_data)
     except ValueError as ex:
-      print(ex)
-      return { 'error': str(ex) }, 400
+        print(ex)
+        return {'error': str(ex)}, 400
 
 
 def handle_github_request(code) -> (str, str):
@@ -187,14 +185,14 @@ def handle_github_request(code) -> (str, str):
         redirect_uri = os.environ.get('GITHUB_REDIRECT_URI')
 
         payload = {
-          'client_id': github_client_id,
-          'client_secret': github_client_secret,
-          'code': code,
-          'redirect_uri': redirect_uri
+            'client_id': github_client_id,
+            'client_secret': github_client_secret,
+            'code': code,
+            'redirect_uri': redirect_uri
         }
 
         token_response = requests.post(
-        'https://github.com/login/oauth/access_token', data=payload)
+            'https://github.com/login/oauth/access_token', data=payload)
 
         if token_response is not None and len(token_response.text) > 0:
             github_access_token = token_response.text.split('&')[0].split('=')[1]
@@ -205,11 +203,11 @@ def handle_github_request(code) -> (str, str):
                 if user_data_response is not None and user_data_response.ok is True:
                     user_data = user_data_response.json()
                     if user_data['name'] is not None:
-                      name = user_data['name']
+                        name = user_data['name']
                     else:
-                      name = user_data['login']
+                        name = user_data['login']
                     if user_data['avatar_url'] is not None:
-                      image = user_data['avatar_url']
+                        image = user_data['avatar_url']
 
 
             user_email_data_response = requests.get(f'https://api.github.com/user/emails?access_token={github_access_token}')
@@ -242,11 +240,11 @@ def handle_user_creation(code, oauth_data) -> str:
 
     if user is None:
         user = User(
-          name=name,
-          email=email,
-          imageUrl=image,
-          password=None,
-          role=UserRoles.NORMAL
+            name=name,
+            email=email,
+            imageUrl=image,
+            password=None,
+            role=UserRoles.NORMAL
         )
 
         try:

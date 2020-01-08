@@ -18,14 +18,14 @@ from flask_jwt_extended.exceptions import NoAuthorizationError
 from .models import db, UserRoles, TokenBlacklist
 
 
-jwt = JWTManager()
+JWT = JWTManager()
 
 
 class UnauthorizedException(NoAuthorizationError):
     pass
 
 
-@jwt.token_in_blacklist_loader
+@JWT.token_in_blacklist_loader
 def _is_token_revoked(decoded_jwt):
     token = TokenBlacklist.query.filter_by(
         jti=decoded_jwt['jti']).one_or_none()
