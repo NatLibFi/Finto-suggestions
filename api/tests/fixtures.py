@@ -1,6 +1,8 @@
-from api.models import UserRoles
 import uuid
 import copy
+
+from api.models import UserRoles
+
 
 MEETING_DATA = {
     "meeting_date": "2018-08-13T09:59:14.647Z",

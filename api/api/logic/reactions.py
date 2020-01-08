@@ -1,7 +1,8 @@
 import connexion
+
 from ..authentication import authorized
 from .validators import reaction_parameter_validator
-from ..models import Reaction, Event, Suggestion, db
+from ..models import Reaction
 from .common import (get_one_or_404, get_all_or_404, get_all_or_404_custom,
                      create_or_400, delete_or_404, update_or_404, patch_or_404)
 

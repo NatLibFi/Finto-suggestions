@@ -2,8 +2,10 @@
 Creates a WSGI app instance for the server (Gunicorn)
 """
 
-from app import create_app
 import os
+
+from app import create_app
+
 
 config_object = os.environ.get('APP_CONFIG_OBJECT', 'config.DevelopmentConfig')
 

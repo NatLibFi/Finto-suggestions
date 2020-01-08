@@ -1,10 +1,10 @@
+from datetime import datetime
 import connexion
+
 from ..models import Event, Suggestion, db
 from ..authentication import authorized
 from .common import (get_all_or_404_custom, get_one_or_404, create_or_400, delete_or_404, patch_or_404, update_or_404)
 from .validators import event_parameter_validator
-from datetime import datetime
-
 
 def get_events(limit: int = None, offset: int = None, user_id: int = None, suggestion_id: int = None) -> str:
     """

@@ -1,4 +1,5 @@
 import connexion
+
 from ..authentication import admin_only
 from ..models import db, Meeting, Suggestion
 from .common import (get_one_or_404, get_all_or_404, create_or_400,

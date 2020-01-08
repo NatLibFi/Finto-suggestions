@@ -1,14 +1,13 @@
-from flask_sqlalchemy import SQLAlchemy as _NSQLAlc
-# from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy.ext.hybrid import hybrid_property, hybrid_method
-from sqlalchemy.orm import validates, column_property
-from sqlalchemy import select, column, table
-from passlib.hash import pbkdf2_sha256 as hash_algorithm
 from datetime import datetime
 from collections import Counter
 import enum
-# import ujson
 import json
+
+from flask_sqlalchemy import SQLAlchemy as _NSQLAlc
+from sqlalchemy.ext.hybrid import hybrid_property
+from sqlalchemy.orm import validates
+from passlib.hash import pbkdf2_sha256 as hash_algorithm
+
 # Mika 021019
 # import logging
 # logging.basicConfig()
@@ -16,9 +15,10 @@ import json
 
 # Mika 011019 also added _NSQLAlc in the import
 
+
 def mDecoder(obj):
     return json.dumps(obj, ensure_ascii=False)
-    
+
 
 class SQLAlchemy(_NSQLAlc):
     # def __init__(self, ):
@@ -27,7 +27,7 @@ class SQLAlchemy(_NSQLAlc):
         super(SQLAlchemy, self).apply_pool_defaults(app, options)
         options["pool_pre_ping"] = True
 
-#Jatka tästä
+# Jatka tästä
 # class HackSQLAlchemy(SQLAlchemy):
 #     """ Ugly way to get SQLAlchemy engine to pass the Flask JSON serializer
 #     to `create_engine`.
@@ -45,7 +45,8 @@ class SQLAlchemy(_NSQLAlc):
 
 # This is the one to used originally
 # If you want go switch a logging on, do it here: 'echo': False
-db = SQLAlchemy(engine_options={'encoding': 'utf-8', 'echo': False, 'json_serializer': mDecoder})
+db = SQLAlchemy(engine_options={'encoding': 'utf-8',
+                                'echo': False, 'json_serializer': mDecoder})
 
 # Tests
 # db.register_default_json(loads=ujson.loads, globally=True)
@@ -55,14 +56,17 @@ db = SQLAlchemy(engine_options={'encoding': 'utf-8', 'echo': False, 'json_serial
 # Mika 011019
 # db.options.pool_pre_ping = True
 
+
 class EventTypes(enum.IntEnum):
     ACTION = 0
     COMMENT = 1
+
 
 class EventActionSubTypes(enum.IntEnum):
     STATUS = 0
     TAG = 1
     SYSTEM = 2
+
 
 class SuggestionStatusTypes(enum.IntEnum):
     RECEIVED = 0,
@@ -72,13 +76,16 @@ class SuggestionStatusTypes(enum.IntEnum):
     RETAINED = 4,
     ARCHIVED = 5
 
+
 class SuggestionTypes(enum.IntEnum):
     NEW = 0
     MODIFY = 1
 
+
 class UserRoles(enum.IntEnum):
     NORMAL = 0
     ADMIN = 1
+
 
 class SerializableMixin():
     """
@@ -99,7 +106,7 @@ class SerializableMixin():
 
     def as_dict(self, strip=True):
         d = {c.name: self._serialize(getattr(self, c.name))
-            for c in self.__table__.columns}
+             for c in self.__table__.columns}
         if strip:  # strip hidden fields, such as meeting_id
             d = {k: v for k, v in d.items() if k in self.__public__}
         return d
@@ -109,8 +116,10 @@ class SuggestionTag(db.Model, SerializableMixin):
     __tablename__ = 'suggestion_tags_association'
     __public__ = ['tag_label', 'suggestion_id', 'event_id']
 
-    tag_label = db.Column(db.String, db.ForeignKey('tags.label'), primary_key=True)
-    suggestion_id = db.Column(db.Integer, db.ForeignKey('suggestions.id'), primary_key=True)
+    tag_label = db.Column(db.String, db.ForeignKey(
+        'tags.label'), primary_key=True)
+    suggestion_id = db.Column(db.Integer, db.ForeignKey(
+        'suggestions.id'), primary_key=True)
     event_id = db.Column(db.Integer, db.ForeignKey('events.id'))
 
     def __repr__(self):
@@ -124,7 +133,7 @@ class Event(db.Model, SerializableMixin):
     """
 
     __tablename__ = 'events'
-    __public__ = ['id', 'event_type',  'sub_type', 'text', 'value',
+    __public__ = ['id', 'event_type', 'sub_type', 'text', 'value',
                   'reactions', 'user_id', 'suggestion_id', 'created', 'modified', 'tags']
 
     id = db.Column(db.Integer, primary_key=True)
@@ -155,7 +164,7 @@ class Event(db.Model, SerializableMixin):
 
     def as_dict(self, strip=True):
         serialized = super(Event, self).as_dict()
-        serialized['reactions'] = [e.id for e in self.reactions] # only ids
+        serialized['reactions'] = [e.id for e in self.reactions]  # only ids
         serialized['tags'] = [e.as_dict(strip=strip) for e in self.tags]
         return serialized
 
@@ -246,7 +255,8 @@ class Suggestion(db.Model, SerializableMixin):
     yse_term = db.Column(db.JSON)
 
     events = db.relationship('Event', backref='suggestion', lazy='joined')
-    reactions = db.relationship('Reaction', backref='suggestion', lazy='joined')
+    reactions = db.relationship(
+        'Reaction', backref='suggestion', lazy='joined')
 
     tags = db.relationship('Tag',
                            secondary='suggestion_tags_association',
@@ -265,7 +275,7 @@ class Suggestion(db.Model, SerializableMixin):
         # relationships (joins) should be expanded carefully
         serialized = super(Suggestion, self).as_dict()
         serialized['events'] = [e.as_dict() for e in self.events]
-        serialized['reactions'] = [e.id for e in self.reactions] # only ids
+        serialized['reactions'] = [e.id for e in self.reactions]  # only ids
         serialized['tags'] = [e.as_dict(strip=strip) for e in self.tags]
         return serialized
 
@@ -329,6 +339,7 @@ class User(db.Model, SerializableMixin):
         # serialized['events'] = [e.as_dict(strip=strip) for e in self.events]  # whole events
         serialized['events'] = [e.id for e in self.events]  # only ids
         return serialized
+
 
 class TokenBlacklist(db.Model, SerializableMixin):
     """

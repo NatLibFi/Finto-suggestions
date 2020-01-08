@@ -1,10 +1,13 @@
+import os
+import smtplib
 from datetime import datetime
 from typing import Dict
+
 from sqlalchemy import exists
 from sqlalchemy.exc import IntegrityError
+
 from ..models import db
 from ..authentication import verify_user_access_to_resource
-import smtplib, os
 
 
 class InvalidFilterException(Exception):
@@ -97,7 +100,7 @@ def get_count_or_404_custom(query_func) -> str:
     except InvalidFilterException as e:
         return create_response(0, 404, str(e))
 
-    return create_response({ "count": db_count }, 200)
+    return create_response({"count": db_count}, 200)
 
 
 def get_all_or_404(model, limit: int, offset: int) -> str:
@@ -168,7 +171,7 @@ def create_or_400(model: object, payload: Dict, error_msg: str = None) -> str:
         #     print(db_obj.attributes)
         #     if 'email' in db_obj.attributes:
         if db_obj.email:
-            print("The email in use is " + db_obj.email )
+            print("The email in use is " + db_obj.email)
             send_email_while_signing_up(db_obj.email)
     except Exception as exx:
         print("The object has no attribute --> " + str(exx))
@@ -329,23 +332,23 @@ def send_email_while_signing_up(email: str) -> str:
     """
 
     if email:
-      email_server_address = os.environ.get('EMAIL_SERVER_ADDRESS')
-      email_server_port = os.environ.get('EMAIL_SERVER_PORT')
-      default_sender = os.environ.get('EMAIL_SERVER_DEFAULT_SENDER_EMAIL')
-      email_server_username = os.environ.get('EMAIL_SERVER_USERNAME')
-      email_server_password = os.environ.get('EMAIL_SERVER_PASSWORD')
-      
-      body = os.environ.get('WELCOME_MESSAGE_BODY')
-      subject_text = os.environ.get('WELCOME_SUBJECT')
+        email_server_address = os.environ.get('EMAIL_SERVER_ADDRESS')
+        email_server_port = os.environ.get('EMAIL_SERVER_PORT')
+        default_sender = os.environ.get('EMAIL_SERVER_DEFAULT_SENDER_EMAIL')
+        email_server_username = os.environ.get('EMAIL_SERVER_USERNAME')
+        email_server_password = os.environ.get('EMAIL_SERVER_PASSWORD')
+
+        body = os.environ.get('WELCOME_MESSAGE_BODY')
+        subject_text = os.environ.get('WELCOME_SUBJECT')
 
 # WELCOME_SUBJECT='Tervetuloa systeemiin'
 # WELCOME_MESSAGE_BODY="""Mikan testiteksti"""
 
 
-      print(email_server_address)
-      print(email_server_port)
-      print(default_sender)
-      print(email_server_username)
+        print(email_server_address)
+        print(email_server_port)
+        print(default_sender)
+        print(email_server_username)
 
 # Toimiva
     #   body = """
@@ -355,24 +358,24 @@ def send_email_while_signing_up(email: str) -> str:
     #   message = 'Subject: Tervetuloa Ehdotusjärjestelmän käyttäjäksi'.format(body)
 
 
-      message = 'Subject: {}\n\n{}'.format(
-        # TOIMIVA 'Tervetuloa systeemiin',
-        subject_text,
-        body)
+        message = 'Subject: {}\n\n{}'.format(
+            # TOIMIVA 'Tervetuloa systeemiin',
+            subject_text,
+            body)
 
 
 
-      try:
-        mailserver = smtplib.SMTP(email_server_address, email_server_port)
-        mailserver.ehlo()
-        mailserver.starttls()
+        try:
+            mailserver = smtplib.SMTP(email_server_address, email_server_port)
+            mailserver.ehlo()
+            mailserver.starttls()
 
-        if email_server_username and email_server_password:
-          mailserver.login(email_server_username, email_server_password)
+            if email_server_username and email_server_password:
+                mailserver.login(email_server_username, email_server_password)
 
-        mailserver.sendmail(default_sender, [email], message)
-        mailserver.quit()
-        return True
-      except Exception as ex:
-        print(str(ex))
+            mailserver.sendmail(default_sender, [email], message)
+            mailserver.quit()
+            return True
+        except Exception as ex:
+            print(str(ex))
     return False
