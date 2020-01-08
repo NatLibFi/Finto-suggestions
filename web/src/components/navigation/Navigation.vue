@@ -121,7 +121,7 @@ import SvgIcon from '../icons/SvgIcon';
 import IconMore from '../icons/IconMore';
 import IconTriangle from '../icons/IconTriangle';
 import { directive as onClickaway } from 'vue-clickaway';
-
+import router from '../../router/index';
 import { userGetters, userActions } from '../../store/modules/user/userConsts';
 import { mapUserGetters, mapUserActions } from '../../store/modules/user/userModule';
 // eslint-disable-next-line
@@ -234,13 +234,14 @@ export default {
             if(window.localStorage) {
               if(!localStorage.getItem('loadedOnce')) {
                 localStorage['loadedOnce'] = true;
-                window.location.reload();
+                // window.location.reload();
               }  
               else
                 localStorage.removeItem('firstLoad');
             }
         }
       }
+      window.location.reload();
     },
     async signup(data) {
       if (data && data.service !== 'local') {
@@ -275,9 +276,14 @@ export default {
       this.showMobileDropdown = false;
     },
     logOut() {
+      alert("NOTE! You must close all Finto-suggestion tabs")
+      console.log("Router: " + router. history.current.name);
       this.revokeAuthentication();
       this.closeDropdown();
       this.closeMobileDropdown();
+      localStorage.removeItem('userIdTemp');
+      sessionStorage.removeItem('userId');
+      location.reload();
     },
     async oAuth2Authenticate() {
       this.$router.push('/github');
