@@ -2,7 +2,6 @@
   <div class="event">
     <div class="event-divider"></div>
     <div class="event-container">
-      <!-- Area 51 131119 -->
       <!-- <div v-if="event.user_id || type === eventTypes.ACTION" class="event-header"> -->
       <div v-if="event.user_id || type === eventTypes.ACTION" class="event-header">
         <div v-if="userImage" class="event-user-image">
@@ -45,16 +44,12 @@
           "
           class="menu-wrapper"
         > -->
-
-        <!-- Test begins -->
         <div
           v-if="
             isAuthenticated"
           class="menu-wrapper"
         >
-
         <!-- Test until here -->
-
           <emoji-selector
             v-if="type === eventTypes.COMMENT"
             @updateReactionList="updateReactionList()"
@@ -63,12 +58,12 @@
             :userId="authedUserId"
             class="emoji"
             />
-          <menu-button
-            v-if="type === eventTypes.COMMENT"
-            :options="commentOptions"
-            ref="menu"
-            class="menu"
-          />
+            <menu-button 
+              v-if="type === eventTypes.COMMENT && role === userRoles.ADMIN || isUserAllowedToEdit() === true"
+              :options="commentOptions"
+              ref="menu"
+              class="menu"
+            /> 
           <menu-button
             v-if="type === eventTypes.ACTION"
             :options="actionOptions"
@@ -77,7 +72,6 @@
           />
         </div>
       </div>
-      <!-- Area 51 131119 ends -->
       <div v-if="type === eventTypes.COMMENT">
         <div v-if="!isEditable" class="event-comment">
           <p v-if="content.length > 0" v-html="$sanitize(content)"></p>
@@ -111,19 +105,16 @@ import ReactionList from '../reaction/ReactionList';
 import markdownEditor from 'vue-simplemde/src/markdown-editor';
 import { dateTimeFormatLabel } from '../../utils/dateHelper';
 import { userRoles } from '../../utils/userHelpers';
-
 // eslint-disable-next-line
 import { mapAuthenticatedUserGetters } from '../../store/modules/authenticatedUser/authenticatedUserModule.js';
 // eslint-disable-next-line
 import { authenticatedUserGetters } from '../../store/modules/authenticatedUser/authenticatedUserConsts.js';
-
 import { combineEventTextContent, eventTypes, eventSubTypes } from '../../utils/eventHelper';
 import { eventActions } from '../../store/modules/event/eventConsts.js';
 import { mapEventActions } from '../../store/modules/event/eventModule.js';
 import { mapUserGetters, mapUserActions } from '../../store/modules/user/userModule';
 import { userGetters, userActions } from '../../store/modules/user/userConsts';
 import { userNameInitials } from '../../utils/userHelpers';
-
 export default {
   components: {
     MenuButton,
@@ -153,7 +144,8 @@ export default {
         indentWithTabs: false,
         spellChecker: false,
         status: false,
-        toolbarTips: true
+        toolbarTips: true,
+        isUserAllowedToEditComment: false
       },
       isEditable: false,
       dateTimeFormatLabel,
@@ -249,6 +241,10 @@ export default {
     },
     updateReactionList() {
       this.$emit('updateReactionList');
+    },
+    isUserAllowedToEdit() {
+      this.isUserAllowedToEditComment = (parseInt(this.event.user_id) === parseInt(this.authedUserId)) ? true : false;
+      return this.isUserAllowedToEditComment;
     }
   }
 };
@@ -263,19 +259,16 @@ export default {
   margin-top: 20px;
   background-color: #dddddd;
 }
-
 .event-container {
   background-color: #ffffff;
   border: 2px solid #f5f5f5;
   text-align: left;
   margin-top: 10px;
 }
-
 .event-header {
   padding: 20px 60px 20px 40px;
   position: relative;
 }
-
 .event-header .event-user-initials {
   display: inline-block;
   height: 40px;
@@ -285,28 +278,23 @@ export default {
   background-color: #eeeeee;
   vertical-align: middle;
 }
-
 .event-header .event-info {
   display: inline-block;
   vertical-align: middle;
   margin-left: 20px;
   max-width: calc(100% - 60px);
 }
-
 .event-header .event-info p {
   vertical-align: middle;
   margin: 0;
 }
-
 .event-header .event-info .user-name {
   font-weight: 600;
   font-size: 16px;
 }
-
 .event-header .event-info .date-sent {
   font-size: 14px;
 }
-
 .event-user-initials {
   display: inline-block;
   height: 35px;
@@ -319,7 +307,6 @@ export default {
   font-size: 20px;
   font-weight: 800;
 }
-
 .event-user-image {
   display: inline-block;
   height: 40px;
@@ -328,14 +315,12 @@ export default {
   text-align: center;
   vertical-align: middle;
 }
-
 .event-user-image img {
   line-height: 46px;
   height: 40px;
   width: 40px;
   border-radius: 40px;
 }
-
 .tag {
   color: #ffffff;
   font-size: 12px;
@@ -349,50 +334,41 @@ export default {
   border-radius: 2px;
   display: inline-block;
 }
-
 .type-new {
   background-color: #1137ff;
   border: 2px solid #1137ff;
 }
-
 .type-modify {
   background-color: #ff8111;
   border: 2px solid #ff8111;
 }
-
 .menu-wrapper {
   display: inline;
 }
-
 .menu {
   position: absolute;
   right: 20px;
 }
-
 .emoji {
   position: absolute;
   right: 60px;
 }
-
 .event-comment {
   border-top: 1px solid #f5f5f5;
   padding: 10px 40px;
   margin: 0;
   word-break: break-all;
 }
-
 .edit-comment {
   width: calc(100% - 80px);
   border-top: 1px solid #f5f5f5;
   padding: 40px 40px 25px;
   margin: 0;
 }
-
 .comment-submit {
   margin: 20px 0 0;
   text-align: right;
 }
-
 .submit-button {
   background-color: #06a798;
   border: none;
@@ -409,31 +385,24 @@ export default {
   transition: background-color 0.1s;
   margin: 0;
 }
-
 .submit-button:hover {
   background-color: #44bdb2;
 }
-
 .reaction-list {
   border-top: 1px solid #f4f4f4;
   padding: 12px 40px 10px;
 }
-
 @media (max-width: 700px) {
   .event-header {
     padding: 20px 100px 20px 20px;
   }
-
   .event-comment {
     padding-left: 20px;
     padding-right: 20px;
   }
-
   .emoji {
-
   }
 }
-
 .fade-enter-active,
 .fade-leave-active {
   transition: opacity 0.1s;

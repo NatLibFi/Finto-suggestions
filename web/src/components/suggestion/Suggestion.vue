@@ -1,13 +1,11 @@
 <template>
   <div class="suggestion">
-        
     <div class="arrow-button">
       <a @click="goBack()" unselectable="on">
         <svg-icon icon-name="arrow"><icon-arrow /></svg-icon>
         Takaisin käsite-ehdotuksiin
       </a>
     </div>
-
     <div v-if="meetingId" class="meeting-status">
       <div class="meeting-status-container">
         <meeting-status v-if="meetingId" :meetingId="meetingId" />
@@ -25,7 +23,6 @@
         </div>
       </div>
     </div>
-
     <div v-if="suggestion" class="suggestion-container">
       <div class="suggestion-header">
         <div class="suggestion-header-headline">
@@ -52,7 +49,6 @@
           >
             {{ suggestion.preferred_label.fi }}
           </h1>
-
           <transition name="fade">
             <div class="suggestion-header-details">
               <span>
@@ -139,8 +135,7 @@
           <menu-button :options="menuOptions" name="suggestion-menu" class="menu" ref="menu" />
         </div>
       </div>
-
-      <div name="testMika"> 
+      <div name="forContent"> 
         <suggestion-content
           :suggestion="suggestion"
           :userName="userName"
@@ -148,8 +143,7 @@
           :isAdmin="role === userRoles.ADMIN"
           :componentKey="componentKey"
         />
-      </div> <!--Added by Mika -->
-
+      </div>
         <!-- orig <suggestion-content
           :suggestion="suggestion"
           :userName="userName"
@@ -158,7 +152,6 @@
           :componentKey="componentKey"
         /> -->
     </div>
-
     <div v-if="meetingId" class="meeting-actions">
       <meeting-actions
         :userId="userId"
@@ -168,7 +161,6 @@
         @moveToNextSuggestion="goToNextSuggestion"
       />
     </div>
-
     <div v-if="events && events.length > 0">
       <div v-for="event in events" :key="event.id">
         <suggestion-event
@@ -181,13 +173,11 @@
         />
       </div>
     </div>
-
     <div>
       <add-comment :suggestionId="suggestionId" />
     </div>
   </div>
 </template>
-
 <script>
 import SuggestionContent from './SuggestionContent';
 import SuggestionEvent from './SuggestionEvent';
@@ -200,40 +190,31 @@ import AddComment from './AddComment';
 import AssignMeeting from './AssignMeeting';
 import EmojiSelector from '../common/EmojiSelector';
 import TagSelector from '../tag/TagSelector';
-
 import {
   suggestionType,
   suggestionTypeToString,
   suggestionStateStatus,
   suggestionStateStatusToString
 } from '../../utils/suggestionHelpers.js';
-
 import {
   suggestionGetters,
   suggestionActions
 } from '../../store/modules/suggestion/suggestionConsts.js';
-
 import {
   mapSuggestionGetters,
   mapSuggestionActions
 } from '../../store/modules/suggestion/suggestionModule.js';
-
 import { eventGetters, eventActions } from '../../store/modules/event/eventConsts.js';
 import { mapEventGetters, mapEventActions } from '../../store/modules/event/eventModule.js';
-
 import { userActions, userGetters } from '../../store/modules/user/userConsts';
 import { mapUserActions, mapUserGetters } from '../../store/modules/user/userModule';
-
 import { newActionEvent } from '../../utils/tagHelpers';
 import { dateTimeFormatLabel } from '../../utils/dateHelper.js';
-
 // eslint-disable-next-line
 import { mapAuthenticatedUserGetters, mapAuthenticatedUserActions } from '../../store/modules/authenticatedUser/authenticatedUserModule.js';
 // eslint-disable-next-line
 import { authenticatedUserGetters, authenticatedUserActions } from '../../store/modules/authenticatedUser/authenticatedUserConsts.js';
-
 import { userRoles } from '../../utils/userHelpers';
-
 export default {
   components: {
     SuggestionContent,
@@ -314,7 +295,6 @@ export default {
     await this.getSuggestionById(parseInt(this.suggestionId));
     await this.getEventsBySuggestionId(parseInt(this.suggestionId));
     await this.getUserName();
-
     if (this.meetingId) {
       await this.getSuggestionsByMeetingId(this.meetingId);
     }
@@ -411,13 +391,11 @@ export default {
           suggestion => suggestion.id === parseInt(this.suggestionId)
         );
         const index = this.suggestions.indexOf(element);
-
         if (index === 0) {
           this.noPreviousSuggestions = true;
         } else {
           this.noPreviousSuggestions = false;
         }
-
         if (this.suggestions.length - 1 === index) {
           this.noNextSuggestions = true;
         } else {
@@ -458,7 +436,7 @@ export default {
       });
       await this.createEvent(suggestionStateStatus.ARCHIVED);
       this.closeMenuDropdown();
-    }
+    },
   },
   watch: {
     async suggestion() {
@@ -471,14 +449,12 @@ export default {
   }
 };
 </script>
-
 <style scoped>
 .suggestion {
   width: 60vw;
   padding: 40px 20%;
   overflow: hidden;
 }
-
 .arrow-button {
   color: #1ea195;
   font-weight: 800;
@@ -491,35 +467,29 @@ export default {
   -ms-user-select: none; /* IE10+/Edge */
   user-select: none; /* Standard */
 }
-
 .arrow-button a:hover {
   cursor: pointer;
   cursor: hand;
 }
-
 .arrow-button svg {
   margin: 0 -15px -28px 0;
   width: 37px;
   height: 37px;
 }
-
 .meeting-status {
   margin-bottom: 30px;
 }
-
 .meeting-status-container {
   padding: 20px 40px;
   border: 2px solid #f5f5f5;
   background-color: #ffffff;
 }
-
 .meeting-arrow-controls {
   position: relative;
   width: 100%;
   margin-top: 6px;
   height: 24px;
 }
-
 .meeting-arrow-controls .control {
   display: inline-block;
   cursor: pointer;
@@ -530,37 +500,31 @@ export default {
   position: absolute;
   left: 0;
 }
-
 .meeting-arrow-controls .control:last-of-type {
   left: initial;
   right: 0;
 }
-
 .suggestion-container {
   background-color: #ffffff;
   border: 2px solid #f5f5f5;
   text-align: left;
 }
-
 .suggestion-header {
   margin: 35px 40px 20px;
   position: relative;
 }
-
 .suggestion-header-headline {
   line-height: 45px;
   display: inline-block;
   width: 65%;
   height: 100px;
 }
-
 h1.suggestion-title {
   display: inline;
   font-weight: 900;
   font-size: 24px;
   vertical-align: middle;
 }
-
 .suggestion-header-buttons {
   position: absolute;
   top: 0px;
@@ -571,26 +535,21 @@ h1.suggestion-title {
   height: 30px;
   text-align: right;
 }
-
 .emoji {
   margin-left: 6px;
 }
-
 .menu {
   margin-left: 10px;
   position: relative;
 }
-
 .suggestion-header-details {
   line-height: 24px;
   font-size: 13px;
 }
-
 .suggestion-header-details span a:hover {
   cursor: pointer;
   cursor: hand;
 }
-
 .tags {
   line-height: 20px;
   font-size: 12px;
@@ -598,7 +557,6 @@ h1.suggestion-title {
   text-transform: lowercase;
   color: #ffffff;
 }
-
 .tag {
   background-color: #4794a2;
   border: 2px solid #4794a2;
@@ -607,67 +565,54 @@ h1.suggestion-title {
   border-radius: 2px;
   display: inline-block;
 }
-
 .type-new {
   background-color: #1137ff;
   border: 2px solid #1137ff;
 }
-
 .type-modify {
   background-color: #ff8111;
   border: 2px solid #ff8111;
 }
-
 .status-received {
   background-color: #1137ff;
   border: 2px solid #1137ff;
 }
-
 .status-read {
   background-color: #f5f5f5;
   border: 2px solid #f5f5f5;
 }
-
 .status-accepted {
   background-color: #58ba81;
   border: 2px solid #58ba81;
 }
-
 .status-rejected {
   background-color: #cc4a4a;
   border: 2px solid #cc4a4a;
 }
-
 .status-retained {
   background-color: #f2994a;
   border: 2px solid #f2994a;
 }
-
 .status-archived {
   background-color: #ad9d8f;
   border: 2px solid #ad9d8f;
 }
-
 .comment-container {
   background-color: #ffffff;
   border: 2px solid #f5f5f5;
   margin-top: 10px;
 }
-
 .assign-meeting {
   display: inline-block;
 }
-
 @media (max-width: 700px) {
   .meeting-arrow-controls .control span {
     display: none;
   }
-
   .suggestion {
     width: 80vw;
     padding: 10px 10% 20px;
   }
-
   .suggestion-header-headline,
   .suggestion-header-buttons {
     width: 100%;
@@ -675,17 +620,14 @@ h1.suggestion-title {
     position: initial;
     text-align: left;
   }
-
   .suggestion-header-buttons {
     margin-top: 20px;
   }
-
   .icon-button {
     margin-left: 0;
     margin-right: 20px;
   }
 }
-
 .fade-enter-active,
 .fade-leave-active {
   transition: opacity 0.5s;
