@@ -59,4 +59,5 @@ var handleCookiesAndSessionStorage = function(){
   }
   return cookiesList;
 }
+
 console.log(handleCookiesAndSessionStorage());
