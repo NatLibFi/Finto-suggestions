@@ -64,7 +64,7 @@ export default {
     SuggestionSearch,
     SuggestionListHeader,
     SuggestionItem,
-    SuggestionListPagination,
+    SuggestionListPagination
   },
   props: {
     userId: {
@@ -93,15 +93,14 @@ export default {
       pageCount: 400,
       pageCountLoading: false,
       aCount: 0,
-      suggestionsAsArray: [],
+      suggestionsAsArray: []
     };
   },
   computed: {
     ...mapSuggestionGetters({
       suggestions: suggestionGetters.GET_SUGGESTIONS,
-      suggestionCount: suggestionGetters.GET_SUGGESTIONS_COUNT,
-    }),
-    
+      suggestionCount: suggestionGetters.GET_SUGGESTIONS_COUNT
+    })
   },
   beforeUpdate() {
     // this.getArchivedSuggestionsCount();
@@ -116,50 +115,49 @@ export default {
     this.pageCountLoading = false;
   },
   mounted() {
-    setTimeout(function(){
-      document.getElementById('itemListContainer').style.visibility = "visible";
-    },4000);
-    setTimeout(function(){
-      document.getElementById('progressBar').style.visibility = "hidden";
-    },4000);
-    setTimeout(function(){
-      document.getElementById('greenLine').style.visibility = "hidden";
-    },4000);
+    setTimeout(function() {
+      document.getElementById('itemListContainer').style.visibility = 'visible';
+    }, 4000);
+    setTimeout(function() {
+      document.getElementById('progressBar').style.visibility = 'hidden';
+    }, 4000);
+    setTimeout(function() {
+      document.getElementById('greenLine').style.visibility = 'hidden';
+    }, 4000);
     this.barToRight();
   },
   methods: {
     ...mapSuggestionActions({
       getSuggestions: suggestionActions.GET_SUGGESTIONS,
       getSuggestionsByUserId: suggestionActions.GET_SUGGESTIONS_BY_USER_ID,
-      getSuggestionsCount: suggestionActions.GET_SUGGESTIONS_COUNT,
+      getSuggestionsCount: suggestionActions.GET_SUGGESTIONS_COUNT
       // getArchivedSuggestionsCount: suggestionActions.GET_ARCHIVED_SUGGESTIONS_COUNT
     }),
     barToRight() {
       var i = 0;
       if (i == 0) {
         i = 1;
-        var elementOfGreenLine = document.getElementById("greenLine");
+        var elementOfGreenLine = document.getElementById('greenLine');
         var width = 1;
-        var id = setInterval(perPulse, 40);
-        function perPulse() {
+        var id = setInterval(function() {
           if (width >= 100) {
             clearInterval(id);
             i = 0;
           } else {
             width++;
-            elementOfGreenLine.style.width = width + "%";
+            elementOfGreenLine.style.width = width + '%';
           }
-        }
+        }, 40);
       }
     },
     test: function() {
-      this.searchWordForRemoteUse = this.searchWord; 
+      this.searchWordForRemoteUse = this.searchWord;
     },
     async fetchSuggestions() {
-      if (this.userId) {a
+      if (this.userId) {
         this.getSuggestionsByUaserId({
           userId: this.userId,
-          offset: offsetByPagianation(this.page)
+          offset: offsetByPagination(this.page)
         });
         await this.getSuggestionsCount({
           filters: 'user_id:' + this.userId,
@@ -175,7 +173,7 @@ export default {
         await this.getSuggestionsCount({
           filters: this.filters,
           searchWord: this.searchWord
-          });
+        });
       }
     },
     async updateSuggestionList() {

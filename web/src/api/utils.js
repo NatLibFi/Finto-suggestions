@@ -8,6 +8,7 @@ const client = axios.create({
 const execute = async (method, resource, data, useRefreshToken) => {
   // eslint-disable-next-line no-undef
   const access_token = $cookies.get(storeKeyNames.ACCESS_TOKEN);
+  // eslint-disable-next-line no-undef
   const refreshToken = $cookies.get(storeKeyNames.REFRESH_TOKEN);
   let AuthHeaderValue;
   if (useRefreshToken) {

@@ -20,6 +20,6 @@ export const tagActions = {
   REMOVE_TAG_FROM_SUGGESTION: 'removeTagFromSuggestion',
   // Mika
   ADD_TAG_STRAIGHT_TO_DB: 'addTagStraightToDB',
-  DELETE_TAG_STRAIGHT_FROM_DB: 'deleteTagStraightFromDB',
+  DELETE_TAG_STRAIGHT_FROM_DB: 'deleteTagStraightFromDB'
   // MODIFY_TAG_WITHOUT_SUGGESTION: 'modifyTagWithoutSuggestion'
 };

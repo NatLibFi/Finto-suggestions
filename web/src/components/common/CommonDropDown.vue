@@ -2,9 +2,8 @@
   <div class="sorting-options">
     <select v-model="selectedOption" @change="changeCallBack">
       <option value="">{{ header }}</option>
-      <option v-for="selection in options"
-        :key="selection.value"
-        :value="selection.label">{{ formatLabel(selection.label) }}
+      <option v-for="selection in options" :key="selection.value" :value="selection.label"
+        >{{ formatLabel(selection.label) }}
       </option>
     </select>
     <i class="arrow down"></i>
@@ -15,17 +14,17 @@
 export default {
   props: {
     /*
-    * Dropdown header as string
-    */
+     * Dropdown header as string
+     */
     header: String,
     /*
-    * Options as Array needs to be as follows:
-    * [{ label: 'A', value: '1' },{ label: 2, value: 'C' }]
-    */
+     * Options as Array needs to be as follows:
+     * [{ label: 'A', value: '1' },{ label: 2, value: 'C' }]
+     */
     options: Array,
     /*
-    * changeCallBack as Func, functio to callback after change event is launched
-    */
+     * changeCallBack as Func, functio to callback after change event is launched
+     */
     changeCallBack: Function
   },
   data: () => ({

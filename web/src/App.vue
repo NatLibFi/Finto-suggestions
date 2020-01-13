@@ -5,10 +5,9 @@
 </template>
 
 <script>
-  export default {};
+export default {};
 </script>
 <style>
-
 body {
   margin: 0;
   background-color: #f9f9f9;

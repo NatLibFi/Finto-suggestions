@@ -44,12 +44,8 @@
           "
           class="menu-wrapper"
         > -->
-        <div
-          v-if="
-            isAuthenticated"
-          class="menu-wrapper"
-        >
-        <!-- Test until here -->
+        <div v-if="isAuthenticated" class="menu-wrapper">
+          <!-- Test until here -->
           <emoji-selector
             v-if="type === eventTypes.COMMENT"
             @updateReactionList="updateReactionList()"
@@ -57,13 +53,16 @@
             :suggestionId="event.suggestion_id"
             :userId="authedUserId"
             class="emoji"
-            />
-            <menu-button 
-              v-if="type === eventTypes.COMMENT && role === userRoles.ADMIN || isUserAllowedToEdit() === true"
-              :options="commentOptions"
-              ref="menu"
-              class="menu"
-            /> 
+          />
+          <menu-button
+            v-if="
+              (type === eventTypes.COMMENT && role === userRoles.ADMIN) ||
+                isUserAllowedToEdit() === true
+            "
+            :options="commentOptions"
+            ref="menu"
+            class="menu"
+          />
           <menu-button
             v-if="type === eventTypes.ACTION"
             :options="actionOptions"
@@ -243,7 +242,8 @@ export default {
       this.$emit('updateReactionList');
     },
     isUserAllowedToEdit() {
-      this.isUserAllowedToEditComment = (parseInt(this.event.user_id) === parseInt(this.authedUserId)) ? true : false;
+      this.isUserAllowedToEditComment =
+        parseInt(this.event.user_id) === parseInt(this.authedUserId) ? true : false;
       return this.isUserAllowedToEditComment;
     }
   }
@@ -399,8 +399,6 @@ export default {
   .event-comment {
     padding-left: 20px;
     padding-right: 20px;
-  }
-  .emoji {
   }
 }
 .fade-enter-active,

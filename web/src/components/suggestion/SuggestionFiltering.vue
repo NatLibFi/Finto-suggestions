@@ -49,7 +49,7 @@
     >
       <div :class="[isDropDownOpened.TAG ? 'selected' : '', 'drop-down-button']">
         <span>{{ selectedOptionIndex.TAGS.length }} tunnistetta valittu</span>
-         <svg-icon icon-name="triangle"><icon-triangle /></svg-icon>
+        <svg-icon icon-name="triangle"><icon-triangle /></svg-icon>
       </div>
 
       <multiple-choice-drop-down
@@ -62,17 +62,16 @@
         @resetTags="resetTags()"
         @closeDropDown="closeDropDown"
       />
-
     </div>
     <div
       v-if="!meetingId && mapMeetingsToDropDown().length > 0"
       @click="isDropDownOpened.MEETING = !isDropDownOpened.MEETING"
       :class="[filterStrings.meeting.length > 0 ? 'active-filter' : '', 'filter-item']"
     >
-     <div :class="[isDropDownOpened.MEETING ? 'selected' : '', 'drop-down-button']">
+      <div :class="[isDropDownOpened.MEETING ? 'selected' : '', 'drop-down-button']">
         <span>Kokous: </span>
         <span v-for="item in mapMeetingsToDropDown()" :key="item.value">
-          <span v-if="'meeting_id:' + item.value==filterStrings.meeting">
+          <span v-if="'meeting_id:' + item.value == filterStrings.meeting">
             {{ item.label }}
           </span>
         </span>
@@ -89,12 +88,9 @@
       />
     </div>
 
-      <!-- <a v-if="filters && filters.length > 0" @click="resetFilters()" class="clear-button">
+    <!-- <a v-if="filters && filters.length > 0" @click="resetFilters()" class="clear-button">
         aTyhjennä valinnat
       </a> -->
-
-
-
   </div>
 </template>
 

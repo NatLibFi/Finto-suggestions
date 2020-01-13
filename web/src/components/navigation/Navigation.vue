@@ -6,9 +6,11 @@
         <span @click="returnToHome">Finto – Käsite-ehdotukset</span>
       </div>
       <div class="refresh-button">
-        <p>[
+        <p>
+          [
           <a href="javascript:location.reload(true)">Refresh</a>
-        ]</p>
+          ]
+        </p>
       </div>
       <transition name="fade">
         <div v-if="isAuthenticated && user.name" class="nav-menu" @click="showDropdown = true">
@@ -132,7 +134,9 @@ import { authenticatedUserGetters, authenticatedUserActions, storeKeyNames, auth
 import { userNameInitials } from '../../utils/userHelpers.js';
 
 //The following two lines are for testing purposes at the moment
+// eslint-disable-next-line no-unused-vars
 import { mapMeetingGetters, mapMeetingActions } from '../../store/modules/meeting/meetingModule.js';
+// eslint-disable-next-line no-unused-vars
 import { meetingGetters, meetingActions } from '../../store/modules/meeting/meetingConsts.js';
 
 export default {
@@ -185,7 +189,7 @@ export default {
       await this.refreshToken();
       await this.getUserIdFromStorage();
       await this.handleUserFetch();
-      await this.handleUserInitialsFetch
+      await this.handleUserInitialsFetch;
     }
   },
   methods: {
@@ -231,14 +235,12 @@ export default {
             .catch(() => {
               this.showLocalLoginError = true;
             });
-            if(window.localStorage) {
-              if(!localStorage.getItem('loadedOnce')) {
-                localStorage['loadedOnce'] = true;
-                // window.location.reload();
-              }  
-              else
-                localStorage.removeItem('firstLoad');
-            }
+          if (window.localStorage) {
+            if (!localStorage.getItem('loadedOnce')) {
+              localStorage['loadedOnce'] = true;
+              // window.location.reload();
+            } else localStorage.removeItem('firstLoad');
+          }
         }
       }
       window.location.reload();
@@ -276,8 +278,8 @@ export default {
       this.showMobileDropdown = false;
     },
     logOut() {
-      alert("NOTE! You must close all Finto-suggestion tabs")
-      console.log("Router: " + router. history.current.name);
+      alert('NOTE! You must close all Finto-suggestion tabs');
+      console.log('Router: ' + router.history.current.name);
       this.revokeAuthentication();
       this.closeDropdown();
       this.closeMobileDropdown();
@@ -317,7 +319,7 @@ export default {
         this.closeMobileDropdown();
       }
     });
-  },
+  }
 };
 </script>
 

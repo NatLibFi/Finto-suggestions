@@ -2,14 +2,20 @@
   <div class="login-dialog">
     <h3 v-if="!showForgottenPasswordForm">Kirjaudu sisään</h3>
     <!-- TODO: uncomment this when google oauth2 is ready -->
-    <p>Voit kirjautua sisään Github- ja Google-tunnuksilla</p> <!--241019-->
+    <p>Voit kirjautua sisään Github- ja Google-tunnuksilla</p>
+    <!--241019-->
     <div v-if="!showForgottenPasswordForm" class="login-services">
       <!-- Next div for GitHub -->
-      <div @click="login('github')" class="login-service-button"> <!--241019-->
-        <svg-icon icon-name="github"><icon-github /></svg-icon> <!--241019-->
-        <span class="normal">Kirjaudu GitHub-tunnuksilla</span> <!--241019-->
-        <span class="mobile">GitHub-tunnukset</span> <!--241019-->
-      </div> <!--241019-->
+      <div @click="login('github')" class="login-service-button">
+        <!--241019-->
+        <svg-icon icon-name="github"><icon-github /></svg-icon>
+        <!--241019-->
+        <span class="normal">Kirjaudu GitHub-tunnuksilla</span>
+        <!--241019-->
+        <span class="mobile">GitHub-tunnukset</span>
+        <!--241019-->
+      </div>
+      <!--241019-->
       <!-- TODO: uncomment this when google oauth2 is ready -->
       <!-- <div @click="login('google')" class="login-service-button">
         <svg-icon icon-name="google"><icon-google /></svg-icon>
@@ -85,9 +91,6 @@ import { authenticatedUserGetters, authenticatedUserActions } from '../../store/
 import { mapAuthenticatedUserGetters, mapAuthenticatedUserActions } from '../../store/modules/authenticatedUser/authenticatedUserModule.js';
 // Mika 250919
 
-
-
-
 export default {
   components: {
     SvgIcon,
@@ -152,7 +155,6 @@ export default {
     patchUser: userActions.PATCH_USER
   }),
 
-
   created() {
     if (this.showResetPasswordForm) {
       this.showResetPasswordInputs();
@@ -171,7 +173,7 @@ export default {
         this.$emit('login', data);
       }
     },
-// Mika 011019 Testi
+    // Mika 011019 Testi
     // async updateUser() {
     //   const params = {
     //     userId: this.userId,
