@@ -9,7 +9,8 @@
           v-for="(emoji, index) in emojiMapping"
           @click="addEmoji(index)"
           :key="emoji.id"
-          class="single-emoji">
+          class="single-emoji"
+        >
           {{ emoji }}
         </span>
       </div>
@@ -29,6 +30,7 @@ import {
 } from '../../store/modules/reaction/reactionModule';
 
 import { emojiMapping } from '../../utils/reactionHelpers';
+// eslint-disable-next-line no-unused-vars
 import reaction from '../../api/reaction/reaction';
 
 export default {
@@ -60,9 +62,9 @@ export default {
     };
   },
   computed: {},
-    ...mapReactionGetters({
-      reactions: reactionGetters.GET_REACTIONS
-    }),
+  ...mapReactionGetters({
+    reactions: reactionGetters.GET_REACTIONS
+  }),
   methods: {
     ...mapReactionActions({
       addReaction: reactionActions.ADD_REACTION,
@@ -77,9 +79,9 @@ export default {
       if (!this.eventId) {
         await this.addReaction({
           data: {
-            "code": emoji,
-            "suggestion_id": this.suggestionId,
-            "user_id": parseInt(this.userId, 10)
+            code: emoji,
+            suggestion_id: this.suggestionId,
+            user_id: parseInt(this.userId, 10)
           },
           suggestionId: this.suggestionId
         });
@@ -87,9 +89,9 @@ export default {
       } else if (this.eventId) {
         await this.addReaction({
           data: {
-            "code": emoji,
-            "event_id": this.eventId,
-            "user_id": parseInt(this.userId, 10)
+            code: emoji,
+            event_id: this.eventId,
+            user_id: parseInt(this.userId, 10)
           },
           suggestionId: this.suggestionId
         });

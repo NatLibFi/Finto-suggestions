@@ -31,7 +31,7 @@ export default {
         commit(tagMutations.SET_TAGS, result.data);
       }
     },
-// Orig
+    // Orig
     // async [tagActions.PUT_TAG]({ dispatch }, params) {
     //   await api.tag.putTag(params.tagLabel, params.tag);
     //   dispatch(tagActions.GET_TAGS);
@@ -70,14 +70,14 @@ export default {
         );
       }
     },
-// Mika
+    // Mika
     async [tagActions.ADD_TAG_STRAIGHT_TO_DB]({ dispatch }, params) {
       const result = await api.tag.addNewTagStraightToDB(params);
       if (result && result.code === 201) {
         dispatch(tagActions.GET_TAGS);
       }
     },
-// Mika
+    // Mika
     async [tagActions.DELETE_TAG_STRAIGHT_FROM_DB]({ dispatch }, params) {
       const result = await api.tag.deleteTag(params);
       if (result && result.code === 204) {
@@ -85,7 +85,7 @@ export default {
       }
     },
 
-// Mika
+    // Mika
     async [tagActions.PUT_TAG]({ dispatch }, params) {
       const result = await api.tag.putTag(params);
       if (result && result.code === 200) {

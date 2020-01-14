@@ -1,15 +1,13 @@
 <template>
   <div class="form-container">
-
     <!-- User text block -->
     <!-- <span> Onko käyttäjä autentikoitu: {{ isAuthenticated }} </span> -->
     <!-- <span> UserNameInitials (imports) {{ userNameInitials }} </span> -->
     <!-- <span> userRoleToString  (imports) {{ userRoleToString }} </span> -->
     <!-- <span> userId (imports) {{ userId }} </span> -->
     <!-- <span> User  (imports) {{ user }} </span> -->
-    <!-- <span> authenticatedUserGetters  (imports) {{ authenticatedUserGetters }} </span>
+    <!-- <span> authenticatedUserGetters  (imports) {{ authenticatedUserGetters }} </span> -->
     <!-- <span> mapAuthenticatedUserGetters  (imports) {{ mapAuthenticatedUserGetters }} </span> -->
-
 
     <!-- <span> Onko käyttäjä autentikoitu: {{ isAuthenticated }} </span> -->
     <h5>Muokkaa asetuksiasi</h5>
@@ -21,7 +19,7 @@
         <span> {{ user.title}} </span>
         <span> {{ user.organization}} </span>
         <span> {{ isAuthenticated }} </span> -->
-        <!-- <span> {{ userNameInitials }} </span> -->
+      <!-- <span> {{ userNameInitials }} </span> -->
       <!-- </div>   -->
       <div>
         <p>Nimi:</p>

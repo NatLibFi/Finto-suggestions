@@ -1,6 +1,7 @@
 import { get, put, post, del, patch } from '../utils';
 
-// For adjusting a list lengt on the front page. Remember to set this also at the SuggestionsList.vue
+// For adjusting the list length on the front page.
+// Remember to set this also at the SuggestionsList.vue
 const defaultLimit = 25;
 
 // function toUnicode(value){

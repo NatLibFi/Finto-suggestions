@@ -1,5 +1,4 @@
 <template>
-  
   <div>
     <!-- <span> {{ userRoles.ADMIN }} </span>
     <span> {{ isAuthenticated }} </span> -->
@@ -11,18 +10,23 @@
     <!-- <span> authenticatedUserGetters  (imports) {{ authenticatedUserGetters }} </span>
     <span> mapAuthenticatedUserGetters  (imports) {{ mapAuthenticatedUserGetters }} </span> -->
 
-    <hr v-bind:style="hrSmooth">
+    <hr v-bind:style="hrSmooth" />
     <div>
       <h5>Muokkaa nykyisiä tunnisteita</h5>
       <div v-if="reloadComponent">
         <ul v-if="tags && tags.length > 0">
           <ol v-for="tag in tags" :key="tag.label">
-            <span class="tag" v-bind:style="tab1"> {{ tag.label}}</span>
+            <span class="tag" v-bind:style="tab1"> {{ tag.label }}</span>
             <span v-bind:style="tab2">
-              <a class="button" v-on:click="removeTagStraightFromDB(tag.label)" onClick="return confirm('Oletko varma?');">Poista</a>
+              <a
+                class="button"
+                v-on:click="removeTagStraightFromDB(tag.label)"
+                onClick="return confirm('Oletko varma?');"
+                >Poista</a
+              >
             </span>
             <span v-bind:style="tab3">
-              <span class="tag" :style="{backgroundColor: tag.color}"> RGB </span>
+              <span class="tag" :style="{ backgroundColor: tag.color }"> RGB </span>
             </span>
             <span class="tag" v-bind:style="tab4"> {{ tag.color }} </span>
             <span v-bind:style="tab5">
@@ -30,16 +34,12 @@
                 Muokkaa väriä
               </button>
             </span>
-            <div v-if="tagLabelForSwappingThePicker == tag.label"  class="tag-selector">
+            <div v-if="tagLabelForSwappingThePicker == tag.label" class="tag-selector">
               <p>
                 <span> Olet muokkaamassa tunnistetta: {{ tagLabelForSwappingThePicker }} </span>
               </p>
-              <color-picker 
-                v-if="tags"
-                v-model="modifyingColor"
-                class="color-picker"
-              />
-              <input hidden type="text" v-model="modifyingColor.hex"/>
+              <color-picker v-if="tags" v-model="modifyingColor" class="color-picker" />
+              <input hidden type="text" v-model="modifyingColor.hex" />
               <p>
                 <strong>
                   <a class="button" @click="modifyTag(tag.label)">Tallenna</a>
@@ -51,27 +51,23 @@
         </ul>
       </div>
     </div>
-    <div >   
-      <hr v-bind:style="hrSmooth">
+    <div>
+      <hr v-bind:style="hrSmooth" />
       <h5>Luo uusi tunniste</h5>
       <div class="tag-selector-new-tag-form-input">
         <p class="input-title">Anna uudelle tunnisteelle nimi</p>
-          <input type="text" v-model="transitLabel" />
+        <input type="text" v-model="transitLabel" />
         <!-- <span> {{ transitLabel }} </span> -->
       </div>
       <div class="tag-selector-new-tag-form-input">
-        <p class="input-title">Liu'uta ylempää palkkia ja valitse alemmasta väri </p>
-          <color-picker 
-            v-if="tags"
-            v-model="transitColor"
-            class="color-picker"
-          />
+        <p class="input-title">Liu'uta ylempää palkkia ja valitse alemmasta väri</p>
+        <color-picker v-if="tags" v-model="transitColor" class="color-picker" />
         <p>
           <input hidden type="text" v-model="transitColor.hex" />
           <strong>
             <a class="button" @click="addNewTagStraightToDB"> Lisää tunniste</a>
           </strong>
-            <a class="button" @click="getItClear"> [ Tyhjennä valinnat ]</a>
+          <a class="button" @click="getItClear"> [ Tyhjennä valinnat ]</a>
         </p>
         <!-- <span> {{ transitColor.hex }} </span> -->
       </div>
@@ -90,9 +86,11 @@ import { authenticatedUserGetters } from '../../store/modules/authenticatedUser/
 import { mapAuthenticatedUserGetters } from '../../store/modules/authenticatedUser/authenticatedUserModule.js';
 import { mapTagActions, mapTagGetters } from '../../store/modules/tag/tagModule';
 import { tagActions, tagGetters } from '../../store/modules/tag/tagConst';
+// eslint-disable-next-line no-unused-vars
 import { newActionEvent, newAddingEvent } from '../../utils/tagHelpers';
 import { directive as onClickaway } from 'vue-clickaway';
 import { Slider } from 'vue-color'; // 1
+// eslint-disable-next-line no-unused-vars
 import Vue from 'vue';
 
 export default {
@@ -129,24 +127,24 @@ export default {
       modifyingGoalLabel: 'PLACEHOLDER',
       reloadComponent: true,
       tab1: {
-        position: 'absolute', 
+        position: 'absolute',
         left: '41px'
       },
       tab2: {
-        position: 'relative', 
+        position: 'relative',
         left: '80px'
       },
       tab3: {
-        position: 'relative', 
+        position: 'relative',
         left: '100px'
       },
       tab4: {
-        position: 'relative', 
+        position: 'relative',
         left: '118px',
         color: 'lightgrey'
       },
       tab5: {
-        position: 'absolute', 
+        position: 'absolute',
         left: '390px'
       },
       hrSmooth: {
@@ -159,15 +157,15 @@ export default {
   computed: {
     ...mapTagGetters({ tags: tagGetters.GET_TAGS }),
     ...mapAuthenticatedUserGetters({
-    userId: authenticatedUserGetters.GET_USER_ID,
-    isAuthenticated: authenticatedUserGetters.GET_IS_AUTHENTICATED,
-    loggedInUserId: authenticatedUserGetters.GET_USER_ID
+      userId: authenticatedUserGetters.GET_USER_ID,
+      isAuthenticated: authenticatedUserGetters.GET_IS_AUTHENTICATED,
+      loggedInUserId: authenticatedUserGetters.GET_USER_ID
     }),
     ...mapUserGetters({
       user: userGetters.GET_AUTHENTICATED_USER
     })
   },
-  
+
   created() {
     this.getTags();
     // Mika 300919
@@ -200,21 +198,20 @@ export default {
     },
 
     reRender() {
-        this.reloadComponent = false;
-        this.$nextTick(() => {
-          this.reloadComponent = true;
-        });
-      },
+      this.reloadComponent = false;
+      this.$nextTick(() => {
+        this.reloadComponent = true;
+      });
+    },
 
     swapBetween() {
       this.showColorPickerInTheList = !this.showColorPickerInTheList;
     },
 
     getItClear() {
-      this.listForNewTags = [] //Tarvitaanko
-      this.transitLabel = "",
-      this.transitColor = ""
-},
+      this.listForNewTags = []; //Tarvitaanko
+      (this.transitLabel = ''), (this.transitColor = '');
+    },
     normalizeText(text) {
       const firstCharacter = text.substring(0, 1);
       const restOfTheText = text.substring(1, text.length).toLowerCase();
@@ -231,9 +228,9 @@ export default {
       }
     },
     async removeTagStraightFromDB(label) {
-        await this.deleteTagStraighFromDB(label);
-        this.getTags();
-        this.reRender();
+      await this.deleteTagStraighFromDB(label);
+      this.getTags();
+      this.reRender();
     },
     async refreshTagPage() {
       await this.getTags();
@@ -242,12 +239,10 @@ export default {
     async modifyTag(label) {
       this.modifyingOrigLabel = label;
       if (this.modifyingOrigLabel) {
-        await this.putTag(
-          {
-            color: this.modifyingColor.hex,
-            label: this.modifyingOrigLabel
-          }
-        );
+        await this.putTag({
+          color: this.modifyingColor.hex,
+          label: this.modifyingOrigLabel
+        });
         this.getTags();
         this.reRender();
         // this.checkIfUseriIsAuthenticated();
@@ -322,7 +317,7 @@ export default {
   z-index: 12;
   border: 1px solid #eeeeee;
   background-color: #eeeeee;
-} 
+}
 .color-picker {
   box-shadow: none;
 }

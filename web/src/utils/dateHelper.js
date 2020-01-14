@@ -25,8 +25,8 @@ export const dateTimeFormatLabel = (date, isMeeting = false) => {
       return `(${format(date, 'DD.MM.YYYY HH.mm')})`;
     }
     return whenSended > 1 && whenSended < 30
-      // ? `Lähetetty ${whenSended} päivää sitten`
-      ? `(${format(date, 'DD.MM.YYYY HH.mm')})`
+      ? // ? `Lähetetty ${whenSended} päivää sitten`
+        `(${format(date, 'DD.MM.YYYY HH.mm')})`
       : `(${format(date, 'DD.MM.YYYY HH.mm')})`;
   }
   if (isMeeting) {
