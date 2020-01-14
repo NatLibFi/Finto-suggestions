@@ -77,14 +77,14 @@ export const handleSortedQueries = (filters, searchWord, sort, router) => {
         search: searchWord,
         sort: sort
       }
-    })
+    });
   } else if (filters.length > 0 && searchWord.length === 0) {
     router.push({
       query: {
         filters: filters,
         sort: sort
       }
-    })
+    });
   } else if (filters.length === 0 && searchWord.length > 0) {
     router.push({
       query: {

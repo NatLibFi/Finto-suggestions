@@ -66,7 +66,7 @@ export default {
       }
     },
     async [authenticatedUserActions.VALIDATE_AUTHENTICATION]({ commit, dispatch }) {
-      const userId = localStorage.getItem("userIdTemp");
+      const userId = localStorage.getItem('userIdTemp');
       //TODO: needs to validate token from backend and also check that token has correct userid
       if (parseInt(userId) > 0) {
         const response = await api.user.getUser(userId);
@@ -83,7 +83,7 @@ export default {
         dispatch(authenticatedUserActions.REVOKE_AUTHENTICATION);
       }
     },
-    
+
     async [authenticatedUserActions.REVOKE_AUTHENTICATION]({ commit }) {
       // eslint-disable-next-line no-undef
       $cookies.remove(storeKeyNames.ACCESS_TOKEN);

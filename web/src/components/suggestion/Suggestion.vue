@@ -38,9 +38,7 @@
           >
             {{ suggestion.preferred_label.sv.value }}
           </h1>
-          <h1
-            v-else class="suggestion-title"
-          >
+          <h1 v-else class="suggestion-title">
             Ei otsikkoa
           </h1>
           <h1
@@ -135,7 +133,7 @@
           <menu-button :options="menuOptions" name="suggestion-menu" class="menu" ref="menu" />
         </div>
       </div>
-      <div name="forContent"> 
+      <div name="forContent">
         <suggestion-content
           :suggestion="suggestion"
           :userName="userName"
@@ -144,7 +142,7 @@
           :componentKey="componentKey"
         />
       </div>
-        <!-- orig <suggestion-content
+      <!-- orig <suggestion-content
           :suggestion="suggestion"
           :userName="userName"
           :isAuthenticated="isAuthenticated"
@@ -436,7 +434,7 @@ export default {
       });
       await this.createEvent(suggestionStateStatus.ARCHIVED);
       this.closeMenuDropdown();
-    },
+    }
   },
   watch: {
     async suggestion() {

@@ -79,19 +79,17 @@ export default {
     resolvedSuggestionsClicked: false
   }),
   created() {
-    this.parseRouteForSelection()
-;
+    this.parseRouteForSelection();
   },
 
   methods: {
-
     setSelectedSort(selectedSort) {
-      console.log("Name of the current page: " + router.history.current.name);
+      console.log('Name of the current page: ' + router.history.current.name);
       if (router.history.current.name === 'suggestions') {
-        router.push('/suggestions/1');  
+        router.push('/suggestions/1');
       }
       if (router.history.current.name === 'meeting-suggestion-list') {
-        router.push('/meetings/' + router.history.current.params.meetingId + '/1');  
+        router.push('/meetings/' + router.history.current.params.meetingId + '/1');
       }
       handleQueries(this.filters, this.searchWord, selectedSort, this.$router);
       location.reload();

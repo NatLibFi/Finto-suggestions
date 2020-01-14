@@ -1,15 +1,13 @@
 <template>
   <div class="user">
-
-      <!-- User text block -->
-      <!-- <span> Onko käyttäjä autentikoitu: {{ isAuthenticated }} </span> -->
-      <!-- <span> UserNameInitials (imports) {{ userNameInitials }} </span> -->
-      <!-- <span> userRoleToString  (imports) {{ userRoleToString }} </span> -->
-      <!-- <span> userId (imports) {{ userId }} </span> -->
-      <!-- <span> User  (imports) {{ user }} </span> -->
-      <!-- <span> authenticatedUserGetters  (imports) {{ authenticatedUserGetters }} </span>
+    <!-- User text block -->
+    <!-- <span> Onko käyttäjä autentikoitu: {{ isAuthenticated }} </span> -->
+    <!-- <span> UserNameInitials (imports) {{ userNameInitials }} </span> -->
+    <!-- <span> userRoleToString  (imports) {{ userRoleToString }} </span> -->
+    <!-- <span> userId (imports) {{ userId }} </span> -->
+    <!-- <span> User  (imports) {{ user }} </span> -->
+    <!-- <span> authenticatedUserGetters  (imports) {{ authenticatedUserGetters }} </span>
       <span> mapAuthenticatedUserGetters  (imports) {{ mapAuthenticatedUserGetters }} </span> -->
-
 
     <div class="profile-container">
       <transition name="fade">
@@ -52,7 +50,9 @@ import SuggestionListHeader from '../suggestion/SuggestionListHeader';
 import SuggestionItem from '../suggestion/SuggestionItem';
 import SuggestionList from '../suggestion/SuggestionList';
 
+// eslint-disable-next-line no-unused-vars
 import { userGetters, userActions } from '../../store/modules/user/userConsts';
+// eslint-disable-next-line no-unused-vars
 import { mapUserGetters, mapUserActions } from '../../store/modules/user/userModule';
 import { userNameInitials } from '../../utils/userHelpers.js';
 import { userRoleToString } from '../../utils/userMappings.js';

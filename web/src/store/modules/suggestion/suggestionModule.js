@@ -27,7 +27,8 @@ export default {
   getters: {
     [suggestionGetters.GET_SUGGESTIONS]: state => state[storeStateNames.ITEMS],
     [suggestionGetters.GET_SUGGESTIONS_COUNT]: state => state[storeStateNames.COUNT],
-    [suggestionGetters.GET_ARCHIVED_SUGGESTIONS_COUNT]: state => state[storeStateNames.ARCHIVED_COUNT],
+    [suggestionGetters.GET_ARCHIVED_SUGGESTIONS_COUNT]: state =>
+      state[storeStateNames.ARCHIVED_COUNT],
     [suggestionGetters.GET_SUGGESTION]: state => state[storeStateNames.ITEM],
     [suggestionGetters.GET_SEARCH_QUERY]: state => state[storeStateNames.SEARCH_QUERY],
     [suggestionGetters.GET_FILTERS]: state => state[storeStateNames.FILTERS],
@@ -98,7 +99,7 @@ export default {
       }
     },
 
-// Mika 111119
+    // Mika 111119
     async [suggestionActions.GET_ARCHIVED_SUGGESTIONS_COUNT]({ commit }, { aFilters, searchWord }) {
       const result = await api.suggestion.getArchivedSuggestionsCount(aFilters, searchWord);
       if (result && result.code == 200) {
@@ -106,10 +107,7 @@ export default {
       }
     },
 
-
-
     // GET_ARCHIVED_SUGGESTIONS_COUNT: getSuggestionsCount,
-
 
     async [suggestionActions.GET_SUGGESTIONS_BY_USER_ID]({ commit }, { userId, offset }) {
       const result = await api.suggestion.getSuggestionsByUserId(userId, offset);
