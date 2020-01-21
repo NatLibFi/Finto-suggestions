@@ -80,7 +80,7 @@ export default {
       type: [String, Number],
       default: 1
     },
-    suggesions: String
+    suggestions: String
   },
   data() {
     return {
@@ -155,7 +155,7 @@ export default {
     },
     async fetchSuggestions() {
       if (this.userId) {
-        this.getSuggestionsByUaserId({
+        this.getSuggestionsByUserId({
           userId: this.userId,
           offset: offsetByPagination(this.page)
         });

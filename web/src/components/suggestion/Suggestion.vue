@@ -401,9 +401,6 @@ export default {
         }
       }
     },
-    handleOpenTagSelector() {
-      this.openTagSelector ? (this.openTagSelector = false) : (this.openTagSelector = true);
-    },
     closeMenuDropdown() {
       this.$refs.menu.closeDropdown();
     },
