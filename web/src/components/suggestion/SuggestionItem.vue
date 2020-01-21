@@ -112,14 +112,16 @@ export default {
     },
     suggestions: String
   },
-  data: () => ({
-    suggestionTypeToStyleClass,
-    suggestionTypeToString,
-    eventTypes,
-    dateTimeFormatLabel,
-    suggestionStateStatus,
-    suggestionStateStatusToString
-  }),
+  data() {
+    return {
+      suggestionTypeToStyleClass,
+      suggestionTypeToString,
+      eventTypes,
+      dateTimeFormatLabel,
+      suggestionStateStatus,
+      suggestionStateStatusToString
+    };
+  },
   methods: {
     goToSuggestion() {
       if (!this.meetingId) {
