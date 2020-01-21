@@ -291,7 +291,7 @@ export default {
       this.$router.push('/github');
     },
     async handleUserFetch() {
-      if (parseInt(this.userId) > 0) {
+      if (parseInt(this.userId, 10) > 0) {
         this.getAuthenticatedUser(this.userId);
         this.handleUserInitialsFetch();
       }

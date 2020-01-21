@@ -81,7 +81,7 @@ export default {
       if (this.isAuthenticated && this.userId > 0 && this.suggestionId > 0) {
         this.addNewEvent({
           event: newCommentEvent(this.$sanitize(this.content), this.userId, this.suggestionId),
-          suggestionId: parseInt(this.suggestionId)
+          suggestionId: parseInt(this.suggestionId, 10)
         });
         this.content = '';
       }

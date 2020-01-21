@@ -68,7 +68,7 @@ export default {
     async [authenticatedUserActions.VALIDATE_AUTHENTICATION]({ commit, dispatch }) {
       const userId = localStorage.getItem('userIdTemp');
       //TODO: needs to validate token from backend and also check that token has correct userid
-      if (parseInt(userId) > 0) {
+      if (parseInt(userId, 10) > 0) {
         const response = await api.user.getUser(userId);
         if (response && response.code === 200) {
           commit(authenticatedUserMutations.SET_AUTHENTICATION, {
