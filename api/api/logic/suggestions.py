@@ -116,8 +116,6 @@ def get_suggestions_count(filters: str = None, search: str = None) -> str:
             query = query.filter(or_(
                 func.lower(Suggestion.preferred_label['fi']['value'].cast(
                     Unicode)).contains(search.lower()),
-                # func.lower(Suggestion.preferred_label.cast(Unicode)).contains(search.lower()),
-
                 func.lower(Suggestion.preferred_label['sv'].cast(
                     Unicode)).contains(search.lower()),
                 func.lower(Suggestion.preferred_label['en'].cast(
@@ -205,6 +203,11 @@ def get_archived_suggestions_count(filters: str = None, search: str = None) -> s
 
     def _validate_filters(filters):
         return all([filter[0].upper() in SUGGESTION_FILTER_FUNCTIONS.keys() for filter in filters])
+
+    if filters:
+        # status:accepted|type:new|meeting:12
+        # -> [['status', 'accepted'], ['type', 'new'], ['meeting', '12']]
+        filters = [f.split(':') for f in filters.split('|')]
 
     return get_count_or_404_custom(query_func)
 

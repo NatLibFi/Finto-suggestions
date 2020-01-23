@@ -38,9 +38,12 @@ export default {
     isUserPage: Boolean,
     userId: [Number, String]
   },
+  created() {
+    this.pageNumber = parseInt(this.page, 10);
+  },
   data() {
     return {
-      pageNumber: parseInt(this.page, 10),
+      pageNumber: 1,
       filters: this.$route.query.filters ? this.$route.query.filters : '',
       searchWord: this.$route.query.search ? this.$route.query.search : '',
       sort: this.$route.query.sort ? this.$route.query.sort : ''
