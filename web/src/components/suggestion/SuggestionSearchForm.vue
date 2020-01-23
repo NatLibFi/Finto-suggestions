@@ -51,9 +51,14 @@ export default {
         this.updateSearchWord(this.$refs.input.value);
       }
     });
+  },
+  watch: {
+    $route() {
+      this.filters = this.$route.query.filters ? this.$route.query.filters : '';
+      this.sort = this.$route.query.sort ? this.$route.query.sort : '';
+    }
   }
 };
-/* eslint-disable */
 </script>
 
 <style scoped>
