@@ -189,7 +189,7 @@ export default {
       await this.refreshToken();
       await this.getUserIdFromStorage();
       await this.handleUserFetch();
-      await this.handleUserInitialsFetch;
+      await this.handleUserInitialsFetch();
     }
   },
   methods: {

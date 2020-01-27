@@ -5,10 +5,11 @@ export const storeStateNames = {
   ITEM: 'item',
   SEARCH_QUERY: 'searchQuery',
   FILTERS: 'filters',
-  A_FILTERS: 'aFilters',
   SUGGESTIONS_SELECTED_SORT: 'suggestionsSelectedSort',
   MEETING_SUGGESTIONS_SELECTED_SORT: 'meetingSuggestionsSelectedSort',
-  FILTERED_ITEMS: 'filteredItems'
+  FILTERED_ITEMS: 'filteredItems',
+  COUNT: 'suggestionsCount',
+  ARCHIVED_SUGGESTIONS_COUNT: 'archivedSuggestionsCount'
 };
 
 export const sessionStorageKeyNames = {
@@ -24,7 +25,6 @@ export const suggestionGetters = {
   GET_SUGGESTION: 'getSuggestion',
   GET_SEARCH_QUERY: 'getSearchQuery',
   GET_FILTERS: 'getFilters',
-  GET_A_FILTERS: 'getAFilters',
   GET_SUGGESTIONS_SELECTED_SORT: 'getSuggestionsSelectedSort',
   GET_MEETING_SUGGESTIONS_SELECTED_SORT: 'getMeetingSuggestionsSelectedSort',
   GET_FILTERED_ITEMS: 'getFilteredItems'
@@ -37,7 +37,6 @@ export const suggestionMutations = {
   SET_SUGGESTION: 'setSuggestion',
   SET_SEARCH_QUERY: 'setSearchQuery',
   SET_FILTERS: 'setFilters',
-  SET_A_FILTERS: 'setAFilters',
   SET_SUGGESTIONS_SELECTED_SORT: 'setSuggestionsSelectedSort',
   SET_SUGGESTIONS_SELECTED_STORAGE_SORT: 'setSuggestionsSelectedStorageSort',
   SET_MEETING_SUGGESTIONS_SELECTED_SORT: 'setMeetingSuggestionsSelectedSort',
