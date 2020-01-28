@@ -40,7 +40,7 @@
         <!-- Mika 111019 orig <div
           v-if="
             isAuthenticated &&
-              (role === userRoles.ADMIN || parseInt(authedUserId) === event.user_id)
+              (role === userRoles.ADMIN || parseInt(authorizedUserId, 10) === event.user_id)
           "
           class="menu-wrapper"
         > -->
@@ -51,7 +51,7 @@
             @updateReactionList="updateReactionList()"
             :eventId="event.id"
             :suggestionId="event.suggestion_id"
-            :userId="authedUserId"
+            :userId="authorizedUserId"
             class="emoji"
           />
           <menu-button
@@ -184,7 +184,7 @@ export default {
       user: userGetters.GET_USER
     }),
     ...mapAuthenticatedUserGetters({
-      authedUserId: authenticatedUserGetters.GET_USER_ID,
+      authorizedUserId: authenticatedUserGetters.GET_USER_ID,
       role: authenticatedUserGetters.GET_USER_ROLE
     }),
     simplemde() {
@@ -243,7 +243,7 @@ export default {
     },
     isUserAllowedToEdit() {
       this.isUserAllowedToEditComment =
-        parseInt(this.event.user_id) === parseInt(this.authedUserId) ? true : false;
+        parseInt(this.event.user_id, 10) === parseInt(this.authorizedUserId, 10) ? true : false;
       return this.isUserAllowedToEditComment;
     }
   }

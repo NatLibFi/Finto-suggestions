@@ -3,7 +3,7 @@
     <div class="nav-content">
       <div class="nav-title">
         <img @click="returnToHome" src="../assets/finto-logo.svg" alt="" />
-        <span @click="returnToHome">Finto – Käsite-ehdotukset</span>
+        <span @click="returnToHome">[Finto – – – Käsite-ehdotukset]</span>
       </div>
       <div class="refresh-button">
         <p>
@@ -291,7 +291,7 @@ export default {
       this.$router.push('/github');
     },
     async handleUserFetch() {
-      if (parseInt(this.userId) > 0) {
+      if (parseInt(this.userId, 10) > 0) {
         this.getAuthenticatedUser(this.userId);
         this.handleUserInitialsFetch();
       }

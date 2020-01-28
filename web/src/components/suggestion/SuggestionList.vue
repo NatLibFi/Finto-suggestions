@@ -16,9 +16,6 @@
     />
     <div class="list-container">
       <ul class="list">
-        <div id="progressBar">
-          <div id="greenLine"></div>
-        </div>
         <div id="itemListContainer">
           <suggestion-item
             class="suggestion"
@@ -79,8 +76,7 @@ export default {
     page: {
       type: [String, Number],
       default: 1
-    },
-    suggesions: String
+    }
   },
   data() {
     return {
@@ -88,11 +84,10 @@ export default {
       aFilters: 'status:ARCHIVED',
       searchWord: this.$route.query.search ? this.$route.query.search : '',
       sort: this.$route.query.sort ? this.$route.query.sort : '',
-      searchWordForRemoteUse: String,
       offsetByPagination,
       pageCount: 400,
       pageCountLoading: false,
-      aCount: 0,
+      limit: 25,
       suggestionsAsArray: []
     };
   },
@@ -108,23 +103,11 @@ export default {
   async created() {
     this.pageCountLoading = true;
     await this.fetchSuggestions();
-    this.pageCount = Math.ceil(this.suggestionCount / 25);
+    this.pageCount = Math.ceil(this.suggestionCount / this.limit);
     if (this.pageCount < this.page) {
       this.goToFirstPage();
     }
     this.pageCountLoading = false;
-  },
-  mounted() {
-    setTimeout(function() {
-      document.getElementById('itemListContainer').style.visibility = 'visible';
-    }, 4000);
-    setTimeout(function() {
-      document.getElementById('progressBar').style.visibility = 'hidden';
-    }, 4000);
-    setTimeout(function() {
-      document.getElementById('greenLine').style.visibility = 'hidden';
-    }, 4000);
-    this.barToRight();
   },
   methods: {
     ...mapSuggestionActions({
@@ -133,31 +116,11 @@ export default {
       getSuggestionsCount: suggestionActions.GET_SUGGESTIONS_COUNT
       // getArchivedSuggestionsCount: suggestionActions.GET_ARCHIVED_SUGGESTIONS_COUNT
     }),
-    barToRight() {
-      var i = 0;
-      if (i == 0) {
-        i = 1;
-        var elementOfGreenLine = document.getElementById('greenLine');
-        var width = 1;
-        var id = setInterval(function() {
-          if (width >= 100) {
-            clearInterval(id);
-            i = 0;
-          } else {
-            width++;
-            elementOfGreenLine.style.width = width + '%';
-          }
-        }, 40);
-      }
-    },
-    test: function() {
-      this.searchWordForRemoteUse = this.searchWord;
-    },
     async fetchSuggestions() {
       if (this.userId) {
-        this.getSuggestionsByUaserId({
+        this.getSuggestionsByUserId({
           userId: this.userId,
-          offset: offsetByPagination(this.page)
+          offset: offsetByPagination(this.page, this.limit)
         });
         await this.getSuggestionsCount({
           filters: 'user_id:' + this.userId,
@@ -165,7 +128,7 @@ export default {
         });
       } else {
         this.getSuggestions({
-          offset: offsetByPagination(this.page),
+          offset: offsetByPagination(this.page, this.limit),
           sort: this.sort,
           filters: this.filters,
           searchWord: this.searchWord
@@ -179,7 +142,7 @@ export default {
     async updateSuggestionList() {
       this.pageCountLoading = true;
       await this.fetchSuggestions();
-      this.pageCount = Math.ceil(this.suggestionCount / 25);
+      this.pageCount = Math.ceil(this.suggestionCount / this.limit);
       if (this.pageCount < this.page) {
         this.goToFirstPage();
       }
@@ -221,7 +184,10 @@ export default {
         });
       } else if (this.suggestions.length === 0 && !this.$route.query) {
         this.$router.push({
-          name: 'index'
+          name: 'index',
+          params: {
+            page: 1
+          }
         });
       }
     }
@@ -273,19 +239,5 @@ ul {
 .fade-enter,
 .fade-leave-to {
   opacity: 0.75;
-}
-#itemListContainer {
-  visibility: hidden;
-}
-#progressBar {
-  visibility: visible;
-  width: 100%;
-  background-color: #f5f5f5;
-}
-#greenLine {
-  visibility: visible;
-  width: 1%;
-  height: 8px;
-  background-color: #66bea9;
 }
 </style>

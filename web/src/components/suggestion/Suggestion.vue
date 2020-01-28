@@ -290,8 +290,8 @@ export default {
     })
   },
   async created() {
-    await this.getSuggestionById(parseInt(this.suggestionId));
-    await this.getEventsBySuggestionId(parseInt(this.suggestionId));
+    await this.getSuggestionById(parseInt(this.suggestionId, 10));
+    await this.getEventsBySuggestionId(parseInt(this.suggestionId, 10));
     await this.getUserName();
     if (this.meetingId) {
       await this.getSuggestionsByMeetingId(this.meetingId);
@@ -342,7 +342,7 @@ export default {
             meetingId: this.meetingId
           }
         });
-        this.getEventsBySuggestionId(parseInt(this.requestedSuggestionId));
+        this.getEventsBySuggestionId(parseInt(this.requestedSuggestionId, 10));
       }
     },
     goToNextSuggestion() {
@@ -359,14 +359,14 @@ export default {
               meetingId: this.meetingId
             }
           });
-          this.getEventsBySuggestionId(parseInt(this.requestedSuggestionId));
+          this.getEventsBySuggestionId(parseInt(this.requestedSuggestionId, 10));
         }
       }
     },
     getNextUsableSuggestionId(action) {
       if (this.suggestions && this.suggestions.length > 0) {
         for (let i = 0; this.suggestions.length > i; i++) {
-          if (this.suggestions[i].id === parseInt(this.suggestionId)) {
+          if (this.suggestions[i].id === parseInt(this.suggestionId, 10)) {
             if (action === this.movingAction.PREVIOUS) {
               if (this.suggestions.length > 1 && i > 0) {
                 this.requestedSuggestionId = this.suggestions[i - 1].id;
@@ -386,7 +386,7 @@ export default {
     checkVisibilityOfGoingNextOrPrevious() {
       if (this.suggestionId && this.suggestions && this.suggestions.length > 0) {
         const element = this.suggestions.find(
-          suggestion => suggestion.id === parseInt(this.suggestionId)
+          suggestion => suggestion.id === parseInt(this.suggestionId, 10)
         );
         const index = this.suggestions.indexOf(element);
         if (index === 0) {
@@ -400,9 +400,6 @@ export default {
           this.noNextSuggestions = false;
         }
       }
-    },
-    handleOpenTagSelector() {
-      this.openTagSelector ? (this.openTagSelector = false) : (this.openTagSelector = true);
     },
     closeMenuDropdown() {
       this.$refs.menu.closeDropdown();

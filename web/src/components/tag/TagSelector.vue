@@ -108,16 +108,18 @@ export default {
       required: true
     }
   },
-  data: () => ({
-    showTagSelector: false,
-    checkedTags: [],
-    showCreateTagInputs: false,
-    showModifyTagInputs: false,
-    showModifyTagButtons: false,
-    tagBeingModified: null,
-    tagLabelBeingModified: null,
-    newTag: null
-  }),
+  data() {
+    return {
+      showTagSelector: false,
+      checkedTags: [],
+      showCreateTagInputs: false,
+      showModifyTagInputs: false,
+      showModifyTagButtons: false,
+      tagBeingModified: null,
+      tagLabelBeingModified: null,
+      newTag: null
+    };
+  },
   computed: {
     ...mapTagGetters({
       tags: tagGetters.GET_TAGS
@@ -125,6 +127,9 @@ export default {
   },
   created() {
     this.getTags();
+    this.handleSuggestionTagsChecked();
+  },
+  beforeUpdate() {
     this.handleSuggestionTagsChecked();
   },
   methods: {
@@ -187,6 +192,7 @@ export default {
       return false;
     },
     handleSuggestionTagsChecked() {
+      this.checkedTags = [];
       this.suggestion.tags.forEach(tag => {
         this.checkedTags.push(tag.label.toUpperCase());
       });

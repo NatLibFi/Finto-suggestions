@@ -34,9 +34,9 @@ export const filterType = {
   SEARCH: 'search'
 };
 /* Helper method for calculating the offset for pagination */
-export const offsetByPagination = page => {
+export const offsetByPagination = (page, limit) => {
   if (page > 1) {
-    return (page - 1) * 15;
+    return (page - 1) * limit;
   }
   return 0;
 };

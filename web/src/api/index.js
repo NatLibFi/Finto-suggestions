@@ -61,7 +61,7 @@ var handleCookiesAndSessionStorage = function() {
   }
   if (sessionStorage.userId) {
     if (!(sessionStorage.getItem('userId') === '0')) {
-      var userIdData = parseInt(sessionStorage.getItem('userId'));
+      var userIdData = parseInt(sessionStorage.getItem('userId'), 10);
       var parsedUserIdData = userIdData;
       localStorage.setItem('userIdTemp', JSON.stringify(parsedUserIdData));
     }

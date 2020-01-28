@@ -1,5 +1,3 @@
-import unicodedata
-
 import connexion
 from flask import jsonify
 from sqlalchemy import or_, func, and_
@@ -7,18 +5,13 @@ from sqlalchemy.types import Unicode
 
 from ..authentication import admin_only
 from .validators import suggestion_parameter_validator, suggestion_id_validator, _error_messagify
+# pylint: disable=unused-import
 from .common import (create_response, get_one_or_404, get_all_or_404, get_all_or_404_custom,
                      get_count_or_404_custom, create_or_400, delete_or_404, patch_or_404, update_or_404)
+# pylint: enable=unused-import
 from .utils import SUGGESTION_FILTER_FUNCTIONS, SUGGESTION_SORT_FUNCTIONS
 from ..models import db, Suggestion, Tag, User
 from .skos import suggestionToGraph
-
-
-def compare_caseless(s1, s2):
-    def NFD(s):
-        return unicodedata.normalize('NFD', s)
-    return NFD(NFD(s1).casefold()) == NFD(NFD(s2).casefold())
-
 
 # Profiler decorator, enable if needed
 # @profiler
@@ -45,65 +38,24 @@ def get_suggestions(limit: int = None, offset: int = None, filters: str = None, 
         if filters and _validate_filters(filters):
             for name, value in filters:
                 filter_func = SUGGESTION_FILTER_FUNCTIONS.get(name.upper())
-
-                # Area 51 131119
-                # logMarker("***********************************")
-                # print(filters)
-
-                # Area 51 131119
-
                 if filter_func:
                     query = filter_func(query, value.upper())
 
         if search:
-            searchEscaped = unicodedata.normalize(
-                "NFD", unicodedata.normalize('NFD', search).casefold())
-            # print("****************************")
-            # print(limit)
-            # print(offset)
-            # print(filters)
-            # print(search)
-            # print(sort)
-
-            print("***************************")
-            print(compare_caseless("å", "\u00e5"))
-            print(searchEscaped)
-            # testString1 = "moi"
-            # if testString1 c conta
-
-            # searchWithUnicodes = search
-            # searchWithUnicodes = checkSpecialChars(search)
-            # print("#############################")
-            # print(searchWithUnicodes)
             # Please append more fields, if you'd like to include in search
             # Currently the JSON field search is a bit dumb.
             # Ideally, you would like to search matches in each language separately,
             # instead of the whole json blob (cast as string)
-            # print(Suggestion.preferred_label['fi']['value'].cast(Unicode))
-            # print("Alex TEST >>>>>>>>>>>>>>>>>")
-            # print(db.session.query(Suggestion.preferred_label['fi']['value'] .contains("valta".lower())))
-            # print(db.session.query(Suggestion).filter(Suggestion.preferred_label['fi']['value'].contains('aarteet')))
-# records = db_session.query(Resource).filter(Resources.data["lastname"] == cast("Doe", JSON)).all()
 
             query = query.filter(or_(
-                # Mika's and Alex's testing func.lower(str(Suggestion)).contains(search.lower())
-                # func.lower(Suggestion.preferred_label['fi'].astext.matches(search)),
-                # func.lower(Suggestion.preferred_label['fi']['value'].cast(Unicode)).contains(searchEscaped.lower()),
-                # Almost working version
-                # func.lower(Suggestion.preferred_label['fi'].cast(Unicode)).contains(search.lower()),
-                #
-                #
                 func.lower(Suggestion.preferred_label['fi']['value'].cast(
                     Unicode)).contains(search.lower()),
-                # func.lower(Suggestion.preferred_label.cast(Unicode)).contains(search.lower()),
-
                 func.lower(Suggestion.preferred_label['sv'].cast(
                     Unicode)).contains(search.lower()),
                 func.lower(Suggestion.preferred_label['en'].cast(
                     Unicode)).contains(search.lower()),
                 # func.lower(Suggestion.alternative_labels.cast(Unicode)).contains(search.lower()),
                 func.lower(Suggestion.id.cast(Unicode)).contains(search),
-                # func.lower(Suggestion.id.cast(Unicode)).contains(searchEscaped),
                 # func.lower(Suggestion.description).contains(search.lower()),
                 # func.lower(Suggestion.reason).contains(search.lower()),
                 # func.lower(Suggestion.uri).contains(search.lower()),
@@ -118,10 +70,6 @@ def get_suggestions(limit: int = None, offset: int = None, filters: str = None, 
                 # func.lower(Suggestion.yse_term.cast(Unicode)).contains(search.lower()),
             ))
 
-            # print(searchEscaped)
-            # print(Suggestion.preferred_label['fi'])
-            # print(func.lower(Suggestion.preferred_label['fi'].cast(Unicode)).contains(searchEscaped))
-
         if limit:
             query = query.limit(limit)
         if offset:
@@ -129,8 +77,8 @@ def get_suggestions(limit: int = None, offset: int = None, filters: str = None, 
 
         return query.all()
 
-    def _validate_filters(f):
-        return all([f[0].upper() in SUGGESTION_FILTER_FUNCTIONS.keys() for f in filters])
+    def _validate_filters(filters):
+        return all([filter[0].upper() in SUGGESTION_FILTER_FUNCTIONS.keys() for filter in filters])
 
     if filters:
         # status:accepted|type:new|meeting_id:12|tags:melinda-slm|user_id:1
@@ -168,8 +116,6 @@ def get_suggestions_count(filters: str = None, search: str = None) -> str:
             query = query.filter(or_(
                 func.lower(Suggestion.preferred_label['fi']['value'].cast(
                     Unicode)).contains(search.lower()),
-                # func.lower(Suggestion.preferred_label.cast(Unicode)).contains(search.lower()),
-
                 func.lower(Suggestion.preferred_label['sv'].cast(
                     Unicode)).contains(search.lower()),
                 func.lower(Suggestion.preferred_label['en'].cast(
@@ -192,8 +138,8 @@ def get_suggestions_count(filters: str = None, search: str = None) -> str:
 
         return query.count()
 
-    def _validate_filters(f):
-        return all([f[0].upper() in SUGGESTION_FILTER_FUNCTIONS.keys() for f in filters])
+    def _validate_filters(filters):
+        return all([filter[0].upper() in SUGGESTION_FILTER_FUNCTIONS.keys() for filter in filters])
 
     if filters:
         # status:accepted|type:new|meeting:12
@@ -255,17 +201,13 @@ def get_archived_suggestions_count(filters: str = None, search: str = None) -> s
 
         return query.count()
 
-    def _validate_filters(f):
-        return all([f[0].upper() in SUGGESTION_FILTER_FUNCTIONS.keys() for f in filters])
+    def _validate_filters(filters):
+        return all([filter[0].upper() in SUGGESTION_FILTER_FUNCTIONS.keys() for filter in filters])
 
     if filters:
         # status:accepted|type:new|meeting:12
         # -> [['status', 'accepted'], ['type', 'new'], ['meeting', '12']]
         filters = [f.split(':') for f in filters.split('|')]
-        print("XXXXXXXXXXXXXXXXXXXXXXXXXXX")
-        print("XXXXXXXXXXXXXXXXXXXXXXXXXXX")
-        print("XXXXXXXXXXXXXXXXXXXXXXXXXXX")
-        print(filters)
 
     return get_count_or_404_custom(query_func)
 
