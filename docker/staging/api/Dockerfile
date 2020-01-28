@@ -1,5 +1,5 @@
-# ORIGINAL FROM python:3.7-alpine
-FROM python:3.6-alpine
+#FROM python:3.6-alpine
+FROM python:3.7-alpine
 
 ENV PYTHONUNBUFFERED 1
 ENV TZ "Europe/Helsinki"
