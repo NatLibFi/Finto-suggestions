@@ -38,4 +38,6 @@ class TestingConfig(BaseConfig):
     DEBUG = True
 
 class ProductionConfig(BaseConfig):
-    pass
+    db_container_name = 'db'
+    SQLALCHEMY_DATABASE_URI = f'postgresql://{user}:{pw}@{db_container_name}:5432/{db}'
+    DEBUG = False
