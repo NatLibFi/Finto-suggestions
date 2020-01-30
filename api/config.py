@@ -26,18 +26,20 @@ class BaseConfig:
 
 class DevelopmentConfig(BaseConfig):
     # db_container_name = 'db'
-    ENABLE_SWAGGER_UI = True
+    # ENABLE_SWAGGER_UI = True
     DEBUG = True
     # SQLALCHEMY_DATABASE_URI = f'postgresql+psycopg2://{user}:{pw}@{db_container_name}:5432/{db}?charset=utf8mb4'
 
 class TestingConfig(BaseConfig):
     # testdb db will be created upon test initialization
+    # ENABLE_SWAGGER_UI = True
     db_container_name = 'db'
     SQLALCHEMY_DATABASE_URI = f'postgresql://{user}:{pw}@{db_container_name}:5432/{db}'
     # SQLALCHEMY_DATABASE_URI = f'postgresql+psycopg2://{user}:{pw}@{db_container_name}:5432/{db}?charset=utf8mb4'
     DEBUG = True
 
 class ProductionConfig(BaseConfig):
+    # ENABLE_SWAGGER_UI = True
     db_container_name = 'db'
     SQLALCHEMY_DATABASE_URI = f'postgresql://{user}:{pw}@{db_container_name}:5432/{db}'
     DEBUG = False
