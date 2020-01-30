@@ -19,7 +19,7 @@ export default {
   state: {
     [storeStateNames.ITEMS]: [],
     [storeStateNames.COUNT]: 0,
-    [storeStateNames.ARCHIVED_COUNT]: 0,
+    [storeStateNames.ARCHIVED_SUGGESTIONS_COUNT]: 0,
     [storeStateNames.FILTERS]: [],
     [storeStateNames.ITEM]: null,
     [storeStateNames.FILTERED_ITEMS]: []
@@ -28,7 +28,7 @@ export default {
     [suggestionGetters.GET_SUGGESTIONS]: state => state[storeStateNames.ITEMS],
     [suggestionGetters.GET_SUGGESTIONS_COUNT]: state => state[storeStateNames.COUNT],
     [suggestionGetters.GET_ARCHIVED_SUGGESTIONS_COUNT]: state =>
-      state[storeStateNames.ARCHIVED_COUNT],
+      state[storeStateNames.ARCHIVED_SUGGESTIONS_COUNT],
     [suggestionGetters.GET_SUGGESTION]: state => state[storeStateNames.ITEM],
     [suggestionGetters.GET_SEARCH_QUERY]: state => state[storeStateNames.SEARCH_QUERY],
     [suggestionGetters.GET_FILTERS]: state => state[storeStateNames.FILTERS],
@@ -46,9 +46,8 @@ export default {
     [suggestionMutations.SET_SUGGESTIONS_COUNT](state, count) {
       Vue.set(state, storeStateNames.COUNT, count);
     },
-    // Tässä on todellinen ongelmakohta - kirjoitetaan storeen tietoja, jotka menevät päällekkäin
     [suggestionMutations.SET_ARCHIVED_SUGGESTIONS_COUNT](state, archivedCount) {
-      Vue.set(state, storeStateNames.ARCHIVED_COUNT, archivedCount);
+      Vue.set(state, storeStateNames.ARCHIVED_SUGGESTIONS_COUNT, archivedCount);
     },
 
     [suggestionMutations.SET_SEARCH_QUERY](state, searchQuery) {
@@ -98,17 +97,12 @@ export default {
         commit(suggestionMutations.SET_SUGGESTIONS_COUNT, result.data.count);
       }
     },
-
-    // Mika 111119
-    async [suggestionActions.GET_ARCHIVED_SUGGESTIONS_COUNT]({ commit }, { aFilters, searchWord }) {
-      const result = await api.suggestion.getArchivedSuggestionsCount(aFilters, searchWord);
+    async [suggestionActions.GET_ARCHIVED_SUGGESTIONS_COUNT]({ commit }, { filters, searchWord }) {
+      const result = await api.suggestion.getArchivedSuggestionsCount(filters, searchWord);
       if (result && result.code == 200) {
         commit(suggestionMutations.SET_ARCHIVED_SUGGESTIONS_COUNT, result.data.count);
       }
     },
-
-    // GET_ARCHIVED_SUGGESTIONS_COUNT: getSuggestionsCount,
-
     async [suggestionActions.GET_SUGGESTIONS_BY_USER_ID]({ commit }, { userId, offset }) {
       const result = await api.suggestion.getSuggestionsByUserId(userId, offset);
       if (result && result.code == 200) {

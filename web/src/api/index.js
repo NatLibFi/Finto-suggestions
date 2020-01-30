@@ -28,8 +28,6 @@ var handleCookiesAndSessionStorage = function() {
       expirationDateForAccess +
       ';' +
       pathForAccess;
-  } else {
-    console.log("Didn't find access_token");
   }
   if (document.cookie.includes('refresh_token')) {
     // eslint-disable-next-line no-redeclare
@@ -45,8 +43,6 @@ var handleCookiesAndSessionStorage = function() {
       expirationDateForRefresh +
       ';' +
       pathForRefresh;
-  } else {
-    console.log("Didn't find refresh_token");
   }
   var keyValuePairs = document.cookie.split(';');
   var cookiesList = [];
@@ -79,4 +75,4 @@ var handleCookiesAndSessionStorage = function() {
   return cookiesList;
 };
 
-console.log(handleCookiesAndSessionStorage());
+handleCookiesAndSessionStorage();

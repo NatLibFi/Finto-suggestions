@@ -15,7 +15,7 @@ from .skos import suggestionToGraph
 
 # Profiler decorator, enable if needed
 # @profiler
-def get_suggestions(limit: int = None, offset: int = None, filters: str = None, search: str = None, sort: str = 'DEFAULT') -> str:
+def get_suggestions(limit: int = 0, offset: int = 0, filters: str = "", search: str = "", sort: str = 'DEFAULT') -> str:
     """
     Returns all suggestions.
 
@@ -88,7 +88,7 @@ def get_suggestions(limit: int = None, offset: int = None, filters: str = None, 
     return get_all_or_404_custom(query_func)
 
 
-def get_suggestions_count(filters: str = None, search: str = None) -> str:
+def get_suggestions_count(filters: str = "", search: str = "") -> str:
     """
     Returns the amount of suggestions for pagination purposes.
 
@@ -149,16 +149,18 @@ def get_suggestions_count(filters: str = None, search: str = None) -> str:
     return get_count_or_404_custom(query_func)
 
 
-def get_archived_suggestions_count(filters: str = None, search: str = None) -> str:
+def get_archived_suggestions_count(filters: str = "", search: str = "") -> str:
     """
-    Returns the amount of suggestions for pagination purposes.
+    Returns the amount of archived suggestions.
 
     As the request query can be limited with additional parameters, we take those into account.
 
     :param filters: Filter the results based on filter selections
     :param search: Filter the results based on search word
-    :returns: All suggestion matching the query in json format
+    :returns: The amount of archived suggestions matching the query.
     """
+    if "status:archived" not in filters:
+        filters = "status:archived|" + filters
 
     def query_func():
         query = db.session.query(Suggestion)
@@ -204,10 +206,10 @@ def get_archived_suggestions_count(filters: str = None, search: str = None) -> s
     def _validate_filters(filters):
         return all([filter[0].upper() in SUGGESTION_FILTER_FUNCTIONS.keys() for filter in filters])
 
-    if filters:
+    if filters and len(filters) > 0:
         # status:accepted|type:new|meeting:12
         # -> [['status', 'accepted'], ['type', 'new'], ['meeting', '12']]
-        filters = [f.split(':') for f in filters.split('|')]
+        filters = [f.split(':') for f in filters.split('|') if len(f) > 0]
 
     return get_count_or_404_custom(query_func)
 
@@ -294,7 +296,7 @@ def post_suggestion() -> str:
     created_response = create_or_400(Suggestion, payload_dict)
     response = created_response[0]
 
-    if response is not None and response['code'] is 201 and 'tags' in payload_dict and len(payload_tags) > 0:
+    if response is not None and response['code'] == 201 and 'tags' in payload_dict and len(payload_tags) > 0:
         suggestion = Suggestion.query.get(response['data']['id'])
         for tag in payload_tags:
             existing_tag = _get_or_create_tag(tag['label'])
@@ -303,12 +305,12 @@ def post_suggestion() -> str:
 
         db.session.commit()
 
-    if response is not None and response['code'] is 201:
+    if response is not None and response['code'] == 201:
         suggestion_id = response['data']['id']
         protocol = connexion.request.environ['HTTP_X_FORWARDED_PROTO']
         baseurl = connexion.request.environ['HTTP_HOST'].split(',')[1]
 
-        if suggestion_id > 0 and protocol is not '' and baseurl is not None and baseurl is not '':
+        if suggestion_id > 0 and protocol != '' and baseurl is not None and baseurl != '':
             response['data']['suggestionUrl'] = f'{protocol}://{baseurl}/suggestion/{suggestion_id}'
 
         return jsonify(response['data']), 201

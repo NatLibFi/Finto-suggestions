@@ -1,19 +1,9 @@
 <template>
   <div class="header-container">
-    <!--TODO: <div v-if="!userPage" class="title">
-      <span
-        :class="['open', openSuggestionClicked ? 'toggled' : '']"
-        @click="showOpenSuggestions()"
-      >
-        {{ openSuggestionCount }} käsittelemätöntä
-      </span>
-      <span
-        :class="[resolvedSuggestionsClicked ? 'toggled' : '']"
-        @click="showResolvedSuggestions()"
-      >
-        {{ resolvedSuggestionCount }} käsiteltyä
-      </span>
-    </div> -->
+    <div v-if="!userPage" class="title">
+      <span>Tuloksia: {{ suggestionCount }} </span>
+      <span v-if="isArchivedStatus"> Arkistoitu: {{ archivedSuggestionCount }}</span>
+    </div>
     <div v-if="userPage" class="title user-title">
       <span>Käyttäjälle asetut ehdotukset</span>
     </div>
@@ -54,8 +44,8 @@ export default {
     IconTriangle
   },
   props: {
-    openSuggestionCount: Number,
-    resolvedSuggestionCount: Number,
+    suggestionCount: Number,
+    archivedSuggestionCount: Number,
     meetingId: {
       type: [String, Number],
       default: null
@@ -76,14 +66,18 @@ export default {
         { label: 'Vähiten kommentoitu', value: sortingKeys.LEAST_COMMENTS },
         { label: 'Viimeksi päivitetty', value: sortingKeys.LAST_UPDATED }
       ],
-      openSuggestionClicked: false,
-      resolvedSuggestionsClicked: false
+      isArchivedStatus: false
     };
   },
   created() {
     this.parseRouteForSelection();
+    this.isArchivedStatus = !this.filters.startsWith('status:');
   },
-
+  watch: {
+    filters() {
+      this.isArchivedStatus = !this.filters.startsWith('status:');
+    }
+  },
   methods: {
     setSelectedSort(selectedSort) {
       console.log('Name of the current page: ' + router.history.current.name);
@@ -98,26 +92,6 @@ export default {
     },
     closeDropDown: function() {
       this.isDropDownOpened = false;
-    },
-    showOpenSuggestions() {
-      if (!this.openSuggestionClicked) {
-        this.openSuggestionClicked = true;
-        this.resolvedSuggestionsClicked = false;
-        this.$emit('showOpenSuggestions');
-      } else {
-        this.openSuggestionClicked = false;
-        this.$emit('showAllSuggestions');
-      }
-    },
-    showResolvedSuggestions() {
-      if (!this.resolvedSuggestionsClicked) {
-        this.openSuggestionClicked = false;
-        this.resolvedSuggestionsClicked = true;
-        this.$emit('showResolvedSuggestions');
-      } else {
-        this.resolvedSuggestionsClicked = false;
-        this.$emit('showAllSuggestions');
-      }
     },
     parseRouteForSelection() {
       let arr = Object.values(this.dropDownOptions);

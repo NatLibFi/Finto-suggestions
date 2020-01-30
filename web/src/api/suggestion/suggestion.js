@@ -7,15 +7,13 @@ const defaultLimit = 25;
 export default {
   getSuggestions: (offset = 0, sort = '', filters = '', searchWord = '') =>
     get({
-      // eslint-disable-next-line
+      // eslint-disable-next-line max-len
       resource: `/suggestions?limit=${defaultLimit}&offset=${offset}&sort=${sort}&filters=${filters}&search=${searchWord}`
     }),
-  // getSuggestionsCount: (filters, searchWord) =>
-  //   get({ resource: `/suggestions/count?filters=status:ARCHIVED&search=${searchWord}` }),
   getSuggestionsCount: (filters, searchWord) =>
     get({ resource: `/suggestions/count?filters=${filters}&search=${searchWord}` }),
   getArchivedSuggestionsCount: (filters, searchWord) =>
-    get({ resource: `/suggestions/archcount?filters=status:ARCHIVED&search=${searchWord}` }),
+    get({ resource: `/suggestions/archivedCount?filters=${filters}&search=${searchWord}` }),
   getSuggestionsByUserId: (userId, offset = 0) =>
     get({ resource: `/suggestions/user=${userId}?limit=${defaultLimit}&offset=${offset}` }),
   getSuggestionById: suggestionId => get({ resource: `/suggestions/${suggestionId}` }),
