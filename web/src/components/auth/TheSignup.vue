@@ -1,25 +1,13 @@
 <template>
   <!-- Using 'login' as a catch-all term for signups and logins -->
   <div class="login-dialog">
-    <h3>Luo tunnus</h3>
-    <p>Voit luoda tilin Github- ja Google-tunnuksilla</p>
-    <div class="login-services">
-      <div @click="signup('github')" class="login-service-button">
-        <svg-icon icon-name="github"><icon-github /></svg-icon>
-        <span>Luo tili GitHub-tunnuksilla</span>
-      </div>
-      <!-- TODO: enable this when google login/signup works -->
-      <!-- <div @click="signup('google')" class="login-service-button">
-        <svg-icon icon-name="google"><icon-google /></svg-icon>
-        <span>Luo tili Google-tunnuksilla</span>
-      </div> -->
-    </div>
+    <h3>[Luo käyttäjätili]</h3>
     <div class="login-own-credentials">
       <h4
         v-if="!showOwnCredentialSignup"
         @click="showOwnCredentialSignup = !showOwnCredentialSignup"
       >
-        Luo tili omilla tunnuksilla
+        Luo käyttäjätili 
       </h4>
       <div v-if="showOwnCredentialSignup" class="login-inputs">
         <div class="login-input">

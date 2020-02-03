@@ -1,36 +1,16 @@
 <template>
   <div class="login-dialog">
-    <h3 v-if="!showForgottenPasswordForm">Kirjaudu sisään</h3>
-    <!-- TODO: uncomment this when google oauth2 is ready -->
-    <p>Voit kirjautua sisään Github- ja Google-tunnuksilla</p>
-    <!--241019-->
+    <h3 v-if="!showForgottenPasswordForm">[Kirjaudu sisään]</h3>
     <div v-if="!showForgottenPasswordForm" class="login-services">
-      <!-- Next div for GitHub -->
-      <div @click="login('github')" class="login-service-button">
-        <!--241019-->
-        <svg-icon icon-name="github"><icon-github /></svg-icon>
-        <!--241019-->
-        <span class="normal">Kirjaudu GitHub-tunnuksilla</span>
-        <!--241019-->
-        <span class="mobile">GitHub-tunnukset</span>
-        <!--241019-->
-      </div>
-      <!--241019-->
-      <!-- TODO: uncomment this when google oauth2 is ready -->
-      <!-- <div @click="login('google')" class="login-service-button">
-        <svg-icon icon-name="google"><icon-google /></svg-icon>
-        <span>Kirjaudu Google-tunnuksilla</span>
-      </div> -->
     </div>
     <div class="login-own-credentials">
       <h4
         v-if="!showOwnCredentialLogin && !showForgottenPasswordForm"
         @click="showOwnCredentialInputs()"
       >
-        Kirjaudu sisään omilla tunnuksilla
+        Kirjaudu sisään
       </h4>
       <div v-if="showOwnCredentialLogin">
-        <h5>Kirjaudu omilla tunnuksillasi</h5>
         <div class="login-input">
           <span>Sähköposti</span>
           <input type="text" v-model="email" />
