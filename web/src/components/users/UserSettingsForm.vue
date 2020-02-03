@@ -148,11 +148,6 @@ export default {
       router.push('/settings');
     }
   },
-  // beforeMount(){
-  //   // setTimeout(function(){}, 3000);
-  //   // document.write("**************************** ");
-  //   this.goToSettingsPage();
-  // },
   mounted: function() {
     document.addEventListener('keydown', e => {
       if (e.keyCode == 13) {

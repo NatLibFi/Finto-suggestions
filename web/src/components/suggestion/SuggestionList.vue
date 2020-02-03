@@ -13,6 +13,8 @@
       :filters="filters"
       :searchWord="searchWord"
       :sort="sort"
+      :suggestionCount="suggestionCount"
+      :archivedSuggestionCount="archivedSuggestionCount"
     />
     <div class="list-container">
       <ul class="list">
@@ -81,7 +83,6 @@ export default {
   data() {
     return {
       filters: this.$route.query.filters ? this.$route.query.filters : '',
-      aFilters: 'status:ARCHIVED',
       searchWord: this.$route.query.search ? this.$route.query.search : '',
       sort: this.$route.query.sort ? this.$route.query.sort : '',
       offsetByPagination,
@@ -94,11 +95,9 @@ export default {
   computed: {
     ...mapSuggestionGetters({
       suggestions: suggestionGetters.GET_SUGGESTIONS,
-      suggestionCount: suggestionGetters.GET_SUGGESTIONS_COUNT
+      suggestionCount: suggestionGetters.GET_SUGGESTIONS_COUNT,
+      archivedSuggestionCount: suggestionGetters.GET_ARCHIVED_SUGGESTIONS_COUNT
     })
-  },
-  beforeUpdate() {
-    // this.getArchivedSuggestionsCount();
   },
   async created() {
     this.pageCountLoading = true;
@@ -113,8 +112,8 @@ export default {
     ...mapSuggestionActions({
       getSuggestions: suggestionActions.GET_SUGGESTIONS,
       getSuggestionsByUserId: suggestionActions.GET_SUGGESTIONS_BY_USER_ID,
-      getSuggestionsCount: suggestionActions.GET_SUGGESTIONS_COUNT
-      // getArchivedSuggestionsCount: suggestionActions.GET_ARCHIVED_SUGGESTIONS_COUNT
+      getSuggestionsCount: suggestionActions.GET_SUGGESTIONS_COUNT,
+      getArchivedSuggestionCount: suggestionActions.GET_ARCHIVED_SUGGESTIONS_COUNT
     }),
     async fetchSuggestions() {
       if (this.userId) {
@@ -137,6 +136,12 @@ export default {
           filters: this.filters,
           searchWord: this.searchWord
         });
+        if (!this.filters.startsWith('status:')) {
+          await this.getArchivedSuggestionCount({
+            filters: this.filters,
+            searchWord: this.searchWord
+          });
+        }
       }
     },
     async updateSuggestionList() {
@@ -195,7 +200,6 @@ export default {
   watch: {
     $route() {
       this.filters = this.$route.query.filters ? this.$route.query.filters : '';
-      this.aFilters = 'status:ARCHIVED';
       this.searchWord = this.$route.query.search ? this.$route.query.search : '';
       this.sort = this.$route.query.sort ? this.$route.query.sort : '';
       this.updateSuggestionList();
