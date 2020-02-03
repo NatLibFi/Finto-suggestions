@@ -482,7 +482,7 @@ def get_open_suggestions() -> str:
     """
     try:
         open_suggestions = Suggestion.query.filter(Suggestion.status.notin_(
-            ['ACCEPTED', 'REJECTED', 'RETAINED', 'ARCHIVED'])).all()
+            ['ACCEPTED', 'REJECTED', 'ARCHIVED'])).all()
         serialized_objects = [o.as_dict() for o in open_suggestions]
         return {'data': serialized_objects, 'code': 200}, 200
     except Exception as ex:
