@@ -34,7 +34,7 @@
       <transition name="fade">
         <div v-if="!isAuthenticated" class="nav-login-buttons">
           <div @click="showLoginDialog = !showLoginDialog">Kirjaudu sisään</div>
-          <div @click="showSignupDialog = !showSignupDialog">Luo tunnus</div>
+          <div @click="showSignupDialog = !showSignupDialog">Luo käyttäjätili</div>
         </div>
       </transition>
       <transition name="fade">
