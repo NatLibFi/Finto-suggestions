@@ -313,9 +313,11 @@ def post_suggestion() -> str:
         if suggestion_id > 0 and protocol != '' and baseurl is not None and baseurl != '':
             response['data']['suggestionUrl'] = f'{protocol}://{baseurl}/suggestion/{suggestion_id}'
 
+        print("#### Response: " + str(jsonify(response['data'])))
         return jsonify(response['data']), 201
 
     else:
+        print("#### Response: " + str(jsonify(response['data']))) 
         return {'error': 'Could not create suggestion.'}, 400
 
 
