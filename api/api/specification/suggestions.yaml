@@ -50,6 +50,7 @@ paths:
             $ref: '#/definitions/SuggestionParameterObject'
       consumes:
         - application/json
+        - application/problem+json
       responses:
         '201':
           description: The created suggestion

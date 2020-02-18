@@ -19,6 +19,7 @@ rdflib = "*"
 rdflib-jsonld = "*"
 ujson = "*"
 pyyaml = ">=4.2b1"
+urllib3 = "*"
 
 
 [dev-packages]
