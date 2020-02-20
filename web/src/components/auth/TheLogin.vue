@@ -20,7 +20,7 @@
           <input type="password" v-model="password" />
         </div>
         <transition name="fade">
-          <p v-if="showLocalLoginError" class="error">Kirjautumisessa tapahtui virhe: Väärä sähköposti tai salasana.</p>
+          <p v-if="showLocalLoginError" class="error">Väärä sähköposti tai salasana.</p>
         </transition>
         <div
           @click="login('local')"
@@ -62,14 +62,12 @@ import IconGithub from '../icons/IconGithub';
 import IconGoogle from '../icons/IconGoogle';
 import router from '../../router/index';
 import { required, minLength, email } from 'vuelidate/lib/validators';
-// Mika 250919
 import { userActions, userGetters } from '../../store/modules/user/userConsts';
 import { mapUserActions, mapUserGetters } from '../../store/modules/user/userModule';
 // eslint-disable-next-line
 import { authenticatedUserGetters, authenticatedUserActions } from '../../store/modules/authenticatedUser/authenticatedUserConsts.js';
 // eslint-disable-next-line
 import { mapAuthenticatedUserGetters, mapAuthenticatedUserActions } from '../../store/modules/authenticatedUser/authenticatedUserModule.js';
-// Mika 250919
 
 export default {
   components: {
@@ -146,40 +144,10 @@ export default {
       const data = { service, loginData };
       if (!this.$v.email.$invalid && !this.$v.password.$invalid && service === 'local') {
         this.$emit('login', data);
-        // Mika 011019
-        // this.getUserBasics();
-        // this.updateUser();
       } else {
         this.$emit('login', data);
       }
     },
-    // Mika 011019 Testi
-    // async updateUser() {
-    //   const params = {
-    //     userId: this.userId,
-    //     data: {
-    //       name: this.$sanitize(this.userName),
-    //       title: this.$sanitize(this.userTitle),
-    //       organization: this.$sanitize(this.userOrg),
-    //       imageUrl: this.$sanitize(this.userImageUrl),
-    //       role: this.$sanitize(this.userRole)
-    //     }
-    //   };
-    //   await this.patchUser(params)
-    //     .then(() => {
-    //       this.hasSucceeded = true;
-    //       setTimeout(() => {
-    //         this.hasSucceeded = false;
-    //       }, 2000);
-    //     })
-    //     .catch(() => {
-    //       this.hasFailed = true;
-    //       setTimeout(() => {
-    //         this.hasFailed = false;
-    //       }, 3000);
-    //     });
-    // },
-
     getUserBasics() {
       this.userName = this.user.name;
       if (this.user.title) {

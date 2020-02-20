@@ -173,7 +173,6 @@ export default {
     ...mapAuthenticatedUserGetters({
       isAuthenticated: authenticatedUserGetters.GET_IS_AUTHENTICATED,
       userId: authenticatedUserGetters.GET_USER_ID,
-      // can be shown if login did not succeed:
       error: authenticatedUserGetters.GET_AUTHENTICATE_ERROR
     }),
     ...mapUserGetters({
@@ -222,9 +221,7 @@ export default {
     },
     async login(data) {
       if (data) {
-        if (data.service !== '' && data.service !== 'local') {
-          await this.oAuth2Authenticate(data.service);
-        } else {
+        if (data.service !== '') {
           await this.authenticateLocalUser(data.loginData)
             .then(() => {
               if (this.userId) {
@@ -234,16 +231,13 @@ export default {
             })
             .catch(() => {
               this.showLocalLoginError = true;
+              this.showLoginDialog = true;
             });
-          if (window.localStorage) {
-            if (!localStorage.getItem('loadedOnce')) {
-              localStorage['loadedOnce'] = true;
-              // window.location.reload();
-            } else localStorage.removeItem('firstLoad');
-          }
         }
       }
-      window.location.reload();
+      if(!this.showLoginDialog){
+        window.location.reload();
+      }
     },
     async signup(data) {
       if (data && data.service !== 'local') {
