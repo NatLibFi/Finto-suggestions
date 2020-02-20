@@ -95,7 +95,7 @@ export default {
         user_id: localStorage.userIdTemp
       });
       //Mika
-      // localStorage.removeItem("userIdTemp");
+      // localStorage.removshowLocalLoginErroreItem("userIdTemp");
     },
     async [authenticatedUserActions.GET_USER_NAME]({ commit }, userId) {
       const response = await api.user.getUser(userId);

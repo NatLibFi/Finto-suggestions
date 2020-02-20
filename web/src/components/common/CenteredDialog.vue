@@ -19,6 +19,11 @@ export default {
     SvgIcon,
     IconCross
   },
+  data() {
+    return {
+      showLoginDialog: false,
+    };
+  },
   methods: {
     close: function() {
       this.$emit('close');
