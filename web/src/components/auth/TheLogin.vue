@@ -20,7 +20,7 @@
           <input type="password" v-model="password" />
         </div>
         <transition name="fade">
-          <p v-if="showLocalLoginError" class="error">Väärä sähköposti tai salasana.</p>
+          <p v-if="showLocalLoginError" class="error">Kirjautumisessa tapahtui virhe: Väärä sähköposti tai salasana.</p>
         </transition>
         <div
           @click="login('local')"
