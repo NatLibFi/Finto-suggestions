@@ -4,6 +4,7 @@ import connexion
 import click
 from flask_migrate import Migrate
 from flask_cors import CORS
+#Should be checked if flask-cors is the right package
 from specsynthase.specbuilder import SpecBuilder
 
 from api.models import db, User, UserRoles

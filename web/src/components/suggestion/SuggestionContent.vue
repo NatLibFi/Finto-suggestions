@@ -21,7 +21,6 @@
         {{ suggestion.preferred_label.fi.value }}
       </a>
     </div>
-
     <div v-if="suggestion.preferred_label.sv && suggestion.preferred_label.sv.value">
       <p class="content-title"><strong>Ehdotettu termi ruotsiksi</strong></p>
       <p v-if="!suggestion.preferred_label.sv.value">{{ suggestion.preferred_label.sv }}</p>
@@ -32,7 +31,16 @@
         {{ suggestion.preferred_label.sv.value }}
       </a>
     </div>
-
+    <div v-if="suggestion.preferred_label.en">
+      <p class="content-title"><strong>Ehdotettu termi englanniksi</strong></p>
+      <p v-if="!suggestion.preferred_label.en.value">{{ suggestion.preferred_label.en }}</p>
+      <p v-if="suggestion.preferred_label.en.value && !suggestion.preferred_label.en.uri">
+        {{ suggestion.preferred_label.en.value }}
+      </p>
+      <a :href="suggestion.preferred_label.en.uri" v-if="suggestion.preferred_label.en.uri">
+        {{ suggestion.preferred_label.en.value }}
+      </a>
+    </div>
     <div
       v-if="
         suggestion.preferred_label.en &&
@@ -43,7 +51,6 @@
       <p class="content-title"><strong>Ehdotettu termi englanniksi</strong></p>
       <p>{{ suggestion.preferred_label.en.value }}</p>
     </div>
-
     <div
       v-if="suggestion.alternative_labels[0] && suggestion.alternative_labels[0].value.length > 0"
     >
@@ -52,28 +59,24 @@
         {{ label.value }}
       </p>
     </div>
-
     <div v-if="suggestion.broader_labels[0] && suggestion.broader_labels[0].value.length > 0">
       <p class="content-title"><strong>Yläkäsite YSOssa (LT)</strong></p>
       <p v-for="term in suggestion.broader_labels" :key="term.id">
         <a :href="term.uri">{{ term.value }}</a>
       </p>
     </div>
-
     <div v-if="suggestion.narrower_labels[0] && suggestion.narrower_labels[0].value.length > 0">
       <p class="content-title"><strong>Alakäsitteet (ST)</strong></p>
       <p v-for="term in suggestion.narrower_labels" :key="term.id">
         <a :href="term.uri">{{ term.value }}</a>
       </p>
     </div>
-
     <div v-if="suggestion.related_labels[0] && suggestion.related_labels[0].value.length > 0">
       <p class="content-title"><strong>Assosiatiiviset (RT)</strong></p>
       <p v-for="term in suggestion.related_labels" :key="term.id">
         <a :href="term.uri">{{ term.value }}</a>
       </p>
     </div>
-
     <div v-if="suggestion.groups && suggestion.groups[0]">
       <p class="content-title"><strong>YSA/YSO temaattinen ryhmä</strong></p>
       <p v-for="group in suggestion.groups" :key="group.id">
@@ -81,7 +84,6 @@
         <a v-if="group.prefLabel" :href="group.uri">{{ group.prefLabel }}</a>
       </p>
     </div>
-
     <div v-if="suggestion.exactMatches[0] && suggestion.exactMatches[0].value.length > 0">
       <p class="content-title"><strong>Vastaava käsite muussa sanastossa</strong></p>
       <p v-for="match in suggestion.exactMatches" :key="match.id">
@@ -94,53 +96,32 @@
         </span>
       </p>
     </div>
-
     <div v-if="suggestion.scopeNote">
       <p class="content-title"><strong>Tarkoitusta täsmentävä selite</strong></p>
       <p>{{ suggestion.scopeNote }}</p>
     </div>
-
-    <!-- orig <div v-if="suggestion.description"> -->
     <div v-if="suggestion">
-      <p v-if="suggestion.suggestion_type == suggestionType.NEW" class="content-title">
-        <strong>Perustelut ehdotukselle</strong>
-      </p>
-      <p v-if="suggestion.suggestion_type == suggestionType.MODIFY" class="content-title">
-        <strong>Ehdotettu muutos</strong>
-      </p>
-      <!-- orig <p>{{ suggestion.description }}</p> -->
-      <p>{{ suggestion.reason }}</p>
+      <div v-if="suggestion.suggestion_type == suggestionType.MODIFY">
+        <p class="content-title"><strong>Ehdotettu muutos</strong></p>
+        <p>{{ suggestion.description }}</p>
+      </div>
+      <div v-if="suggestion.reason">
+        <p class="content-title"><strong>Perustelut ehdotukselle</strong></p>
+        <p>{{ suggestion.reason }}</p>
+      </div>
+      <div v-if="suggestion.neededFor">
+        <p class="content-title"><strong>Minkä aineiston kuvailussa käytetään</strong></p>
+        <p>{{ suggestion.neededFor }}</p>
+      </div>
     </div>
-    <!-- <div v-if="suggestion.reason">
-      <p v-if="suggestion.suggestion_type == suggestionType.NEW" class="content-title">
-        <strong>Perustelut ehdotukselle</strong>
-      </p>
-      <p v-if="suggestion.suggestion_type == suggestionType.MODIFY" class="content-title">
-        <strong>Perustelut muutosehdotukselle</strong>
-      </p>
-      <p>{{ suggestion.reason }}</p>
-    </div> -->
-
-    <div v-if="suggestion.neededFor">
-      <p v-if="suggestion.suggestion_type == suggestionType.NEW" class="content-title">
-        <strong>Tarve ehdotukselle</strong>
-      </p>
-      <p v-if="suggestion.suggestion_type == suggestionType.MODIFY" class="content-title">
-        <strong>Tarve muutosehdotukselle</strong>
-      </p>
-      <p>{{ suggestion.neededFor }}</p>
-    </div>
-
     <div v-if="suggestion.organization">
       <p class="content-title"><strong>Ehdottajan organisaatio</strong></p>
       <p>{{ suggestion.organization }}</p>
     </div>
-
     <div v-if="suggestion.yse_term && suggestion.yse_term.value">
       <p class="content-title"><strong>Termi Fintossa</strong></p>
       <a :href="suggestion.yse_term.url">{{ suggestion.yse_term.value }}</a>
     </div>
-
     <transition name="fade">
       <div v-if="!suggestion.user_id && isAdmin">
         <assign-user :suggestion="suggestion" class="icon-button" />
