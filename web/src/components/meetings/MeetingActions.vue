@@ -1,6 +1,7 @@
 <template>
   <div v-if="isAuthenticated && role === userRoles.ADMIN" class="actions-container">
-    <add-comment v-if="events && events.length > 1" :userId="userId" :suggestionId="suggestionId" />
+    <!-- Next line is left there as an option -->
+    <!-- <add-comment v-if="events && events.length > 1" :userId="userId" :suggestionId="suggestionId" /> -->
     <div class="action-buttons">
       <span class="button dismiss" @click="retainSuggestion()">
         Jätä ehdotukseksi

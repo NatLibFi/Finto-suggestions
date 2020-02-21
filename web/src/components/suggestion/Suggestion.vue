@@ -142,22 +142,6 @@
           :componentKey="componentKey"
         />
       </div>
-      <!-- orig <suggestion-content
-          :suggestion="suggestion"
-          :userName="userName"
-          :isAuthenticated="isAuthenticated"
-          :isAdmin="role === userRoles.ADMIN"
-          :componentKey="componentKey"
-        /> -->
-    </div>
-    <div v-if="meetingId" class="meeting-actions">
-      <meeting-actions
-        :userId="userId"
-        :suggestionId="suggestionId"
-        :meetingId="meetingId"
-        :events="events"
-        @moveToNextSuggestion="goToNextSuggestion"
-      />
     </div>
     <div v-if="events && events.length > 0">
       <div v-for="event in events" :key="event.id">
@@ -173,6 +157,15 @@
     </div>
     <div>
       <add-comment :suggestionId="suggestionId" />
+    </div>
+    <div v-if="meetingId" class="meeting-actions">
+      <meeting-actions
+        :userId="userId"
+        :suggestionId="suggestionId"
+        :meetingId="meetingId"
+        :events="events"
+        @moveToNextSuggestion="goToNextSuggestion"
+      />
     </div>
   </div>
 </template>
