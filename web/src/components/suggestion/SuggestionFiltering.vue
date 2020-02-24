@@ -6,7 +6,6 @@
         Tyhjennä valinnat
       </a>
     </h5>
-
     <div
       @click="isDropDownOpened.STATUS = !isDropDownOpened.STATUS"
       :class="[filterStrings.status.length > 0 ? 'active-filter' : '', 'filter-item']"
@@ -67,9 +66,9 @@
       v-if="!meetingId && mapMeetingsToDropDown().length > 0"
       @click="isDropDownOpened.MEETING = !isDropDownOpened.MEETING"
       :class="[filterStrings.meeting.length > 0 ? 'active-filter' : '', 'filter-item']"
-    >
+    > 
       <div :class="[isDropDownOpened.MEETING ? 'selected' : '', 'drop-down-button']">
-        <span>Kokous: </span>
+        <span >Kokous: </span>
         <span v-for="item in mapMeetingsToDropDown()" :key="item.value">
           <span v-if="'meeting_id:' + item.value == filterStrings.meeting">
             {{ item.label }}
@@ -77,7 +76,7 @@
         </span>
         <svg-icon icon-name="triangle"><icon-triangle /></svg-icon>
       </div>
-      <filter-drop-down
+      <filter-drop-down 
         :selectedIndex="selectedOptionIndex.MEETING"
         :isOpened="isDropDownOpened.MEETING"
         :dropDownOptions="mapMeetingsToDropDown()"
@@ -86,11 +85,10 @@
         @refreshSelectedIndex="selectedOptionIndex.MEETING = $event"
         @closeDropDown="closeDropDown"
       />
-    </div>
-
-    <!-- <a v-if="filters && filters.length > 0" @click="resetFilters()" class="clear-button">
-        aTyhjennä valinnat
-      </a> -->
+    </div >
+        <a v-if="isDropDownOpened.MEETING && filterStrings.meeting.length > 0" @click="resetMeetings()" class="clear-button">
+          Tyhjennä kokoukset
+    </a>
   </div>
 </template>
 
@@ -249,6 +247,23 @@ export default {
         handleQueries(filters, this.searchWord, this.sort, this.$router);
       }
     },
+
+    meetingOutFromTheFilters() {
+      if (this.meetingId) {
+        handleMeetingQueries(
+          null,
+          this.filters,
+          this.searchWord,
+          this.sort,
+          this.$router
+        );
+      } else {
+        let stateString = '';
+        let filters = this.combineStateStrings(filterType.MEETING, stateString);
+        handleQueries(filters, this.searchWord, this.sort, this.$router);
+      }
+    },
+
     tagChanged(selected) {
       let filters = this.combineStateStrings(filterType.TAGS, selected);
       if (this.meetingId) {
@@ -257,6 +272,7 @@ export default {
         handleQueries(filters, this.searchWord, this.sort, this.$router);
       }
     },
+
     typeChanged(selected) {
       let stateString = this.createFilterString(filterType.TYPE, selected);
       let filters = this.combineStateStrings(filterType.TYPE, stateString);
@@ -303,6 +319,12 @@ export default {
       this.tagChanged('');
       this.selectedOptionIndex.TAGS = [];
     },
+
+    resetMeetings() {
+      this.meetingOutFromTheFilters();
+      this.selectedOptionIndex.MEETING = null;
+    },
+
     resetFilters() {
       this.selectedOptionIndex = {
         STATUS: 0,
@@ -316,6 +338,33 @@ export default {
         type: '',
         meeting: ''
       };
+
+      handleQueries('', this.searchWord, this.sort, this.$router);
+      this.hasTouchedFilters = false;
+    },
+
+    resetFiltersFromMeetings() {
+      this.filterStrings = {
+        status: 'status:' + this.selectedOptionIndex.STATUS.indexOf(this.tagIndex),
+        // this.selectedOptionIndex.TAGS.indexOf(tagIndex)
+        tags: 'tags:' + this.selectedOptionIndex.TAGS,
+        type: 'type:' + this.selectedOptionIndex.TYPE,
+        meeting: 'meeting_id:'
+      };
+      console.log(this.selectedOptionIndex.STATUS);
+      console.log(this.selectedOptionIndex.TAGS);
+      console.log(this.selectedOptionIndex.TYPE);
+      console.log(this.selectedOptionIndex.MEETING);
+
+      // selectedOptionIndex
+
+      this.selectedOptionIndex = {
+        STATUS: 0,
+        TAGS: [],
+        TYPE: 0,
+        MEETING: null
+      };
+      
       handleQueries('', this.searchWord, this.sort, this.$router);
       this.hasTouchedFilters = false;
     },
