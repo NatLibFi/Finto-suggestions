@@ -1,13 +1,11 @@
 <template>
   <div v-if="isOpened" class="drop-down-options empty-options" v-on-clickaway="closeDropDown">
-    <!-- <div @click="testingOfExternal()"> klikkaa </div> -->
     <div v-if="dropDownOptions.length == 0">
       <div class="option" style="padding-left: 16px;">
         <span>{{ noOptionsMessage }}</span>
       </div>
     </div>
     <div v-if="dropDownOptions.length > 0">
-      <!-- <div @click="testingOfExternal()"> klikkaa </div> -->
       <div v-for="(option, i) in dropDownOptions" :key="option.id">
         <div
           @click="filterValueSelected(option, i)"
@@ -57,10 +55,6 @@ export default {
         this.applyFilter();
       }
     },
-
-    // testingOfExternal() {
-    //   this.$emit('test2', resetMeetings());
-    // },
     applyFilter(selectedFilter = null) {
       this.$emit('applyFilter', selectedFilter);
     },

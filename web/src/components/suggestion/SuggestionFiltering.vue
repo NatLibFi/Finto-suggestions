@@ -1,24 +1,11 @@
 <template>
   <div class="suggestion-filtering">
-    <!-- <div class="suggestion-filtering" ref="test2"> -->
     <h5>
       Suodata hakutuloksia
       <a v-if="filters && filters.length > 0" @click="resetFilters()" class="clear-button">
         Tyhjennä valinnat
       </a>
-      <!-- <a v-if="filters && filters.length > 0" @click="resetFiltersFromMeetings()" class="clear-button"> -->
-      <a v-if="filters && filters.length > 0" @click="resetMeetings()" class="clear-button">
-        Tyhjennä tapaamiset
-      </a>
-      <p> selectedOptionIndex:</p>
-      <p> {{ selectedOptionIndex  }} </p>
-      <p> {{ filterStrings.status }} </p>  
-      <p> {{ filterStrings.tags }} </p>
-      <p> {{ filterStrings.type}} </p>
-      <p> {{ filterStrings.meeting }} </p>
-
     </h5>
-
     <div
       @click="isDropDownOpened.STATUS = !isDropDownOpened.STATUS"
       :class="[filterStrings.status.length > 0 ? 'active-filter' : '', 'filter-item']"
@@ -75,7 +62,6 @@
         @closeDropDown="closeDropDown"
       />
     </div>
-    <!-- <div @click="resetMeetings()"> mihin tämä tekesti tulee </div> -->
     <div
       v-if="!meetingId && mapMeetingsToDropDown().length > 0"
       @click="isDropDownOpened.MEETING = !isDropDownOpened.MEETING"
@@ -100,6 +86,9 @@
         @closeDropDown="closeDropDown"
       />
     </div >
+        <a v-if="isDropDownOpened.MEETING && filterStrings.meeting.length > 0" @click="resetMeetings()" class="clear-button">
+          Tyhjennä kokoukset
+    </a>
   </div>
 </template>
 
