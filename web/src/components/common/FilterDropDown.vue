@@ -10,7 +10,7 @@
         <div
           @click="filterValueSelected(option, i)"
           :class="[i == selectedIndex ? 'selected' : '', 'option']"
-        >
+        > 
           <svg-icon :class="[i == selectedIndex ? '' : 'hidden-checkmark']" icon-name="check">
             <icon-check />
           </svg-icon>
@@ -23,7 +23,7 @@
 
 <script>
 import { findValueFromDropDownOptions } from '../../utils/dropDownHelper.js';
-
+import IconCross from '../icons/IconCross';
 import SvgIcon from '../icons/SvgIcon';
 import IconCheck from '../icons/IconCheck';
 import { directive as onClickaway } from 'vue-clickaway';
@@ -31,7 +31,8 @@ import { directive as onClickaway } from 'vue-clickaway';
 export default {
   components: {
     SvgIcon,
-    IconCheck
+    IconCheck,
+    IconCross
   },
   directives: {
     onClickaway: onClickaway

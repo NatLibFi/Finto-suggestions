@@ -11,7 +11,7 @@
         />
         <transition name="fade">
           <div v-if="searchWord && searchWord.length > 0" @click="clearSearch" class="clear-button">
-            <svg-icon icon-name="cross"><icon-cross /></svg-icon>
+            <!-- <svg-icon icon-name="cross"><icon-cross /></svg-icon> -->
           </div>
         </transition>
       </div>
