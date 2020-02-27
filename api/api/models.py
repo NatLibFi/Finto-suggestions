@@ -8,54 +8,21 @@ from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import validates
 from passlib.hash import pbkdf2_sha256 as hash_algorithm
 
-# Mika 021019
-# import logging
-# logging.basicConfig()
-# logging.getLogger('sqlachemy.engine').setLevel(logging.ERROR)
-
-# Mika 011019 also added _NSQLAlc in the import
-
-
-def mDecoder(obj):
-    return json.dumps(obj, ensure_ascii=False)
-
-
 class SQLAlchemy(_NSQLAlc):
-    # def __init__(self, ):
-
     def apply_pool_defaults(self, app, options):
         super(SQLAlchemy, self).apply_pool_defaults(app, options)
         options["pool_pre_ping"] = True
 
-# Jatka tästä
-# class HackSQLAlchemy(SQLAlchemy):
-#     """ Ugly way to get SQLAlchemy engine to pass the Flask JSON serializer
-#     to `create_engine`.
+def mDecoder(obj):
+    '''
+    This serializer prevents JSON from being encoded in ASCII
+    and, thus, fixes issues with UTF-8 encoded search.
+    '''
+    return json.dumps(obj, ensure_ascii=False)
 
-#     See https://github.com/mitsuhiko/flask-sqlalchemy/pull/67/files
-
-#     """
-
-#     def apply_driver_hacks(self, app, info, options):
-#         options.update(json_serializer=json.dumps({}, ensure_ascii=False))
-#         super(HackSQLAlchemy, self).apply_driver_hacks(app, info, options)
-
-#db = HackSQLAlchemy()
-
-
-# This is the one to used originally
 # If you want go switch a logging on, do it here: 'echo': False
 db = SQLAlchemy(engine_options={'encoding': 'utf-8',
                                 'echo': False, 'json_serializer': mDecoder})
-
-# Tests
-# db.register_default_json(loads=ujson.loads, globally=True)
-# db.register_default_jsonb(loads=ujson.loads, globally=True)
-# _NSQLAlc.re
-
-# Mika 011019
-# db.options.pool_pre_ping = True
-
 
 class EventTypes(enum.IntEnum):
     ACTION = 0

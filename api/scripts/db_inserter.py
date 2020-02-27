@@ -85,7 +85,6 @@ class DBInserter:
                 comment_bo.event_type = EventTypes.COMMENT
                 comment_bo.text = comment.text
                 comment_bo.suggestion_id = suggestion_id
-                # Mika 111019
                 if comment_bo.user_id is None:
                     comment_bo.user_id = 1
                 comments_bo.append(comment_bo)

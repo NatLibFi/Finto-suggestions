@@ -8,7 +8,7 @@ class GithubDataParser:
 
     # ctor
     def __init__(self):
-        self.prefrered_labels = dict()
+        self.preferred_labels = dict()
         self.last_request_completed = False
 
     # privates
