@@ -10,25 +10,16 @@ from specsynthase.specbuilder import SpecBuilder
 from api.models import db, User, UserRoles
 from api.authentication import JWT, prune_expired_tokens
 
-
 # Here you can adjust error logging levels
 # logging.basicConfig()   # log messages to stdout
 # logging.getLogger('sqlalchemy.dialects.postgresql').setLevel(logging.DEBUG)
 
-# psycopg2.extras.register_default_json(globally=True, loads=loads)
-# conn = psycopg2.connect(...)
-# psycopg2.extras.register_default_json(conn, loads=loads)
-
-
-# def create_app(config_object='config.DevelopmentConfig'):
 def create_app(config_object='config.DevelopmentConfig'):
 
     app = connexion.FlaskApp(__name__, specification_dir='api/specification/')
-    # app
 
     # This is required for Flask CLI and FLASK_APP env to work
     flask_app = app.app
-    # flask_app.json.JSONEncoder(ensure_ascii=False)
 
     flask_app.secret_key = os.environ.get('APP_SECRET_KEY')
     flask_app.config.from_object(config_object)
@@ -38,15 +29,12 @@ def create_app(config_object='config.DevelopmentConfig'):
     # https://github.com/zalando/connexion/issues/254
     api_spec = _build_swagger_spec(SpecBuilder())
 
-
     # In case you don't want to show the swagger_ui for private endpoints
     # You might want to split this into two apis
     enable_swagger = flask_app.config['ENABLE_SWAGGER_UI']
     app.add_api(api_spec, options={"swagger_ui": enable_swagger})
 
-
     db.init_app(flask_app)
-    # flask_app.OPTIONS.psycopg2.register_default_json.
     JWT.init_app(flask_app)
     migrate = Migrate(flask_app, db, compare_type=True)
 
@@ -85,12 +73,10 @@ def create_app(config_object='config.DevelopmentConfig'):
             '{} expired tokens pruned from the database.'.format(no_pruned))
 
     @flask_app.cli.command()
-    # def json_testing();
-
     @click.argument('name')
-    @click.argument('email') #pylint: disable=unused-variable
+    @click.argument('email')
     @click.argument('password')
-    def create_admin(name, email, password):
+    def create_admin(name, email, password): #pylint: disable=unused-variable
         """
         Creates an admin user
 
@@ -129,6 +115,4 @@ def _build_swagger_spec(builder):
 
 if __name__ == '__main__':
     app = create_app('config.DevelopmentConfig')
-    # app.register_default_json(loads=ujson.loads, globally=True)
-    # app.register_default_jsonb(loads=ujson.loads, globally=True)
     app.run(host='0.0.0.0', port=8050, debug=True)

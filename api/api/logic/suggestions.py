@@ -276,7 +276,6 @@ def post_suggestion() -> str:
     # Mika's test area for getting missing lists inserted into the db with at least brackets
     if 'broader_labels' not in payload_dict:
         payload_dict['broader_labels'] = []
-        # print(payload_dict['broader_labels'])
 
     if 'exactMatches' not in payload_dict:
         payload_dict['exactMatches'] = []
@@ -485,7 +484,7 @@ def get_open_suggestions() -> str:
     """
     try:
         open_suggestions = Suggestion.query.filter(Suggestion.status.notin_(
-            ['ACCEPTED', 'REJECTED', 'RETAINED', 'ARCHIVED'])).all()
+            ['ACCEPTED', 'REJECTED', 'ARCHIVED'])).all()
         serialized_objects = [o.as_dict() for o in open_suggestions]
         return {'data': serialized_objects, 'code': 200}, 200
     except Exception as ex:
@@ -514,9 +513,8 @@ def get_open_suggestions_skos() -> str:
     :returns: Suggestions list of open suggestions in skos format
     """
     try:
-        # Retruns all except...
         open_suggestions = Suggestion.query.filter(and_(Suggestion.status.notin_(
-            ['ACCEPTED', 'REJECTED', 'RETAINED', 'ARCHIVED']), Suggestion.yse_term["url"] == None)).all()
+            ['ACCEPTED', 'REJECTED', 'ARCHIVED']), Suggestion.yse_term["url"] == None)).all()
         graph = None
         for suggestion in open_suggestions:
             graph = suggestionToGraph(suggestion.as_dict(), graph)
