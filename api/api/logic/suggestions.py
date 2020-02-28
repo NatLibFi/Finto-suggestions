@@ -600,13 +600,30 @@ def get_suggestion_skos(suggestion_id: int) -> str:
 
 def get_suggestion_skosjoku(filters: str = "") -> str:
 
+#     http://localhost:8080/api/suggestions/skosjoku?filters=abc
 
+#   status:
+#     type: string
+#     enum:
+#       - RECEIVED
+#       - READ
+#       - ACCEPTED
+#       - REJECTED
+#       - RETAINED
+#       - ARCHIVED
+
+    # type: string
+    # enum:
+    #   - NEW
+    #   - MODIFY
+
+# status:received+read+accepted+rejected+retained+archived|exclude:true|type:new|yse:true|model:skos|format:turtle|suggestion_id:0
 
     print("************************")
     if len(filters) > 0:
         print(filters)
     else:
-        print("Ei toimi vielä")
+        print(f'{filters} ei toimi vielä')
 
     
     """

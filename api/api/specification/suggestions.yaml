@@ -322,11 +322,17 @@ paths:
       produces:
         - text/turtle
       parameters:
-        - name: filters
+        - name: status_value
           in: query
           description: 'Pipe-separated filter string, i.e. status:accepted|type:new|meeting_id:12|tags:melinda-slm|user_id:1'
           required: false
           type: string
+      parameters:
+        - name: filters
+          in: query
+          description: 'Pipe-separated filter string, i.e. status:accepted|type:new|meeting_id:12|tags:melinda-slm|user_id:1'
+          required: false
+          type: string          
       responses:
         '200':
           description: A suggestion matching the given id
