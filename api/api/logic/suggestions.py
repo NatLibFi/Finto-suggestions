@@ -508,10 +508,56 @@ def get_resolved_suggestions() -> str:
 
 
 def get_open_suggestions_skos() -> str:
+# def get_open_suggestions_skos(search_terms: str) -> str:
+
     """
     Get open status suggestions from db
     :returns: Suggestions list of open suggestions in skos format
     """
+        #   description: 'Pipe-separated filter string, i.e. status:accepted|type:new|meeting_id:12'
+
+
+    # def _validate_filters(filters):
+    #     return all([filter[0].upper() in SUGGESTION_FILTER_FUNCTIONS.keys() for filter in filters])
+
+    # if filters:
+    #     # status:accepted|type:new|meeting_id:12|tags:melinda-slm|user_id:1
+    #     # -> [['status', 'accepted'], ['type', 'new'], ['meeting_id', '12'], ['tags', 'melinda-slm'], ['user_id', '1]]
+    #     filters = [f.split(':') for f in filters.split('|')]
+
+    # return get_all_or_404_custom(query_func)
+
+##Start
+    # if search_terms:
+    #     print(search_terms)
+    # status:accepted|type:new|meeting:12
+    # -> [['status', 'accepted'], ['type', 'new'], ['meeting', '12']]
+    # filters = [f.split(':') for f in filters.split('|')]
+    # try:
+    #     suggestion = Suggestion.query.filter_by(id=suggestion_id).first()
+    #     graph = suggestionToGraph(suggestion.as_dict())
+    #     try:
+    #         return graph.serialize(format='turtle')
+    #     except Exception as ex:
+    #         print(str(ex))
+    # except Exception as ex:
+    #     print(str(ex))
+    #     return {'code': 404, 'error': str(ex)}, 404
+        # return search_terms
+
+
+
+
+# return get_count_or_404_custom(query_func)
+#End
+
+
+
+#   tekstiä
+#   tekstiä  
+
+#original start
+
     try:
         open_suggestions = Suggestion.query.filter(and_(Suggestion.status.notin_(
             ['ACCEPTED', 'REJECTED', 'ARCHIVED']), Suggestion.yse_term["url"] == None)).all()
@@ -526,6 +572,8 @@ def get_open_suggestions_skos() -> str:
     except Exception as ex:
         print(str(ex))
         return {'code': 404, 'error': str(ex)}, 404
+
+#original ends
 
 
 def get_suggestion_skos(suggestion_id: int) -> str:
@@ -546,3 +594,38 @@ def get_suggestion_skos(suggestion_id: int) -> str:
     except Exception as ex:
         print(str(ex))
         return {'code': 404, 'error': str(ex)}, 404
+
+
+# Mikan uusi
+
+def get_suggestion_skosjoku(filters: str = "") -> str:
+
+
+
+    print("************************")
+    if len(filters) > 0:
+        print(filters)
+    else:
+        print("Ei toimi vielä")
+
+    
+    """
+    Returns a suggestion by id in skos format.
+
+    :param id: Suggestion id
+    :returns: A single suggestion object as json
+    """
+
+    try:
+        # suggestion = Suggestion.query.filter_by(id=suggestion_id).first()
+        suggestion = Suggestion.query.filter_by(id=222).first()
+        graph = suggestionToGraph(suggestion.as_dict())
+        try:
+            return graph.serialize(format='turtle')
+        except Exception as ex:
+            print(str(ex))
+    except Exception as ex:
+        print(str(ex))
+        return {'code': 404, 'error': str(ex)}, 404
+
+

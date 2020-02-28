@@ -315,3 +315,20 @@ paths:
           description: A suggestion matching the given id
         '404':
           description: No suggestion could be found with the given ID
+  /suggestions/skosjoku:
+    get:
+      operationId: api.logic.suggestions.get_suggestion_skosjoku
+      description: Get a single suggestion by id in skos format
+      produces:
+        - text/turtle
+      parameters:
+        - name: filters
+          in: query
+          description: 'Pipe-separated filter string, i.e. status:accepted|type:new|meeting_id:12|tags:melinda-slm|user_id:1'
+          required: false
+          type: string
+      responses:
+        '200':
+          description: A suggestion matching the given id
+        '404':
+          description: No suggestion could be found with the given ID
