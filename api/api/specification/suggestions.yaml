@@ -322,15 +322,10 @@ paths:
       produces:
         - text/turtle
       parameters:
-        - name: status_value
-          in: query
-          description: 'Pipe-separated filter string, i.e. status:accepted|type:new|meeting_id:12|tags:melinda-slm|user_id:1'
-          required: false
-          type: string
       parameters:
         - name: filters
           in: query
-          description: 'Pipe-separated filter string, i.e. status:accepted|type:new|meeting_id:12|tags:melinda-slm|user_id:1'
+          description: 'Pipe-separated filter string, i.e. status:received.read.accepted.rejected.retained.archived|exclude:true|type:new|yse:true|model:skos|format:turtle|suggestion_id:0'
           required: false
           type: string          
       responses:

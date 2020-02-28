@@ -617,13 +617,46 @@ def get_suggestion_skosjoku(filters: str = "") -> str:
     #   - NEW
     #   - MODIFY
 
-# status:received+read+accepted+rejected+retained+archived|exclude:true|type:new|yse:true|model:skos|format:turtle|suggestion_id:0
+# status:received.read.accepted.rejected.retained.archived|exclude:true|type:new|yse:true|model:skos|format:turtle|suggestion_id:0
 
     print("************************")
     if len(filters) > 0:
+        filters = [f.split(':') for f in filters.split('|')]
+        print(type(filters))
         print(filters)
+        print("************************")        
+        statusList = filters[0]
+        print(statusList)
+        statusValues = statusList[1]
+        print("************************")
+        print(statusValues)
+        statusValuesList = statusValues.split('.')
+        print("************************")
+        print(statusValuesList)
+        upperCaseStatusValuesList = [item.upper() for item in statusValuesList]
+        print("************************")
+        print(upperCaseStatusValuesList)
     else:
         print(f'{filters} ei toimi vielä')
+
+    try:
+        # Kun excludataan -> open_suggestions = Suggestion.query.filter(and_(Suggestion.status.notin_(
+        open_suggestions = Suggestion.query.filter(and_(Suggestion.status.in_(
+            upperCaseStatusValuesList), Suggestion.yse_term["url"] == None)).all()
+        graph = None
+        for suggestion in open_suggestions:
+            graph = suggestionToGraph(suggestion.as_dict(), graph)
+        try:
+            return graph.serialize(format='turtle')
+        except Exception as ex:
+            print(str(ex))
+
+    except Exception as ex:
+        print(str(ex))
+        return {'code': 404, 'error': str(ex)}, 404
+
+
+    
 
     
     """
@@ -633,16 +666,16 @@ def get_suggestion_skosjoku(filters: str = "") -> str:
     :returns: A single suggestion object as json
     """
 
-    try:
-        # suggestion = Suggestion.query.filter_by(id=suggestion_id).first()
-        suggestion = Suggestion.query.filter_by(id=222).first()
-        graph = suggestionToGraph(suggestion.as_dict())
-        try:
-            return graph.serialize(format='turtle')
-        except Exception as ex:
-            print(str(ex))
-    except Exception as ex:
-        print(str(ex))
-        return {'code': 404, 'error': str(ex)}, 404
+    # try:
+    #     # suggestion = Suggestion.query.filter_by(id=suggestion_id).first()
+    #     suggestion = Suggestion.query.filter_by(id=222).first()
+    #     graph = suggestionToGraph(suggestion.as_dict())
+    #     try:
+    #         return graph.serialize(format='turtle')
+    #     except Exception as ex:
+    #         print(str(ex))
+    # except Exception as ex:
+    #     print(str(ex))
+    #     return {'code': 404, 'error': str(ex)}, 404
 
 
