@@ -618,41 +618,86 @@ def get_suggestion_skosjoku(filters: str = "") -> str:
     #   - MODIFY
 
 # status:received.read.accepted.rejected.retained.archived|exclude:true|type:new|yse:true|model:skos|format:turtle|suggestion_id:0
+    inYSE = ''
 
     print("************************")
+
     if len(filters) > 0:
-        filters = [f.split(':') for f in filters.split('|')]
-        print(type(filters))
-        print(filters)
-        print("************************")        
-        statusList = filters[0]
-        print(statusList)
-        statusValues = statusList[1]
-        print("************************")
-        print(statusValues)
-        statusValuesList = statusValues.split('.')
-        print("************************")
-        print(statusValuesList)
-        upperCaseStatusValuesList = [item.upper() for item in statusValuesList]
-        print("************************")
-        print(upperCaseStatusValuesList)
+        if "suggestion_id:0" in filters:
+            if "yse:true" in filters:
+                inYSE = 'InYSE'
+                print("************************")        
+                print(inYSE)
+            elif "yse:false" in filters:
+                inYSE = 'NotInYSE'
+                print("************************")        
+                print(inYSE)
+            else:
+                inYSE = 'both'
+                print("************************")        
+                print(inYSE)
+
+            filters = [f.split(':') for f in filters.split('|')]
+            print(type(filters))
+            print(filters)
+            print("************************")        
+            statusList = filters[0]
+            print(statusList)
+            statusValues = statusList[1]
+            print("************************")
+            print(statusValues)
+            statusValuesList = statusValues.split('.')
+            print("************************")
+            print(statusValuesList)
+            upperCaseStatusValuesList = [item.upper() for item in statusValuesList]
+            print("************************")
+            print(upperCaseStatusValuesList)
+
+
+
+            try:
+                # Kun excludataan -> open_suggestions = Suggestion.query.filter(and_(Suggestion.status.notin_(
+                if inYSE == 'InYSE':
+                    open_suggestions = Suggestion.query.filter(and_(Suggestion.status.in_(
+                    upperCaseStatusValuesList), Suggestion.yse_term["url"] != None)).all()
+                    print("********")
+                    print("Tultiin is not None -kohtaan eli ehdotus on YSESSÄ")
+                elif inYSE == 'NotInYSE':
+                    open_suggestions = Suggestion.query.filter(and_(Suggestion.status.in_(
+                    upperCaseStatusValuesList), Suggestion.yse_term["url"] == None)).all()
+                    print("********")
+                    print("Tultiin is None -kohtaan eli ehdotus ei ole YSESSÄ")
+                elif inYSE == 'both':
+                    open_suggestions = Suggestion.query.filter(and_(Suggestion.status.in_(
+                    upperCaseStatusValuesList))).all()
+                    print("********")
+                    print("Tultiin kohtaa, jossa on asetettu both eli voi olla tai olla olematta YSEssä")
+                else:
+                    print("Something went wrong")
+
+                    # upperCaseStatusValuesList))).all() ## For test purposes
+            except Exception as ex:
+                    print(str(ex))
+                    return {'code': 404, 'error': str(ex)}, 404
+
+
+
+
+            
+            graph = None
+            for suggestion in open_suggestions:
+                graph = suggestionToGraph(suggestion.as_dict(), graph)
+            try:
+                return graph.serialize(format='turtle')
+            except Exception as ex:
+                print(str(ex))
+
+        elif "suggestion_id:0" not in filters:
+            print('Tämä on keskeneräinen kohta')
+        else:
+            print('Jotain hämärää tapahtui')
+
     else:
-        print(f'{filters} ei toimi vielä')
-
-    try:
-        # Kun excludataan -> open_suggestions = Suggestion.query.filter(and_(Suggestion.status.notin_(
-        open_suggestions = Suggestion.query.filter(and_(Suggestion.status.in_(
-            upperCaseStatusValuesList), Suggestion.yse_term["url"] == None)).all()
-        graph = None
-        for suggestion in open_suggestions:
-            graph = suggestionToGraph(suggestion.as_dict(), graph)
-        try:
-            return graph.serialize(format='turtle')
-        except Exception as ex:
-            print(str(ex))
-
-    except Exception as ex:
-        print(str(ex))
         return {'code': 404, 'error': str(ex)}, 404
 
 
