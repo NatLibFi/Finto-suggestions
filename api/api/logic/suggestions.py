@@ -634,11 +634,6 @@ def get_suggestion_skosjoku(filters: str = "") -> str:
     print("************************")
 
     if len(filters) > 0:
-        # if condition:
-        #     pass
-        # else:
-        #     pass
-
 
         if "exclude:true" in filters:
             ifItIsExcluded = True
