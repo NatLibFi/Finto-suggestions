@@ -617,13 +617,40 @@ def get_suggestion_skosjoku(filters: str = "") -> str:
     #   - NEW
     #   - MODIFY
 
+# curl 
+# -X GET --header 'Accept: text/turtle' --header 
+# 'Authorization: Bearer xyz123' 'http://localhost:8080/api/suggestions/skosjoku?filters=
+# status:received.read.accepted.rejected.retained.archived|exclude:false|type:new|yse:both|
+# model:skos|format:turtle|suggestion_id:0' > /home/mijuahon/tests/skos_test_020220_1.txt 
+
+
+
+
 # status:received.read.accepted.rejected.retained.archived|exclude:true|type:new|yse:true|model:skos|format:turtle|suggestion_id:0
     inYSE = ''
     tempId = ''
+    ifItIsExcluded = False
 
     print("************************")
 
     if len(filters) > 0:
+        # if condition:
+        #     pass
+        # else:
+        #     pass
+
+
+        if "exclude:true" in filters:
+            ifItIsExcluded = True
+            print('Excludataan eli arvo on: ' + str(ifItIsExcluded))
+            # exclude:true
+            # in_
+            # notin_
+        else:
+            print("Something went wrong")
+
+
+
         if "suggestion_id:0" in filters:
             if "yse:true" in filters:
                 inYSE = 'InYSE'
@@ -659,20 +686,32 @@ def get_suggestion_skosjoku(filters: str = "") -> str:
             try:
                 # Kun excludataan -> open_suggestions = Suggestion.query.filter(and_(Suggestion.status.notin_(
                 if inYSE == 'InYSE':
-                    open_suggestions = Suggestion.query.filter(and_(Suggestion.status.in_(
-                    upperCaseStatusValuesList), Suggestion.yse_term["url"] != None)).all()
-                    print("********")
-                    print("Tultiin is not None -kohtaan eli ehdotus on YSESSÄ")
+                    if ifItIsExcluded:
+                        open_suggestions = Suggestion.query.filter(and_(Suggestion.status.notin_(
+                        upperCaseStatusValuesList), Suggestion.yse_term["url"] != None)).all()
+                        print("********")
+                        print("Tultiin is not None -kohtaan eli ehdotus on YSESSÄ")
+                    else:
+                        open_suggestions = Suggestion.query.filter(and_(Suggestion.status.in_(
+                        upperCaseStatusValuesList), Suggestion.yse_term["url"] != None)).all()
                 elif inYSE == 'NotInYSE':
-                    open_suggestions = Suggestion.query.filter(and_(Suggestion.status.in_(
-                    upperCaseStatusValuesList), Suggestion.yse_term["url"] == None)).all()
-                    print("********")
-                    print("Tultiin is None -kohtaan eli ehdotus ei ole YSESSÄ")
+                    if ifItIsExcluded:
+                        open_suggestions = Suggestion.query.filter(and_(Suggestion.status.notin_(
+                        upperCaseStatusValuesList), Suggestion.yse_term["url"] == None)).all()
+                        print("********")
+                        print("Tultiin is None -kohtaan eli ehdotus ei ole YSESSÄ")
+                    else:
+                        open_suggestions = Suggestion.query.filter(and_(Suggestion.status.in_(
+                        upperCaseStatusValuesList), Suggestion.yse_term["url"] == None)).all()
                 elif inYSE == 'both':
-                    open_suggestions = Suggestion.query.filter(and_(Suggestion.status.in_(
-                    upperCaseStatusValuesList))).all()
-                    print("********")
-                    print("Tultiin kohtaa, jossa on asetettu both eli voi olla tai olla olematta YSEssä")
+                    if ifItIsExcluded:
+                        open_suggestions = Suggestion.query.filter(and_(Suggestion.status.notin_(
+                        upperCaseStatusValuesList))).all()
+                        print("********")
+                        print("Tultiin kohtaa, jossa on asetettu both eli voi olla tai olla olematta YSEssä")
+                    else:
+                        open_suggestions = Suggestion.query.filter(and_(Suggestion.status.in_(
+                        upperCaseStatusValuesList))).all()
                 else:
                     print("Something went wrong")
 
