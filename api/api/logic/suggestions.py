@@ -619,6 +619,7 @@ def get_suggestion_skosjoku(filters: str = "") -> str:
 
 # status:received.read.accepted.rejected.retained.archived|exclude:true|type:new|yse:true|model:skos|format:turtle|suggestion_id:0
     inYSE = ''
+    tempId = ''
 
     print("************************")
 
@@ -693,10 +694,22 @@ def get_suggestion_skosjoku(filters: str = "") -> str:
                 print(str(ex))
 
         elif "suggestion_id:0" not in filters:
-            print('Tämä on keskeneräinen kohta')
+            
+            tempId = filters.split("suggestion_id:", 1)[1]
+            print('Tätä id:tä käytetään: ' + tempId)
+            try:
+                # suggestion = Suggestion.query.filter_by(id=suggestion_id).first()
+                suggestion = Suggestion.query.filter_by(id=tempId).first()
+                graph = suggestionToGraph(suggestion.as_dict())
+                try:
+                    return graph.serialize(format='turtle')
+                except Exception as ex:
+                    print(str(ex))
+            except Exception as ex:
+                print(str(ex))
+                return {'code': 404, 'error': str(ex)}, 404
         else:
             print('Jotain hämärää tapahtui')
-
     else:
         return {'code': 404, 'error': str(ex)}, 404
 
