@@ -631,6 +631,7 @@ def get_suggestion_skosjoku(filters: str = "") -> str:
     tempId = ''
     ifItIsExcluded = False
     typeOfSuggestion = ''
+    # formatUsed = ''
 
     def conditionsForSuggestionTypes(filters: str = "") -> list:
         if "type:new" in filters:
@@ -642,21 +643,20 @@ def get_suggestion_skosjoku(filters: str = "") -> str:
         else:
             print("Type of suggestions is not set")
 
+    def formatInUse(filters: str = "") -> str:
+        if "format:turtle" in filters:
+            return 'turtle'
+        elif "format:jsonld" in filters:
+            return 'json-ld'
+        else:
+            return 'turtle'
+
     if len(filters) > 0:
 
         if "exclude:true" in filters:
             ifItIsExcluded = True
         else:
             print("An inclusive search in use")
-
-        # if "type:new" in filters:
-        #     typeOfSuggestion = 'new'
-        # elif "type:modify" in filters:
-        #     typeOfSuggestion = 'modify'
-        # elif "type:both" in filters:
-        #     typeOfSuggestion = 'both'
-        # else:
-        #     print("Type of suggestions is not set")
 
         if "suggestion_id:0" in filters:
             if "yse:true" in filters:
@@ -665,6 +665,23 @@ def get_suggestion_skosjoku(filters: str = "") -> str:
                 inYSE = 'NotInYSE'
             else:
                 inYSE = 'both'
+
+            # if "format:turtle" in filters:
+            #     formatUsed = 'turtle'
+            # elif "format:jsonld" in filters:
+            #     formatUsed = 'json-ld'
+            # else:
+            #     formatUsed = 'turtle'
+
+
+        # if "type:new" in filters:
+        #     return ['NEW']
+        # elif "type:modify" in filters:
+        #     return ['MODIFY']
+        # elif "type:both" in filters:
+        #     return ['NEW', 'MODIFY']
+        # else:
+        #     print("Type of suggestions is not set")
 
             splittedFilters = [f.split(':') for f in filters.split('|')]
             print(splittedFilters)
@@ -696,9 +713,6 @@ def get_suggestion_skosjoku(filters: str = "") -> str:
                     if ifItIsExcluded:
                         open_suggestions = Suggestion.query.filter(and_(Suggestion.status.notin_(
                         upperCaseStatusValuesList), Suggestion.suggestion_type.in_(conditionsForSuggestionTypes(filters)))).all()
-                        print("tultiinko tänne?")
-
-                        ####Jatka tästä
                     else:
                         print("********************")
                         print(conditionsForSuggestionTypes(filters))
@@ -732,20 +746,22 @@ def get_suggestion_skosjoku(filters: str = "") -> str:
             for suggestion in open_suggestions:
                 graph = suggestionToGraph(suggestion.as_dict(), graph)
             try:
-                return graph.serialize(format='turtle')
+                # return graph.serialize(format='turtle')
+                return graph.serialize(format=formatInUse(filters))
             except Exception as ex:
                 print(str(ex))
 
         elif "suggestion_id:0" not in filters:
+            print("tullaanko tänne asti?")
             
             tempId = filters.split("suggestion_id:", 1)[1]
             print('Tätä id:tä käytetään: ' + tempId)
             try:
-                # suggestion = Suggestion.query.filter_by(id=suggestion_id).first()
                 suggestion = Suggestion.query.filter_by(id=tempId).first()
                 graph = suggestionToGraph(suggestion.as_dict())
                 try:
-                    return graph.serialize(format='turtle')
+                    return graph.serialize(format=formatInUse(filters))
+                    # return graph.serialize(format='turtle')
                 except Exception as ex:
                     print(str(ex))
             except Exception as ex:
