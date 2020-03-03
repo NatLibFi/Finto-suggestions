@@ -315,3 +315,25 @@ paths:
           description: A suggestion matching the given id
         '404':
           description: No suggestion could be found with the given ID
+  /suggestions/skosfilter:
+    get:
+      operationId: api.logic.suggestions.get_suggestion_skosfilter
+      description: Get the suggestions in many of formats
+      produces:
+        - text/turtle
+      parameters:
+      parameters:
+        - name: filters
+          in: query
+          description: 'Pipe-separated filter string, i.e. /api/suggestions/skosfilter?filters=status:received.read.accepted.rejected.retained.archived
+    |exclude:false|type:both|yse:both|model:skos|format:turtle|suggestion_id:0'
+          required: false
+          type: string          
+      responses:
+        '200':
+          description: A suggestion matching the criteria
+        '400':
+          description: Bad request
+        '404':
+          description: No suggestion could be found
+        
