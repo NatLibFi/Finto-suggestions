@@ -595,11 +595,11 @@ def get_suggestion_skos(suggestion_id: int) -> str:
         print(str(ex))
         return {'code': 404, 'error': str(ex)}, 404
 
-def get_suggestion_skosjoku(filters: str = "") -> str:
+def get_suggestion_skosfilter(filters: str = "") -> str:
 
     '''
     curl -X GET --header 'Accept: text/turtle' --header 'Authorization: Bearer ..YourSHAorSomethingForAuthorization.. ' 
-    'http://localhost:8080/api/suggestions/skosjoku
+    'http://localhost:8080/api/suggestions/skosfilter
     ?filters=status:received.read.accepted.rejected.retained.archived|exclude:true/false|type:new/modify/both|
     yse:true/false/both|model:skos/dc/foaf|format:turtle/jsonld/xml/n3/ntriples|
     suggestion_id:0/suggestion_id:nnnn'
@@ -615,7 +615,7 @@ def get_suggestion_skosjoku(filters: str = "") -> str:
     Example:
 
     curl -X GET --header 'Accept: text/turtle' --header 'Authorization: Bearer ABC123ABC123'
-    'http://localhost:8080/api/suggestions/skosjoku?filters=status:received.read.accepted.rejected.retained.archived
+    'http://localhost:8080/api/suggestions/skosfilter?filters=status:received.read.accepted.rejected.retained.archived
     |exclude:false|type:both|yse:both|model:skos|format:turtle|suggestion_id:0'
     '''
     print("Before validation")
