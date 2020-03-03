@@ -595,9 +595,6 @@ def get_suggestion_skos(suggestion_id: int) -> str:
         print(str(ex))
         return {'code': 404, 'error': str(ex)}, 404
 
-
-# Mikan uusi
-
 def get_suggestion_skosjoku(filters: str = "") -> str:
 
     '''
@@ -621,8 +618,32 @@ def get_suggestion_skosjoku(filters: str = "") -> str:
     'http://localhost:8080/api/suggestions/skosjoku?filters=status:received.read.accepted.rejected.retained.archived
     |exclude:false|type:both|yse:both|model:skos|format:turtle|suggestion_id:0'
     '''
+    print("Before validation")
+    print(filters)
 
- 
+    def validateQueryParameters(filters: str = ""):
+        amountOfParametersCount = 0 # Cheks the minimums, must be 7
+        amountOfParameterOptionsCount = 0 # Cheks the minimums, must be 6
+        listOfMandatoryParameters = ['status:', 'exclude:', 'type:', 'yse:', 'model:', 'format:', 'suggestion_id:']
+        listOfMandatoryParameterOptions = ['status:received', 'status:read', 'status:accepted', 'status:rejected' 'status:retained',\
+            'status:archived', 'exclude:true', 'exclude:false', 'type:new', 'type:modify', 'type:both', 'yse:true', 'yse:false',\
+                'yse:both', 'model:skos', 'model:dc', 'model:foaf', 'format:turtle', 'format:jsonld', 'format:xml', 'format:n3',\
+                     'format:ntriples']
+        for parameterKey in listOfMandatoryParameters:
+            if parameterKey in filters:
+                amountOfParametersCount += 1
+            else:
+                print(f"ParameterKey {parameterKey} is not in querystring")
+        for parameterKey in listOfMandatoryParameterOptions:
+            if parameterKey in filters:
+                amountOfParameterOptionsCount += 1
+            else:
+                print(f"ParameterKey {parameterKey} is not in querystring")
+
+        if amountOfParametersCount == 7 and amountOfParameterOptionsCount == 6:
+            return True
+        else:
+            return False
 
     inYSE = ''
     tempId = ''
@@ -658,15 +679,14 @@ def get_suggestion_skosjoku(filters: str = "") -> str:
         # Only skos in use at the moment. In the future DC and FOAF will be on the list
         if "model:skos" in filters:
             return 'skos'
-        elif "modle:dc" in filters:
+        elif "model:dc" in filters:
             return 'skos'
-        elif "modle:foaf" in filters:
+        elif "model:foaf" in filters:
             return 'skos'
         else:
             return 'skos'
 
-    if len(filters) > 0:
-
+    if len(filters) > 0 and validateQueryParameters(filters) == True:
         if "exclude:true" in filters:
             ifItIsExcluded = True
         else:
@@ -742,5 +762,5 @@ def get_suggestion_skosjoku(filters: str = "") -> str:
         else:
             print('Please, check the passed arguments')
     else:
-        return {'code': 404, 'error': str(ex)}, 404
+        return {'code': 400, 'error': str(ex)}, 400
 

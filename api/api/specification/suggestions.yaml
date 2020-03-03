@@ -331,5 +331,8 @@ paths:
       responses:
         '200':
           description: A suggestion matching the given id
+        '400':
+          description: Bad request
         '404':
           description: No suggestion could be found with the given ID
+        
