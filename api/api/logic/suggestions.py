@@ -603,12 +603,26 @@ def get_suggestion_skosjoku(filters: str = "") -> str:
     '''
     curl -X GET --header 'Accept: text/turtle' --header 'Authorization: Bearer ..YourSHAorSomethingForAuthorization.. ' 
     'http://localhost:8080/api/suggestions/skosjoku
-    ?filters=status:received.read.accepted.rejected.retained.archived|exclude:true/false|type:new/mofify/both|
+    ?filters=status:received.read.accepted.rejected.retained.archived|exclude:true/false|type:new/modify/both|
     yse:true/false/both|model:skos/dc/foaf|format:turtle/jsonld/xml/n3/ntriples|
     suggestion_id:0/suggestion_id:nnnn'
+
+    1) At least one status flag should be used
+    2) Status flags must be delimited by a dot (.)
+    3) The 'pipe' is used as delimiter for query parameters 
+    4) suggestion_id:0 returns all the filtered suggestions
+    5) suggestion_id:nnnn retruns only one suggestion by suggestion id
+    6) All the parameters must be defined in the query
+
+
+    Example:
+
+    curl -X GET --header 'Accept: text/turtle' --header 'Authorization: Bearer ABC123ABC123'
+    'http://localhost:8080/api/suggestions/skosjoku?filters=status:received.read.accepted.rejected.retained.archived
+    |exclude:false|type:both|yse:both|model:skos|format:turtle|suggestion_id:0'
     '''
 
-    print(filters)
+ 
 
     inYSE = ''
     tempId = ''
