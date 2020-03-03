@@ -624,26 +624,39 @@ def get_suggestion_skosjoku(filters: str = "") -> str:
 # model:skos|format:turtle|suggestion_id:0' > /home/mijuahon/tests/skos_test_020220_1.txt 
 
 # status:received.read.accepted.rejected.retained.archived|exclude:true|type:new|yse:true|model:skos|format:turtle|suggestion_id:0
+    print("************************")
+    print(filters)
+
     inYSE = ''
     tempId = ''
     ifItIsExcluded = False
     typeOfSuggestion = ''
 
-    print("************************")
+    def conditionsForSuggestionTypes(filters: str = "") -> list:
+        if "type:new" in filters:
+            return ['NEW']
+        elif "type:modify" in filters:
+            return ['MODIFY']
+        elif "type:both" in filters:
+            return ['NEW', 'MODIFY']
+        else:
+            print("Type of suggestions is not set")
 
     if len(filters) > 0:
 
         if "exclude:true" in filters:
             ifItIsExcluded = True
         else:
-            print("Something went wrong")
-        if "type:new" in filters:
-            typeOfSuggestion = 'new'
-        elif "type:modify" in filters:
-            typeOfSuggestion = 'modify'
-        else:
-            typeOfSuggestion = 'both'
-            print("Type of suggestions is not set")
+            print("An inclusive search in use")
+
+        # if "type:new" in filters:
+        #     typeOfSuggestion = 'new'
+        # elif "type:modify" in filters:
+        #     typeOfSuggestion = 'modify'
+        # elif "type:both" in filters:
+        #     typeOfSuggestion = 'both'
+        # else:
+        #     print("Type of suggestions is not set")
 
         if "suggestion_id:0" in filters:
             if "yse:true" in filters:
@@ -653,8 +666,9 @@ def get_suggestion_skosjoku(filters: str = "") -> str:
             else:
                 inYSE = 'both'
 
-            filters = [f.split(':') for f in filters.split('|')]
-            statusList = filters[0]
+            splittedFilters = [f.split(':') for f in filters.split('|')]
+            print(splittedFilters)
+            statusList = splittedFilters[0]
             statusValues = statusList[1]
             statusValuesList = statusValues.split('.')
             upperCaseStatusValuesList = [item.upper() for item in statusValuesList]
@@ -663,33 +677,49 @@ def get_suggestion_skosjoku(filters: str = "") -> str:
                 if inYSE == 'InYSE':
                     if ifItIsExcluded:
                         open_suggestions = Suggestion.query.filter(and_(Suggestion.status.notin_(
-                        upperCaseStatusValuesList), Suggestion.yse_term["url"] != None)).all()
+                        upperCaseStatusValuesList), Suggestion.suggestion_type.in_(conditionsForSuggestionTypes(filters)),\
+                             Suggestion.yse_term["url"] != None)).all()
                     else:
                         open_suggestions = Suggestion.query.filter(and_(Suggestion.status.in_(
-                        upperCaseStatusValuesList), Suggestion.yse_term["url"] != None)).all()
+                        upperCaseStatusValuesList), Suggestion.suggestion_type.in_(conditionsForSuggestionTypes(filters)),\
+                             Suggestion.yse_term["url"] != None)).all()
                 elif inYSE == 'NotInYSE':
                     if ifItIsExcluded:
                         open_suggestions = Suggestion.query.filter(and_(Suggestion.status.notin_(
-                        upperCaseStatusValuesList), Suggestion.yse_term["url"] == None)).all()
+                        upperCaseStatusValuesList), Suggestion.suggestion_type.in_(conditionsForSuggestionTypes(filters)),\
+                             Suggestion.yse_term["url"] == None)).all()
                     else:
                         open_suggestions = Suggestion.query.filter(and_(Suggestion.status.in_(
-                        upperCaseStatusValuesList), Suggestion.yse_term["url"] == None)).all()
+                        upperCaseStatusValuesList), Suggestion.suggestion_type.in_(conditionsForSuggestionTypes(filters)),\
+                             Suggestion.yse_term["url"] == None)).all()
                 elif inYSE == 'both':
                     if ifItIsExcluded:
                         open_suggestions = Suggestion.query.filter(and_(Suggestion.status.notin_(
-                        upperCaseStatusValuesList))).all()
+                        upperCaseStatusValuesList), Suggestion.suggestion_type.in_(conditionsForSuggestionTypes(filters)))).all()
+                        print("tultiinko tänne?")
+
+                        ####Jatka tästä
                     else:
-                        if typeOfSuggestion == 'new':
-                            open_suggestions = Suggestion.query.filter(and_(Suggestion.status.in_(
-                            upperCaseStatusValuesList), Suggestion.suggestion_type.in_(['NEW']))).all()
-                        elif typeOfSuggestion == 'modify':
-                            open_suggestions = Suggestion.query.filter(and_(Suggestion.status.in_(
-                            upperCaseStatusValuesList), Suggestion.suggestion_type.in_(['MODIFY']))).all()
-                        elif typeOfSuggestion == 'both':
-                            open_suggestions = Suggestion.query.filter(and_(Suggestion.status.in_(
-                            upperCaseStatusValuesList))).all()
-                        else:
-                            print("Something missing")
+                        print("********************")
+                        print(conditionsForSuggestionTypes(filters))
+                        open_suggestions = Suggestion.query.filter(and_(Suggestion.status.in_(
+                        upperCaseStatusValuesList), Suggestion.suggestion_type.in_(conditionsForSuggestionTypes(filters)))).all()
+
+# conditionsForSuggestionTypes(filters: str = "")
+
+
+
+                        # if typeOfSuggestion == 'new':
+                        #     open_suggestions = Suggestion.query.filter(and_(Suggestion.status.in_(
+                        #     upperCaseStatusValuesList), Suggestion.suggestion_type.in_(['NEW']))).all()
+                        # elif typeOfSuggestion == 'modify':
+                        #     open_suggestions = Suggestion.query.filter(and_(Suggestion.status.in_(
+                        #     upperCaseStatusValuesList), Suggestion.suggestion_type.in_(['MODIFY']))).all()
+                        # elif typeOfSuggestion == 'both':
+                        #     open_suggestions = Suggestion.query.filter(and_(Suggestion.status.in_(
+                        #     upperCaseStatusValuesList), Suggestion.suggestion_type.in_(['NEW', 'MODIFY']))).all()
+                        # else:
+                        #     print("Something missing")
                 else:
                     print("Something went wrong")
             except Exception as ex:
