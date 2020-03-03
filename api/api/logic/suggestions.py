@@ -600,38 +600,19 @@ def get_suggestion_skos(suggestion_id: int) -> str:
 
 def get_suggestion_skosjoku(filters: str = "") -> str:
 
-#     http://localhost:8080/api/suggestions/skosjoku?filters=abc
+    '''
+    curl -X GET --header 'Accept: text/turtle' --header 'Authorization: Bearer ..YourSHAorSomethingForAuthorization.. ' 
+    'http://localhost:8080/api/suggestions/skosjoku
+    ?filters=status:received.read.accepted.rejected.retained.archived|exclude:true/false|type:new/mofify/both|
+    yse:true/false/both|model:skos/dc/foaf|format:turtle/jsonld/xml/n3/ntriples|
+    suggestion_id:0/suggestion_id:nnnn'
+    '''
 
-#   status:
-#     type: string
-#     enum:
-#       - RECEIVED
-#       - READ
-#       - ACCEPTED
-#       - REJECTED
-#       - RETAINED
-#       - ARCHIVED
-
-    # type: string
-    # enum:
-    #   - NEW
-    #   - MODIFY
-
-# curl 
-# -X GET --header 'Accept: text/turtle' --header 
-# 'Authorization: Bearer xyz123' 'http://localhost:8080/api/suggestions/skosjoku?filters=
-# status:received.read.accepted.rejected.retained.archived|exclude:false|type:new|yse:both|
-# model:skos|format:turtle|suggestion_id:0' > /home/mijuahon/tests/skos_test_020220_1.txt 
-
-# status:received.read.accepted.rejected.retained.archived|exclude:true|type:new|yse:true|model:skos|format:turtle|suggestion_id:0
-    print("************************")
     print(filters)
 
     inYSE = ''
     tempId = ''
     ifItIsExcluded = False
-    typeOfSuggestion = ''
-    # formatUsed = ''
 
     def conditionsForSuggestionTypes(filters: str = "") -> list:
         if "type:new" in filters:
@@ -644,12 +625,31 @@ def get_suggestion_skosjoku(filters: str = "") -> str:
             print("Type of suggestions is not set")
 
     def formatInUse(filters: str = "") -> str:
+        # Serialization formats
+        # Turtle, at the moment JSON-LD and XML in use
         if "format:turtle" in filters:
             return 'turtle'
         elif "format:jsonld" in filters:
             return 'json-ld'
+        elif "format:xml" in filters:
+            return 'xml'
+        elif "format:n3" in filters:
+            return 'n3'
+        elif "format:ntriples" in filters:
+            return 'turtle'
         else:
             return 'turtle'
+
+    def modelInUse(filters: str = "") -> str:
+        # Only skos in use at the moment. In the future DC and FOAF will be on the list
+        if "model:skos" in filters:
+            return 'skos'
+        elif "modle:dc" in filters:
+            return 'skos'
+        elif "modle:foaf" in filters:
+            return 'skos'
+        else:
+            return 'skos'
 
     if len(filters) > 0:
 
@@ -666,25 +666,7 @@ def get_suggestion_skosjoku(filters: str = "") -> str:
             else:
                 inYSE = 'both'
 
-            # if "format:turtle" in filters:
-            #     formatUsed = 'turtle'
-            # elif "format:jsonld" in filters:
-            #     formatUsed = 'json-ld'
-            # else:
-            #     formatUsed = 'turtle'
-
-
-        # if "type:new" in filters:
-        #     return ['NEW']
-        # elif "type:modify" in filters:
-        #     return ['MODIFY']
-        # elif "type:both" in filters:
-        #     return ['NEW', 'MODIFY']
-        # else:
-        #     print("Type of suggestions is not set")
-
             splittedFilters = [f.split(':') for f in filters.split('|')]
-            print(splittedFilters)
             statusList = splittedFilters[0]
             statusValues = statusList[1]
             statusValuesList = statusValues.split('.')
@@ -714,34 +696,14 @@ def get_suggestion_skosjoku(filters: str = "") -> str:
                         open_suggestions = Suggestion.query.filter(and_(Suggestion.status.notin_(
                         upperCaseStatusValuesList), Suggestion.suggestion_type.in_(conditionsForSuggestionTypes(filters)))).all()
                     else:
-                        print("********************")
-                        print(conditionsForSuggestionTypes(filters))
                         open_suggestions = Suggestion.query.filter(and_(Suggestion.status.in_(
                         upperCaseStatusValuesList), Suggestion.suggestion_type.in_(conditionsForSuggestionTypes(filters)))).all()
-
-# conditionsForSuggestionTypes(filters: str = "")
-
-
-
-                        # if typeOfSuggestion == 'new':
-                        #     open_suggestions = Suggestion.query.filter(and_(Suggestion.status.in_(
-                        #     upperCaseStatusValuesList), Suggestion.suggestion_type.in_(['NEW']))).all()
-                        # elif typeOfSuggestion == 'modify':
-                        #     open_suggestions = Suggestion.query.filter(and_(Suggestion.status.in_(
-                        #     upperCaseStatusValuesList), Suggestion.suggestion_type.in_(['MODIFY']))).all()
-                        # elif typeOfSuggestion == 'both':
-                        #     open_suggestions = Suggestion.query.filter(and_(Suggestion.status.in_(
-                        #     upperCaseStatusValuesList), Suggestion.suggestion_type.in_(['NEW', 'MODIFY']))).all()
-                        # else:
-                        #     print("Something missing")
                 else:
-                    print("Something went wrong")
+                    print("Please, check the passed arguments")
             except Exception as ex:
                     print(str(ex))
                     return {'code': 404, 'error': str(ex)}, 404
 
-# ([if typeOfSuggestionIsNew: Suggestion.suggestion_type.in_(['NEW'])] )
-            
             graph = None
             for suggestion in open_suggestions:
                 graph = suggestionToGraph(suggestion.as_dict(), graph)
@@ -752,47 +714,19 @@ def get_suggestion_skosjoku(filters: str = "") -> str:
                 print(str(ex))
 
         elif "suggestion_id:0" not in filters:
-            print("tullaanko tänne asti?")
-            
             tempId = filters.split("suggestion_id:", 1)[1]
-            print('Tätä id:tä käytetään: ' + tempId)
             try:
                 suggestion = Suggestion.query.filter_by(id=tempId).first()
                 graph = suggestionToGraph(suggestion.as_dict())
                 try:
                     return graph.serialize(format=formatInUse(filters))
-                    # return graph.serialize(format='turtle')
                 except Exception as ex:
                     print(str(ex))
             except Exception as ex:
                 print(str(ex))
                 return {'code': 404, 'error': str(ex)}, 404
         else:
-            print('Jotain hämärää tapahtui')
+            print('Please, check the passed arguments')
     else:
         return {'code': 404, 'error': str(ex)}, 404
-
-
-    
-
-    
-    """
-    Returns a suggestion by id in skos format.
-
-    :param id: Suggestion id
-    :returns: A single suggestion object as json
-    """
-
-    # try:
-    #     # suggestion = Suggestion.query.filter_by(id=suggestion_id).first()
-    #     suggestion = Suggestion.query.filter_by(id=222).first()
-    #     graph = suggestionToGraph(suggestion.as_dict())
-    #     try:
-    #         return graph.serialize(format='turtle')
-    #     except Exception as ex:
-    #         print(str(ex))
-    # except Exception as ex:
-    #     print(str(ex))
-    #     return {'code': 404, 'error': str(ex)}, 404
-
 
