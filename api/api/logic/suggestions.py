@@ -508,10 +508,56 @@ def get_resolved_suggestions() -> str:
 
 
 def get_open_suggestions_skos() -> str:
+# def get_open_suggestions_skos(search_terms: str) -> str:
+
     """
     Get open status suggestions from db
     :returns: Suggestions list of open suggestions in skos format
     """
+        #   description: 'Pipe-separated filter string, i.e. status:accepted|type:new|meeting_id:12'
+
+
+    # def _validate_filters(filters):
+    #     return all([filter[0].upper() in SUGGESTION_FILTER_FUNCTIONS.keys() for filter in filters])
+
+    # if filters:
+    #     # status:accepted|type:new|meeting_id:12|tags:melinda-slm|user_id:1
+    #     # -> [['status', 'accepted'], ['type', 'new'], ['meeting_id', '12'], ['tags', 'melinda-slm'], ['user_id', '1]]
+    #     filters = [f.split(':') for f in filters.split('|')]
+
+    # return get_all_or_404_custom(query_func)
+
+##Start
+    # if search_terms:
+    #     print(search_terms)
+    # status:accepted|type:new|meeting:12
+    # -> [['status', 'accepted'], ['type', 'new'], ['meeting', '12']]
+    # filters = [f.split(':') for f in filters.split('|')]
+    # try:
+    #     suggestion = Suggestion.query.filter_by(id=suggestion_id).first()
+    #     graph = suggestionToGraph(suggestion.as_dict())
+    #     try:
+    #         return graph.serialize(format='turtle')
+    #     except Exception as ex:
+    #         print(str(ex))
+    # except Exception as ex:
+    #     print(str(ex))
+    #     return {'code': 404, 'error': str(ex)}, 404
+        # return search_terms
+
+
+
+
+# return get_count_or_404_custom(query_func)
+#End
+
+
+
+#   tekstiä
+#   tekstiä  
+
+#original start
+
     try:
         open_suggestions = Suggestion.query.filter(and_(Suggestion.status.notin_(
             ['ACCEPTED', 'REJECTED', 'ARCHIVED']), Suggestion.yse_term["url"] == None)).all()
@@ -526,6 +572,8 @@ def get_open_suggestions_skos() -> str:
     except Exception as ex:
         print(str(ex))
         return {'code': 404, 'error': str(ex)}, 404
+
+#original ends
 
 
 def get_suggestion_skos(suggestion_id: int) -> str:
@@ -546,3 +594,173 @@ def get_suggestion_skos(suggestion_id: int) -> str:
     except Exception as ex:
         print(str(ex))
         return {'code': 404, 'error': str(ex)}, 404
+
+def get_suggestion_skosfilter(filters: str = "") -> str:
+
+    '''
+    curl -X GET --header 'Accept: text/turtle' --header 'Authorization: Bearer ..YourSHAorSomethingForAuthorization.. ' 
+    'http://localhost:8080/api/suggestions/skosfilter
+    ?filters=status:received.read.accepted.rejected.retained.archived|exclude:true/false|type:new/modify/both|
+    yse:true/false/both|model:skos/dc/foaf|format:turtle/jsonld/xml/n3/ntriples|
+    suggestion_id:0/suggestion_id:nnnn'
+
+    1) At least one status flag should be used
+    2) Status flags must be delimited by a dot (.)
+    3) The 'pipe' is used as delimiter for query parameters 
+    4) suggestion_id:0 returns all the filtered suggestions
+    5) suggestion_id:nnnn retruns only one suggestion by suggestion id
+    6) All the parameters must be defined in the query
+
+
+    Example:
+
+    curl -X GET --header 'Accept: text/turtle' --header 'Authorization: Bearer ABC123ABC123'
+    'http://localhost:8080/api/suggestions/skosfilter?filters=status:received.read.accepted.rejected.retained.archived
+    |exclude:false|type:both|yse:both|model:skos|format:turtle|suggestion_id:0'
+    '''
+    print("Before validation")
+    print(filters)
+
+    def validateQueryParameters(filters: str = ""):
+        amountOfParametersCount = 0 # Cheks the minimums, must be 7
+        amountOfParameterOptionsCount = 0 # Cheks the minimums, must be 6
+        listOfMandatoryParameters = ['status:', 'exclude:', 'type:', 'yse:', 'model:', 'format:', 'suggestion_id:']
+        listOfMandatoryParameterOptions = ['status:received', 'status:read', 'status:accepted', 'status:rejected' 'status:retained',\
+            'status:archived', 'exclude:true', 'exclude:false', 'type:new', 'type:modify', 'type:both', 'yse:true', 'yse:false',\
+                'yse:both', 'model:skos', 'model:dc', 'model:foaf', 'format:turtle', 'format:jsonld', 'format:xml', 'format:n3',\
+                     'format:ntriples']
+        for parameterKey in listOfMandatoryParameters:
+            if parameterKey in filters:
+                amountOfParametersCount += 1
+            else:
+                print(f"ParameterKey {parameterKey} is not in querystring")
+        for parameterKey in listOfMandatoryParameterOptions:
+            if parameterKey in filters:
+                amountOfParameterOptionsCount += 1
+            else:
+                print(f"ParameterKey {parameterKey} is not in querystring")
+
+        if amountOfParametersCount == 7 and amountOfParameterOptionsCount == 6:
+            return True
+        else:
+            return False
+
+    inYSE = ''
+    tempId = ''
+    ifItIsExcluded = False
+
+    def conditionsForSuggestionTypes(filters: str = "") -> list:
+        if "type:new" in filters:
+            return ['NEW']
+        elif "type:modify" in filters:
+            return ['MODIFY']
+        elif "type:both" in filters:
+            return ['NEW', 'MODIFY']
+        else:
+            print("Type of suggestions is not set")
+
+    def formatInUse(filters: str = "") -> str:
+        # Serialization formats
+        # Turtle, at the moment JSON-LD and XML in use
+        if "format:turtle" in filters:
+            return 'turtle'
+        elif "format:jsonld" in filters:
+            return 'json-ld'
+        elif "format:xml" in filters:
+            return 'xml'
+        elif "format:n3" in filters:
+            return 'n3'
+        elif "format:ntriples" in filters:
+            return 'turtle'
+        else:
+            return 'turtle'
+
+    def modelInUse(filters: str = "") -> str:
+        # Only skos in use at the moment. In the future DC and FOAF will be on the list
+        if "model:skos" in filters:
+            return 'skos'
+        elif "model:dc" in filters:
+            return 'skos'
+        elif "model:foaf" in filters:
+            return 'skos'
+        else:
+            return 'skos'
+
+    if len(filters) > 0 and validateQueryParameters(filters) == True:
+        if "exclude:true" in filters:
+            ifItIsExcluded = True
+        else:
+            print("An inclusive search in use")
+
+        if "suggestion_id:0" in filters:
+            if "yse:true" in filters:
+                inYSE = 'InYSE'
+            elif "yse:false" in filters:
+                inYSE = 'NotInYSE'
+            else:
+                inYSE = 'both'
+
+            splittedFilters = [f.split(':') for f in filters.split('|')]
+            statusList = splittedFilters[0]
+            statusValues = statusList[1]
+            statusValuesList = statusValues.split('.')
+            upperCaseStatusValuesList = [item.upper() for item in statusValuesList]
+
+            try:
+                if inYSE == 'InYSE':
+                    if ifItIsExcluded:
+                        open_suggestions = Suggestion.query.filter(and_(Suggestion.status.notin_(
+                        upperCaseStatusValuesList), Suggestion.suggestion_type.in_(conditionsForSuggestionTypes(filters)),\
+                             Suggestion.yse_term["url"] != None)).all()
+                    else:
+                        open_suggestions = Suggestion.query.filter(and_(Suggestion.status.in_(
+                        upperCaseStatusValuesList), Suggestion.suggestion_type.in_(conditionsForSuggestionTypes(filters)),\
+                             Suggestion.yse_term["url"] != None)).all()
+                elif inYSE == 'NotInYSE':
+                    if ifItIsExcluded:
+                        open_suggestions = Suggestion.query.filter(and_(Suggestion.status.notin_(
+                        upperCaseStatusValuesList), Suggestion.suggestion_type.in_(conditionsForSuggestionTypes(filters)),\
+                             Suggestion.yse_term["url"] == None)).all()
+                    else:
+                        open_suggestions = Suggestion.query.filter(and_(Suggestion.status.in_(
+                        upperCaseStatusValuesList), Suggestion.suggestion_type.in_(conditionsForSuggestionTypes(filters)),\
+                             Suggestion.yse_term["url"] == None)).all()
+                elif inYSE == 'both':
+                    if ifItIsExcluded:
+                        open_suggestions = Suggestion.query.filter(and_(Suggestion.status.notin_(
+                        upperCaseStatusValuesList), Suggestion.suggestion_type.in_(conditionsForSuggestionTypes(filters)))).all()
+                    else:
+                        open_suggestions = Suggestion.query.filter(and_(Suggestion.status.in_(
+                        upperCaseStatusValuesList), Suggestion.suggestion_type.in_(conditionsForSuggestionTypes(filters)))).all()
+                else:
+                    print("Please, check the passed arguments")
+            except Exception as ex:
+                    print(str(ex))
+                    return {'code': 404, 'error': str(ex)}, 404
+
+            graph = None
+            for suggestion in open_suggestions:
+                graph = suggestionToGraph(suggestion.as_dict(), graph)
+            try:
+                # return graph.serialize(format='turtle')
+                return graph.serialize(format=formatInUse(filters))
+            except Exception as ex:
+                print(str(ex))
+
+        elif "suggestion_id:0" not in filters:
+            tempId = filters.split("suggestion_id:", 1)[1]
+            try:
+                suggestion = Suggestion.query.filter_by(id=tempId).first()
+                graph = suggestionToGraph(suggestion.as_dict())
+                try:
+                    return graph.serialize(format=formatInUse(filters))
+                except Exception as ex:
+                    print(str(ex))
+            except Exception as ex:
+                print(str(ex))
+                return {'code': 404, 'error': str(ex)}, 404
+        else:
+            print('Please, check the passed arguments')
+    else:
+        return {'code': 400, 'error': str(ex)}, 400
+
