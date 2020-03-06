@@ -9,6 +9,15 @@
           @input="updateSearchWord"
           @keyup.enter.prevent="updateSearchWord"
         />
+
+        <div>
+          <!-- Tarvitaanko -> :isHeadersAndIdSet="asetettuArvo" -->
+          <switch-board name="jotain"/>
+        </div>
+
+
+
+
         <transition name="fade">
           <div v-if="searchWord && searchWord.length > 0" @click="clearSearch" class="clear-button">
             <!-- <svg-icon icon-name="cross"><icon-cross /></svg-icon> -->
@@ -22,13 +31,26 @@
 <script>
 import SvgIcon from '../icons/SvgIcon';
 import IconCross from '../icons/IconCross';
+import SwitchBoard from '../common/SwitchBoard';
+
+import {
+  mapSwitchBoardGetters,
+  mapSwitchBoardMutations
+} from "../../store/modules/switchboard/switchBoardModule";
+import {
+  switchBoardGetters,
+  switchBoardMutation
+} from '../../store/modules/switchboard/switchBoardConsts.js';
+
+
 
 import { handleQueries } from '../../utils/suggestionHelpers.js';
 
 export default {
   components: {
     SvgIcon,
-    IconCross
+    IconCross,
+    SwitchBoard
   },
   props: {
     filters: String,
@@ -36,6 +58,9 @@ export default {
     sort: String
   },
   methods: {
+    ...mapSwitchBoardGetters({
+        getSwitches: switchBoardGetters.GET_SWITCHES 
+    }),
     updateSearchWord() {
       setTimeout(() => {
         handleQueries(this.filters, this.$refs.input.value, this.sort, this.$router);
