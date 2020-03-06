@@ -1,5 +1,6 @@
 <template>
   <div>
+    <div> {{getStoreStateItem()}} </div>
     <suggestion-search
       v-if="!isUserPage"
       :meetingId="meetingId"
@@ -58,6 +59,8 @@ import {
   mapSuggestionActions
 } from '../../store/modules/suggestion/suggestionModule.js';
 import { offsetByPagination } from '../../utils/suggestionHelpers.js';
+import store from "../../store/index";
+
 export default {
   components: {
     SuggestionSearch,
@@ -115,6 +118,9 @@ export default {
       getSuggestionsCount: suggestionActions.GET_SUGGESTIONS_COUNT,
       getArchivedSuggestionCount: suggestionActions.GET_ARCHIVED_SUGGESTIONS_COUNT
     }),
+    getStoreStateItem(){
+      return store.state.isHeadersAndIdSetInState
+    },
     async fetchSuggestions() {
       if (this.userId) {
         this.getSuggestionsByUserId({
@@ -130,7 +136,8 @@ export default {
           offset: offsetByPagination(this.page, this.limit),
           sort: this.sort,
           filters: this.filters,
-          searchWord: this.searchWord
+          searchWord: this.searchWord,
+          areaTerm: this.getStoreStateItem()
         });
         await this.getSuggestionsCount({
           filters: this.filters,

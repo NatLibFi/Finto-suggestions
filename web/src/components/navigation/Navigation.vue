@@ -1,5 +1,6 @@
 <template>
   <div class="navigation">
+    <div> {{ getStoreStateItem() }} </div>
     <div class="nav-content">
       <div class="nav-title">
         <img @click="returnToHome" src="../assets/finto-logo.svg" alt="" />
@@ -139,6 +140,8 @@ import { mapMeetingGetters, mapMeetingActions } from '../../store/modules/meetin
 // eslint-disable-next-line no-unused-vars
 import { meetingGetters, meetingActions } from '../../store/modules/meeting/meetingConsts.js';
 
+import store from "../../store/index";
+
 export default {
   components: {
     CenteredDialog,
@@ -204,6 +207,9 @@ export default {
       registerLocalUser: userActions.CREATE_USER,
       getAuthenticatedUser: userActions.GET_AUTHENTICATED_USER
     }),
+    getStoreStateItem(){
+      return store.state.isHeadersAndIdSetInState
+    },
     async returnToHome() {
       this.$router.push('/');
     },

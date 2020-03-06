@@ -33,6 +33,11 @@ paths:
           description: Search string
           required: false
           type: string
+        - name: area
+          in: query
+          description: Search area
+          required: false
+          type: string
       responses:
         '200':
           description: An array of suggestion objects

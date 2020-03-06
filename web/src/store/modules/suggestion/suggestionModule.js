@@ -82,8 +82,8 @@ export default {
     }
   },
   actions: {
-    async [suggestionActions.GET_SUGGESTIONS]({ commit }, { offset, sort, filters, searchWord }) {
-      const result = await api.suggestion.getSuggestions(offset, sort, filters, searchWord);
+    async [suggestionActions.GET_SUGGESTIONS]({ commit }, { offset, sort, filters, searchWord, areaTerm }) {
+      const result = await api.suggestion.getSuggestions(offset, sort, filters, searchWord, areaTerm);
       if (result && result.code == 200) {
         commit(suggestionMutations.SET_SUGGESTIONS, result.data);
         return result.items;

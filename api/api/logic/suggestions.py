@@ -15,7 +15,7 @@ from .skos import suggestionToGraph
 
 # Profiler decorator, enable if needed
 # @profiler
-def get_suggestions(limit: int = 0, offset: int = 0, filters: str = "", search: str = "", sort: str = 'DEFAULT') -> str:
+def get_suggestions(limit: int = 0, offset: int = 0, filters: str = "", search: str = "", sort: str = 'DEFAULT', area: str = "") -> str:
     """
     Returns all suggestions.
 
@@ -28,6 +28,18 @@ def get_suggestions(limit: int = 0, offset: int = 0, filters: str = "", search: 
     :param sort: Sort the results before returning them
     :returns: All suggestion matching the query in json format
     """
+    # Area: headers, body, all
+    print("*")
+    print("*")
+    print("*")
+    print("*")
+    print("*")
+    print("Mikan 0 -- area")
+    if area:
+        print(area)
+    else:
+        print("Ei areaa")
+
 
     def query_func():
         if sort in SUGGESTION_SORT_FUNCTIONS:
@@ -46,6 +58,58 @@ def get_suggestions(limit: int = 0, offset: int = 0, filters: str = "", search: 
             # Currently the JSON field search is a bit dumb.
             # Ideally, you would like to search matches in each language separately,
             # instead of the whole json blob (cast as string)
+
+            if area == "inUse":
+                query = query.filter(or_(
+                    func.lower(Suggestion.preferred_label['fi']['value'].cast(
+                        Unicode)).contains(search.lower()),
+                    func.lower(Suggestion.preferred_label['sv'].cast(
+                        Unicode)).contains(search.lower()),
+                    func.lower(Suggestion.preferred_label['en'].cast(
+                        Unicode)).contains(search.lower()),
+                    # func.lower(Suggestion.alternative_labels.cast(Unicode)).contains(search.lower()),
+                    func.lower(Suggestion.id.cast(Unicode)).contains(search),
+                    # func.lower(Suggestion.description).contains(search.lower()),
+                    # func.lower(Suggestion.reason).contains(search.lower()),
+                    # func.lower(Suggestion.uri).contains(search.lower()),
+                    # func.lower(Suggestion.organization).contains(search.lower()),
+                    # func.lower(Suggestion.broader_labels.cast(Unicode)).contains(search.lower()),
+                    # func.lower(Suggestion.narrower_labels.cast(Unicode)).contains(search.lower()),
+                    # func.lower(Suggestion.related_labels.cast(Unicode)).contains(search.lower()),
+                    # func.lower(Suggestion.groups.cast(Unicode)).contains(search.lower()),
+                    # func.lower(Suggestion.scopeNote).contains(search.lower()),
+                    # func.lower(Suggestion.exactMatches.cast(Unicode)).contains(search.lower()),
+                    # func.lower(Suggestion.neededFor).contains(search.lower()),
+                    # func.lower(Suggestion.yse_term.cast(Unicode)).contains(search.lower()),
+                ))
+            elif area == "notInUse":
+                query = query.filter(or_(
+                    func.lower(Suggestion.preferred_label['fi']['value'].cast(
+                        Unicode)).contains(search.lower()),
+                    func.lower(Suggestion.preferred_label['sv'].cast(
+                        Unicode)).contains(search.lower()),
+                    func.lower(Suggestion.preferred_label['en'].cast(
+                        Unicode)).contains(search.lower()),
+                    func.lower(Suggestion.alternative_labels.cast(Unicode)).contains(search.lower()),
+                    func.lower(Suggestion.id.cast(Unicode)).contains(search),
+                    func.lower(Suggestion.description).contains(search.lower()),
+                    func.lower(Suggestion.reason).contains(search.lower()),
+                    func.lower(Suggestion.uri).contains(search.lower()),
+                    func.lower(Suggestion.organization).contains(search.lower()),
+                    func.lower(Suggestion.broader_labels.cast(Unicode)).contains(search.lower()),
+                    func.lower(Suggestion.narrower_labels.cast(Unicode)).contains(search.lower()),
+                    func.lower(Suggestion.related_labels.cast(Unicode)).contains(search.lower()),
+                    func.lower(Suggestion.groups.cast(Unicode)).contains(search.lower()),
+                    func.lower(Suggestion.scopeNote).contains(search.lower()),
+                    func.lower(Suggestion.exactMatches.cast(Unicode)).contains(search.lower()),
+                    func.lower(Suggestion.neededFor).contains(search.lower()),
+                    func.lower(Suggestion.yse_term.cast(Unicode)).contains(search.lower()),
+                ))
+            else:
+                print("somethin went wrong")
+
+
+
 
             query = query.filter(or_(
                 func.lower(Suggestion.preferred_label['fi']['value'].cast(
