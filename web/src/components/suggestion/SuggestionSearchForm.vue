@@ -35,11 +35,13 @@ import SwitchBoard from '../common/SwitchBoard';
 
 import {
   mapSwitchBoardGetters,
-  mapSwitchBoardMutations
+  mapSwitchBoardMutations,
+  mapSwitchBoardActions
 } from "../../store/modules/switchboard/switchBoardModule";
 import {
   switchBoardGetters,
-  switchBoardMutation
+  switchBoardMutation,
+  switchBoardActions
 } from '../../store/modules/switchboard/switchBoardConsts.js';
 
 
@@ -61,6 +63,12 @@ export default {
     ...mapSwitchBoardGetters({
         getSwitches: switchBoardGetters.GET_SWITCHES 
     }),
+    //   ...mapSwitchBoardMutations({
+    //     setSwitches: switchBoardMutations.SET_SWITCHES
+    // }),
+    // ...mapSwitchBoardActions({
+    //     addSwitch: switchBoardActions.ADD_SWITCH
+    // }),
     updateSearchWord() {
       setTimeout(() => {
         handleQueries(this.filters, this.$refs.input.value, this.sort, this.$router);
