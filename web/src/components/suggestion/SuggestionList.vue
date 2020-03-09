@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div> {{getStoreStateItem()}} </div>
+    <div name="saapoistaa"> {{getStoreStateItem()}} </div>
     <suggestion-search
       v-if="!isUserPage"
       :meetingId="meetingId"

@@ -111,28 +111,28 @@ def get_suggestions(limit: int = 0, offset: int = 0, filters: str = "", search: 
 
 
 
-            query = query.filter(or_(
-                func.lower(Suggestion.preferred_label['fi']['value'].cast(
-                    Unicode)).contains(search.lower()),
-                func.lower(Suggestion.preferred_label['sv'].cast(
-                    Unicode)).contains(search.lower()),
-                func.lower(Suggestion.preferred_label['en'].cast(
-                    Unicode)).contains(search.lower()),
-                # func.lower(Suggestion.alternative_labels.cast(Unicode)).contains(search.lower()),
-                func.lower(Suggestion.id.cast(Unicode)).contains(search),
-                # func.lower(Suggestion.description).contains(search.lower()),
-                # func.lower(Suggestion.reason).contains(search.lower()),
-                # func.lower(Suggestion.uri).contains(search.lower()),
-                # func.lower(Suggestion.organization).contains(search.lower()),
-                # func.lower(Suggestion.broader_labels.cast(Unicode)).contains(search.lower()),
-                # func.lower(Suggestion.narrower_labels.cast(Unicode)).contains(search.lower()),
-                # func.lower(Suggestion.related_labels.cast(Unicode)).contains(search.lower()),
-                # func.lower(Suggestion.groups.cast(Unicode)).contains(search.lower()),
-                # func.lower(Suggestion.scopeNote).contains(search.lower()),
-                # func.lower(Suggestion.exactMatches.cast(Unicode)).contains(search.lower()),
-                # func.lower(Suggestion.neededFor).contains(search.lower()),
-                # func.lower(Suggestion.yse_term.cast(Unicode)).contains(search.lower()),
-            ))
+            # query = query.filter(or_(
+            #     func.lower(Suggestion.preferred_label['fi']['value'].cast(
+            #         Unicode)).contains(search.lower()),
+            #     func.lower(Suggestion.preferred_label['sv'].cast(
+            #         Unicode)).contains(search.lower()),
+            #     func.lower(Suggestion.preferred_label['en'].cast(
+            #         Unicode)).contains(search.lower()),
+            #     # func.lower(Suggestion.alternative_labels.cast(Unicode)).contains(search.lower()),
+            #     func.lower(Suggestion.id.cast(Unicode)).contains(search),
+            #     # func.lower(Suggestion.description).contains(search.lower()),
+            #     # func.lower(Suggestion.reason).contains(search.lower()),
+            #     # func.lower(Suggestion.uri).contains(search.lower()),
+            #     # func.lower(Suggestion.organization).contains(search.lower()),
+            #     # func.lower(Suggestion.broader_labels.cast(Unicode)).contains(search.lower()),
+            #     # func.lower(Suggestion.narrower_labels.cast(Unicode)).contains(search.lower()),
+            #     # func.lower(Suggestion.related_labels.cast(Unicode)).contains(search.lower()),
+            #     # func.lower(Suggestion.groups.cast(Unicode)).contains(search.lower()),
+            #     # func.lower(Suggestion.scopeNote).contains(search.lower()),
+            #     # func.lower(Suggestion.exactMatches.cast(Unicode)).contains(search.lower()),
+            #     # func.lower(Suggestion.neededFor).contains(search.lower()),
+            #     # func.lower(Suggestion.yse_term.cast(Unicode)).contains(search.lower()),
+            # ))
 
         if limit:
             query = query.limit(limit)
