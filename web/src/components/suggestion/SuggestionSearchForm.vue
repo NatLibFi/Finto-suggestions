@@ -3,17 +3,18 @@
     <h5>Hae ehdotusta {{ searchWord }}</h5>
     <div class="search-wrapper">
       <div class="input-wrapper">
+        <div>
+          <!-- Tarvitaanko -> :isHeadersAndIdSet="asetettuArvo" -->
+          <switch-board name="jotain"/>
+        </div>
         <input
           :value="searchWord"
           ref="input"
           @input="updateSearchWord"
           @keyup.enter.prevent="updateSearchWord"
         />
-        
-        <div>
-          <!-- Tarvitaanko -> :isHeadersAndIdSet="asetettuArvo" -->
-          <switch-board name="jotain"/>
-        </div>
+
+
 
 
 
@@ -48,8 +49,6 @@ import {
 
 import { handleQueries } from '../../utils/suggestionHelpers.js';
 
-import { mapState } from 'vuex'
-
 export default {
   components: {
     SvgIcon,
@@ -59,12 +58,7 @@ export default {
   props: {
     filters: String,
     searchWord: String,
-    sort: String,
-    isHeadersAndIdSet: String,
-  },
-
-  async created() {
-    this.keyValuePairIsAddedToState("isHeadersAndIdSetInState", this.isHeadersAndIdSet)
+    sort: String
   },
   methods: {
     ...mapSwitchBoardGetters({
@@ -76,13 +70,6 @@ export default {
     // ...mapSwitchBoardActions({
     //     addSwitch: switchBoardActions.ADD_SWITCH
     // }),
-    keyValuePairIsAddedToState(key, value) {
-      Vue.set(store.state, key, value);
-      // store.state.push({ himmeli: 'testitestitesti' });
-    },
-    getStoreStateItem(){
-      return store.state.isHeadersAndIdSetInState
-    },
     updateSearchWord() {
       setTimeout(() => {
         handleQueries(this.filters, this.$refs.input.value, this.sort, this.$router);
