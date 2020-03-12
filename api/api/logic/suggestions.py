@@ -6,8 +6,8 @@ from sqlalchemy.types import Unicode
 from ..authentication import admin_only
 from .validators import suggestion_parameter_validator, suggestion_id_validator, _error_messagify
 # pylint: disable=unused-import
-from .common import (create_response, get_one_or_404, get_all_or_404, get_all_or_404_custom,
-                     get_count_or_404_custom, create_or_400, delete_or_404, patch_or_404, update_or_404)
+from .common import (create_response, get_one_or_404, get_all_or_400, get_all_or_400_custom,
+                     get_count_or_400_custom, create_or_400, delete_or_404, patch_or_404, update_or_404)
 # pylint: enable=unused-import
 from .utils import SUGGESTION_FILTER_FUNCTIONS, SUGGESTION_SORT_FUNCTIONS
 from ..models import db, Suggestion, Tag, User
@@ -16,6 +16,60 @@ from .skos import suggestionToGraph
 # Profiler decorator, enable if needed
 # @profiler
 
+
+def getQuery(limit: int = 0, offset: int = 0, filters: str = "", queryString: str = "", sort: str = 'DEFAULT') -> db.Query:
+    """
+    Returns query for querying all suggestions.
+
+    Query can be sorted and limited with additional parameters.
+
+    :param limit: Cap the results to :limit: results
+    :param offset: Start the query from offset (e.g. for paging)
+    :param filters: Filter the results based on filter selections
+    :param queryString: Filter the results based on search term
+    :param sort: Sort the result set
+    :returns: Query object for querying the database
+    """
+
+    sort = sort.upper()
+    if sort not in SUGGESTION_SORT_FUNCTIONS:
+        sort = "CREATED_DESC"
+
+    query = SUGGESTION_SORT_FUNCTIONS.get(sort)(db.session)
+
+    if filters:
+        filters = [f.split(':') for f in filters.strip('|').split('|')]
+        for name, value in filters:
+            filter_func = SUGGESTION_FILTER_FUNCTIONS.get(name.upper(), None)
+            if filter_func:
+                query = filter_func(query, value.upper())
+            else:
+                # Could not find appropriate filter, skip it
+                pass
+
+    queryString = queryString.lower()
+    if queryString:
+        # Please append more fields, if you'd like to include in search
+        # Currently the JSON field search is a bit dumb.
+        # Ideally, you would like to search matches in each language separately,
+        # instead of the whole json blob (cast as string)
+
+        query = query.filter(or_(
+            func.lower(Suggestion.preferred_label['fi']['value'].cast(
+                Unicode)).contains(queryString),
+            func.lower(Suggestion.preferred_label['sv'].cast(
+                Unicode)).contains(queryString),
+            func.lower(Suggestion.preferred_label['en'].cast(
+                Unicode)).contains(queryString),
+            func.lower(Suggestion.id.cast(Unicode)).contains(queryString),
+        ))
+
+    if limit:
+        query = query.limit(limit)
+    if offset:
+        query = query.offset(offset)
+
+    return query
 
 def get_suggestions(limit: int = 0, offset: int = 0, filters: str = "", search: str = "", sort: str = 'DEFAULT') -> str:
     """
@@ -26,68 +80,13 @@ def get_suggestions(limit: int = 0, offset: int = 0, filters: str = "", search: 
     :param limit: Cap the results to :limit: results
     :param offset: Start the query from offset (e.g. for paging)
     :param filters: Filter the results based on filter selections
-    :param search: Filter the results based on search word
+    :param search: Filter the results based on search term
     :param sort: Sort the results before returning them
     :returns: All suggestion matching the query in json format
     """
 
-    def query_func():
-        if sort in SUGGESTION_SORT_FUNCTIONS:
-            query = SUGGESTION_SORT_FUNCTIONS.get(sort)(db.session)
-        else:
-            query = SUGGESTION_SORT_FUNCTIONS.get('CREATED_DESC')(db.session)
-
-        if filters and _validate_filters(filters):
-            for name, value in filters:
-                filter_func = SUGGESTION_FILTER_FUNCTIONS.get(name.upper())
-                if filter_func:
-                    query = filter_func(query, value.upper())
-
-        if search:
-            # Please append more fields, if you'd like to include in search
-            # Currently the JSON field search is a bit dumb.
-            # Ideally, you would like to search matches in each language separately,
-            # instead of the whole json blob (cast as string)
-
-            query = query.filter(or_(
-                func.lower(Suggestion.preferred_label['fi']['value'].cast(
-                    Unicode)).contains(search.lower()),
-                func.lower(Suggestion.preferred_label['sv'].cast(
-                    Unicode)).contains(search.lower()),
-                func.lower(Suggestion.preferred_label['en'].cast(
-                    Unicode)).contains(search.lower()),
-                # func.lower(Suggestion.alternative_labels.cast(Unicode)).contains(search.lower()),
-                func.lower(Suggestion.id.cast(Unicode)).contains(search),
-                # func.lower(Suggestion.description).contains(search.lower()),
-                # func.lower(Suggestion.reason).contains(search.lower()),
-                # func.lower(Suggestion.uri).contains(search.lower()),
-                # func.lower(Suggestion.organization).contains(search.lower()),
-                # func.lower(Suggestion.broader_labels.cast(Unicode)).contains(search.lower()),
-                # func.lower(Suggestion.narrower_labels.cast(Unicode)).contains(search.lower()),
-                # func.lower(Suggestion.related_labels.cast(Unicode)).contains(search.lower()),
-                # func.lower(Suggestion.groups.cast(Unicode)).contains(search.lower()),
-                # func.lower(Suggestion.scopeNote).contains(search.lower()),
-                # func.lower(Suggestion.exactMatches.cast(Unicode)).contains(search.lower()),
-                # func.lower(Suggestion.neededFor).contains(search.lower()),
-                # func.lower(Suggestion.yse_term.cast(Unicode)).contains(search.lower()),
-            ))
-
-        if limit:
-            query = query.limit(limit)
-        if offset:
-            query = query.offset(offset)
-
-        return query.all()
-
-    def _validate_filters(filters):
-        return all([filter[0].upper() in SUGGESTION_FILTER_FUNCTIONS.keys() for filter in filters])
-
-    if filters:
-        # status:accepted|type:new|meeting_id:12|tags:melinda-slm|user_id:1
-        # -> [['status', 'accepted'], ['type', 'new'], ['meeting_id', '12'], ['tags', 'melinda-slm'], ['user_id', '1]]
-        filters = [f.split(':') for f in filters.split('|')]
-
-    return get_all_or_404_custom(query_func)
+    query = getQuery(limit=limit, offset=offset, filters=filters, queryString=search, sort=sort)
+    return  get_all_or_400_custom(query)
 
 
 def get_suggestions_count(filters: str = "", search: str = "") -> str:
@@ -97,58 +96,12 @@ def get_suggestions_count(filters: str = "", search: str = "") -> str:
     As the request query can be limited with additional parameters, we take those into account.
 
     :param filters: Filter the results based on filter selections
-    :param search: Filter the results based on search word
+    :param search: Filter the results based on search term
     :returns: All suggestion matching the query in json format
     """
 
-    def query_func():
-        query = db.session.query(Suggestion)
-
-        if filters and _validate_filters(filters):
-            for name, value in filters:
-                filter_func = SUGGESTION_FILTER_FUNCTIONS.get(name.upper())
-                if filter_func:
-                    query = filter_func(query, value.upper())
-
-        if search:
-            # Please append more fields, if you'd like to include in search
-            # Currently the JSON field search is a bit dumb.
-            # Ideally, you would like to search matches in each language separately,
-            # instead of the whole json blob (cast as string)
-            query = query.filter(or_(
-                func.lower(Suggestion.preferred_label['fi']['value'].cast(
-                    Unicode)).contains(search.lower()),
-                func.lower(Suggestion.preferred_label['sv'].cast(
-                    Unicode)).contains(search.lower()),
-                func.lower(Suggestion.preferred_label['en'].cast(
-                    Unicode)).contains(search.lower()),
-                # func.lower(Suggestion.alternative_labels.cast(Unicode)).contains(search.lower()),
-                func.lower(Suggestion.id.cast(Unicode)).contains(search),
-                # func.lower(Suggestion.description).contains(search.lower()),
-                # func.lower(Suggestion.reason).contains(search.lower()),
-                # func.lower(Suggestion.uri).contains(search.lower()),
-                # func.lower(Suggestion.organization).contains(search.lower()),
-                # func.lower(Suggestion.broader_labels.cast(Unicode)).contains(search.lower()),
-                # func.lower(Suggestion.narrower_labels.cast(Unicode)).contains(search.lower()),
-                # func.lower(Suggestion.related_labels.cast(Unicode)).contains(search.lower()),
-                # func.lower(Suggestion.groups.cast(Unicode)).contains(search.lower()),
-                # func.lower(Suggestion.scopeNote).contains(search.lower()),
-                # func.lower(Suggestion.exactMatches.cast(Unicode)).contains(search.lower()),
-                # func.lower(Suggestion.neededFor).contains(search.lower()),
-                # func.lower(Suggestion.yse_term.cast(Unicode)).contains(search.lower()),
-            ))
-
-        return query.count()
-
-    def _validate_filters(filters):
-        return all([filter[0].upper() in SUGGESTION_FILTER_FUNCTIONS.keys() for filter in filters])
-
-    if filters:
-        # status:accepted|type:new|meeting:12
-        # -> [['status', 'accepted'], ['type', 'new'], ['meeting', '12']]
-        filters = [f.split(':') for f in filters.split('|')]
-
-    return get_count_or_404_custom(query_func)
+    query = getQuery(filters=filters, queryString=search)
+    return get_count_or_400_custom(query)
 
 
 def get_archived_suggestions_count(filters: str = "", search: str = "") -> str:
@@ -158,62 +111,14 @@ def get_archived_suggestions_count(filters: str = "", search: str = "") -> str:
     As the request query can be limited with additional parameters, we take those into account.
 
     :param filters: Filter the results based on filter selections
-    :param search: Filter the results based on search word
+    :param search: Filter the results based on search term
     :returns: The amount of archived suggestions matching the query.
     """
     if "status:archived" not in filters:
         filters = "status:archived|" + filters
 
-    def query_func():
-        query = db.session.query(Suggestion)
-
-        if filters and _validate_filters(filters):
-            for name, value in filters:
-                filter_func = SUGGESTION_FILTER_FUNCTIONS.get(name.upper())
-                if filter_func:
-                    query = filter_func(query, value.upper())
-
-        if search:
-            # Please append more fields, if you'd like to include in search
-            # Currently the JSON field search is a bit dumb.
-            # Ideally, you would like to search matches in each language separately,
-            # instead of the whole json blob (cast as string)
-            query = query.filter(or_(
-                func.lower(Suggestion.preferred_label['fi']['value'].cast(
-                    Unicode)).contains(search.lower()),
-                # func.lower(Suggestion.preferred_label.cast(Unicode)).contains(search.lower()),
-
-                func.lower(Suggestion.preferred_label['sv'].cast(
-                    Unicode)).contains(search.lower()),
-                func.lower(Suggestion.preferred_label['en'].cast(
-                    Unicode)).contains(search.lower()),
-                # func.lower(Suggestion.alternative_labels.cast(Unicode)).contains(search.lower()),
-                func.lower(Suggestion.id.cast(Unicode)).contains(search),
-                # func.lower(Suggestion.description).contains(search.lower()),
-                # func.lower(Suggestion.reason).contains(search.lower()),
-                # func.lower(Suggestion.uri).contains(search.lower()),
-                # func.lower(Suggestion.organization).contains(search.lower()),
-                # func.lower(Suggestion.broader_labels.cast(Unicode)).contains(search.lower()),
-                # func.lower(Suggestion.narrower_labels.cast(Unicode)).contains(search.lower()),
-                # func.lower(Suggestion.related_labels.cast(Unicode)).contains(search.lower()),
-                # func.lower(Suggestion.groups.cast(Unicode)).contains(search.lower()),
-                # func.lower(Suggestion.scopeNote).contains(search.lower()),
-                # func.lower(Suggestion.exactMatches.cast(Unicode)).contains(search.lower()),
-                # func.lower(Suggestion.neededFor).contains(search.lower()),
-                # func.lower(Suggestion.yse_term.cast(Unicode)).contains(search.lower()),
-            ))
-
-        return query.count()
-
-    def _validate_filters(filters):
-        return all([filter[0].upper() in SUGGESTION_FILTER_FUNCTIONS.keys() for filter in filters])
-
-    if filters and len(filters) > 0:
-        # status:accepted|type:new|meeting:12
-        # -> [['status', 'accepted'], ['type', 'new'], ['meeting', '12']]
-        filters = [f.split(':') for f in filters.split('|') if len(f) > 0]
-
-    return get_count_or_404_custom(query_func)
+    query = getQuery(filters=filters, queryString=search)
+    return get_count_or_400_custom(query)
 
 
 def get_user_suggestions(user_id: int, limit: int = None, offset: int = None) -> str:
@@ -525,7 +430,7 @@ def get_open_suggestions_skos() -> str:
     #     # -> [['status', 'accepted'], ['type', 'new'], ['meeting_id', '12'], ['tags', 'melinda-slm'], ['user_id', '1]]
     #     filters = [f.split(':') for f in filters.split('|')]
 
-    # return get_all_or_404_custom(query_func)
+    # return get_all_or_400_custom(query)
 
 # Start
     # if search_terms:
@@ -546,7 +451,7 @@ def get_open_suggestions_skos() -> str:
     # return search_terms
 
 
-# return get_count_or_404_custom(query_func)
+# return get_count_or_400_custom(query)
 # End
 
 

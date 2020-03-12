@@ -2,7 +2,7 @@ import connexion
 
 from ..authentication import admin_only
 from ..models import db, Meeting, Suggestion
-from .common import (get_one_or_404, get_all_or_404, create_or_400,
+from .common import (get_one_or_404, get_all_or_400, create_or_400,
                      delete_or_404, update_or_404, patch_or_404,
                      create_response)
 
@@ -18,7 +18,7 @@ def get_meetings(limit: int = None, offset: int = None) -> str:
     :returns: All meetings matching the query in json format
     """
 
-    return get_all_or_404(Meeting, limit, offset)
+    return get_all_or_400(Meeting, limit, offset)
 
 
 def get_meeting(meeting_id: int) -> str:
@@ -107,5 +107,4 @@ def add_suggestions_to_meeting(meeting_id: int) -> str:
         return create_response(meeting.as_dict(), 200,
                                msg.format(len(successfully_added_list), successfully_added_list, meeting_id))
 
-    else:
-        return create_response({}, 404, "Meeting with an id {} doesn't exist.".format(meeting_id))
+    return create_response({}, 404, "Meeting with an id {} doesn't exist.".format(meeting_id))

@@ -73,6 +73,8 @@ paths:
       responses:
         "200":
           description: Object containing number of suggestions
+        "400":
+          description: Bad request due to invalid filters
   /suggestions/archivedCount:
     get:
       operationId: api.logic.suggestions.get_archived_suggestions_count
@@ -90,6 +92,8 @@ paths:
       responses:
         "200":
           description: Object containing number of suggestions
+        "400":
+          description: Bad request due to invalid filters
   /suggestions/user={user_id}:
     get:
       operationId: api.logic.suggestions.get_user_suggestions
@@ -322,18 +326,17 @@ paths:
       produces:
         - text/turtle
       parameters:
-      parameters:
         - name: filters
           in: query
           description: 'Pipe-separated filter string, i.e. /api/suggestions/skosfilter?filters=status:received.read.accepted.rejected.retained.archived
     |exclude:false|type:both|yse:both|model:skos|format:turtle|suggestion_id:0'
           required: false
-          type: string          
+          type: string
       responses:
         '200':
-          description: A suggestion matching the criteria
+          description: Suggestions matching the criteria
+        '204':
+          description: No suggestion matching the criteria could be found
         '400':
           description: Bad request
-        '404':
-          description: No suggestion could be found
-        
+
