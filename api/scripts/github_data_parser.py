@@ -409,3 +409,4 @@ class GithubDataParser:
                 break
 
         return models
+        
