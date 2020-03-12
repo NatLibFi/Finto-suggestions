@@ -2,7 +2,7 @@ import connexion
 
 from ..authentication import admin_only
 from ..models import Tag
-from .common import get_one_or_404, get_all_or_404, create_or_400, delete_or_404, update_or_404_custom
+from .common import get_one_or_404, get_all_or_400, create_or_400, delete_or_404, update_or_404_custom
 
 
 def get_tags(limit: int = None, offset: int = None) -> str:
@@ -16,7 +16,7 @@ def get_tags(limit: int = None, offset: int = None) -> str:
     :returns: All tags matching the query in json format
     """
 
-    return get_all_or_404(Tag, limit, offset)
+    return get_all_or_400(Tag, limit, offset)
 
 
 def get_tag(tag_label: str) -> str:

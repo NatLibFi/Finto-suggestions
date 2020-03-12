@@ -3,7 +3,7 @@ import connexion
 
 from ..models import Event, Suggestion, db
 from ..authentication import authorized
-from .common import (get_all_or_404_custom, get_one_or_404, create_or_400, delete_or_404, patch_or_404, update_or_404)
+from .common import (get_all_or_400_custom, get_one_or_404, create_or_400, delete_or_404, patch_or_404, update_or_404)
 from .validators import event_parameter_validator
 
 def get_events(limit: int = None, offset: int = None, user_id: int = None, suggestion_id: int = None) -> str:
@@ -17,19 +17,18 @@ def get_events(limit: int = None, offset: int = None, user_id: int = None, sugge
     :returns: All events matching the query in json format
     """
 
-    def filter_func():
-        query = Event.query
-        if user_id:
-            query = query.filter(Event.user_id == user_id)
-        if suggestion_id:
-            query = query.filter(Event.suggestion_id == suggestion_id)
-        if limit:
-            query = query.limit(limit)
-        if offset:
-            query = query.offset(offset)
-        return query.order_by(Event.created.asc()).all()
+    query = Event.query
+    if user_id:
+        query = query.filter(Event.user_id == user_id)
+    if suggestion_id:
+        query = query.filter(Event.suggestion_id == suggestion_id)
+    if limit:
+        query = query.limit(limit)
+    if offset:
+        query = query.offset(offset)
+    query.order_by(Event.created.asc())
 
-    return get_all_or_404_custom(filter_func)
+    return get_all_or_400_custom(query)
 
 
 def get_event(event_id: int) -> str:
@@ -56,7 +55,7 @@ def post_event() -> str:
     """
 
     create_event_response = create_or_400(Event, connexion.request.json)
-    if create_event_response is not None and create_event_response[1] is 201:
+    if create_event_response is not None and create_event_response[1] == 201:
         try:
             suggestion = Suggestion.query.get(connexion.request.json.get('suggestion_id'))
             if suggestion is not None:
