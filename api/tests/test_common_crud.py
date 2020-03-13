@@ -1,4 +1,4 @@
-from api.logic.common import (create_response, id_exists, get_all_or_404,
+from api.logic.common import (create_response, id_exists, get_all_or_400,
                               get_one_or_404, create_or_400, delete_or_404, update_or_404, patch_or_404)
 from api.models import User
 from .fixtures import USER_DATA, MEETING_DATA, random_user
@@ -27,20 +27,20 @@ def test_create_response(session):
     assert response[1] == 200
 
 
-def test_get_all_or_404(session):
+def test_get_all_or_400(session):
     [
         session.add(User(**random_user()))
         for i in range(0, 9)
     ]
     session.commit()
 
-    response = get_all_or_404(User, limit=None, offset=None)
+    response = get_all_or_400(User, limit=None, offset=None)
     assert len(response[0].get('data')) == 10
 
-    response = get_all_or_404(User, limit=5, offset=None)
+    response = get_all_or_400(User, limit=5, offset=None)
     assert len(response[0].get('data')) == 5
 
-    response = get_all_or_404(User, limit=None, offset=8)
+    response = get_all_or_400(User, limit=None, offset=8)
     assert len(response[0].get('data')) == 2
 
 

@@ -62,6 +62,7 @@ werkzeug = "==1.0.0"
 zipp = "==3.0.0"
 
 [dev-packages]
+setuptools = "*"
 pytest = "*"
 pylint = "*"
 

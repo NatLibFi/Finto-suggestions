@@ -116,6 +116,7 @@ def get_count_or_400_custom(query) -> str:
 
     return create_response({"count": db_count}, 200)
 
+
 def create_or_400(model: object, payload: Dict, error_msg: str = None) -> str:
     """
     Creates a new object and commits it to the database.
@@ -137,46 +138,7 @@ def create_or_400(model: object, payload: Dict, error_msg: str = None) -> str:
             msg = error_msg
         db.session.rollback()
         return create_response(None, 400, msg)
-# Mika's testing begins
 
-    try:
-        print("*** If User Object has an email it is used to send a Welcome email ***")
-        # if db_obj.attributes:
-        #     print(db_obj.attributes)
-        #     if 'email' in db_obj.attributes:
-        if db_obj.email:
-            print("The email in use is " + db_obj.email)
-            send_email_while_signing_up(db_obj.email)
-    except Exception as exx:
-        print("The object has no attribute --> " + str(exx))
-
-
-    # if db_obj.attributes:
-
-    #     if db_obj.
-    #     if 'User' in db_obj.attributes:
-    #         print("ja kaikki sanoo moooooi")
-    #     else:
-    #         print(db_obj.attributes)
-
-#Tarvitaan, mutta korjaa
-    # if db_obj.email:
-    #     print("***********************")
-    #     print("***********************")
-    #     print("***********************")
-    #     print("***********************")
-    #     print(model.__str__())
-    #     print("The email in use is " + db_obj.email )
-    #     send_email_while_signing_up(db_obj.email)
-
-        # if password_update_success is True:
-        #   sending_status = send_email(new_password, user.email)
-        #   if sending_status:
-        #     return { 'code': 200 }, 200
-        #   else:
-        #     return { 'code': 404, 'error': 'Could not send email' }, 404
-
-# Mika's testing ends
     return create_response(db_obj.as_dict(), 201)
 
 
@@ -232,6 +194,7 @@ def update_or_404(model: object, primary_key: int, payload: Dict) -> str:
     db.session.commit()
 
     return create_response(db_obj.as_dict(), 200)
+
 
 def update_or_404_custom(model: object, primary_key: int, payload: Dict) -> str:
     """
@@ -299,7 +262,6 @@ def patch_or_404(model: object, primary_key: int, payload: Dict) -> str:
     return create_response(db_obj.as_dict(), 200)
 
 
-
 def send_email_while_signing_up(email: str) -> str:
     """
     Method for sending email messages
@@ -315,29 +277,9 @@ def send_email_while_signing_up(email: str) -> str:
         body = os.environ.get('WELCOME_MESSAGE_BODY')
         subject_text = os.environ.get('WELCOME_SUBJECT')
 
-# WELCOME_SUBJECT='Tervetuloa systeemiin'
-# WELCOME_MESSAGE_BODY="""Mikan testiteksti"""
-
-
-        print(email_server_address)
-        print(email_server_port)
-        print(default_sender)
-        print(email_server_username)
-
-# Toimiva
-    #   body = """
-    #   Mikan testiteksti
-    #   """
-
-    #   message = 'Subject: Tervetuloa Ehdotusjärjestelmän käyttäjäksi'.format(body)
-
-
         message = 'Subject: {}\n\n{}'.format(
-            # TOIMIVA 'Tervetuloa systeemiin',
             subject_text,
             body)
-
-
 
         try:
             mailserver = smtplib.SMTP(email_server_address, email_server_port)

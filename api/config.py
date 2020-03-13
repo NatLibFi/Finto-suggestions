@@ -9,7 +9,6 @@ class BaseConfig:
     Default values for app configurations. Do not modify these.
     Rather, overwrite the DevelopmentConfig and ProductionConfig values.
     """
-    # Mika 271919
     # SQLALCHEMY_DATABASE_URI = f'postgresql+psycopg2://{user}:{pw}@db:5432/{db}'
     SQLALCHEMY_DATABASE_URI = f'postgresql://{user}:{pw}@db:5432/{db}?client_encoding=utf8'
 
@@ -28,14 +27,14 @@ class DevelopmentConfig(BaseConfig):
     # db_container_name = 'db'
     # ENABLE_SWAGGER_UI = True
     DEBUG = True
-    # SQLALCHEMY_DATABASE_URI = f'postgresql+psycopg2://{user}:{pw}@{db_container_name}:5432/{db}?charset=utf8mb4'
 
 class TestingConfig(BaseConfig):
     # testdb db will be created upon test initialization
     # ENABLE_SWAGGER_UI = True
-    db_container_name = 'db'
-    SQLALCHEMY_DATABASE_URI = f'postgresql://{user}:{pw}@{db_container_name}:5432/{db}'
-    # SQLALCHEMY_DATABASE_URI = f'postgresql+psycopg2://{user}:{pw}@{db_container_name}:5432/{db}?charset=utf8mb4'
+    SQLALCHEMY_DATABASE_ROOT = f'postgresql+psycopg2://{user}:{pw}@db:5432/'
+    SQLALCHEMY_DATABASE_URI = SQLALCHEMY_DATABASE_ROOT + 'testdb'
+    #db_container_name = 'db'
+    #SQLALCHEMY_DATABASE_URI = f'postgresql://{user}:{pw}@{db_container_name}:5432/{db}'
     DEBUG = True
 
 class ProductionConfig(BaseConfig):

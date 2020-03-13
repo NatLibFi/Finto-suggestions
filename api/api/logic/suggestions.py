@@ -180,7 +180,6 @@ def post_suggestion() -> str:
         payload_tags = payload_dict['tags']
         payload_dict['tags'] = []
 
-    # Mika's test area for getting missing lists inserted into the db with at least brackets
     if 'broader_labels' not in payload_dict:
         payload_dict['broader_labels'] = []
 
@@ -219,11 +218,8 @@ def post_suggestion() -> str:
         if suggestion_id > 0 and protocol != '' and baseurl is not None and baseurl != '':
             response['data']['suggestionUrl'] = f'{protocol}://{baseurl}/suggestion/{suggestion_id}'
 
-        print("#### Response: " + str(jsonify(response['data'])))
         return jsonify(response['data']), 201
 
-
-    print("#### Response: " + str(jsonify(response['data'])))
     return {'error': 'Could not create suggestion.'}, 400
 
 
@@ -375,7 +371,6 @@ def put_update_suggestion_status(suggestion_id: int, status: str) -> str:
             suggestion = Suggestion.query.get(suggestion_id)
             suggestion.status = status
             db.session.add(suggestion)
-            # Mika 011019
             db.session.commit()
             return {'code': 202}, 202
         except Exception as ex:
@@ -415,67 +410,25 @@ def get_resolved_suggestions() -> str:
 
 
 def get_open_suggestions_skos() -> str:
-    # def get_open_suggestions_skos(search_terms: str) -> str:
     """
     Get open status suggestions from db
     :returns: Suggestions list of open suggestions in skos format
     """
-    #   description: 'Pipe-separated filter string, i.e. status:accepted|type:new|meeting_id:12'
-
-    # def _validate_filters(filters):
-    #     return all([filter[0].upper() in SUGGESTION_FILTER_FUNCTIONS.keys() for filter in filters])
-
-    # if filters:
-    #     # status:accepted|type:new|meeting_id:12|tags:melinda-slm|user_id:1
-    #     # -> [['status', 'accepted'], ['type', 'new'], ['meeting_id', '12'], ['tags', 'melinda-slm'], ['user_id', '1]]
-    #     filters = [f.split(':') for f in filters.split('|')]
-
-    # return get_all_or_400_custom(query)
-
-# Start
-    # if search_terms:
-    #     print(search_terms)
-    # status:accepted|type:new|meeting:12
-    # -> [['status', 'accepted'], ['type', 'new'], ['meeting', '12']]
-    # filters = [f.split(':') for f in filters.split('|')]
-    # try:
-    #     suggestion = Suggestion.query.filter_by(id=suggestion_id).first()
-    #     graph = suggestionToGraph(suggestion.as_dict())
-    #     try:
-    #         return graph.serialize(format='turtle')
-    #     except Exception as ex:
-    #         print(str(ex))
-    # except Exception as ex:
-    #     print(str(ex))
-    #     return {'code': 404, 'error': str(ex)}, 404
-    # return search_terms
-
-
-# return get_count_or_400_custom(query)
-# End
-
-
-#   tekstiä
-#   tekstiä
-
-# original start
-
     try:
         open_suggestions = Suggestion.query.filter(and_(Suggestion.status.notin_(
             ['ACCEPTED', 'REJECTED', 'ARCHIVED']), Suggestion.yse_term["url"] == None)).all()
+        if len(open_suggestions) == 0:
+            return {'code': 204, 'message': "No open suggestions"}, 204
         graph = None
         for suggestion in open_suggestions:
             graph = suggestionToGraph(suggestion.as_dict(), graph)
         try:
             return graph.serialize(format='turtle')
         except Exception as ex:
-            print(str(ex))
+            return {'code': 500, 'error': "Failed to serialize open suggestions"}, 500
 
     except Exception as ex:
-        print(str(ex))
-        return {'code': 404, 'error': str(ex)}, 404
-
-# original ends
+        return {'code': 500, 'error': str(ex)}, 500
 
 
 def get_suggestion_skos(suggestion_id: int) -> str:
@@ -492,7 +445,7 @@ def get_suggestion_skos(suggestion_id: int) -> str:
         try:
             return graph.serialize(format='turtle')
         except Exception as ex:
-            print(str(ex))
+            return {'code': 500, 'error': "Failed to serialize suggestion"}, 500
     except Exception as ex:
         print(str(ex))
         return {'code': 404, 'error': str(ex)}, 404
@@ -565,7 +518,6 @@ def get_suggestion_skosfilter(filters: str = "") -> str:
             return ['MODIFY']
         if "type:both" in filters:
             return ['NEW', 'MODIFY']
-        print("Type of suggestions is not set")
         return ['NEW', 'MODIFY']
 
     def getFormat() -> str:
@@ -593,16 +545,12 @@ def get_suggestion_skosfilter(filters: str = "") -> str:
             return 'skos'
         return 'skos'
 
-    print("Before validation")
-    print(filters)
-
     if not validFilters():
         return {'code': 400, 'error': "Invalid filters"}, 400
 
     inYSE = getYse()
     excluded = "exclude:true" in filters
-    if not excluded:
-        print("An inclusive search in use")
+
     returnFormat = getFormat()
     splittedFilters = [f.split(':') for f in filters.split('|')]
     statusList = splittedFilters[0]
@@ -638,7 +586,7 @@ def get_suggestion_skosfilter(filters: str = "") -> str:
 
     if len(open_suggestions) == 0 or open_suggestions[0] is None:
         # Empty result set
-        return {'code': 204, 'error': "Empty result set"}, 204
+        return {'code': 204, 'message': "Empty result set"}, 204
 
     graph = None
     for suggestion in open_suggestions:
@@ -646,4 +594,4 @@ def get_suggestion_skosfilter(filters: str = "") -> str:
     try:
         return graph.serialize(format=returnFormat)
     except Exception as ex:
-        print(str(ex))
+        return {'code': 500, 'error': "Failed to serialize open suggestions"}, 500

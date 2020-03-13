@@ -300,8 +300,10 @@ paths:
       responses:
         "200":
           description: Get all open status suggestions in skos format
-        "400":
-          description: Filtering open suggestions failed
+        "204":
+          description: No open suggestions
+        "500":
+          description: Server error
   /suggestions/{suggestion_id}/skos:
     get:
       operationId: api.logic.suggestions.get_suggestion_skos
@@ -319,6 +321,8 @@ paths:
           description: A suggestion matching the given id
         '404':
           description: No suggestion could be found with the given ID
+        '500':
+          description: Server error
   /suggestions/skosfilter:
     get:
       operationId: api.logic.suggestions.get_suggestion_skosfilter
@@ -339,4 +343,6 @@ paths:
           description: No suggestion matching the criteria could be found
         '400':
           description: Bad request
+        '500':
+          description: Server error
 
