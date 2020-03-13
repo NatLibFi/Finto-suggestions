@@ -173,13 +173,15 @@ export default {
       let listOfUserIds = [];
       console.log("1. reactions.length: " + reactions.length);
 
+
       for (let index = 0; index < reactions.length; index++) {
         if (reactions[index].code === 'THUMBS_DOWN') {
+        // if (reactions[index].code === this.emojiList['code']) {
           listOfUserIds.push(reactions[index].user_id)
         }
       }
 
-for (let i = 0; i < reactions.length; i++) {
+      for (let i = 0; i < reactions.length; i++) {
         if (reactions[i].code in this.emojiMapping) {
           console.log("2. reactions[" + i + "].code: " + String(reactions[i].code));
           if (listedEmojis.includes(reactions[i].code)) {
@@ -194,6 +196,7 @@ for (let i = 0; i < reactions.length; i++) {
               id: reactions[i].id,
               user_id: reactions[i].user_id,
               user_id_total: reactions[i].code !== 'THUMBS_DOWN' ? []  : this.filterDuplicates(listOfUserIds)
+              // user_id_total: reactions[i].code !== this.emojiList['code'] ? []  : this.filterDuplicates(listOfUserIds)
             });
             listedEmojis.push(reactions[i].code);
             console.log("4. " + String(reactions[i].code) + " lisättiin listedEmojis-listalle");
