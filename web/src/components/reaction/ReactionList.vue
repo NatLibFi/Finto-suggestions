@@ -100,20 +100,8 @@ export default {
     } else {
       await this.reactionsBySuggestion(this.suggestionId);
       this.emojiList = this.listCountedEmojis(this.reactions);
-      // this.emojiList.push({"mika": "TESTAA"});
     }
-    // Mika
-    // await this.getUsers();
-    // this.filteredUsers = this.users;
 
-    // // await this.getUser(2);
-    // // this.fetchName();
-
-    //   await this.getUser(13);
-    //   this.fetchName();
-
-    // this.filteredUsers = this.users.filter(user =>
-    //   user.name.includes("Matti"));
   },
   methods: {
     ...mapReactionActions({
@@ -140,26 +128,6 @@ export default {
       }
       return this.filteredUserIdsList;
     },
-    // async fetchName() {
-    //   await this.getUser(2);
-    //   this.userName = this.user.name;
-    //   // return this.user;
-    // },
-    // async getUserName() {
-    //   if (this.suggestion && this.suggestion.user_id) {
-    //     await this.getUser(this.suggestion.user_id);
-    //     this.userName = this.user.name;
-    //   } else {
-    //     this.userName = '';
-    //   }
-    // },
-
-    // async getUsersAsList() {
-    //   let users = [];
-    //   users = await this.get;
-    //   return users;
-    // },
-
 
 
     filterDuplicates(arrayToFilter) { 
