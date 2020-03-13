@@ -73,13 +73,9 @@ SUGGESTION_SORT_FUNCTIONS = {
         lambda session:
         session.query(Suggestion)
         .outerjoin(Event)
-        .filter(or_(
-            Event.event_type == 'COMMENT',
-            Event.event_type == None  # pylint: disable=C0121
-        ))
         .group_by(Suggestion.id)
         .order_by(
-            db.func.count(Event.event_type).desc(),
+            db.func.count(Event.event_type == "COMMENT").desc(),
             Suggestion.created.desc()
         )
     ),
@@ -87,13 +83,9 @@ SUGGESTION_SORT_FUNCTIONS = {
         lambda session:
         session.query(Suggestion)
         .outerjoin(Event)
-        .filter(or_(
-            Event.event_type == 'COMMENT',
-            Event.event_type == None  # pylint: disable=C0121
-        ))
         .group_by(Suggestion.id)
         .order_by(
-            db.func.count(Event.event_type).asc(),
+            db.func.count(Event.event_type == "COMMENT").asc(),
             Suggestion.created.desc()
         )
     ),
