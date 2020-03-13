@@ -66,9 +66,9 @@
       v-if="!meetingId && mapMeetingsToDropDown().length > 0"
       @click="isDropDownOpened.MEETING = !isDropDownOpened.MEETING"
       :class="[filterStrings.meeting.length > 0 ? 'active-filter' : '', 'filter-item']"
-    > 
+    >
       <div :class="[isDropDownOpened.MEETING ? 'selected' : '', 'drop-down-button']">
-        <span >Kokous: </span>
+        <span>Kokous: </span>
         <span v-for="item in mapMeetingsToDropDown()" :key="item.value">
           <span v-if="'meeting_id:' + item.value == filterStrings.meeting">
             {{ item.label }}
@@ -76,7 +76,7 @@
         </span>
         <svg-icon icon-name="triangle"><icon-triangle /></svg-icon>
       </div>
-      <filter-drop-down 
+      <filter-drop-down
         :selectedIndex="selectedOptionIndex.MEETING"
         :isOpened="isDropDownOpened.MEETING"
         :dropDownOptions="mapMeetingsToDropDown()"
@@ -85,9 +85,13 @@
         @refreshSelectedIndex="selectedOptionIndex.MEETING = $event"
         @closeDropDown="closeDropDown"
       />
-    </div >
-        <a v-if="isDropDownOpened.MEETING && filterStrings.meeting.length > 0" @click="resetMeetings()" class="clear-button">
-          Tyhjennä kokoukset
+    </div>
+    <a
+      v-if="isDropDownOpened.MEETING && filterStrings.meeting.length > 0"
+      @click="resetMeetings()"
+      class="clear-button"
+    >
+      Tyhjennä kokoukset
     </a>
   </div>
 </template>
@@ -250,13 +254,7 @@ export default {
 
     meetingOutFromTheFilters() {
       if (this.meetingId) {
-        handleMeetingQueries(
-          null,
-          this.filters,
-          this.searchWord,
-          this.sort,
-          this.$router
-        );
+        handleMeetingQueries(null, this.filters, this.searchWord, this.sort, this.$router);
       } else {
         let stateString = '';
         let filters = this.combineStateStrings(filterType.MEETING, stateString);
@@ -364,7 +362,7 @@ export default {
         TYPE: 0,
         MEETING: null
       };
-      
+
       handleQueries('', this.searchWord, this.sort, this.$router);
       this.hasTouchedFilters = false;
     },
