@@ -47,28 +47,17 @@ def id_exists(model: object, object_id: int) -> bool:
     return db.session.query(exists().where(model.id == object_id)).scalar()
 
 
-def get_all_or_404_custom(query_func) -> str:
+def get_all_or_400_custom(query) -> str:
     """
         A generic get all, with a custom query function
 
-        :param model: model to query
-        :param query_func: a function, that takes a query
-            instance as a parameter and returns a query instance.
-
-            This is handy for filtering, sorting and searching.
-
-            def query_func()
-                query = model.query
-                if limit:
-                    query = query.limit(limit)
-                return query.all()
-
-        :returns: All columns matching the filtered query or 404
+        :param query: query instance
+        :returns: All columns matching the query or 400
     """
     try:
-        db_objs = query_func()
+        db_objs = query.all()
     except InvalidFilterException as e:
-        return create_response({}, 404, str(e))
+        return create_response({}, 400, str(e))
 
     serialized_objects = []
     if db_objs:
@@ -77,52 +66,23 @@ def get_all_or_404_custom(query_func) -> str:
     return create_response(serialized_objects, 200)
 
 
-def get_count_or_404_custom(query_func) -> str:
-    """
-        Gets count of objects, with a custom query function
-
-        :param model: model to query
-        :param query_func: a function, that takes a query
-            instance as a parameter and returns a query instance.
-
-            This is handy for filtering, sorting and searching.
-
-            def query_func()
-                query = model.query
-                if limit:
-                    query = query.limit(limit)
-                return query.all()
-
-        :returns: All columns matching the filtered query or 404
-    """
-    try:
-        db_count = query_func()
-    except InvalidFilterException as e:
-        return create_response(0, 404, str(e))
-
-    return create_response({"count": db_count}, 200)
-
-
-def get_all_or_404(model, limit: int, offset: int) -> str:
+def get_all_or_400(model: object, limit: int, offset: int) -> str:
     """
     Returns all queried objects.
     Request query can be limited with additional parameters `limit` and `offset`.
 
     :param limit: Cap the results to :limit: results
     :param offset: Start the query from offset (e.g. for paging)
-    :returns: All columns matching the query in json format or 404 and error message as JSON
+    :returns: All columns matching the query in json format or 400 and error message as JSON
     """
 
-    def query_func():
-        query = model.query
-        if limit:
-            query = query.limit(limit)
-        if offset:
-            query = query.offset(offset)
+    query = model.query
+    if limit:
+        query = query.limit(limit)
+    if offset:
+        query = query.offset(offset)
 
-        return query.all()
-
-    return get_all_or_404_custom(query_func)
+    return get_all_or_400_custom(query)
 
 
 def get_one_or_404(model: object, primary_key: int) -> str:
@@ -140,6 +100,21 @@ def get_one_or_404(model: object, primary_key: int) -> str:
     msg = "Unable to find any {} with an id of {}.".format(
         model.__table__, primary_key)
     return create_response(None, 404, msg)
+
+
+def get_count_or_400_custom(query) -> str:
+    """
+        Runs function count() on given query.
+
+        :param query: query instance
+        :returns: Row count of query or 400
+    """
+    try:
+        db_count = query.count()
+    except InvalidFilterException as e:
+        return create_response(0, 400, str(e))
+
+    return create_response({"count": db_count}, 200)
 
 
 def create_or_400(model: object, payload: Dict, error_msg: str = None) -> str:
@@ -163,46 +138,7 @@ def create_or_400(model: object, payload: Dict, error_msg: str = None) -> str:
             msg = error_msg
         db.session.rollback()
         return create_response(None, 400, msg)
-# Mika's testing begins
 
-    try:
-        print("*** If User Object has an email it is used to send a Welcome email ***")
-        # if db_obj.attributes:
-        #     print(db_obj.attributes)
-        #     if 'email' in db_obj.attributes:
-        if db_obj.email:
-            print("The email in use is " + db_obj.email)
-            send_email_while_signing_up(db_obj.email)
-    except Exception as exx:
-        print("The object has no attribute --> " + str(exx))
-
-
-    # if db_obj.attributes:
-
-    #     if db_obj.
-    #     if 'User' in db_obj.attributes:
-    #         print("ja kaikki sanoo moooooi")
-    #     else:
-    #         print(db_obj.attributes)
-
-#Tarvitaan, mutta korjaa
-    # if db_obj.email:
-    #     print("***********************")
-    #     print("***********************")
-    #     print("***********************")
-    #     print("***********************")
-    #     print(model.__str__())
-    #     print("The email in use is " + db_obj.email )
-    #     send_email_while_signing_up(db_obj.email)
-
-        # if password_update_success is True:
-        #   sending_status = send_email(new_password, user.email)
-        #   if sending_status:
-        #     return { 'code': 200 }, 200
-        #   else:
-        #     return { 'code': 404, 'error': 'Could not send email' }, 404
-
-# Mika's testing ends
     return create_response(db_obj.as_dict(), 201)
 
 
@@ -258,6 +194,7 @@ def update_or_404(model: object, primary_key: int, payload: Dict) -> str:
     db.session.commit()
 
     return create_response(db_obj.as_dict(), 200)
+
 
 def update_or_404_custom(model: object, primary_key: int, payload: Dict) -> str:
     """
@@ -325,7 +262,6 @@ def patch_or_404(model: object, primary_key: int, payload: Dict) -> str:
     return create_response(db_obj.as_dict(), 200)
 
 
-
 def send_email_while_signing_up(email: str) -> str:
     """
     Method for sending email messages
@@ -341,29 +277,9 @@ def send_email_while_signing_up(email: str) -> str:
         body = os.environ.get('WELCOME_MESSAGE_BODY')
         subject_text = os.environ.get('WELCOME_SUBJECT')
 
-# WELCOME_SUBJECT='Tervetuloa systeemiin'
-# WELCOME_MESSAGE_BODY="""Mikan testiteksti"""
-
-
-        print(email_server_address)
-        print(email_server_port)
-        print(default_sender)
-        print(email_server_username)
-
-# Toimiva
-    #   body = """
-    #   Mikan testiteksti
-    #   """
-
-    #   message = 'Subject: Tervetuloa Ehdotusjärjestelmän käyttäjäksi'.format(body)
-
-
         message = 'Subject: {}\n\n{}'.format(
-            # TOIMIVA 'Tervetuloa systeemiin',
             subject_text,
             body)
-
-
 
         try:
             mailserver = smtplib.SMTP(email_server_address, email_server_port)

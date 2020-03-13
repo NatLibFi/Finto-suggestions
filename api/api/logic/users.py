@@ -7,7 +7,7 @@ import connexion
 
 from ..authentication import admin_only
 from ..models import db, User
-from .common import (get_all_or_404, get_one_or_404,
+from .common import (get_all_or_400, get_one_or_404,
                      create_or_400, delete_or_404, update_or_404, patch_or_404)
 
 
@@ -23,7 +23,7 @@ def get_users(limit: int = None, offset: int = None) -> str:
     :returns: All users matching the query in json format
     """
 
-    return get_all_or_404(User, limit, offset)
+    return get_all_or_400(User, limit, offset)
 
 
 def get_user(user_id: int) -> str:
