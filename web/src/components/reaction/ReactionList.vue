@@ -55,10 +55,12 @@ import {
 import { eventActions } from "../../store/modules/event/eventConsts";
 
 // Mika
-import { mapUserGetters, mapUserActions } from "../../store/modules/user/userModule";
-import { userGetters, userActions } from "../../store/modules/user/userConsts";
+import { mapUserGetters, mapUserActions, mapUserMutations } from "../../store/modules/user/userModule";
+import { userGetters, userActions, userMutations } from "../../store/modules/user/userConsts";
 import reaction from "../../api/reaction/reaction";
 import user from "../../api/user/user";
+// import { userActions, userGetters, userMutations } from '../../store/modules/user/userConsts';
+// import store from "../../store/index";
 
 // Hae eventit
 // Hae
@@ -96,6 +98,7 @@ export default {
     ...mapReactionGetters({
       reactions: reactionGetters.GET_REACTIONS
     }),
+    ...mapUserGetters({ users: userGetters.GET_USERS }),
 
     // Mika
     ...mapUserGetters({ users: userGetters.GET_USERS })
@@ -109,21 +112,26 @@ export default {
       await this.reactionsBySuggestion(this.suggestionId);
       this.emojiList = this.listCountedEmojis(this.reactions);
     }
+    await this.getUsers();
+    this.filteredUsers = this.users;
+  },
     // this.getUserNamesForCodes(this.reactions);
     // this.getEmojiSubmittersByReaction
 
-  },
+  // },
   methods: {
     ...mapReactionActions({
       reactionsBySuggestion: reactionActions.GET_REACTIONS_BY_SUGGESTION,
       reactionsByEvent: reactionActions.GET_REACTIONS_BY_EVENT
     }),
-    ...mapUserActions({
-      getUsers: userActions.GET_USERS,
-      getUser: userActions.GET_USER
-    }),
+    ...mapUserActions({ getUsers: userActions.GET_USERS }),
+    ...mapUserMutations({ setUsers: userMutations.SET_USERS }),
 
     // Mika
+    // getUserByIdFromStore(id){
+    //   return store.state.isHeadersAndIdSetInState
+    // },
+
     getFilteredUserIds() {
       console.log(this.filteredUsers.length);
       for (let userIndex = 0; userIndex < this.filteredUsers.length; userIndex++) {
