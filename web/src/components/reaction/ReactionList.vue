@@ -2,17 +2,17 @@
   <div>
     <div class="emoji-list">
       <!-- mika -->
-      <p>
+      <!-- <p>
         <span>suggestionId: {{ suggestionId }}</span>
-      </p>
-          <p>
+      </p> -->
+          <!-- <p>
             <span> Vaihtoehto 1: emojiList {{ emojiList }} </span>
-          </p>
+          </p> -->
           <!-- <p>
             <span> emojiMapping {{ emojiMapping }} </span>
           </p> -->
       <div v-for="(emoji, index) in emojiList" :key="index" class="single-emoji" name="huihai">
-        <span class="count">{{ emoji.count }}</span>
+        <span class="count">{{ (emoji.count/emojiList.length) }}</span>
 
         <!-- Mika -->
         <div>
@@ -22,12 +22,14 @@
           <!-- <p>
             <span> eventId: {{ eventId }} </span>
           </p> -->
+          <!-- toimii -->
           <p>
             <span> Vaihtoehto 0 : {{ reactionCodesAndUserIdsArray }} </span>
           </p>
-          <p>
+          <!-- yllä oleva toimii -->
+          <!-- <p>
             <span> Vaihtoetho 2: reactions: {{ reactions }} </span>
-          </p>
+          </p> -->
           <!-- <p>
             <span> kommentin luojan userId: {{ userId }} </span>
           </p> -->
@@ -36,7 +38,8 @@
           </p> -->
         </div>
 
-        <span class="emoji">{{ emojiMapping[emoji.code] }}</span>
+        <span class="emoji">{{ emojiMapping[emoji.code]}} </span>
+        <span> {{ getEmojiSubmittersByReaction(emoji.code) }}</span>
       </div>
     </div>
   </div>
@@ -85,7 +88,8 @@ export default {
       filteredUsers: [],
       filteredUserIdsList: [],
       userName: "",
-      reactionCodesAndUserIdsArray: {}
+      reactionCodesAndUserIdsArray: {},
+      emojiNames: []
     };
   },
   computed: {
@@ -106,6 +110,7 @@ export default {
       this.emojiList = this.listCountedEmojis(this.reactions);
     }
     // this.getUserNamesForCodes(this.reactions);
+    // this.getEmojiSubmittersByReaction
 
   },
   methods: {
@@ -132,6 +137,11 @@ export default {
         this.filteredUserIdsList[userIndex] = this.filteredUsers[userIndex].id;
       }
       return this.filteredUserIdsList;
+    },
+    getEmojiSubmittersByReaction(emojiCode){
+      if (emojiCode) {
+        return this.reactionCodesAndUserIdsArray[emojiCode]; 
+      }
     },
 
 
@@ -172,11 +182,9 @@ export default {
         listOfUserIds = [];
         for (let i = 0; i < reactions.length; i++) {
           if (reactions[i].code in this.emojiMapping) {
-            console.log("2. reactions[" + i + "].code: " + String(reactions[i].code));
             if (listedEmojis.includes(reactions[i].code)) {
               let index = arr.findIndex(emoji => emoji.code === reactions[i].code);
               arr[index].count += 1;
-              console.log("ELEM iffissä " + element);
             } else {
               arr.push({
                 code: reactions[i].code,
@@ -185,9 +193,7 @@ export default {
                 user_id: reactions[i].user_id,
                 user_id_total: this.filterDuplicates(keyValuePairsForCodesAndUsers[element])
               });
-              console.log("Elementin " + element + " palauttama taulukko: " + keyValuePairsForCodesAndUsers[element]); 
               listedEmojis.push(reactions[i].code);
-              console.log("4. " + String(reactions[i].code) + " lisättiin listedEmojis-listalle");
             }
           }
         }
