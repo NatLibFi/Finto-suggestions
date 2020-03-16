@@ -23,6 +23,9 @@
             <span> eventId: {{ eventId }} </span>
           </p> -->
           <p>
+            <span> Vaihtoehto 0 : {{ reactionCodesAndUserIdsArray }} </span>
+          </p>
+          <p>
             <span> Vaihtoetho 2: reactions: {{ reactions }} </span>
           </p>
           <!-- <p>
@@ -71,7 +74,7 @@ export default {
       type: [String, Number],
       required: false
     },
-    componentKey: Number
+    componentKey: Number,
     // filteredUsers: String
   },
   data() {
@@ -81,7 +84,8 @@ export default {
       // Mika
       filteredUsers: [],
       filteredUserIdsList: [],
-      userName: ""
+      userName: "",
+      reactionCodesAndUserIdsArray: {}
     };
   },
   computed: {
@@ -101,6 +105,7 @@ export default {
       await this.reactionsBySuggestion(this.suggestionId);
       this.emojiList = this.listCountedEmojis(this.reactions);
     }
+    // this.getUserNamesForCodes(this.reactions);
 
   },
   methods: {
@@ -134,43 +139,125 @@ export default {
       return Array.from(new Set(arrayToFilter));;
     },
 
+
+
     listCountedEmojis(reactions) {
       let listedEmojis = [];
       let arr = [];
       //
       let listOfUserIds = [];
+      var tempArrayOfCodes = [];
+      let keyValuePairsForCodesAndUsers = {};
       console.log("1. reactions.length: " + reactions.length);
 
-
-      for (let index = 0; index < reactions.length; index++) {
-        if (reactions[index].code === 'THUMBS_DOWN') {
-        // if (reactions[index].code === this.emojiList['code']) {
-          listOfUserIds.push(reactions[index].user_id)
+      console.log("Getting codes from the used reactions");
+      for (let index = 0; index < this.reactions.length; index++) {
+        const elementAtTheMoment = reactions[index];
+        if (!tempArrayOfCodes.includes(elementAtTheMoment.code)) {
+          tempArrayOfCodes.push(elementAtTheMoment.code);
+        } else {
+          console.log("Element already included the used code");
         }
       }
-
-      for (let i = 0; i < reactions.length; i++) {
-        if (reactions[i].code in this.emojiMapping) {
-          console.log("2. reactions[" + i + "].code: " + String(reactions[i].code));
-          if (listedEmojis.includes(reactions[i].code)) {
-            let index = arr.findIndex(emoji => emoji.code === reactions[i].code);
-            arr[index].count += 1;
-          } else {
-            console.log("3. reactions[" + i + "].code ennen pushia: " + String(reactions[i].code));
-            arr.push({
-              code: reactions[i].code,
-              count: 1,
-              //Mika lisäys
-              id: reactions[i].id,
-              user_id: reactions[i].user_id,
-              user_id_total: reactions[i].code !== 'THUMBS_DOWN' ? []  : this.filterDuplicates(listOfUserIds)
-              // user_id_total: reactions[i].code !== this.emojiList['code'] ? []  : this.filterDuplicates(listOfUserIds)
-            });
-            listedEmojis.push(reactions[i].code);
-            console.log("4. " + String(reactions[i].code) + " lisättiin listedEmojis-listalle");
+      tempArrayOfCodes.forEach(element => {
+        for (let index = 0; index < reactions.length; index++) {
+          if (reactions[index].code === element) {
+            listOfUserIds.push(reactions[index].user_id);
           }
         }
-      }
+        keyValuePairsForCodesAndUsers[element] = listOfUserIds;
+        //////////////////
+        this.reactionCodesAndUserIdsArray[element] = this.filterDuplicates(keyValuePairsForCodesAndUsers[element]);
+        /////////////////////
+        listOfUserIds = [];
+        for (let i = 0; i < reactions.length; i++) {
+          if (reactions[i].code in this.emojiMapping) {
+            console.log("2. reactions[" + i + "].code: " + String(reactions[i].code));
+            if (listedEmojis.includes(reactions[i].code)) {
+              let index = arr.findIndex(emoji => emoji.code === reactions[i].code);
+              arr[index].count += 1;
+              console.log("ELEM iffissä " + element);
+            } else {
+              arr.push({
+                code: reactions[i].code,
+                count: 1,
+                id: reactions[i].id,
+                user_id: reactions[i].user_id,
+                user_id_total: this.filterDuplicates(keyValuePairsForCodesAndUsers[element])
+              });
+              console.log("Elementin " + element + " palauttama taulukko: " + keyValuePairsForCodesAndUsers[element]); 
+              listedEmojis.push(reactions[i].code);
+              console.log("4. " + String(reactions[i].code) + " lisättiin listedEmojis-listalle");
+            }
+          }
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//Testarea ends
+      });
+
+
+
+
+      // for (let index = 0; index < reactions.length; index++) {
+      //   if (reactions[index].code === 'THUMBS_DOWN') {
+      //   // if (reactions[index].code === this.emojiList['code']) {
+      //     listOfUserIds.push(reactions[index].user_id)
+      //   }
+      // }
+
+
+
+
+      // for (let i = 0; i < reactions.length; i++) {
+      //   if (reactions[i].code in this.emojiMapping) {
+      //     console.log("2. reactions[" + i + "].code: " + String(reactions[i].code));
+      //     if (listedEmojis.includes(reactions[i].code)) {
+      //       let index = arr.findIndex(emoji => emoji.code === reactions[i].code);
+      //       arr[index].count += 1;
+      //     } else {
+      //       console.log("3. reactions[" + i + "].code ennen pushia: " + String(reactions[i].code));
+      //       arr.push({
+      //         code: reactions[i].code,
+      //         count: 1,
+      //         //Mika lisäys
+      //         id: reactions[i].id,
+      //         user_id: reactions[i].user_id,
+      //         user_id_total: reactions[i].code !== 'THUMBS_DOWN' ? []  : this.filterDuplicates(listOfUserIds)
+      //         // user_id_total: reactions[i].code !== this.emojiList['code'] ? []  : this.filterDuplicates(listOfUserIds)
+      //       });
+      //       listedEmojis.push(reactions[i].code);
+      //       console.log("4. " + String(reactions[i].code) + " lisättiin listedEmojis-listalle");
+      //     }
+      //   }
+      // }
       return arr;
     }
 
