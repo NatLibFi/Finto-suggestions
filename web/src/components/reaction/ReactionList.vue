@@ -53,10 +53,11 @@
           </p> -->
         </div>
 
-        <span class="emoji">{{ emojiMapping[emoji.code]}} </span>
+        <span :title="'Käyttäjät: ' + getEmojiSubmittersByReaction2(emoji.code)" class="emoji">{{ emojiMapping[emoji.code]}} </span>
         <!-- <span> {{ getEmojiSubmittersByReaction(emoji.code) }}</span> //Toimiva eli tuo emojin user_id:t -->
         <!-- <span> {{ getEmojiSubmittersByReaction(emoji.code) }}</span> -->
-        <span> {{ getEmojiSubmittersByReaction2(emoji.code) }}</span>
+        <!-- <span > {{ getEmojiSubmittersByReaction2(emoji.code) }}</span> TOIMII -->
+        <!-- <span :title="'Käyttäjät: ' + getEmojiSubmittersByReaction2(emoji.code)"> {{ getEmojiSubmittersByReaction2(emoji.code) }}</span> -->
         <!-- <span> {{  users }} </span> -->
       </div>
     </div>
@@ -83,7 +84,7 @@ import reaction from "../../api/reaction/reaction";
 
 // Hae eventit
 // Hae
-
+export const userNamesInReactionSpanTag = document.getElementById("userNamesInReactionSpanTag");
 
 
 export default {
