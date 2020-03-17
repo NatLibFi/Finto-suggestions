@@ -6,7 +6,10 @@
         <span>suggestionId: {{ suggestionId }}</span>
       </p> -->
           <!-- <p>
-            <span> Vaihtoehto 1: emojiList {{ emojiList }} </span>
+            <span> Storesta {{ getStoreStateItems() }} </span>
+          </p> -->
+          <!-- <p>
+            <span> userNamesToBeInEmoji {{ userNamesToBeInEmoji }} </span>
           </p> -->
           <!-- <p>
             <span> emojiMapping {{ emojiMapping }} </span>
@@ -20,12 +23,24 @@
             <span> fetchName(): {{ fetchName() }} </span>
           </p> -->
           <!-- <p>
+            <span> filteredUsers: {{ filteredUsers }} </span>
+          </p> -->
+          <!-- Toimii -->
+          <!-- <p>
+            <span> userNames: {{ getUserNamesForReactions() }} </span>
+          </p> -->
+
+      <!-- filteredUsers: [],
+      filteredUserIdsList: [], -->
+
+
+          <!-- <p>
             <span> eventId: {{ eventId }} </span>
           </p> -->
           <!-- toimii -->
-          <p>
+          <!-- <p>
             <span> Vaihtoehto 0 : {{ reactionCodesAndUserIdsArray }} </span>
-          </p>
+          </p> -->
           <!-- yllä oleva toimii -->
           <!-- <p>
             <span> Vaihtoetho 2: reactions: {{ reactions }} </span>
@@ -39,7 +54,10 @@
         </div>
 
         <span class="emoji">{{ emojiMapping[emoji.code]}} </span>
-        <span> {{ getEmojiSubmittersByReaction(emoji.code) }}</span>
+        <!-- <span> {{ getEmojiSubmittersByReaction(emoji.code) }}</span> //Toimiva eli tuo emojin user_id:t -->
+        <!-- <span> {{ getEmojiSubmittersByReaction(emoji.code) }}</span> -->
+        <span> {{ getEmojiSubmittersByReaction2(emoji.code) }}</span>
+        <!-- <span> {{  users }} </span> -->
       </div>
     </div>
   </div>
@@ -58,12 +76,15 @@ import { eventActions } from "../../store/modules/event/eventConsts";
 import { mapUserGetters, mapUserActions, mapUserMutations } from "../../store/modules/user/userModule";
 import { userGetters, userActions, userMutations } from "../../store/modules/user/userConsts";
 import reaction from "../../api/reaction/reaction";
-import user from "../../api/user/user";
+// import user from "../../api/user/user";
 // import { userActions, userGetters, userMutations } from '../../store/modules/user/userConsts';
 // import store from "../../store/index";
 
+
 // Hae eventit
 // Hae
+
+
 
 export default {
   props: {
@@ -81,6 +102,7 @@ export default {
     },
     componentKey: Number,
     // filteredUsers: String
+    // userNamesToBeInEmoji: []
   },
   data() {
     return {
@@ -88,10 +110,11 @@ export default {
       emojiList: [],
       // Mika
       filteredUsers: [],
-      filteredUserIdsList: [],
+      userNames: [],
       userName: "",
       reactionCodesAndUserIdsArray: {},
-      emojiNames: []
+      emojiNames: [],
+      userNamesToBeInEmoji: []
     };
   },
   computed: {
@@ -99,21 +122,25 @@ export default {
       reactions: reactionGetters.GET_REACTIONS
     }),
     ...mapUserGetters({ users: userGetters.GET_USERS }),
+    
 
     // Mika
-    ...mapUserGetters({ users: userGetters.GET_USERS })
+    // ...mapUserGetters({ users: userGetters.GET_USERS })
   },
   async created() {
     if (this.eventId) {
       await this.reactionsByEvent(this.eventId);
       this.emojiList = this.listCountedEmojis(this.reactions);
-      // this.emojiList.push('{"mika": "TESTAA"}');
     } else {
       await this.reactionsBySuggestion(this.suggestionId);
       this.emojiList = this.listCountedEmojis(this.reactions);
     }
     await this.getUsers();
+    this.userNamesToBeInEmoji = this.users;
     this.filteredUsers = this.users;
+    //Takista alla oleva
+    // await this.getFilteredUserIds();
+    await this.getUserNamesForReactions();
   },
     // this.getUserNamesForCodes(this.reactions);
     // this.getEmojiSubmittersByReaction
@@ -132,25 +159,73 @@ export default {
     //   return store.state.isHeadersAndIdSetInState
     // },
 
-    getFilteredUserIds() {
-      console.log(this.filteredUsers.length);
-      for (let userIndex = 0; userIndex < this.filteredUsers.length; userIndex++) {
-        this.filteredUserIdsList[userIndex] = this.filteredUsers[userIndex].id;
+    // getStoreStateItems(){
+    //   return store.state
+    // },
+
+
+    getUserNamesForReactions() {
+      console.log(this.users.length);
+      for (let userIndex = 0; userIndex < this.users.length; userIndex++) {
+        this.userNames[userIndex] = this.users[userIndex].name;
       }
-      return this.filteredUserIdsList;
+      return this.userNames;
     },
-    getUserNamesByReaction(reaction) {
-      console.log(this.filteredUsers.length);
-      for (let userIndex = 0; userIndex < this.filteredUsers.length; userIndex++) {
-        this.filteredUserIdsList[userIndex] = this.filteredUsers[userIndex].id;
-      }
-      return this.filteredUserIdsList;
-    },
+
+    // filterResults() {
+    //   this.getUsers();
+    //   if (this.searchQuery.length >= 1) {
+    //     this.filteredUsers = this.users.filter(user =>
+    //       user.name.toLowerCase().includes(this.searchQuery.toLowerCase())
+    //     );
+    //     this.setUsers(this.filteredUsers);
+    //   }
+    // },    
+    // getUserNamesByReaction(reaction) {
+    //   console.log(this.filteredUsers.length);
+    //   for (let userIndex = 0; userIndex < this.filteredUsers.length; userIndex++) {
+    //     this.filteredUserIdsList[userIndex] = this.filteredUsers[userIndex].id;
+    //   }
+    //   return this.filteredUserIdsList;
+    // },
     getEmojiSubmittersByReaction(emojiCode){
       if (emojiCode) {
         return this.reactionCodesAndUserIdsArray[emojiCode]; 
       }
     },
+
+
+    getEmojiSubmittersByReaction2(emojiCode){
+      // this.getUsers();
+      if (!this.users) {
+        console.log("Did not find any user from the DB");
+      } else {
+        console.log(this.users);
+      }
+      var tempUserNameResultArray = [];
+      var userIdsFromEmoji = this.reactionCodesAndUserIdsArray[emojiCode]; //Emojissa olevat user_id:t
+      var usersFromDB = this.userNamesToBeInEmoji; //Kaikki nimet
+      console.log(userIdsFromEmoji.length);
+      if (emojiCode) {
+        for (let i = 0; i < usersFromDB.length; i++) {
+          if (userIdsFromEmoji.includes(usersFromDB[i].id)) {
+            // userNamesFromDB.includes(userIdsFromEmoji[i].user_id)
+            tempUserNameResultArray.push(usersFromDB[i].name);
+          } else {
+            console.log("UserId in the emoji and the users listing did not match");
+          }
+        }
+        // return this.getUserNamesForReactions
+        return tempUserNameResultArray; 
+      } else {
+        tempUserNameResultArray[0] = "Did not find any userNames"
+        return tempUserNameResultArray;
+      }
+    },
+
+
+
+
 
 
     filterDuplicates(arrayToFilter) { 
