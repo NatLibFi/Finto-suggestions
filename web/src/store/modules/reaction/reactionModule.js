@@ -49,6 +49,28 @@ export default {
         }
       }
     },
+
+//// Mika
+    async [reactionActions.DELETE_REACTION]({ dispatch }, { reactionId }) {
+      const response = await api.reaction.deleteReaction(reactionId);
+      if (response && response.code === 204) {
+        dispatch(reactionActions.DELETE_REACTION);
+      }
+    },
+
+
+    // async [meetingActions.DELETE_MEETING]({ commit }, meetingId) {
+    //   const result = await api.meeting.deleteMeeting(meetingId);
+    //   if (result && result.code === 204) {
+    //     await commit(meetingMutations.GET_MEETINGS);
+    //   }
+    // },    
+
+
+
+
+////
+
     async [reactionActions.GET_REACTIONS_BY_SUGGESTION]({ commit }, suggestion_id) {
       const response = await api.reaction.getReactionsBySuggestion(suggestion_id);
       if (response && response.code === 200) {
