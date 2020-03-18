@@ -1,7 +1,6 @@
 <template>
   <div>
     <div class="emoji-list">
-      <!-- Tästä merkistä eteenpäin aloitettiin käyttäjän liikalisäämisen estämisen rakentaminen -->
       <div v-for="(emoji, index) in emojiList" :key="index" class="single-emoji" name="huihai">
         <p class="count"> K:{{ userId }}</p>
         <span class="count">{{ (emoji.count/emojiList.length) }}</span>
@@ -85,7 +84,7 @@ export default {
     ...mapUserActions({ getUsers: userActions.GET_USERS }),
     ...mapUserMutations({ setUsers: userMutations.SET_USERS }),
     getUserNamesForReactions() {
-      console.log(this.users.length);
+      // console.log(this.users.length);
       for (let userIndex = 0; userIndex < this.users.length; userIndex++) {
         this.userNames[userIndex] = this.users[userIndex].name;
       }
@@ -93,11 +92,11 @@ export default {
     },
 
     getEmojiSubmittersByReaction(emojiCode){
-      if (!this.users) {
-        console.log("Did not find any user from the DB");
-      } else {
-        console.log(this.users);
-      }
+      // if (!this.users) {
+      //   console.log("Did not find any user from the DB");
+      // } else {
+      //   console.log(this.users);
+      // }
       var tempUserNameResultArray = [];
       var userIdsFromEmoji = this.reactionCodesAndUserIdsArray[emojiCode]; //Emojissa olevat user_id:t
       var usersFromDB = this.userNamesToBeInEmoji; //Kaikki nimet
