@@ -95,9 +95,10 @@ export default {
 
 
     async addEmoji(emoji) {
-//////////////////////////////////////
       let userIdCount = 0;
       if (!this.eventId) {
+        // this.reactions = null;
+        // this.getReactionsBySuggestion(this.suggestionId);
         console.log("emoji: " + emoji);
         if(this.reactions){
           Array.prototype.forEach.call(this.reactions, element => {
@@ -113,8 +114,8 @@ export default {
           });
           console.log(userIdCount);
           if (userIdCount > 0) {
-            console.log("this.reactionId" + this.reactionId);
             await this.deleteReaction({reactionId: this.reactionId});
+            console.log("**** this.reactionId kun !this.eventId " + this.reactionId);
             this.userIdCount = 0;
             this.reactionId = null;
           } else {
@@ -131,32 +132,9 @@ export default {
         } else {
           console.log("Did not find any reactions");
         }
-
-        // Poisto toimii näillä -----
-        // this.reactionId = 277;
-        // console.log("this.reactionId" + this.reactionId);
-        // await this.deleteReaction({reactionId: this.reactionId});
-        // ------
-        
-// Älä poista seuraavaa
-        // await this.addReaction({
-        //   data: {
-        //     code: emoji,
-        //     suggestion_id: this.suggestionId,
-        //     user_id: parseInt(this.userId, 10)
-        //   },
-        //   suggestionId: this.suggestionId
-        // });
-
-
-        // this.getReactionsBySuggestion(this.suggestionId);
-        // this.temporaryReactionsArray = [];
-
-
-/////////////////////////////////////////
       } else if (this.eventId) {
-
-
+        // this.reactions = null;
+        // this.getReactionsByEvent(this.eventId);
         console.log("emoji: " + emoji);
         if(this.reactions){
           Array.prototype.forEach.call(this.reactions, element => {
@@ -172,8 +150,9 @@ export default {
           });
           console.log(userIdCount);
           if (userIdCount > 0) {
-            console.log("this.reactionId" + this.reactionId);
+            // console.log("this.reactionId" + this.reactionId);
             await this.deleteReaction({reactionId: this.reactionId});
+            console.log("**** this.reactionId kun this.eventId " + this.reactionId);
             this.userIdCount = 0;
             this.reactionId = null;
           } else {
@@ -190,20 +169,6 @@ export default {
         } else {
           console.log("Did not find any reactions");
         }
-
-
-
-
-
-        // await this.addReaction({
-        //   data: {
-        //     code: emoji,
-        //     event_id: this.eventId,
-        //     user_id: parseInt(this.userId, 10)
-        //   },
-        //   suggestionId: this.suggestionId
-        // });
-        // this.getReactionsByEvent(this.eventId);
       }
       this.toggleEmojiSelector();
       this.updateReactionList();
@@ -213,55 +178,6 @@ export default {
     }
   }
 };
-
-
-
-    // async addEmoji(emoji) {
-    //   var temporaryReactionsArray = [];
-
-
-
-
-    //   if (!this.eventId) {
-    //     await this.addReaction({
-    //       data: {
-    //         code: emoji,
-    //         suggestion_id: this.suggestionId,
-    //         user_id: parseInt(this.userId, 10)
-    //       },
-    //       suggestionId: this.suggestionId
-    //     });
-    //     this.getReactionsBySuggestion(this.suggestionId);
-    //   } else if (this.eventId) {
-
-
-
-
-
-
-    //     await this.addReaction({
-    //       data: {
-    //         code: emoji,
-    //         event_id: this.eventId,
-    //         user_id: parseInt(this.userId, 10)
-    //       },
-    //       suggestionId: this.suggestionId
-    //     });
-    //     this.getReactionsByEvent(this.eventId);
-    //   }
-    //   this.toggleEmojiSelector();
-    //   this.updateReactionList();
-    // },
-
-
-
-
-
-
-
-
-
-
 
 
 </script>
