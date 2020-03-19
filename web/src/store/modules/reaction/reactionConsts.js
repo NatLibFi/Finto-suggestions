@@ -9,7 +9,7 @@ export const reactionGetters = {
 };
 
 export const reactionMutations = {
-  SET_REACTIONS: 'setReactions'
+  'SET_REACTIONS': 'setReactions'
 };
 
 export const reactionActions = {

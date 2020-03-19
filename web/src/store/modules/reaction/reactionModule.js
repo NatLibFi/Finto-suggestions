@@ -1,5 +1,5 @@
 import Vue from 'vue';
-import { mapGetters, mapActions } from 'vuex';
+import { mapGetters, mapActions, mapMutations } from 'vuex';
 import api from '../../../api';
 import {
   namespace,
@@ -16,6 +16,7 @@ import { namespace as eventNamespace, eventActions } from '../event/eventConsts'
 
 export const mapReactionGetters = getters => mapGetters(namespace, getters);
 export const mapReactionActions = actions => mapActions(namespace, actions);
+export const mapReactionMutations = mutations => mapMutations(namespace, mutations);
 
 export default {
   namespaced: true,

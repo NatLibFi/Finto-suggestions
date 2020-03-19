@@ -33,10 +33,11 @@ import SvgIcon from '../icons/SvgIcon';
 import IconEmoji from '../icons/IconEmoji';
 import { directive as onClickaway } from 'vue-clickaway';
 
-import { reactionGetters, reactionActions } from '../../store/modules/reaction/reactionConsts';
+import { reactionGetters, reactionActions, reactionMutations } from '../../store/modules/reaction/reactionConsts';
 import {
   mapReactionGetters,
-  mapReactionActions
+  mapReactionActions,
+  mapReactionMutations
 } from '../../store/modules/reaction/reactionModule';
 
 import { emojiMapping } from '../../utils/reactionHelpers';
@@ -85,6 +86,7 @@ export default {
       getReactionsBySuggestion: reactionActions.GET_REACTIONS_BY_SUGGESTION,
       getReactionsByEvent: reactionActions.GET_REACTIONS_BY_EVENT
     }),
+    ...mapReactionMutations({setReaction: reactionMutations.SET_REACTION}),
     toggleEmojiSelector() {
       this.showEmojiSelector = !this.showEmojiSelector;
     },
@@ -95,30 +97,52 @@ export default {
 
 
     async addEmoji(emoji) {
+      let reactionIdInProgress = Number;
       let userIdCount = 0;
       if (!this.eventId) {
-        // this.reactions = null;
-        // this.getReactionsBySuggestion(this.suggestionId);
+        var countOfKeys = Object.keys(this.reactions).length; 
+        console.log("Avaimien lukumäärä: " + countOfKeys); 
         console.log("emoji: " + emoji);
-        if(this.reactions){
+        if(countOfKeys == 0){
+          console.log("** 1");
+          console.log("Tehdään ensimmäinen reaktio, koska reaktiot olivat tyhjiä");
+          await this.addReaction({
+          data: {
+            code: emoji,
+            suggestion_id: this.suggestionId,
+            user_id: parseInt(this.userId, 10)
+          },
+          suggestionId: this.suggestionId
+          });
+          // this.getReactionsBySuggestion(this.suggestionId);
+          // this.updateReactionList();
+        }
+        if(countOfKeys > 0){ //entinen this.reactions
+          console.log("** 2");
+          // MMMMUUUUUUUUUUUTTTOOOOOOOSSSSSSSSHH
           Array.prototype.forEach.call(this.reactions, element => {
             console.log("user_id:t elementissä :" + element.user_id);
             console.log("userID komponentissä :" + this.userId);
             if (element.user_id == this.userId && element.code == emoji) {
               userIdCount += 1;
+              reactionIdInProgress = element.id;
               console.log("ID löytyi");
             } else {
               console.log("ID:tä ei löytynyt");
             }
-            this.reactionId = element.id;
+            // reactionIdInProgress = element.id;
+            console.log("reaction id suggestionin puolella on :" + reactionIdInProgress);
           });
           console.log(userIdCount);
           if (userIdCount > 0) {
-            await this.deleteReaction({reactionId: this.reactionId});
-            console.log("**** this.reactionId kun !this.eventId " + this.reactionId);
+            console.log("** 3");
+            await this.deleteReaction({ reactionId: reactionIdInProgress});
+            console.log("**** poisto -> this.reactionId kun !this.eventId " + reactionIdInProgress);
             this.userIdCount = 0;
-            this.reactionId = null;
+            reactionIdInProgress = null;
           } else {
+            console.log("pitäisi tulla tähän");
+             console.log("** 4");
             await this.addReaction({
             data: {
               code: emoji,
@@ -128,47 +152,182 @@ export default {
             suggestionId: this.suggestionId
           });
         this.getReactionsBySuggestion(this.suggestionId);
+        // console.log("Tässä kohtaa ei vielä ollut yhtään reaktiota");
           }
         } else {
           console.log("Did not find any reactions");
+          this.getReactionsBySuggestion(this.suggestionId);
         }
+        reactionIdInProgress = null;
+        this.reactions;
       } else if (this.eventId) {
-        // this.reactions = null;
-        // this.getReactionsByEvent(this.eventId);
+
+
+
+
+
+
+        var countOfKeys = Object.keys(this.reactions).length; 
+        console.log("Avaimien lukumäärä: " + countOfKeys); 
         console.log("emoji: " + emoji);
-        if(this.reactions){
+        if(countOfKeys == 0){
+          console.log("** 1");
+          console.log("Tehdään ensimmäinen reaktio, koska reaktiot olivat tyhjiä");
+          await this.addReaction({
+          data: {
+            code: emoji,
+            event_id: this.eventId,
+            user_id: parseInt(this.userId, 10)
+          },
+          suggestionId: this.suggestionId
+          });
+          // this.getReactionsBySuggestion(this.suggestionId);
+          // this.updateReactionList();
+        }
+        if(countOfKeys > 0){ //entinen this.reactions
+          console.log("** 2");
+          // MMMMUUUUUUUUUUUTTTOOOOOOOSSSSSSSSHH
           Array.prototype.forEach.call(this.reactions, element => {
             console.log("user_id:t elementissä :" + element.user_id);
             console.log("userID komponentissä :" + this.userId);
             if (element.user_id == this.userId && element.code == emoji) {
               userIdCount += 1;
+              reactionIdInProgress = element.id;
               console.log("ID löytyi");
             } else {
               console.log("ID:tä ei löytynyt");
             }
-            this.reactionId = element.id;
+            // reactionIdInProgress = element.id;
+            console.log("reaction id suggestionin puolella on :" + reactionIdInProgress);
           });
           console.log(userIdCount);
           if (userIdCount > 0) {
-            // console.log("this.reactionId" + this.reactionId);
-            await this.deleteReaction({reactionId: this.reactionId});
-            console.log("**** this.reactionId kun this.eventId " + this.reactionId);
+            console.log("** 3");
+            await this.deleteReaction({ reactionId: reactionIdInProgress});
+            console.log("**** poisto -> this.reactionId kun !this.eventId " + reactionIdInProgress);
             this.userIdCount = 0;
-            this.reactionId = null;
+            reactionIdInProgress = null;
           } else {
+            console.log("pitäisi tulla tähän");
+             console.log("** 4");
             await this.addReaction({
-              data: {
-                code: emoji,
-                event_id: this.eventId,
-                user_id: parseInt(this.userId, 10)
-              },
-              suggestionId: this.suggestionId
-            });
-            this.getReactionsByEvent(this.eventId);
+            data: {
+              code: emoji,
+              event_id: this.eventId,
+              user_id: parseInt(this.userId, 10)
+            },
+            suggestionId: this.suggestionId
+          });
+        this.getReactionsByEvent(this.eventId);
+        // console.log("Tässä kohtaa ei vielä ollut yhtään reaktiota");
           }
         } else {
           console.log("Did not find any reactions");
+          this.getReactionsByEvent(this.eventId);
         }
+        reactionIdInProgress = null;
+        this.reactions;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+///// 
+
+        // reactionIdInProgress = null;
+        // console.log("emoji: " + emoji);
+        // if(this.reactions){
+        //   Array.prototype.forEach.call(this.reactions, element => {
+        //     console.log("reaction id on :" + element.id);
+        //     console.log("user_id:t elementissä :" + element.user_id);
+        //     console.log("userID komponentissä :" + this.userId);
+        //     if (element.user_id == this.userId && element.code == emoji) {
+        //       userIdCount += 1;
+        //       console.log("ID löytyi");
+        //     } else {
+        //       console.log("ID:tä ei löytynyt");
+        //     }
+        //     reactionIdInProgress = element.id;
+        //   });
+        //   console.log(userIdCount);
+        //   if (userIdCount > 0) {
+        //     console.log("this.reactionId" + reactionIdInProgress)
+        //     await this.deleteReaction({reactionId: reactionIdInProgress});
+        //     console.log("**** this.reactionId kun this.eventId " + reactionIdInProgress);
+        //     this.userIdCount = 0;
+        //     reactionIdInProgress = null;
+        //   } else {
+        //     await this.addReaction({
+        //       data: {
+        //         code: emoji,
+        //         event_id: this.eventId,
+        //         user_id: parseInt(this.userId, 10)
+        //       },
+        //       suggestionId: this.suggestionId
+        //     });
+        //     this.getReactionsByEvent(this.eventId);
+        //   }
+        // } else {
+        //   console.log("Did not find any reactions");
+        // }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//////
+
       }
       this.toggleEmojiSelector();
       this.updateReactionList();
