@@ -11,7 +11,7 @@
           :key="emoji.id"
           class="single-emoji"
         >
-          {{ emoji }} abc
+          {{ emoji }}
         </span>
       </div>
     </div>
