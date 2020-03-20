@@ -2,7 +2,7 @@
   <div>
     <div class="emoji-list">
       <div v-for="(emoji, index) in emojiList" :key="index" class="single-emoji" name="huihai">
-        <p class="count"> K:{{ userId }}</p>
+        <!-- <p class="count">{{ userId }}</p> -->
         <span class="count">{{ (emoji.count/emojiList.length) }}</span>
         <span :title="getEmojiSubmittersByReaction(emoji.code)" class="emoji">{{ emojiMapping[emoji.code]}} </span>
       </div>
@@ -72,9 +72,6 @@ export default {
     this.userNamesToBeInEmoji = this.users;
     this.filteredUsers = this.users;
     await this.getUserNamesForReactions();
-    ////
-    // this.userIdHelpArray[0] = this.userId;
-    ////
   },
   methods: {
     ...mapReactionActions({
@@ -92,15 +89,9 @@ export default {
     },
 
     getEmojiSubmittersByReaction(emojiCode){
-      // if (!this.users) {
-      //   console.log("Did not find any user from the DB");
-      // } else {
-      //   console.log(this.users);
-      // }
       var tempUserNameResultArray = [];
       var userIdsFromEmoji = this.reactionCodesAndUserIdsArray[emojiCode]; //Emojissa olevat user_id:t
       var usersFromDB = this.userNamesToBeInEmoji; //Kaikki nimet
-      // console.log(userIdsFromEmoji.length);
       if (emojiCode) {
         for (let i = 0; i < usersFromDB.length; i++) {
           if (userIdsFromEmoji.includes(usersFromDB[i].id)) {
