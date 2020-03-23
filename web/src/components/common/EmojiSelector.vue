@@ -86,10 +86,11 @@ export default {
     },
 
     async addEmoji(emoji) {
-      var countOfKeys = Object.keys(this.reactions).length; 
+      var countOfKeys = ((this.reactions) ? Object.keys(this.reactions).length : countOfKeys = 0); 
       let userIdCount = 0;
       let isSuggestion = false;
       if (!this.eventId) {
+        console.log("Eventillä on id, vaikka tarkistus edellyttää, ettei ole: " + this.eventId);
         isSuggestion = true;
       }
       if (countOfKeys > 0) {
@@ -102,8 +103,8 @@ export default {
             userIdCount = 0;
           }
         });
-      }
-      if (isSuggestion == true && userIdCount == 0) {
+      } // typeof car.color === 'undefined'
+      if (typeof this.eventId === 'undefined' && userIdCount == 0) { // was earlier isSuggestion
         await this.addReaction({
           data: {
             code: emoji,
@@ -117,7 +118,8 @@ export default {
         console.log("User already has added the emoji");  
       }
 
-      if (isSuggestion == false && userIdCount == 0) {
+      if (this.eventId && userIdCount == 0) { // was earlier isSuggestion == false
+        console.log("päästiinkö tänne asti? ");
         await this.addReaction({
           data: {
             code: emoji,
