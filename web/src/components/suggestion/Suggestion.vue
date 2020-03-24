@@ -8,7 +8,7 @@
     </div>
     <div v-if="meetingId" class="meeting-status">
       <div class="meeting-status-container">
-        <meeting-status v-if="meetingId" :meetingId="meetingId" />
+        <meeting-status :meetingId="meetingId" />
       </div>
       <div class="meeting-arrow-controls">
         <div class="control">
@@ -130,43 +130,42 @@
             :userId="userId"
             class="emoji"
           />
-          <menu-button :options="menuOptions" name="suggestion-menu" class="menu" ref="menu" />
+          <menu-button
+            v-if="!meetingId"
+            :options="menuOptions"
+            name="suggestion-menu"
+            class="menu"
+            ref="menu"
+          />
         </div>
       </div>
-      <div name="forContent">
-        <suggestion-content
-          :suggestion="suggestion"
-          :userName="userName"
-          :isAuthenticated="isAuthenticated"
-          :isAdmin="role === userRoles.ADMIN"
-          :componentKey="componentKey"
-        />
-      </div>
-    </div>
-    <div v-if="events && events.length > 0">
-      <div v-for="event in events" :key="event.id">
-        <suggestion-event
-          @updateReactionList="componentKey += 1"
-          :event="event"
-          :type="event.event_type"
-          :suggestionId="suggestionId"
-          :isAuthenticated="isAuthenticated"
-          :componentKey="componentKey"
-        />
-      </div>
-    </div>
-    <div>
-      <add-comment :suggestionId="suggestionId" />
-    </div>
-    <div v-if="meetingId" class="meeting-actions">
-      <meeting-actions
-        :userId="userId"
-        :suggestionId="suggestionId"
-        :meetingId="meetingId"
-        :events="events"
-        @moveToNextSuggestion="goToNextSuggestion"
+      <suggestion-content
+        :suggestion="suggestion"
+        :userName="userName"
+        :isAuthenticated="isAuthenticated"
+        :isAdmin="role === userRoles.ADMIN"
       />
     </div>
+    <div v-if="sortedEvents.length" class="suggestion-events">
+      <suggestion-event
+        v-for="event in sortedEvents"
+        :key="event.id"
+        :event="event"
+        :type="event.event_type"
+        :suggestionId="suggestionId"
+        :isAuthenticated="isAuthenticated"
+        :componentKey="componentKey"
+      />
+    </div>
+    <add-comment :suggestionId="suggestionId" />
+    <meeting-actions
+      v-if="meetingId && suggestion && isAuthenticated && role === userRoles.ADMIN"
+      :userId="userId"
+      :suggestion="suggestion"
+      :meetingId="meetingId"
+      :events="sortedEvents"
+      @moveToNextSuggestion="goToNextSuggestion"
+    />
   </div>
 </template>
 <script>
@@ -181,6 +180,7 @@ import AddComment from './AddComment';
 import AssignMeeting from './AssignMeeting';
 import EmojiSelector from '../common/EmojiSelector';
 import TagSelector from '../tag/TagSelector';
+import ReactionList from '../reaction/ReactionList';
 import {
   suggestionType,
   suggestionTypeToString,
@@ -218,7 +218,8 @@ export default {
     AddComment,
     AssignMeeting,
     EmojiSelector,
-    TagSelector
+    TagSelector,
+    ReactionList
   },
   props: {
     suggestionId: {
@@ -280,11 +281,15 @@ export default {
       isAuthenticated: authenticatedUserGetters.GET_IS_AUTHENTICATED,
       userId: authenticatedUserGetters.GET_USER_ID,
       role: authenticatedUserGetters.GET_USER_ROLE
-    })
+    }),
+    sortedEvents() {
+      if (!Array.isArray(this.events)) return [];
+      return this.events.slice().sort((a, b) => a.id - b.id);
+    }
   },
   async created() {
     await this.getSuggestionById(parseInt(this.suggestionId, 10));
-    await this.getEventsBySuggestionId(parseInt(this.suggestionId, 10));
+    await this.getEventsBySuggestion(parseInt(this.suggestionId, 10));
     await this.getUserName();
     if (this.meetingId) {
       await this.getSuggestionsByMeetingId(this.meetingId);
@@ -298,7 +303,7 @@ export default {
       setSuggestionStatus: suggestionActions.SET_SUGGESTION_STATUS
     }),
     ...mapEventActions({
-      getEventsBySuggestionId: eventActions.GET_EVENTS_BY_SUGGESTION_ID,
+      getEventsBySuggestion: eventActions.GET_EVENTS_BY_SUGGESTION,
       addEvent: eventActions.ADD_NEW_EVENT
     }),
     ...mapUserActions({
@@ -335,7 +340,7 @@ export default {
             meetingId: this.meetingId
           }
         });
-        this.getEventsBySuggestionId(parseInt(this.requestedSuggestionId, 10));
+        this.getEventsBySuggestion(parseInt(this.requestedSuggestionId, 10));
       }
     },
     goToNextSuggestion() {
@@ -352,7 +357,7 @@ export default {
               meetingId: this.meetingId
             }
           });
-          this.getEventsBySuggestionId(parseInt(this.requestedSuggestionId, 10));
+          this.getEventsBySuggestion(parseInt(this.requestedSuggestionId, 10));
         }
       }
     },
@@ -439,7 +444,7 @@ export default {
 </script>
 <style scoped>
 .suggestion {
-  width: 60vw;
+  width: 60%;
   padding: 40px 20%;
   overflow: hidden;
 }
@@ -491,6 +496,11 @@ export default {
 .meeting-arrow-controls .control:last-of-type {
   left: initial;
   right: 0;
+}
+.reaction-list {
+  border-top: 1px solid #f4f4f4;
+  width: 100%;
+  padding-top: 20px;
 }
 .suggestion-container {
   background-color: #ffffff;
@@ -598,7 +608,7 @@ h1.suggestion-title {
     display: none;
   }
   .suggestion {
-    width: 80vw;
+    width: 80%;
     padding: 10px 10% 20px;
   }
   .suggestion-header-headline,

@@ -30,24 +30,24 @@ export default {
       if (params.event) {
         const response = await api.event.addNewComment(params.event);
         if (response && response.code === 201) {
-          dispatch(eventActions.GET_EVENTS_BY_SUGGESTION_ID, params.suggestionId);
+          dispatch(eventActions.GET_EVENTS_BY_SUGGESTION, params.suggestionId);
         }
       }
     },
     async [eventActions.PATCH_EVENT]({ dispatch }, { eventId, data, suggestionId }) {
       const response = await api.event.patchEvent(eventId, data);
       if (response && response.code === 200) {
-        dispatch(eventActions.GET_EVENTS_BY_SUGGESTION_ID, suggestionId);
+        dispatch(eventActions.GET_EVENTS_BY_SUGGESTION, suggestionId);
       }
     },
     async [eventActions.DELETE_EVENT]({ dispatch }, { eventId, suggestionId }) {
       await api.event.deleteEvent(eventId);
-      dispatch(eventActions.GET_EVENTS_BY_SUGGESTION_ID, suggestionId);
+      dispatch(eventActions.GET_EVENTS_BY_SUGGESTION, suggestionId);
     },
-    async [eventActions.GET_EVENTS_BY_SUGGESTION_ID]({ commit }, suggestionId) {
-      const result = await api.event.getEventsBySuggestionId(suggestionId);
-      if (result && result.code === 200) {
-        commit(eventMutations.SET_EVENTS, result.data);
+    async [eventActions.GET_EVENTS_BY_SUGGESTION]({ commit }, suggestionId) {
+      const response = await api.event.getEventsBySuggestion(suggestionId);
+      if (response && response.code === 200) {
+        commit(eventMutations.SET_EVENTS, response.data);
       }
     }
   }

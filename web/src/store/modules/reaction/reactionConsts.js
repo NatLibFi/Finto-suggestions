@@ -15,6 +15,5 @@ export const reactionMutations = {
 export const reactionActions = {
   ADD_REACTION: 'addReaction',
   DELETE_REACTION: 'deleteReaction',
-  GET_REACTIONS_BY_SUGGESTION: 'getReactionsBySuggestion',
-  GET_REACTIONS_BY_EVENT: 'getReactionsByEvent'
+  GET_REACTIONS_BY_SUGGESTION: 'getReactionsBySuggestion'
 };

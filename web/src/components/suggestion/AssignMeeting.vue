@@ -104,7 +104,7 @@ export default {
         this.filteredMeetings = this.meetings.filter(meeting =>
           meeting.name.toLowerCase().includes(this.searchQuery.toLowerCase())
         );
-        this.setMeetings(this.filteredUsers);
+        this.setMeetings(this.filteredMeetings);
       }
     },
     assignToMeeting(id) {

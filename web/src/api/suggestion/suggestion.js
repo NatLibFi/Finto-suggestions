@@ -23,7 +23,7 @@ export default {
     put({ resource: `/suggestions/${suggestionId}/unassign` }),
   assignSuggestionToMeeting: (suggestionId, meetingId) =>
     patch({ resource: `/suggestions/${suggestionId}`, data: { meeting_id: meetingId } }),
-  getSuggestionByMeetingId: meetingId => get({ resource: `/suggestions/meeting/${meetingId}` }),
+  getSuggestionsByMeetingId: meetingId => get({ resource: `/suggestions/meeting/${meetingId}` }),
   updateSuggestionStatus: (suggestionId, status) =>
     put({ resource: `/suggestions/${suggestionId}/status/${status}` }),
   addTagToSuggestion: (suggestionId, tag) =>

@@ -141,9 +141,9 @@
       </div>
     </transition>
     <reaction-list
-      :suggestionId="suggestion.id"
-      :reactions="suggestion.reactions"
-      :key="componentKey"
+      v-if="reactions && reactions.length"
+      :reactions="reactions"
+      :componentKey="componentKey"
       class="reaction-list"
     />
   </div>
@@ -159,6 +159,11 @@ import {
 } from '../../utils/suggestionHelpers.js';
 import { suggestionActions } from '../../store/modules/suggestion/suggestionConsts';
 import { mapSuggestionActions } from '../../store/modules/suggestion/suggestionModule';
+import { reactionGetters, reactionActions } from '../../store/modules/reaction/reactionConsts';
+import {
+  mapReactionGetters,
+  mapReactionActions
+} from '../../store/modules/reaction/reactionModule';
 
 export default {
   components: {
@@ -182,7 +187,18 @@ export default {
       suggestionStateStatusToString
     };
   },
+  async created() {
+    await this.getSuggestionReactions(this.suggestion.id);
+  },
+  computed: {
+    ...mapReactionGetters({
+      reactions: reactionGetters.GET_REACTIONS
+    })
+  },
   methods: {
+    ...mapReactionActions({
+      getSuggestionReactions: reactionActions.GET_REACTIONS_BY_SUGGESTION
+    }),
     ...mapSuggestionActions({
       unassignUserFromSuggestion: suggestionActions.UNASSIGN_SUGGESTION_FROM_USER
     })

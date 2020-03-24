@@ -1,9 +1,7 @@
 import Vue from 'vue';
 import { mapGetters, mapActions, mapMutations } from 'vuex';
-
-import { namespace, storeStateNames, userGetters, userActions, userMutations } from './userConsts';
-
 import api from '../../../api';
+import { namespace, storeStateNames, userGetters, userActions, userMutations } from './userConsts';
 
 export const mapUserGetters = getters => mapGetters(namespace, getters);
 export const mapUserActions = actions => mapActions(namespace, actions);
