@@ -1,23 +1,27 @@
 <template>
   <div>
     <div class="emoji-list">
-      <div v-for="(emoji, index) in emojiList" :key="index" class="single-emoji">
-        <span class="count">{{ emoji.count }}</span>
-        <span class="emoji">
-          {{ emojiMapping[emoji.code] }}
-        </span>
+      <div v-for="(emoji, index) in emojiList" :key="index" class="single-emoji" name="emojiLister">
+        <!-- <p class="count">{{ userId }}</p> -->
+        <span class="count">{{ (emoji.count/emojiList.length) }}</span>
+        <span :title="getEmojiSubmittersByReaction(emoji.code)" class="emoji">{{ emojiMapping[emoji.code]}} </span>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import { emojiMapping } from '../../utils/reactionHelpers';
-import { reactionGetters, reactionActions } from '../../store/modules/reaction/reactionConsts';
+import { emojiMapping } from "../../utils/reactionHelpers";
+import { reactionGetters, reactionActions } from "../../store/modules/reaction/reactionConsts";
 import {
   mapReactionGetters,
   mapReactionActions
-} from '../../store/modules/reaction/reactionModule';
+} from "../../store/modules/reaction/reactionModule";
+import { eventActions } from "../../store/modules/event/eventConsts";
+import { mapUserGetters, mapUserActions, mapUserMutations } from "../../store/modules/user/userModule";
+import { userGetters, userActions, userMutations } from "../../store/modules/user/userConsts";
+import reaction from "../../api/reaction/reaction";
+export const userNamesInReactionSpanTag = document.getElementById("userNamesInReactionSpanTag");
 
 export default {
   props: {
@@ -33,18 +37,26 @@ export default {
       type: [String, Number],
       required: false
     },
-    componentKey: Number
+    componentKey: Number,
   },
   data() {
     return {
       emojiMapping,
-      emojiList: []
+      emojiList: [],
+      filteredUsers: [],
+      userNames: [],
+      userName: "",
+      reactionCodesAndUserIdsArray: {},
+      emojiNames: [],
+      userNamesToBeInEmoji: [],
+      // userIdHelpArray: []
     };
   },
   computed: {
     ...mapReactionGetters({
       reactions: reactionGetters.GET_REACTIONS
-    })
+    }),
+    ...mapUserGetters({ users: userGetters.GET_USERS }),
   },
   async created() {
     if (this.eventId) {
@@ -54,31 +66,111 @@ export default {
       await this.reactionsBySuggestion(this.suggestionId);
       this.emojiList = this.listCountedEmojis(this.reactions);
     }
+    await this.getUsers();
+    this.userNamesToBeInEmoji = this.users;
+    this.filteredUsers = this.users;
+    await this.getUserNamesForReactions();
   },
   methods: {
     ...mapReactionActions({
       reactionsBySuggestion: reactionActions.GET_REACTIONS_BY_SUGGESTION,
       reactionsByEvent: reactionActions.GET_REACTIONS_BY_EVENT
     }),
+    ...mapUserActions({ getUsers: userActions.GET_USERS }),
+    ...mapUserMutations({ setUsers: userMutations.SET_USERS }),
+    getUserNamesForReactions() {
+      for (let userIndex = 0; userIndex < this.users.length; userIndex++) {
+        this.userNames[userIndex] = this.users[userIndex].name;
+      }
+      return this.userNames;
+    },
+    getEmojiSubmittersByReaction(emojiCode){
+      var tempUserNameResultArray = [];
+      var userIdsFromEmoji = this.reactionCodesAndUserIdsArray[emojiCode];
+      var usersFromDB = this.userNamesToBeInEmoji;
+      if (emojiCode) {
+        for (let i = 0; i < usersFromDB.length; i++) {
+          if (userIdsFromEmoji.includes(usersFromDB[i].id)) {
+            tempUserNameResultArray.push(usersFromDB[i].name);
+          } else {
+            console.log("UserId assigned to the emoji and user id in the user list did not match");
+          }
+        }
+        return tempUserNameResultArray; 
+      } else {
+        tempUserNameResultArray[0] = "Did not find any userNames"
+        return tempUserNameResultArray;
+      }
+    },
+
+    filterDuplicates(arrayToFilter) { 
+      return Array.from(new Set(arrayToFilter));;
+    },
+
     listCountedEmojis(reactions) {
       let listedEmojis = [];
       let arr = [];
-      for (let i = 0; i < reactions.length; i++) {
-        if (reactions[i].code in this.emojiMapping) {
-          if (listedEmojis.includes(reactions[i].code)) {
-            let index = arr.findIndex(emoji => emoji.code === reactions[i].code);
-            arr[index].count += 1;
-          } else {
-            arr.push({
-              code: reactions[i].code,
-              count: 1
-            });
-            listedEmojis.push(reactions[i].code);
-          }
+      let listOfUserIds = [];
+      var tempArrayOfCodes = [];
+      let keyValuePairsForCodesAndUsers = {};
+      for (let index = 0; index < this.reactions.length; index++) {
+        const elementAtTheMoment = reactions[index];
+        if (!tempArrayOfCodes.includes(elementAtTheMoment.code)) {
+          tempArrayOfCodes.push(elementAtTheMoment.code);
+        } else {
+          console.log("Element already included the used code");
         }
       }
+      tempArrayOfCodes.forEach(element => {
+        for (let index = 0; index < reactions.length; index++) {
+          if (reactions[index].code === element) {
+            listOfUserIds.push(reactions[index].user_id);
+          }
+        }
+        keyValuePairsForCodesAndUsers[element] = listOfUserIds;
+        this.reactionCodesAndUserIdsArray[element] = this.filterDuplicates(keyValuePairsForCodesAndUsers[element]);
+        listOfUserIds = [];
+        for (let i = 0; i < reactions.length; i++) {
+          if (reactions[i].code in this.emojiMapping) {
+            if (listedEmojis.includes(reactions[i].code)) {
+              let index = arr.findIndex(emoji => emoji.code === reactions[i].code);
+              arr[index].count += 1;
+            } else {
+              arr.push({
+                code: reactions[i].code,
+                count: 1,
+                id: reactions[i].id,
+                user_id: reactions[i].user_id,
+                user_id_total: this.filterDuplicates(keyValuePairsForCodesAndUsers[element])
+              });
+              listedEmojis.push(reactions[i].code);
+            }
+          }
+        }
+      });
       return arr;
     }
+
+    // BU
+    // listCountedEmojis(reactions) {
+    //   let listedEmojis = [];
+    //   let arr = [];
+    //   for (let i = 0; i < reactions.length; i++) {
+    //     if (reactions[i].code in this.emojiMapping) {
+    //       if (listedEmojis.includes(reactions[i].code)) {
+    //         let index = arr.findIndex(emoji => emoji.code === reactions[i].code);
+    //         arr[index].count += 1;
+    //       } else {
+    //         arr.push({
+    //           code: reactions[i].code,
+    //           count: 1
+    //         });
+    //         listedEmojis.push(reactions[i].code);
+    //       }
+    //     }
+    //   }
+    //   return arr;
+    // }
   }
 };
 </script>
@@ -94,7 +186,8 @@ export default {
   display: inline-block;
   width: 50px;
   height: 40px;
-  margin-right: 12px;
+  /* margin-right: 12px; */
+  margin-right: 20px;
   position: relative;
 }
 
