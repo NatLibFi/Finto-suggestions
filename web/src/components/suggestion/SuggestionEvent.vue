@@ -2,7 +2,6 @@
   <div class="event">
     <div class="event-divider"></div>
     <div class="event-container">
-      <!-- <div v-if="event.user_id || type === eventTypes.ACTION" class="event-header"> -->
       <div v-if="event.user_id || type === eventTypes.ACTION" class="event-header">
         <div v-if="userImage" class="event-user-image">
           <img :src="userImage" :alt="userNameInitials" />
@@ -37,15 +36,7 @@
             {{ dateTimeFormatLabel(this.event.created) }}
           </p>
         </div>
-        <!-- Mika 111019 orig <div
-          v-if="
-            isAuthenticated &&
-              (role === userRoles.ADMIN || parseInt(authorizedUserId, 10) === event.user_id)
-          "
-          class="menu-wrapper"
-        > -->
         <div v-if="isAuthenticated" class="menu-wrapper">
-          <!-- Test until here -->
           <emoji-selector
             v-if="type === eventTypes.COMMENT"
             @updateReactionList="updateReactionList()"
@@ -56,15 +47,14 @@
           />
           <menu-button
             v-if="
-              (type === eventTypes.COMMENT && role === userRoles.ADMIN) ||
-                isUserAllowedToEdit() === true
+              type === eventTypes.COMMENT && (role === userRoles.ADMIN || isUserAllowedToEdit())
             "
             :options="commentOptions"
             ref="menu"
             class="menu"
           />
           <menu-button
-            v-if="type === eventTypes.ACTION"
+            v-if="type === eventTypes.ACTION && role === userRoles.ADMIN"
             :options="actionOptions"
             ref="menu"
             class="menu"
@@ -86,13 +76,7 @@
           </div>
         </div>
       </div>
-      <reaction-list
-        :eventId="event.id"
-        :userId="event.user_id"
-        :reactions="event.reactions"
-        :key="componentKey"
-        class="reaction-list"
-      />
+      <reaction-list v-if="reactions.length" :reactions="reactions" class="reaction-list" />
     </div>
   </div>
 </template>
@@ -104,6 +88,11 @@ import ReactionList from '../reaction/ReactionList';
 import markdownEditor from 'vue-simplemde/src/markdown-editor';
 import { dateTimeFormatLabel } from '../../utils/dateHelper';
 import { userRoles } from '../../utils/userHelpers';
+//import { emojiMapping } from '../../utils/';
+//import axios from '../../utils';
+
+//import { getReactionsByEvent as testaus } from '../../api/reaction/reaction.js';
+import api from '../../api';
 // eslint-disable-next-line
 import { mapAuthenticatedUserGetters } from '../../store/modules/authenticatedUser/authenticatedUserModule.js';
 // eslint-disable-next-line
@@ -130,7 +119,6 @@ export default {
       type: String,
       required: true
     },
-    componentKey: [Number, String],
     suggestionId: [Number, String],
     isAuthenticated: Boolean
   },
@@ -151,6 +139,7 @@ export default {
       combineEventTextContent,
       eventTypes,
       eventSubTypes,
+      reactions: [],
       userName: '',
       userImage: '',
       userNameInitials: '',
@@ -193,7 +182,9 @@ export default {
       }
     }
   },
-  mounted() {
+  async mounted() {
+    await this.updateReactions();
+
     if (this.simplemde) {
       this.content = this.simplemde.markdown(this.event.text);
     }
@@ -206,6 +197,15 @@ export default {
       patchEvent: eventActions.PATCH_EVENT,
       deleteEvent: eventActions.DELETE_EVENT
     }),
+    async updateReactions() {
+      await api.reaction.getReactionsByEvent(this.event.id).then(response => {
+        if (response.code == 200) {
+          this.reactions = response.data;
+        } else {
+          this.reactions = [];
+        }
+      });
+    },
     async fetchUserNameAndInitials() {
       if (this.user) {
         this.userName = this.user.name;
@@ -238,12 +238,13 @@ export default {
     async removeEvent() {
       await this.deleteEvent({ eventId: this.event.id, suggestionId: this.suggestionId });
     },
-    updateReactionList() {
-      this.$emit('updateReactionList');
+    async updateReactionList() {
+      this.componentKey += 1;
+      await this.updateReactions();
     },
     isUserAllowedToEdit() {
       this.isUserAllowedToEditComment =
-        parseInt(this.event.user_id, 10) === parseInt(this.authorizedUserId, 10) ? true : false;
+        parseInt(this.event.user_id, 10) == parseInt(this.authorizedUserId, 10);
       return this.isUserAllowedToEditComment;
     }
   }
@@ -388,6 +389,7 @@ export default {
 .submit-button:hover {
   background-color: #44bdb2;
 }
+
 .reaction-list {
   border-top: 1px solid #f4f4f4;
   padding: 12px 40px 10px;

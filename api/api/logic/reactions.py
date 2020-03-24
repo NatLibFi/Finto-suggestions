@@ -53,16 +53,14 @@ def get_reactions_by_event(limit: int = None, offset: int = None, event_id: int 
     Returns all reactions for a certain event.
     """
 
-    def filter_func():
-        query = Reaction.query
-        if event_id:
-            query = query.filter(Reaction.event_id == event_id)
-        if limit:
-            query = query.limit(limit)
-        if offset:
-            query = query.offset(offset)
-        return query
-    query = filter_func()
+    query = Reaction.query
+    if event_id:
+        query = query.filter(Reaction.event_id == event_id)
+    if limit:
+        query = query.limit(limit)
+    if offset:
+        query = query.offset(offset)
+
     return get_all_or_400_custom(query)
 
 

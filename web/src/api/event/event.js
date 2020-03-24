@@ -5,6 +5,5 @@ export default {
   patchEvent: (eventId, data, suggestionId) =>
     patch({ resource: `/events/${eventId}`, data: data, suggestionId: suggestionId }),
   deleteEvent: eventId => del({ resource: `/events/${eventId}` }),
-  getEventsBySuggestionId: suggestionId =>
-    get({ resource: `/events?suggestion_id=${suggestionId}` })
+  getEventsBySuggestion: suggestionId => get({ resource: `/events?suggestion_id=${suggestionId}` })
 };

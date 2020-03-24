@@ -43,7 +43,7 @@ export default {
             }
           );
         } else if (data.event_id) {
-          dispatch(`${eventNamespace}/${eventActions.GET_EVENTS_BY_SUGGESTION_ID}`, suggestionId, {
+          dispatch(`${eventNamespace}/${eventActions.GET_EVENTS_BY_SUGGESTION}`, suggestionId, {
             root: true
           });
         }
@@ -51,12 +51,6 @@ export default {
     },
     async [reactionActions.GET_REACTIONS_BY_SUGGESTION]({ commit }, suggestion_id) {
       const response = await api.reaction.getReactionsBySuggestion(suggestion_id);
-      if (response && response.code === 200) {
-        commit(reactionMutations.SET_REACTIONS, response.data);
-      }
-    },
-    async [reactionActions.GET_REACTIONS_BY_EVENT]({ commit }, event_id) {
-      const response = await api.reaction.getReactionsByEvent(event_id);
       if (response && response.code === 200) {
         commit(reactionMutations.SET_REACTIONS, response.data);
       }

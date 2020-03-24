@@ -54,32 +54,32 @@ export default {
   },
   actions: {
     async [meetingActions.GET_MEETINGS]({ commit }) {
-      const result = await api.meeting.getMeetings();
-      if (result && result.code === 200) {
-        commit(meetingMutations.SET_MEETINGS, result.data);
+      const response = await api.meeting.getMeetings();
+      if (response && response.code === 200) {
+        commit(meetingMutations.SET_MEETINGS, response.data);
       }
     },
     async [meetingActions.GET_MEETING]({ commit }, meetingId) {
-      const result = await api.meeting.getMeeting(meetingId);
-      if (result && result.code === 200) {
-        commit(meetingMutations.SET_MEETING, result.data);
+      const response = await api.meeting.getMeeting(meetingId);
+      if (response && response.code === 200) {
+        commit(meetingMutations.SET_MEETING, response.data);
       }
     },
     async [meetingActions.ADD_NEW_MEETING]({ dispatch }, params) {
-      const result = await api.meeting.addNewMeeting(params);
-      if (result && result.code === 201) {
+      const response = await api.meeting.addNewMeeting(params);
+      if (response && response.code === 201) {
         dispatch(meetingActions.GET_MEETINGS);
       }
     },
     async [meetingActions.UPDATE_MEETING]({ commit }, { meetingId, data }) {
-      const result = await api.meeting.updateMeeting(meetingId, data);
-      if (result && result.code === 200) {
-        commit(meetingMutations.SET_MEETING, result.data);
+      const response = await api.meeting.updateMeeting(meetingId, data);
+      if (response && response.code === 200) {
+        commit(meetingMutations.SET_MEETING, response.data);
       }
     },
     async [meetingActions.DELETE_MEETING]({ commit }, meetingId) {
-      const result = await api.meeting.deleteMeeting(meetingId);
-      if (result && result.code === 204) {
+      const response = await api.meeting.deleteMeeting(meetingId);
+      if (response && response.code === 204) {
         await commit(meetingMutations.GET_MEETINGS);
       }
     },

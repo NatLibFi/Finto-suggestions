@@ -31,7 +31,10 @@ const execute = async (method, resource, data, useRefreshToken) => {
       /* eslint-disable-next-line */
       // TODO: needs to decide where errors are going to logged but for now just printing them to console
       console.log(error);
-      return error.response.data;
+      if (error.response) {
+        return error.response.data;
+      }
+      return {};
     });
 };
 export const get = async options => execute('get', options.resource, null);

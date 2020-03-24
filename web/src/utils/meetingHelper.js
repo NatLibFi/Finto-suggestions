@@ -8,10 +8,15 @@ const getProcessedCount = processed => {
 
   if (processed) {
     const accepted = processed[suggestionStateStatus.ACCEPTED];
+    const retained = processed[suggestionStateStatus.RETAINED];
     const rejected = processed[suggestionStateStatus.REJECTED];
 
     if (accepted && accepted > 0) {
       count += accepted;
+    }
+
+    if (retained && retained > 0) {
+      count += retained;
     }
 
     if (rejected && rejected > 0) {
