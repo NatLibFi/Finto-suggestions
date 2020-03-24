@@ -138,6 +138,15 @@ def create_or_400(model: object, payload: Dict, error_msg: str = None) -> str:
             msg = error_msg
         db.session.rollback()
         return create_response(None, 400, msg)
+        
+    try:
+        print("*** If User Object has an email it is used to send a Welcome email ***")
+        if db_obj.email:
+            print("The email in use is " + db_obj.email)
+            send_email_while_signing_up(db_obj.email)
+    except Exception as exx:
+        print("The object has no attribute --> " + str(exx))
+
 
     return create_response(db_obj.as_dict(), 201)
 
@@ -276,6 +285,13 @@ def send_email_while_signing_up(email: str) -> str:
 
         body = os.environ.get('WELCOME_MESSAGE_BODY')
         subject_text = os.environ.get('WELCOME_SUBJECT')
+
+
+        print(email_server_address)
+        print(email_server_port)
+        print(default_sender)
+        print(email_server_username)
+
 
         message = 'Subject: {}\n\n{}'.format(
             subject_text,
