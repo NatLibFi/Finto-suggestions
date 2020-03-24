@@ -209,17 +209,31 @@ export default {
       tags: tagGetters.GET_TAGS
     })
   },
-  async created() {
+  created() {
     this.filterStrings = {
       status: '',
       type: '',
       tags: '',
       meeting: ''
     };
-    await this.getMeetings();
-    await this.getTags();
+    this.getMeetings();
+    this.getTags();
     this.parseRouteIntoSelections();
   },
+
+  // async created() {
+  //   this.filterStrings = {
+  //     status: '',
+  //     type: '',
+  //     tags: '',
+  //     meeting: ''
+  //   };
+  //   await this.getMeetings();
+  //   await this.getTags();
+  //   this.parseRouteIntoSelections();
+  // },
+
+
   methods: {
     ...mapMeetingActions({
       getMeetings: meetingActions.GET_MEETINGS

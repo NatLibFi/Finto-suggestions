@@ -39,12 +39,20 @@ export default {
       pastMeetingCount: 0
     };
   },
-  async created() {
-    await this.getMeetings();
+  created() {
+    this.getMeetings();
     this.calculatePastAndFutureMeetingCounts();
     this.getSelectedSortKey();
     this.sortMeetingList();
   },
+
+  // async created() {
+  //   await this.getMeetings();
+  //   this.calculatePastAndFutureMeetingCounts();
+  //   this.getSelectedSortKey();
+  //   this.sortMeetingList();
+  // },
+
   computed: {
     ...mapMeetingGetters({
       meetings: meetingGetters.GET_MEETINGS,

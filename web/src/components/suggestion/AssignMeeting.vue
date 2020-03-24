@@ -75,13 +75,23 @@ export default {
       meeting: meetingGetters.GET_MEETING
     })
   },
-  async created() {
-    await this.getMeetings();
-    if (this.meetingId) {
-      await this.getMeeting(this.meetingId);
+  created() {
+    this.getMeetings();
+      if (this.meetingId) {
+        this.getMeeting(this.meetingId);
     }
     this.filteredMeetings = this.meetings;
   },
+
+  // async created() {
+  //   await this.getMeetings();
+  //   if (this.meetingId) {
+  //     await this.getMeeting(this.meetingId);
+  //   }
+  //   this.filteredMeetings = this.meetings;
+  // },
+
+
   mounted() {
     document.body.addEventListener('keyup', e => {
       if (e.keyCode === 27) {
