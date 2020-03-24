@@ -88,10 +88,6 @@ import ReactionList from '../reaction/ReactionList';
 import markdownEditor from 'vue-simplemde/src/markdown-editor';
 import { dateTimeFormatLabel } from '../../utils/dateHelper';
 import { userRoles } from '../../utils/userHelpers';
-//import { emojiMapping } from '../../utils/';
-//import axios from '../../utils';
-
-//import { getReactionsByEvent as testaus } from '../../api/reaction/reaction.js';
 import api from '../../api';
 // eslint-disable-next-line
 import { mapAuthenticatedUserGetters } from '../../store/modules/authenticatedUser/authenticatedUserModule.js';
