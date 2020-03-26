@@ -17,7 +17,7 @@ from .skos import suggestionToGraph
 # @profiler
 
 
-def getQuery(limit: int = 0, offset: int = 0, filters: str = "", queryString: str = "", sort: str = 'DEFAULT') -> db.Query:
+def getQuery(limit: int = 0, offset: int = 0, filters: str = "", queryString: str = "", sort: str = 'DEFAULT', area: str = "") -> db.Query:
     """
     Returns query for querying all suggestions.
 
@@ -30,6 +30,16 @@ def getQuery(limit: int = 0, offset: int = 0, filters: str = "", queryString: st
     :param sort: Sort the result set
     :returns: Query object for querying the database
     """
+    print("*")
+    print("*")
+    print("*")
+    print("*")
+    print("*")
+    print("Mikan 0 -- area")
+    if area:
+        print(area)
+    else:
+        print("Ei areaa")
 
     sort = sort.upper()
     if sort not in SUGGESTION_SORT_FUNCTIONS:
