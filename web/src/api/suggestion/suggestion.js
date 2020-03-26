@@ -5,10 +5,10 @@ import { get, put, post, del, patch } from '../utils';
 const defaultLimit = 25;
 
 export default {
-  getSuggestions: (offset = 0, sort = '', filters = '', searchWord = '') =>
+  getSuggestions: (offset = 0, sort = '', filters = '', searchWord = '', areaTerm = '') =>
     get({
       // eslint-disable-next-line max-len
-      resource: `/suggestions?limit=${defaultLimit}&offset=${offset}&sort=${sort}&filters=${filters}&search=${searchWord}`
+      resource: `/suggestions?limit=${defaultLimit}&offset=${offset}&sort=${sort}&filters=${filters}&search=${searchWord}&area=${areaTerm}`
     }),
   getSuggestionsCount: (filters, searchWord) =>
     get({ resource: `/suggestions/count?filters=${filters}&search=${searchWord}` }),
