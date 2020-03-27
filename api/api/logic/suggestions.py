@@ -30,6 +30,8 @@ def getQuery(limit: int = 0, offset: int = 0, filters: str = "", queryString: st
     :param sort: Sort the result set
     :returns: Query object for querying the database
     """
+    isTitleSet = False
+
     sort = sort.upper()
     if sort not in SUGGESTION_SORT_FUNCTIONS:
         sort = "CREATED_DESC"
@@ -48,6 +50,19 @@ def getQuery(limit: int = 0, offset: int = 0, filters: str = "", queryString: st
 
     queryString = queryString.lower()
     if queryString:
+
+        #Mika testejä
+        print("querySring alussa: " + queryString)
+        if 'title:' in queryString:
+            isTitleSet = True
+            print("isTitleSet =")
+            print(isTitleSet)
+            print("queryString ennen muutosta:" + queryString)
+            queryStringForOnlytTitlesSearch = queryString.replace('title:', '')
+            # print('a bar is a bar, essentially'.replace('bar', 'pub'))
+            print("queryStringForOnlytTitlesSearch muutoksen jälkeen: " + queryStringForOnlytTitlesSearch)
+            print("queryString muutoksen jälkeen: " + queryString)
+
         # Please append more fields, if you'd like to include in search
         # Currently the JSON field search is a bit dumb.
         # Ideally, you would like to search matches in each language separately,
@@ -55,12 +70,12 @@ def getQuery(limit: int = 0, offset: int = 0, filters: str = "", queryString: st
 
         query = query.filter(or_(
             func.lower(Suggestion.preferred_label['fi']['value'].cast(
-                Unicode)).contains(queryString),
+                Unicode)).contains(queryStringForOnlytTitlesSearch),
             func.lower(Suggestion.preferred_label['sv'].cast(
-                Unicode)).contains(queryString),
+                Unicode)).contains(queryStringForOnlytTitlesSearch),
             func.lower(Suggestion.preferred_label['en'].cast(
-                Unicode)).contains(queryString),
-            func.lower(Suggestion.id.cast(Unicode)).contains(queryString),
+                Unicode)).contains(queryStringForOnlytTitlesSearch),
+            func.lower(Suggestion.id.cast(Unicode)).contains(queryStringForOnlytTitlesSearch),
         ))
 
     if limit:
