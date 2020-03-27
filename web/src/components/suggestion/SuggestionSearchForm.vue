@@ -33,8 +33,7 @@ export default {
   props: {
     filters: String,
     searchWord: String,
-    sort: String,
-    areaTerm: String
+    sort: String
   },
   methods: {
     updateSearchWord() {
