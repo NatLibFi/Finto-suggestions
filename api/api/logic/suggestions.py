@@ -127,7 +127,7 @@ def getQuery(limit: int = 0, offset: int = 0, filters: str = "", queryString: st
 
     return query
 
-def get_suggestions(limit: int = 0, offset: int = 0, filters: str = "", search: str = "", sort: str = 'DEFAULT', area: str = "") -> str:
+def get_suggestions(limit: int = 0, offset: int = 0, filters: str = "", search: str = "", sort: str = 'DEFAULT') -> str:
     """
     Returns all suggestions.
 
@@ -140,20 +140,6 @@ def get_suggestions(limit: int = 0, offset: int = 0, filters: str = "", search: 
     :param sort: Sort the results before returning them
     :returns: All suggestion matching the query in json format
     """
-
-    print("*")
-    print("*")
-    print("*")
-    print("*")
-    print("*")
-    print("Mikan 0 -- area")
-    if area == "inUse":
-        print(area)
-    elif area == "notInUse":
-        print(area)
-    else:
-        print("Area is not defined")
-
 
     query = getQuery(limit=limit, offset=offset, filters=filters, queryString=search, sort=sort)
     return  get_all_or_400_custom(query)

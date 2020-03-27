@@ -1,6 +1,6 @@
 <template>
   <div class="search-suggestions">
-    <h5>Hae ehdotusta x {{ searchWord }}</h5>
+    <h5>Hae ehdotusta {{ searchWord }}</h5>
     <div class="search-wrapper">
       <div class="input-wrapper">
         <input
