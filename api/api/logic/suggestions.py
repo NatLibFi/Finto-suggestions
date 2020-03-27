@@ -51,23 +51,9 @@ def getQuery(limit: int = 0, offset: int = 0, filters: str = "", queryString: st
     queryString = queryString.lower()
     if queryString:
         queryStringForAllFileds = queryString
-
-        #Mika testejä
-        print("querySring alussa: " + queryString)
         if 'title:' in queryString:
             isTitleSet = True
-            print("isTitleSet =")
-            print(isTitleSet)
-            print("queryString ennen muutosta:" + queryString)
             queryStringForOnlytTitlesSearch = queryString.replace('title:', '')
-            # print('a bar is a bar, essentially'.replace('bar', 'pub'))
-            print("queryStringForOnlytTitlesSearch muutoksen jälkeen: " + queryStringForOnlytTitlesSearch)
-            print("queryString muutoksen jälkeen: " + queryString)
-
-        # Please append more fields, if you'd like to include in search
-        # Currently the JSON field search is a bit dumb.
-        # Ideally, you would like to search matches in each language separately,
-        # instead of the whole json blob (cast as string)
 
         if isTitleSet is True:
             query = query.filter(or_(
@@ -80,9 +66,6 @@ def getQuery(limit: int = 0, offset: int = 0, filters: str = "", queryString: st
                 func.lower(Suggestion.id.cast(Unicode)).contains(queryStringForOnlytTitlesSearch),
             ))
         else:
-            print("isTitleSet:")
-            print (isTitleSet)
-            print("queryStringForAllFileds " + queryStringForAllFileds)
             query = query.filter(or_(
                 func.lower(Suggestion.preferred_label['fi']['value'].cast(
                     Unicode)).contains(queryStringForAllFileds),
@@ -93,13 +76,13 @@ def getQuery(limit: int = 0, offset: int = 0, filters: str = "", queryString: st
                 func.lower(Suggestion.id.cast(
                     Unicode)).contains(queryStringForAllFileds),
                 func.lower(Suggestion.description.cast(
-                    Unicode)).contains(queryString),
+                    Unicode)).contains(queryStringForAllFileds),
                 func.lower(Suggestion.reason.cast(
-                    Unicode)).contains(queryString),
+                    Unicode)).contains(queryStringForAllFileds),
                 func.lower(Suggestion.uri.cast(
-                    Unicode)).contains(queryString),
+                    Unicode)).contains(queryStringForAllFileds),
                 func.lower(Suggestion.organization.cast(
-                    Unicode)).contains(queryString),
+                    Unicode)).contains(queryStringForAllFileds),
                 func.lower(Suggestion.broader_labels.cast(
                     Unicode)).contains(queryStringForAllFileds),
                 func.lower(Suggestion.narrower_labels.cast(
@@ -109,16 +92,14 @@ def getQuery(limit: int = 0, offset: int = 0, filters: str = "", queryString: st
                 func.lower(Suggestion.groups.cast(
                     Unicode)).contains(queryStringForAllFileds),
                 func.lower(Suggestion.scopeNote.cast(
-                    Unicode)).contains(queryString),
+                    Unicode)).contains(queryStringForAllFileds),
                 func.lower(Suggestion.exactMatches.cast(
                     Unicode)).contains(queryStringForAllFileds),
                 func.lower(Suggestion.neededFor.cast(
-                    Unicode)).contains(queryString),
+                    Unicode)).contains(queryStringForAllFileds),
                 func.lower(Suggestion.yse_term.cast(
                     Unicode)).contains(queryStringForAllFileds),
             ))
-        
-
 
     if limit:
         query = query.limit(limit)
