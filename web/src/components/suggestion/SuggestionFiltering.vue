@@ -334,7 +334,7 @@ export default {
         status: '',
         tags: '',
         type: '',
-        meeting: ''
+        meeting: '',
       };
 
       handleQueries('', this.searchWord, this.sort, this.$router);
