@@ -1,39 +1,22 @@
 <template>
-  <div>
-    <div class="emoji-list">
-      <div v-for="(emoji, index) in emojiList" :key="index" class="single-emoji">
-        <span class="count">{{ emoji.count }}</span>
-        <span class="emoji">
-          {{ emojiMapping[emoji.code] }}
-        </span>
-      </div>
+  <div class="emoji-list">
+    <div v-for="(emoji, index) in emojiList" :key="index" class="single-emoji">
+      <span class="count">{{ emoji.count }}</span>
+      <span class="emoji">
+        {{ emojiMapping[emoji.code] }}
+      </span>
     </div>
   </div>
 </template>
 
 <script>
 import { emojiMapping } from '../../utils/reactionHelpers';
-import { reactionGetters, reactionActions } from '../../store/modules/reaction/reactionConsts';
-import {
-  mapReactionGetters,
-  mapReactionActions
-} from '../../store/modules/reaction/reactionModule';
-
 export default {
   props: {
-    suggestionId: {
-      type: [String, Number],
-      required: false
-    },
-    eventId: {
-      type: [String, Number],
-      required: false
-    },
-    userId: {
-      type: [String, Number],
-      required: false
-    },
-    componentKey: Number
+    reactions: {
+      type: Array,
+      required: true
+    }
   },
   data() {
     return {
@@ -41,25 +24,15 @@ export default {
       emojiList: []
     };
   },
-  computed: {
-    ...mapReactionGetters({
-      reactions: reactionGetters.GET_REACTIONS
-    })
-  },
   async created() {
-    if (this.eventId) {
-      await this.reactionsByEvent(this.eventId);
-      this.emojiList = this.listCountedEmojis(this.reactions);
-    } else {
-      await this.reactionsBySuggestion(this.suggestionId);
-      this.emojiList = this.listCountedEmojis(this.reactions);
+    this.emojiList = this.listCountedEmojis(this.reactions);
+  },
+  watch: {
+    reactions(newVal) {
+      this.emojiList = this.listCountedEmojis(newVal);
     }
   },
   methods: {
-    ...mapReactionActions({
-      reactionsBySuggestion: reactionActions.GET_REACTIONS_BY_SUGGESTION,
-      reactionsByEvent: reactionActions.GET_REACTIONS_BY_EVENT
-    }),
     listCountedEmojis(reactions) {
       let listedEmojis = [];
       let arr = [];
@@ -77,7 +50,7 @@ export default {
           }
         }
       }
-      return arr;
+      return arr.sort((a, b) => b.count - a.count || a.code < b.code);
     }
   }
 };

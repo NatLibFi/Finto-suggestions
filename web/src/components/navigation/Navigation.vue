@@ -235,7 +235,7 @@ export default {
             });
         }
       }
-      if(!this.showLoginDialog){
+      if (!this.showLoginDialog) {
         window.location.reload();
       }
     },

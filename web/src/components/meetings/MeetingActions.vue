@@ -1,12 +1,18 @@
 <template>
-  <div v-if="isAuthenticated && role === userRoles.ADMIN" class="actions-container">
-    <!-- Next line is left there as an option -->
-    <!-- <add-comment v-if="events && events.length > 1" :userId="userId" :suggestionId="suggestionId" /> -->
+  <div class="actions-container">
     <div class="action-buttons">
-      <span class="button dismiss" @click="retainSuggestion()">
+      <span
+        v-if="suggestion.status !== suggestionStateStatus.RETAINED"
+        class="button dismiss"
+        @click="retainSuggestion()"
+      >
         Jätä ehdotukseksi
       </span>
-      <span class="button approve" @click="approveSuggestion()">
+      <span
+        v-if="suggestion.status !== suggestionStateStatus.ACCEPTED"
+        class="button approve"
+        @click="approveSuggestion()"
+      >
         Hyväksy ehdotus
       </span>
     </div>
@@ -16,14 +22,10 @@
 <script>
 import AddComment from '../suggestion/AddComment';
 
-import {
-  mapAuthenticatedUserGetters,
-  mapAuthenticatedUserActions
-} from '../../store/modules/authenticatedUser/authenticatedUserModule.js';
-import {
-  authenticatedUserGetters,
-  authenticatedUserActions
-} from '../../store/modules/authenticatedUser/authenticatedUserConsts.js';
+// eslint-disable-next-line max-len
+import { mapAuthenticatedUserGetters } from '../../store/modules/authenticatedUser/authenticatedUserModule.js';
+// eslint-disable-next-line max-len
+import { authenticatedUserGetters } from '../../store/modules/authenticatedUser/authenticatedUserConsts.js';
 import { mapSuggestionActions } from '../../store/modules/suggestion/suggestionModule';
 import { suggestionActions } from '../../store/modules/suggestion/suggestionConsts';
 import { suggestionStateStatus } from '../../utils/suggestionHelpers';
@@ -40,8 +42,8 @@ export default {
   },
   props: {
     userId: [String, Number],
-    suggestionId: {
-      type: [String, Number],
+    suggestion: {
+      type: Object,
       required: true
     },
     meetingId: {
@@ -55,7 +57,8 @@ export default {
   },
   data() {
     return {
-      userRoles
+      userRoles,
+      suggestionStateStatus
     };
   },
   computed: {
@@ -64,15 +67,9 @@ export default {
       role: authenticatedUserGetters.GET_USER_ROLE
     })
   },
-  created() {
-    this.validateAuthentication();
-  },
   methods: {
     ...mapSuggestionActions({
       setSuggestionStatus: suggestionActions.SET_SUGGESTION_STATUS
-    }),
-    ...mapAuthenticatedUserActions({
-      validateAuthentication: authenticatedUserActions.VALIDATE_AUTHENTICATION
     }),
     ...mapEventActions({
       addEvent: eventActions.ADD_NEW_EVENT
@@ -81,7 +78,12 @@ export default {
       setMeetingStatus: meetingMutations.SET_UPDATE_MEETING_SUGGESTIONS_PROGRESS_STATUS
     }),
     async createEvent(status) {
-      const event = newActionEvent('käsitteli ehdotuksen.', status, this.userId, this.suggestionId);
+      const event = newActionEvent(
+        'käsitteli ehdotuksen.',
+        status,
+        this.userId,
+        this.suggestion.id
+      );
       await this.addEvent(event);
     },
     async dismissSuggestion() {
@@ -91,25 +93,25 @@ export default {
       });
       await this.createEvent(suggestionStateStatus.REJECTED);
       this.updateMeetingSuggestionStatus();
-      this.$emit('moveToNextSuggestion');
+      //this.$emit('moveToNextSuggestion');
     },
     async approveSuggestion() {
       await this.setSuggestionStatus({
-        suggestionId: this.suggestionId,
+        suggestionId: this.suggestion.id,
         status: suggestionStateStatus.ACCEPTED
       });
       await this.createEvent(suggestionStateStatus.ACCEPTED);
       this.updateMeetingSuggestionStatus();
-      this.$emit('moveToNextSuggestion');
+      //this.$emit('moveToNextSuggestion');
     },
     async retainSuggestion() {
       await this.setSuggestionStatus({
-        suggestionId: this.suggestionId,
+        suggestionId: this.suggestion.id,
         status: suggestionStateStatus.RETAINED
       });
       await this.createEvent(suggestionStateStatus.RETAINED);
       this.updateMeetingSuggestionStatus();
-      this.$emit('moveToNextSuggestion');
+      //this.$emit('moveToNextSuggestion');
     },
     updateMeetingSuggestionStatus() {
       this.setMeetingStatus(true);
@@ -129,13 +131,14 @@ export default {
   border: 2px solid #f5f5f5;
   border-top: none;
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-end;
 }
 
 .action-buttons .button {
-  display: inline-block;
+  display: inline-flex;
   padding: 6px 12px;
   margin: 0;
+  margin-left: 10px;
   font-weight: 600;
   font-size: 13px;
   border-radius: 2px;
@@ -162,8 +165,6 @@ export default {
   border: 3px solid #394554;
   transition: background-color, 0.1s;
   transition: border, 0.1s;
-  margin: 0 12px;
-  margin-left: auto;
 }
 
 .action-buttons .dismiss:hover {

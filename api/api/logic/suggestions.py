@@ -30,6 +30,7 @@ def getQuery(limit: int = 0, offset: int = 0, filters: str = "", queryString: st
     :param sort: Sort the result set
     :returns: Query object for querying the database
     """
+    isTitleSet = False
 
     sort = sort.upper()
     if sort not in SUGGESTION_SORT_FUNCTIONS:
@@ -49,20 +50,56 @@ def getQuery(limit: int = 0, offset: int = 0, filters: str = "", queryString: st
 
     queryString = queryString.lower()
     if queryString:
-        # Please append more fields, if you'd like to include in search
-        # Currently the JSON field search is a bit dumb.
-        # Ideally, you would like to search matches in each language separately,
-        # instead of the whole json blob (cast as string)
+        queryStringForAllFileds = queryString
+        if 'title:' in queryString:
+            isTitleSet = True
+            queryStringForOnlytTitlesSearch = queryString.replace('title:', '')
 
-        query = query.filter(or_(
-            func.lower(Suggestion.preferred_label['fi']['value'].cast(
-                Unicode)).contains(queryString),
-            func.lower(Suggestion.preferred_label['sv'].cast(
-                Unicode)).contains(queryString),
-            func.lower(Suggestion.preferred_label['en'].cast(
-                Unicode)).contains(queryString),
-            func.lower(Suggestion.id.cast(Unicode)).contains(queryString),
-        ))
+        if isTitleSet is True:
+            query = query.filter(or_(
+                func.lower(Suggestion.preferred_label['fi']['value'].cast(
+                    Unicode)).contains(queryStringForOnlytTitlesSearch),
+                func.lower(Suggestion.preferred_label['sv'].cast(
+                    Unicode)).contains(queryStringForOnlytTitlesSearch),
+                func.lower(Suggestion.preferred_label['en'].cast(
+                    Unicode)).contains(queryStringForOnlytTitlesSearch),
+                func.lower(Suggestion.id.cast(Unicode)).contains(queryStringForOnlytTitlesSearch),
+            ))
+        else:
+            query = query.filter(or_(
+                func.lower(Suggestion.preferred_label['fi']['value'].cast(
+                    Unicode)).contains(queryStringForAllFileds),
+                func.lower(Suggestion.preferred_label['sv'].cast(
+                    Unicode)).contains(queryStringForAllFileds),
+                func.lower(Suggestion.preferred_label['en'].cast(
+                    Unicode)).contains(queryStringForAllFileds),
+                func.lower(Suggestion.id.cast(
+                    Unicode)).contains(queryStringForAllFileds),
+                func.lower(Suggestion.description.cast(
+                    Unicode)).contains(queryStringForAllFileds),
+                func.lower(Suggestion.reason.cast(
+                    Unicode)).contains(queryStringForAllFileds),
+                func.lower(Suggestion.uri.cast(
+                    Unicode)).contains(queryStringForAllFileds),
+                func.lower(Suggestion.organization.cast(
+                    Unicode)).contains(queryStringForAllFileds),
+                func.lower(Suggestion.broader_labels.cast(
+                    Unicode)).contains(queryStringForAllFileds),
+                func.lower(Suggestion.narrower_labels.cast(
+                    Unicode)).contains(queryStringForAllFileds),
+                func.lower(Suggestion.related_labels.cast(
+                    Unicode)).contains(queryStringForAllFileds),
+                func.lower(Suggestion.groups.cast(
+                    Unicode)).contains(queryStringForAllFileds),
+                func.lower(Suggestion.scopeNote.cast(
+                    Unicode)).contains(queryStringForAllFileds),
+                func.lower(Suggestion.exactMatches.cast(
+                    Unicode)).contains(queryStringForAllFileds),
+                func.lower(Suggestion.neededFor.cast(
+                    Unicode)).contains(queryStringForAllFileds),
+                func.lower(Suggestion.yse_term.cast(
+                    Unicode)).contains(queryStringForAllFileds),
+            ))
 
     if limit:
         query = query.limit(limit)

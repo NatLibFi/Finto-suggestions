@@ -69,8 +69,7 @@ export default {
     ...mapReactionActions({
       addReaction: reactionActions.ADD_REACTION,
       deleteReaction: reactionActions.DELETE_REACTION,
-      getReactionsBySuggestion: reactionActions.GET_REACTIONS_BY_SUGGESTION,
-      getReactionsByEvent: reactionActions.GET_REACTIONS_BY_EVENT
+      getReactionsBySuggestion: reactionActions.GET_REACTIONS_BY_SUGGESTION
     }),
     toggleEmojiSelector() {
       this.showEmojiSelector = !this.showEmojiSelector;
@@ -95,7 +94,6 @@ export default {
           },
           suggestionId: this.suggestionId
         });
-        this.getReactionsByEvent(this.eventId);
       }
       this.toggleEmojiSelector();
       this.updateReactionList();

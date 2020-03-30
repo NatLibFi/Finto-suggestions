@@ -139,6 +139,12 @@ def create_or_400(model: object, payload: Dict, error_msg: str = None) -> str:
         db.session.rollback()
         return create_response(None, 400, msg)
 
+    try:
+        if db_obj.email:
+            send_email_while_signing_up(db_obj.email)
+    except Exception as exx:
+        print("The object has no attribute --> " + str(exx))
+
     return create_response(db_obj.as_dict(), 201)
 
 

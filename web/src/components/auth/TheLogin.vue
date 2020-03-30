@@ -1,8 +1,7 @@
 <template>
   <div class="login-dialog">
     <h3 v-if="!showForgottenPasswordForm">[Kirjaudu sisään]</h3>
-    <div v-if="!showForgottenPasswordForm" class="login-services">
-    </div>
+    <div v-if="!showForgottenPasswordForm" class="login-services"></div>
     <div class="login-own-credentials">
       <h4
         v-if="!showOwnCredentialLogin && !showForgottenPasswordForm"
