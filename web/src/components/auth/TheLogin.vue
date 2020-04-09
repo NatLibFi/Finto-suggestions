@@ -3,13 +3,7 @@
     <h3 v-if="!showForgottenPasswordForm">[Kirjaudu sisään]</h3>
     <div v-if="!showForgottenPasswordForm" class="login-services"></div>
     <div class="login-own-credentials">
-      <h4
-        v-if="!showOwnCredentialLogin && !showForgottenPasswordForm"
-        @click="showOwnCredentialInputs()"
-      >
-        Kirjaudu sisään
-      </h4>
-      <div v-if="showOwnCredentialLogin">
+      <div v-if="!showForgottenPasswordForm">
         <div class="login-input">
           <span>Sähköposti</span>
           <input type="text" v-model="email" />
@@ -87,7 +81,6 @@ export default {
   data() {
     return {
       baseUrl: process.env.BASE_URL,
-      showOwnCredentialLogin: false,
       email: '',
       password: '',
       showForgottenPasswordForm: false,
@@ -164,11 +157,9 @@ export default {
       return { email: this.email, password: this.password };
     },
     showOwnCredentialInputs() {
-      this.showOwnCredentialLogin = true;
       this.showForgottenPasswordForm = false;
     },
     showResetPasswordInputs() {
-      this.showOwnCredentialLogin = false;
       this.showForgottenPasswordForm = true;
     },
     resetPassword() {
