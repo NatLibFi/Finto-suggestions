@@ -264,20 +264,17 @@ export default {
 }
 .event-header {
   padding: 20px 60px 20px 40px;
-  position: relative;
+  display: flex;
+  align-items: center;
 }
 .event-header .event-user-initials {
-  display: inline-block;
   height: 40px;
-  width: 40px;
+  min-width: 40px;
   font-size: 15px;
   line-height: 41px;
   background-color: #eeeeee;
-  vertical-align: middle;
 }
 .event-header .event-info {
-  display: inline-block;
-  vertical-align: middle;
   margin-left: 20px;
   max-width: calc(100% - 60px);
 }
@@ -340,16 +337,23 @@ export default {
   border: 2px solid #ff8111;
 }
 .menu-wrapper {
-  display: inline;
+  display: inline-flex;
+  margin-left: auto;
 }
 .menu {
-  position: absolute;
-  right: 20px;
+  position: relative;
+  right: -32px;
 }
 .emoji {
-  position: absolute;
-  right: 60px;
+  position: relative;
+  right: -16px;
 }
+
+.emoji:last-child {
+  position: relative;
+  right: -40px;
+}
+
 .event-comment {
   border-top: 1px solid #f5f5f5;
   padding: 10px 40px;
