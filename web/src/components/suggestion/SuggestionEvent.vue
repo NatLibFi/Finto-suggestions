@@ -354,7 +354,6 @@ export default {
   border-top: 1px solid #f5f5f5;
   padding: 10px 40px;
   margin: 0;
-  word-break: break-all;
 }
 .edit-comment {
   width: calc(100% - 80px);
