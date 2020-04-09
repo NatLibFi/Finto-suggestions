@@ -122,8 +122,8 @@
             </span>
           </div>
         </div>
-        <div class="suggestion-header-buttons" v-if="isAuthenticated && role === userRoles.ADMIN">
-          <tag-selector :suggestion="suggestion" :userId="userId" />
+        <div class="suggestion-header-buttons" v-if="isAuthenticated">
+          <tag-selector v-if="role === userRoles.ADMIN" :suggestion="suggestion" :userId="userId" />
           <emoji-selector
             @updateReactionList="componentKey += 1"
             :suggestionId="suggestion.id"
@@ -131,7 +131,7 @@
             class="emoji"
           />
           <menu-button
-            v-if="!meetingId"
+            v-if="!meetingId && role === userRoles.ADMIN"
             :options="menuOptions"
             name="suggestion-menu"
             class="menu"
