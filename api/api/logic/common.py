@@ -1,5 +1,8 @@
+# -*- coding: utf-8 -*-
 import os
 import smtplib
+import codecs
+from email.mime.text import MIMEText
 from datetime import datetime
 from typing import Dict
 
@@ -280,8 +283,14 @@ def send_email_while_signing_up(email: str) -> str:
         email_server_username = os.environ.get('EMAIL_SERVER_USERNAME')
         email_server_password = os.environ.get('EMAIL_SERVER_PASSWORD')
 
-        body = os.environ.get('WELCOME_MESSAGE_BODY')
-        subject_text = os.environ.get('WELCOME_SUBJECT')
+        body_string_raw = os.environ.get('WELCOME_MESSAGE_BODY')
+        subject_string_raw = os.environ.get('WELCOME_SUBJECT') 
+        body = MIMEText(body_string_raw.encode("utf-8"), _charset='utf-8')
+        subject_text = MIMEText(subject_string_raw.encode("utf-8"), _charset='utf-8')
+
+        # body = body_string_raw.encode('ascii','ignore')
+        # subject_text = subject_string_raw.encode('ascii','ignore')
+
 
         message = 'Subject: {}\n\n{}'.format(
             subject_text,

@@ -42,6 +42,10 @@ services:
     restart: always
     volumes:
       - volume_db:/var/lib/postgresql/data
+    command: ["postgres", "-c", "logging_collector=on"]
+    command: ["postgres", "-c", "log_statement=all"]
+    #command: ["postgres", "-c", "log_directory=/logs"]
+    #command: ["postgres", "-c", "log_filename=postgresql.log"]
     env_file: .env
     ports:
       - 5432:5432
