@@ -13,6 +13,7 @@ export const sessionStorageKeyNames = {
 
 export const meetingGetters = {
   GET_MEETINGS: 'getMeetings',
+  GET_MEETINGS_AS_PITHY: 'getMeetingsAsPithy',  
   GET_MEETING: 'getMeeting',
   GET_MEETINGS_SELECTED_SORT: 'getMeetingsSelectedSort',
   GET_UPDATE_MEETING_SUGGESTIONS_PROGRESS_STATUS: 'getUpdateMeetingSuggestionsProgressStatus'
@@ -20,6 +21,7 @@ export const meetingGetters = {
 
 export const meetingMutations = {
   SET_MEETINGS: 'setMeetings',
+  SET_MEETINGS_AS_PITHY: 'setMeetingsAsPithy',
   SET_MEETING: 'setMeeting',
   SET_MEETINGS_SELECTED_SORT: 'setSelectedSort',
   SET_MEETINGS_SELECTED_STORE_SORT: 'setSelectedStoreSort',
@@ -28,6 +30,7 @@ export const meetingMutations = {
 
 export const meetingActions = {
   GET_MEETINGS: 'getMeetings',
+  GET_MEETINGS_AS_PITHY: 'getMeetingsAsPithy',
   GET_MEETING: 'getMeeting',
   ADD_NEW_MEETING: 'addNewMeeting',
   UPDATE_MEETING: 'updateMeeting',

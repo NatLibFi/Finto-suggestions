@@ -6,13 +6,20 @@
         <div class="welcome-text">
           <p>
             {{ welcomeSummary }}
+          </p>
+          <p>  
             <a @click="toggleWelcomeText" v-if="!isShown" class="button">Lue lisää</a>
             <a @click="toggleWelcomeText" v-if="isShown" class="button">Piilota</a>
           </p>
           <p v-if="isShown">{{ welcomeExplanation }}</p>
           <p class="meetings-link">
             <strong>
-              Voit tarkastella tulevia YSO-kokouksia <a @click="goToMeetings()">täällä</a>.
+              <div>
+                Voit tarkastella tulevia YSO-kokouksia <a @click="goToMeetings()">täällä</a>.
+              </div>
+              <div>
+                Voit seurata uuden kokoustoiminnon kehittämistä <a @click="goToMeetingsAsPithy()">täällä</a>.
+              </div>
             </strong>
           </p>
         </div>
@@ -74,6 +81,9 @@ export default {
   methods: {
     goToMeetings() {
       this.$router.push('/meetings');
+    },
+    goToMeetingsAsPithy() {
+      this.$router.push('/meetingsaspithy');
     },
     toggleWelcomeText() {
       this.isShown = !this.isShown;

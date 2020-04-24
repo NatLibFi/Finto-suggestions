@@ -202,7 +202,7 @@ export default {
     ]
   }),
   computed: {
-    ...mapMeetingGetters({
+...mapMeetingGetters({
       meetings: meetingGetters.GET_MEETINGS
     }),
     ...mapTagGetters({

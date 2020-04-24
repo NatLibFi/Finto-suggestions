@@ -26,6 +26,7 @@ export default {
   },
   getters: {
     [meetingGetters.GET_MEETINGS]: state => state[storeStateNames.ITEMS],
+    [meetingGetters.GET_MEETINGS_AS_PITHY]: state => state[storeStateNames.ITEMS],
     [meetingGetters.GET_MEETING]: state => state[storeStateNames.ITEM],
     [meetingGetters.GET_MEETINGS_SELECTED_SORT]: state =>
       state[storeStateNames.MEETINGS_SELECTED_SORT],
@@ -38,6 +39,9 @@ export default {
         meetings.sort(comparerAsc('meeting_date'));
       }
       Vue.set(state, storeStateNames.ITEMS, meetings);
+    },
+    [meetingMutations.SET_MEETINGS_AS_PITHY](state, meetingsAsPithy) {
+      Vue.set(state, storeStateNames.ITEMS, meetingsAsPithy);
     },
     [meetingMutations.SET_MEETING](state, meeting) {
       Vue.set(state, storeStateNames.ITEM, meeting);
@@ -57,6 +61,12 @@ export default {
       const response = await api.meeting.getMeetings();
       if (response && response.code === 200) {
         commit(meetingMutations.SET_MEETINGS, response.data);
+      }
+    },
+    async [meetingActions.GET_MEETINGS_AS_PITHY]({ commit }) {
+      const response = await api.meeting.getMeetings();
+      if (response && response.code === 200) {
+        commit(meetingMutations.SET_MEETINGS_AS_PITHY, response.data);
       }
     },
     async [meetingActions.GET_MEETING]({ commit }, meetingId) {

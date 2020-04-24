@@ -5,6 +5,8 @@ import Suggestion from '../views/Suggestion';
 import User from '../views/User';
 import UserSettings from '../views/UserSettings';
 import Meetings from '../views/Meetings';
+import MeetingsAsPithy from '../views/MeetingsAsPithy';
+import MeetingAsPithy from '../views/MeetingAsPithy';
 import MeetingSuggestionList from '../views/MeetingSuggestionList';
 import MeetingSuggestion from '../views/MeetingSuggestion';
 
@@ -50,6 +52,16 @@ export default new Router({
       name: 'settings',
       component: UserSettings,
       props: true
+    },
+    {
+      path: '/meetingsaspithy',
+      name: 'meetingsaspithy',
+      component: MeetingsAsPithy
+    },
+    {
+      path: '/meetingaspithy',
+      name: 'meetingaspithy',
+      component: MeetingAsPithy
     },
     {
       path: '/meetings',
