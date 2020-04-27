@@ -5,9 +5,7 @@
       Swap the value:
     </a>
     {{ isPageOk }}
-    {{ onlyNeededPropertiesForMeeting }}
-    {{ singleMeeting }}
-    <!-- <div v-model="singleMeeting.data"></div> -->
+    {{ meeting }}
   </div>
 </template>
 
@@ -32,7 +30,7 @@ export default {
   data() {
     return {
       isPageOk: false,
-      singleMeeting 
+      meetingId: Number,
     };
   },
   computed: {
@@ -40,20 +38,20 @@ export default {
       isAuthenticated: authenticatedUserGetters.GET_IS_AUTHENTICATED,
       role: authenticatedUserGetters.GET_USER_ROLE
     }),
-    // ...mapMeetingGetters({
-    //   meetings: meetingGetters.GET_MEETINGS_AS_PITHY,
-    // }),
-    // onlyNeededPropertiesForMeeting: []
+    ...mapMeetingGetters({
+      meeting: meetingGetters.GET_MEETING,
+    }),
   },
   async created() {
-    await this.getMeetings();
-    this.singleMeeting = this.getOnlyNeededMeetingProperties();
-    // this.onlyNeededPropertiesForMeeting;
+    await this.getMeeting(4);
   },
   methods: {
     ...mapMeetingActions({
-      getMeetings: meetingActions.GET_MEETINGS_AS_PITHY,
+      getMeeting: meetingActions.GET_MEETING,
     }),
+    getMeetingForThePage(){
+      return this.meeting;
+    },
     setPageOk() {
       if(!this.isPageOk) {
       this.isPageOk = true; 
@@ -61,13 +59,6 @@ export default {
       this.isPageOk = false;
       }
     },
-    getOnlyNeededMeetingProperties(){
-      axios.get('http://localhost:8080/api/meetings/2').then(resp => {
-        console.log(resp);
-        return resp.data;
-        // this.onlyNeededPropertiesForMeeting = resp.data;       
-      })
-    }
 
   }
 
