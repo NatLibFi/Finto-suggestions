@@ -4,7 +4,10 @@ export const storeStateNames = {
   ITEMS: 'items',
   ITEM: 'item',
   MEETINGS_SELECTED_SORT: 'meetingsSelectedSort',
-  UPDATE_MEETING_SUGGESTIONS_PROGRESS_STATUS: 'updateMeetingSuggestionsProgressStatus'
+  UPDATE_MEETING_SUGGESTIONS_PROGRESS_STATUS: 'updateMeetingSuggestionsProgressStatus',
+  MEETINGS_AS_PITHY: 'meetingsAsPithy',
+  MEETING_AS_PITHY: 'meetingAsPithy',
+  CURRENT_MEETING_ID: 'currentMeetingId',
 };
 
 export const sessionStorageKeyNames = {
@@ -16,12 +19,15 @@ export const meetingGetters = {
   GET_MEETINGS_AS_PITHY: 'getMeetingsAsPithy',  
   GET_MEETING: 'getMeeting',
   GET_MEETINGS_SELECTED_SORT: 'getMeetingsSelectedSort',
-  GET_UPDATE_MEETING_SUGGESTIONS_PROGRESS_STATUS: 'getUpdateMeetingSuggestionsProgressStatus'
+  GET_UPDATE_MEETING_SUGGESTIONS_PROGRESS_STATUS: 'getUpdateMeetingSuggestionsProgressStatus',
+  GET_CURRENT_MEETING_ID: 'getCurrentMeetingId',
 };
 
 export const meetingMutations = {
+  SET_CURRENT_MEETING_ID: 'setCurrentMeetingId',
   SET_MEETINGS: 'setMeetings',
   SET_MEETINGS_AS_PITHY: 'setMeetingsAsPithy',
+  SET_MEETING_AS_PITHY: 'setMeetingAsPithy',
   SET_MEETING: 'setMeeting',
   SET_MEETINGS_SELECTED_SORT: 'setSelectedSort',
   SET_MEETINGS_SELECTED_STORE_SORT: 'setSelectedStoreSort',
@@ -36,5 +42,7 @@ export const meetingActions = {
   UPDATE_MEETING: 'updateMeeting',
   DELETE_MEETING: 'deleteMeeting',
   GET_MEETINGS_SELECTED_SORT: 'getMeetingsSelectedSort',
-  SET_MEETINGS_SELECTED_SORT: 'setMeetingsSelectedSort'
+  SET_MEETINGS_SELECTED_SORT: 'setMeetingsSelectedSort',
+  SET_CURRENT_MEETING_ID: 'setCurrentMeetingId'
+  
 };

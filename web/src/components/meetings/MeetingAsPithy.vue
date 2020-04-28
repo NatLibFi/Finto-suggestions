@@ -5,7 +5,10 @@
       Swap the value:
     </a>
     {{ isPageOk }}
+     <!-- -> Model -->
     {{ meeting }}
+    Tuleeko tähän meetingId? {{ currentMeetingId }}
+    <!--  -->
   </div>
 </template>
 
@@ -19,8 +22,11 @@ import { userRoles } from '../../utils/userHelpers.js';
 import { authenticatedUserGetters } from '../../store/modules/authenticatedUser/authenticatedUserConsts.js';
 // eslint-disable-next-line
 import { mapAuthenticatedUserGetters } from '../../store/modules/authenticatedUser/authenticatedUserModule.js';
+/// -> Model 
 import { mapMeetingGetters, mapMeetingActions } from '../../store/modules/meeting/meetingModule.js';
 import { meetingGetters, meetingActions } from '../../store/modules/meeting/meetingConsts.js';
+import { mapGetters} from 'vuex';
+///
 
 export default {
   components: {
@@ -30,7 +36,9 @@ export default {
   data() {
     return {
       isPageOk: false,
-      meetingId: Number,
+      /// -> Model
+      currentMeetingId: Number
+      ///
     };
   },
   computed: {
@@ -38,20 +46,26 @@ export default {
       isAuthenticated: authenticatedUserGetters.GET_IS_AUTHENTICATED,
       role: authenticatedUserGetters.GET_USER_ROLE
     }),
+    /// -> Model
     ...mapMeetingGetters({
       meeting: meetingGetters.GET_MEETING,
     }),
+    ///
+    ...mapMeetingGetters({ currentMeetingId: meetingGetters.getMeetingIdForCurrentMeeting })
   },
   async created() {
-    await this.getMeeting(4);
+    /// -> Model
+
+  console.log(this.currentMeetingId)
+    await this.getMeeting(this.currentMeetingId);
+    ///
   },
   methods: {
+    /// -> Model
     ...mapMeetingActions({
       getMeeting: meetingActions.GET_MEETING,
     }),
-    getMeetingForThePage(){
-      return this.meeting;
-    },
+    ///
     setPageOk() {
       if(!this.isPageOk) {
       this.isPageOk = true; 

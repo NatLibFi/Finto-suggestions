@@ -19,14 +19,18 @@ export const mapMeetingMutations = mutations => mapMutations(namespace, mutation
 export default {
   namespaced: true,
   state: {
+    meetingIdForCurrentMeeting: null,
     [storeStateNames.ITEMS]: [],
     [storeStateNames.ITEM]: null,
     [storeStateNames.MEETINGS_SELECTED_SORT]: null,
-    [storeStateNames.UPDATE_MEETING_SUGGESTIONS_PROGRESS_STATUS]: false
+    [storeStateNames.UPDATE_MEETING_SUGGESTIONS_PROGRESS_STATUS]: false,
+    [storeStateNames.SET_CURRENT_MEETING_ID]: Number
   },
   getters: {
+    getMeetingIdForCurrentMeeting: state => state['meetingIdForCurrentMeeting'],
     [meetingGetters.GET_MEETINGS]: state => state[storeStateNames.ITEMS],
     [meetingGetters.GET_MEETINGS_AS_PITHY]: state => state[storeStateNames.ITEMS],
+    [meetingGetters.GET_CURRENT_MEETING_ID]: state => state[storeStateNames.GET_CURRENT_MEETING_ID],
     [meetingGetters.GET_MEETING]: state => state[storeStateNames.ITEM],
     [meetingGetters.GET_MEETINGS_SELECTED_SORT]: state =>
       state[storeStateNames.MEETINGS_SELECTED_SORT],
@@ -34,6 +38,9 @@ export default {
       state[storeStateNames.UPDATE_MEETING_SUGGESTIONS_PROGRESS_STATUS]
   },
   mutations: {
+    setCurrentMeetingIdInState (state, currentMeetingId) {
+      Vue.set(state, currentMeetingId);
+    },
     [meetingMutations.SET_MEETINGS](state, meetings) {
       if (meetings && meetings.length > 0) {
         meetings.sort(comparerAsc('meeting_date'));
@@ -45,6 +52,9 @@ export default {
     },
     [meetingMutations.SET_MEETING](state, meeting) {
       Vue.set(state, storeStateNames.ITEM, meeting);
+    },
+    [meetingMutations.SET_CURRENT_MEETING_ID](state, currentMeetingId) {
+      Vue.set(state, storeStateNames.SET_CURRENT_MEETING_ID, currentMeetingId)
     },
     [meetingMutations.SET_MEETINGS_SELECTED_SORT](state, sortKey) {
       Vue.set(state, storeStateNames.MEETINGS_SELECTED_SORT, sortKey);
@@ -103,6 +113,11 @@ export default {
       if (sortKey) {
         commit(meetingMutations.SET_MEETINGS_SELECTED_SORT, sortKey);
         commit(meetingMutations.SET_MEETINGS_SELECTED_STORE_SORT, sortKey);
+      }
+    },
+    [meetingActions.SET_CURRENT_MEETING_ID]({ commit }, meetingId) {
+      if (sortKey) {
+        commit(meetingMutations.SET_CURRENT_MEETING_ID, meetingId);
       }
     }
   }

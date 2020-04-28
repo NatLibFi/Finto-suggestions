@@ -4,6 +4,10 @@
       Swap the value:
     </a>
     {{ isPageOk }}
+    <!-- <a @click="setCurrentMeetingIdForLinkToMeeting(5)" unselectable="on">
+      Lähetä value stateen
+    </a> -->
+    {{ currentMeetingId }}
     <div>
       <ul>
         <span v-for="meeting in meetings" :key="meeting.id" >
@@ -11,6 +15,8 @@
                 <!-- <li>#{{ meeting.id }}</li> -->
                 <li>Luontipäivä: {{ meeting.created }}</li>
                 <li>Kokouspäivä: {{ meeting.meeting_date }}</li>
+                <!-- <li @click="goToMeetingList()" class="item"> -->
+                <a @click="setCurrentMeetingIdForLinkToMeeting(meeting.id), goToSingleMeetingPage()" unselectable="on">Tästä pääset tapaamiseen</a>
         </span>
           <!-- <meeting-list-item class="item" v-for="item in meetings" :key="item.id" :meeting="item" /> -->
       </ul>
@@ -27,8 +33,9 @@ import { userRoles } from '../../utils/userHelpers.js';
 import { authenticatedUserGetters } from '../../store/modules/authenticatedUser/authenticatedUserConsts.js';
 // eslint-disable-next-line
 import { mapAuthenticatedUserGetters } from '../../store/modules/authenticatedUser/authenticatedUserModule.js';
-import { mapMeetingGetters, mapMeetingActions } from '../../store/modules/meeting/meetingModule.js';
-import { meetingGetters, meetingActions } from '../../store/modules/meeting/meetingConsts.js';
+import meetingModule, { mapMeetingGetters, mapMeetingActions, mapMeetingMutations } from '../../store/modules/meeting/meetingModule.js';
+import { meetingGetters, meetingActions, meetingMutations } from '../../store/modules/meeting/meetingConsts.js';
+import { mapsState} from 'vuex'
 
 export default {
   components: {
@@ -38,6 +45,7 @@ export default {
   data() {
     return {
       isPageOk: false,
+      // currentMeetingId: Number
     };
   },
   computed: {
@@ -47,6 +55,7 @@ export default {
     }),
     ...mapMeetingGetters({
       meetings: meetingGetters.GET_MEETINGS_AS_PITHY,
+      currentMeetingId: meetingGetters.getMeetingIdForCurrentMeeting
     }),
   },
   async created() {
@@ -55,7 +64,30 @@ export default {
   methods: {
     ...mapMeetingActions({
       getMeetings: meetingActions.GET_MEETINGS_AS_PITHY,
+      setCurrentMeetingId: meetingActions.SET_CURRENT_MEETING_ID
     }),
+    ...mapMeetingMutations({
+      setCurrentMeetingIdInState: meetingModule.mutations.setCurrentMeetingIdInState
+    }),
+
+    // ...mapUserMutations({ setUsers: userMutations.SET_USERS })
+    setCurrentMeetingIdForLinkToMeeting(meetingId) {
+      this.currentMeetingId = meetingId
+    },
+    goToSingleMeetingPage() {
+      this.$router.push({
+        name: 'meetingaspithy',
+      });
+    
+    // {
+    //   path: '/meetingaspithy',
+    //   name: 'meetingaspithy',
+    //   component: MeetingAsPithy
+    // },
+
+
+
+    },
     setPageOk() {
       if(!this.isPageOk) {
       this.isPageOk = true; 
