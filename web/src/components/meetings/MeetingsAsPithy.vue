@@ -7,7 +7,6 @@
     <!-- <a @click="setCurrentMeetingIdForLinkToMeeting(5)" unselectable="on">
       Lähetä value stateen
     </a> -->
-    {{ currentMeetingId }}
     <div>
       <ul>
         <span v-for="meeting in meetings" :key="meeting.id" >
@@ -18,7 +17,6 @@
                 <!-- <li @click="goToMeetingList()" class="item"> -->
                 <a @click="setCurrentMeetingIdForLinkToMeeting(meeting.id), goToSingleMeetingPage()" unselectable="on">Tästä pääset tapaamiseen</a>
         </span>
-          <!-- <meeting-list-item class="item" v-for="item in meetings" :key="item.id" :meeting="item" /> -->
       </ul>
     </div>
   </div>
@@ -35,7 +33,13 @@ import { authenticatedUserGetters } from '../../store/modules/authenticatedUser/
 import { mapAuthenticatedUserGetters } from '../../store/modules/authenticatedUser/authenticatedUserModule.js';
 import meetingModule, { mapMeetingGetters, mapMeetingActions, mapMeetingMutations } from '../../store/modules/meeting/meetingModule.js';
 import { meetingGetters, meetingActions, meetingMutations } from '../../store/modules/meeting/meetingConsts.js';
-import { mapsState} from 'vuex'
+import { mapsState} from 'vuex';
+// import { mapCommonControlsMutations, mapCommonControlsActions, mapCommonControlsGetters } from '../../store/modules/commonControls/commonControlsModule';
+// import { commonControlsMutations, commonControlsActions, commonControlsGetters} from '../../store/modules/commonControls/commonControlsConsts';
+import store from "../../store/index";
+import Vue from 'vue';
+
+// const { mapState, mapActions } = createNamespacedHelpers('commonsControls'); //*
 
 export default {
   components: {
@@ -45,7 +49,8 @@ export default {
   data() {
     return {
       isPageOk: false,
-      // currentMeetingId: Number
+      currentMeetingId: Number,
+      tietoToimivuudesta: String //*
     };
   },
   computed: {
@@ -55,38 +60,54 @@ export default {
     }),
     ...mapMeetingGetters({
       meetings: meetingGetters.GET_MEETINGS_AS_PITHY,
-      currentMeetingId: meetingGetters.getMeetingIdForCurrentMeeting
     }),
+    setValueToStoreState: function(value) {
+      Vue.set('updateMessage', value);
+    },
+    getValueFromStoreState: function() {
+      const response = this.$store.state.obj.message;
+      conslole.log(response);
+      return this.$store.state.obj.message
+    },
   },
   async created() {
+    this.helper();
+    // this.setValueToStoreState('testiArvo');
+    // this.getValueFromStoreState();
     await this.getMeetings();
+    // this.keyValuePairIsAddedToState("isHeadersAndIdSetInState", "notInUse")
+    // await this.getCommonControl();
+    // this.keyValuePairIsAddedToState("idUsedtoGetCurrentMeeting", "kukkuluuruu"); // Jatka tästä
+    // this.getStoreStateItem();
+    // await this.toimiikoFn();//*
   },
   methods: {
+    helper(){
+      // console.log(localStorage)
+      // localStorage.setItem("currentMeetingId", 0);
+    },
     ...mapMeetingActions({
       getMeetings: meetingActions.GET_MEETINGS_AS_PITHY,
-      setCurrentMeetingId: meetingActions.SET_CURRENT_MEETING_ID
-    }),
-    ...mapMeetingMutations({
-      setCurrentMeetingIdInState: meetingModule.mutations.setCurrentMeetingIdInState
     }),
 
-    // ...mapUserMutations({ setUsers: userMutations.SET_USERS })
+    getStoreStateItem(){
+        this.tietoToimivuudesta = store.state.idUsedtoGetCurrentMeeting
+        console.log("Tulostuuko seuraava?");
+        console.log(this.tietoToimivuudesta);
+    }, //** 
+    keyValuePairIsAddedToState(key, value) {
+        Vue.set(store.state, key, value);
+        console.log("ja tänne=");
+        console.log(store.state);
+    }, //** 
     setCurrentMeetingIdForLinkToMeeting(meetingId) {
-      this.currentMeetingId = meetingId
+      localStorage.setItem("currentMeetingId", meetingId);
+      // this.setCommonControl(meetingId)
     },
     goToSingleMeetingPage() {
       this.$router.push({
         name: 'meetingaspithy',
       });
-    
-    // {
-    //   path: '/meetingaspithy',
-    //   name: 'meetingaspithy',
-    //   component: MeetingAsPithy
-    // },
-
-
-
     },
     setPageOk() {
       if(!this.isPageOk) {

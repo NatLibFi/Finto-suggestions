@@ -5,9 +5,20 @@
       Swap the value:
     </a>
     {{ isPageOk }}
+  <div>
+    <a @click="goToMeetingsPage()" unselectable="on">Palaa takaisin tapaamilistaukseen</a>
+  </div>
      <!-- -> Model -->
-    {{ meeting }}
-    Tuleeko tähän meetingId? {{ currentMeetingId }}
+     <div>>> Tapaaminen: {{ meeting.name }}</div>
+     <div>>> Luontipäivä: {{ meeting.created }}</div>
+     <div>>> Tapaamispäivä: {{ meeting.meeting_date }}</div>
+     <div>>> Tapaamisen id: #{{ meeting.id }}</div>
+     <div>>> Tapaamiseen liitetyt käsite-ehdotukset:
+      <li v-for="item in meeting.suggestions" :key="item.id">
+        {{ item }}
+      </li>
+    </div>
+    <!-- {{ getStoreStateItem() }} -->
     <!--  -->
   </div>
 </template>
@@ -25,8 +36,12 @@ import { mapAuthenticatedUserGetters } from '../../store/modules/authenticatedUs
 /// -> Model 
 import { mapMeetingGetters, mapMeetingActions } from '../../store/modules/meeting/meetingModule.js';
 import { meetingGetters, meetingActions } from '../../store/modules/meeting/meetingConsts.js';
-import { mapGetters} from 'vuex';
+import { mapGetters } from 'vuex';
+
 ///
+import store from "../../store/index";
+import Vue from 'vue';
+// import { mapState } from 'vuex';
 
 export default {
   components: {
@@ -37,8 +52,9 @@ export default {
     return {
       isPageOk: false,
       /// -> Model
-      currentMeetingId: Number
+      currentMeetingId: Number,
       ///
+      tietoToimivuudesta: String //*
     };
   },
   computed: {
@@ -51,13 +67,11 @@ export default {
       meeting: meetingGetters.GET_MEETING,
     }),
     ///
-    ...mapMeetingGetters({ currentMeetingId: meetingGetters.getMeetingIdForCurrentMeeting })
+    ...mapMeetingGetters({ currentMeetingId: meetingGetters.getMeetingIdForCurrentMeeting }),
   },
-  async created() {
-    /// -> Model
 
-  console.log(this.currentMeetingId)
-    await this.getMeeting(this.currentMeetingId);
+  async created() {
+    await this.getMeeting(localStorage.getItem("currentMeetingId"));
     ///
   },
   methods: {
@@ -65,7 +79,18 @@ export default {
     ...mapMeetingActions({
       getMeeting: meetingActions.GET_MEETING,
     }),
+    getStoreStateItem(){
+        // return store.state.idUsedtoGetCurrentMeeting
+        return this.$store.state
+        console.log("Tulostuuko seuraava?");
+        // console.log(store.state.idUsedtoGetCurrentMeeting);
+    }, //** 
     ///
+    goToMeetingsPage() {
+      this.$router.push({
+        name: 'meetingsaspithy',
+      });
+    },
     setPageOk() {
       if(!this.isPageOk) {
       this.isPageOk = true; 

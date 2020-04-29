@@ -1,8 +1,5 @@
 <template>
   <div class="navigation">
-    <div>
-    moi {{ this.$store.state.meeting.meetingIdForCurrentMeeting }}
-    </div>
     <div class="nav-content">
       <div class="nav-title">
         <img @click="returnToHome" src="../assets/finto-logo.svg" alt="" />

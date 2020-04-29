@@ -19,6 +19,7 @@ export const mapMeetingMutations = mutations => mapMutations(namespace, mutation
 export default {
   namespaced: true,
   state: {
+    currentMeetingId: null,
     meetingIdForCurrentMeeting: null,
     [storeStateNames.ITEMS]: [],
     [storeStateNames.ITEM]: null,
@@ -38,8 +39,8 @@ export default {
       state[storeStateNames.UPDATE_MEETING_SUGGESTIONS_PROGRESS_STATUS]
   },
   mutations: {
-    setCurrentMeetingIdInState (state, currentMeetingId) {
-      Vue.set(state, currentMeetingId);
+    setCurrentMeetingIdInState (id) {
+      Vue.set(this.state, currentMeetingId, id);
     },
     [meetingMutations.SET_MEETINGS](state, meetings) {
       if (meetings && meetings.length > 0) {
