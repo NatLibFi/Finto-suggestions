@@ -16,6 +16,7 @@
                 <li>Kokouspäivä: {{ meeting.meeting_date }}</li>
                 <!-- <li @click="goToMeetingList()" class="item"> -->
                 <a @click="setCurrentMeetingIdForLinkToMeeting(meeting.id), goToSingleMeetingPage()" unselectable="on">Tästä pääset tapaamiseen</a>
+                <div>...</div>
         </span>
       </ul>
     </div>
@@ -69,9 +70,11 @@ export default {
       conslole.log(response);
       return this.$store.state.obj.message
     },
+
   },
   async created() {
     this.helper();
+    this.localStorageTesting();
     // this.setValueToStoreState('testiArvo');
     // this.getValueFromStoreState();
     await this.getMeetings();
@@ -101,8 +104,19 @@ export default {
         console.log(store.state);
     }, //** 
     setCurrentMeetingIdForLinkToMeeting(meetingId) {
+      // Don't change next line!
       localStorage.setItem("currentMeetingId", meetingId);
+      ///
+
       // this.setCommonControl(meetingId)
+    },
+    localStorageTesting(){
+      var testingOfJsonData = {};
+      testingOfJsonData.firstName = 'Mika';
+      testingOfJsonData.lastName = 'Ahonen';
+      testingOfJsonData.howDoesItFeel = 'Fine thanks!';
+      localStorage.setItem('testingOfJsonData', JSON.stringify(testingOfJsonData));
+      console.log(JSON.parse(localStorage.getItem('testingOfJsonData')));
     },
     goToSingleMeetingPage() {
       this.$router.push({
@@ -116,6 +130,23 @@ export default {
       this.isPageOk = false;
       }
     },
+  },
+  mounted(){
+    window.addEventListener("storage", this.getValueFromStoreState);
+        // localStorageTestingWithJSONs(){
+      // this.localStorageTesting();
+      // var testingOfJsonData = {};
+      // testingOfJsonData.firstName = 'Mika';
+      // testingOfJsonData.lastName = 'Ahonen';
+      // testingOfJsonData.howDoesItFeel = 'Fine thanks!';
+      // localStorage.setItem(testingOfJsonData, JSON.stringify(testingOfJsonData));
+      // console.log(JSON.parse(localStorage.getItem('testingOfJsonData')));
+    // }
+  },
+  watch: {
+    name(newName) {
+      localStorage.name = newName;
+    }
   }
 
 };

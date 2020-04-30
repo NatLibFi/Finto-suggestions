@@ -8,7 +8,14 @@
   <div>
     <a @click="goToMeetingsPage()" unselectable="on">Palaa takaisin tapaamilistaukseen</a>
   </div>
+  <div>
+    <p>Storagesta:</p>
+      <input v-model="jsonTestString.firstName" type="text" />
+      <input v-model="jsonTestString.lastName" type="text" />
+      <input v-model="jsonTestString.howDoesItFeel" type="text" />
+  </div>
      <!-- -> Model -->
+     {{ jsonTestString }}
      <div>>> Tapaaminen: {{ meeting.name }}</div>
      <div>>> Luontipäivä: {{ meeting.created }}</div>
      <div>>> Tapaamispäivä: {{ meeting.meeting_date }}</div>
@@ -43,6 +50,11 @@ import store from "../../store/index";
 import Vue from 'vue';
 // import { mapState } from 'vuex';
 
+// window.addEventListener("storage", function () {
+//     // do your checks to detect
+//     // changes in "e1", "e2" & "e3" here
+// }, false);
+
 export default {
   components: {
     SvgIcon,
@@ -54,7 +66,9 @@ export default {
       /// -> Model
       currentMeetingId: Number,
       ///
-      tietoToimivuudesta: String //*
+      tietoToimivuudesta: String, //*
+      jsonTestString: String,
+      timer: ''
     };
   },
   computed: {
@@ -69,11 +83,44 @@ export default {
     ///
     ...mapMeetingGetters({ currentMeetingId: meetingGetters.getMeetingIdForCurrentMeeting }),
   },
+  mounted(){
+    ///
+    // setInterval(this.getSomeDataFromLocalStorage(), 1000);
+    this.getSomeDataFromLocalStorage();
+    },
 
   async created() {
     await this.getMeeting(localStorage.getItem("currentMeetingId"));
+    await this.getSomeDataFromLocalStorage()
+    this.timer = setInterval(this.getSomeDataFromLocalStorage)
     ///
   },
+  // watch: {
+  //   jsonTestString(newJsonTestString) {
+  //     localStorage.setItem('testingOfJsonData', JSON.stringify(newJsonTestString));
+  //     // localStorage.name = newJsonTestString;
+  //   }
+  // },
+
+// watch: {
+//   input: function () {
+//     if (isLocalStorage() /* function to detect if localstorage is supported*/) {
+//       localStorage.setItem('storedData', this.input)
+//     }
+//   }
+// }
+
+  // watch: {
+  //   async code() {
+  //     await this.callAuthenticate();
+  //   },
+  //   isAuthenticated() {
+  //     router.push('/');
+  //   }
+  // }
+
+
+
   methods: {
     /// -> Model
     ...mapMeetingActions({
@@ -98,8 +145,31 @@ export default {
       this.isPageOk = false;
       }
     },
+    getSomeDataFromLocalStorage(){
+      this.jsonTestString = JSON.parse(localStorage.getItem('testingOfJsonData'));
+      console.log(this.jsonTestString), 1000;
+    }
+    // getSomeDataFromLocalStorage(){  
+    // // const self = this;          
+    // this.intervalid1 = setInterval(function(){
+    //     this.jsonTestString = JSON.parse(localStorage.getItem('testingOfJsonData'));
+    //     // console.log (this.changes);
+    // }, 1000);
+    // }
 
-  }
+
+
+
+          // setTimeout(() => {
+          //   this.hasFailed = false;
+          //   this.goToFrontPage();
+          // }, 2000);
+
+
+  },
+  // mounted(){
+  //   this.getSomeDataFromLocalStorage();
+  // }
 
 };
 </script>
