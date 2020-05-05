@@ -4,9 +4,7 @@
       Swap the value:
     </a>
     {{ isPageOk }}
-    <!-- <a @click="setCurrentMeetingIdForLinkToMeeting(5)" unselectable="on">
-      Lähetä value stateen
-    </a> -->
+
     <div>
       <ul>
         <span v-for="meeting in meetings" :key="meeting.id" >
@@ -39,8 +37,7 @@ import { mapsState} from 'vuex';
 // import { commonControlsMutations, commonControlsActions, commonControlsGetters} from '../../store/modules/commonControls/commonControlsConsts';
 import store from "../../store/index";
 import Vue from 'vue';
-
-// const { mapState, mapActions } = createNamespacedHelpers('commonsControls'); //*
+import lockr from 'lockr';
 
 export default {
   components: {
@@ -51,7 +48,8 @@ export default {
     return {
       isPageOk: false,
       currentMeetingId: Number,
-      tietoToimivuudesta: String //*
+      tietoToimivuudesta: String, //*
+      updateTest: String
     };
   },
   computed: {
@@ -73,16 +71,13 @@ export default {
 
   },
   async created() {
+    /// Minor
+    this.testingOfUpdateHook();
+    lockr.prefix = 'meetings_';
+    lockr.set('someValue', { name:'Mika' })
+    ///
     this.helper();
-    this.localStorageTesting();
-    // this.setValueToStoreState('testiArvo');
-    // this.getValueFromStoreState();
     await this.getMeetings();
-    // this.keyValuePairIsAddedToState("isHeadersAndIdSetInState", "notInUse")
-    // await this.getCommonControl();
-    // this.keyValuePairIsAddedToState("idUsedtoGetCurrentMeeting", "kukkuluuruu"); // Jatka tästä
-    // this.getStoreStateItem();
-    // await this.toimiikoFn();//*
   },
   methods: {
     helper(){
@@ -95,29 +90,17 @@ export default {
 
     getStoreStateItem(){
         this.tietoToimivuudesta = store.state.idUsedtoGetCurrentMeeting
-        console.log("Tulostuuko seuraava?");
-        console.log(this.tietoToimivuudesta);
     }, //** 
     keyValuePairIsAddedToState(key, value) {
         Vue.set(store.state, key, value);
-        console.log("ja tänne=");
-        console.log(store.state);
+    }, //** 
+    testingOfUpdateHook() {
+      localStorage.setItem("updatedHookTest", "globalText4");
     }, //** 
     setCurrentMeetingIdForLinkToMeeting(meetingId) {
-      // Don't change next line!
       localStorage.setItem("currentMeetingId", meetingId);
-      ///
+    },
 
-      // this.setCommonControl(meetingId)
-    },
-    localStorageTesting(){
-      var testingOfJsonData = {};
-      testingOfJsonData.firstName = 'Mika';
-      testingOfJsonData.lastName = 'Ahonen';
-      testingOfJsonData.howDoesItFeel = 'Fine thanks!';
-      localStorage.setItem('testingOfJsonData', JSON.stringify(testingOfJsonData));
-      console.log(JSON.parse(localStorage.getItem('testingOfJsonData')));
-    },
     goToSingleMeetingPage() {
       this.$router.push({
         name: 'meetingaspithy',
@@ -133,15 +116,6 @@ export default {
   },
   mounted(){
     window.addEventListener("storage", this.getValueFromStoreState);
-        // localStorageTestingWithJSONs(){
-      // this.localStorageTesting();
-      // var testingOfJsonData = {};
-      // testingOfJsonData.firstName = 'Mika';
-      // testingOfJsonData.lastName = 'Ahonen';
-      // testingOfJsonData.howDoesItFeel = 'Fine thanks!';
-      // localStorage.setItem(testingOfJsonData, JSON.stringify(testingOfJsonData));
-      // console.log(JSON.parse(localStorage.getItem('testingOfJsonData')));
-    // }
   },
   watch: {
     name(newName) {

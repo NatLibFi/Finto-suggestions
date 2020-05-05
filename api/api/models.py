@@ -3,6 +3,15 @@ from collections import Counter
 import enum
 import json
 
+# import sqlalchemy_views
+# from sqlalchemy import Table
+# from sqlalchemy.ext.compiler import compiles
+# from sqlalchemy.sql.ddl import DropTable
+
+# from sqlalchemy import Table
+# from sqlalchemy.ext.compiler import compiles
+# from sqlalchemy.sql.expression import Executable, ClauseElement
+
 from flask_sqlalchemy import SQLAlchemy as _NSQLAlc
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import validates
@@ -160,6 +169,23 @@ class Reaction(db.Model, SerializableMixin):
         return '<Emoji {}>'.format(self.code)
 
 
+# class CreateView(Executable, ClauseElement):
+#     def __init__(self, name, select):
+#         self.name = name
+#         self.select = select
+
+# @compiles(CreateView)
+# def visit_create_view(element, compiler, **kw):
+#     return "CREATE VIEW %s AS %s" % (
+#          element.name,
+#          compiler.process(element.select, literal_binds=True)
+#          )
+
+# createview = CreateView('meetingsCollection, t.select().where(t.c.id>5))
+
+
+
+
 class Meeting(db.Model, SerializableMixin):
     __tablename__ = 'meetings'
     __public__ = ['id', 'name', 'created', 'modified', 'meeting_date']
@@ -174,7 +200,13 @@ class Meeting(db.Model, SerializableMixin):
         'Suggestion',
         backref='meeting',
         lazy='joined'
+        # lazy = 'dynamic'
     )
+
+    # lazy = ‘select’ (or True)
+    # lazy = ‘dynamic’
+    # lazy = ‘joined’ (or False)
+    # lazy = ‘subquery’
 
     def __repr__(self):
         return '<Meeting {}>'.format(self.id)

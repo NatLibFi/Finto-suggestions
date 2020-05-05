@@ -2,6 +2,7 @@
 import os
 import smtplib
 import codecs
+import json
 from email.mime.text import MIMEText
 from datetime import datetime
 from typing import Dict
@@ -11,6 +12,10 @@ from sqlalchemy.exc import IntegrityError
 
 from ..models import db
 from ..authentication import verify_user_access_to_resource
+
+# from sqlalchemy import create_engine  
+from sqlalchemy import Table, Column, String, MetaData
+
 
 
 class InvalidFilterException(Exception):
@@ -87,6 +92,27 @@ def get_all_or_400(model: object, limit: int, offset: int) -> str:
 
     return get_all_or_400_custom(query)
 
+def get_selected_or_400(model: object):
+    """
+    Todo: Must be fixed to read selected entities as an argument.
+
+    Returns all queried objects.
+
+    :returns: All columns matching the query or 400 and error message
+    """
+ 
+    db_selected_objs = model.query.with_entities(model.id, model.name, model.created, model.modified, model.meeting_date)
+    serialized_objects = []
+    if db_selected_objs:
+        serialized_objects = [o for o in db_selected_objs]
+    
+    error_msg = "Did not find any data"
+
+    if db_selected_objs:
+        return create_response(serialized_objects, 200)
+
+    return create_response(None, 404, error_msg)
+    
 
 def get_one_or_404(model: object, primary_key: int) -> str:
     """

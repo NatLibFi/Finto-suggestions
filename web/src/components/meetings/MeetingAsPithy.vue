@@ -10,9 +10,10 @@
   </div>
   <div>
     <p>Storagesta:</p>
-      <input v-model="jsonTestString.firstName" type="text" />
+      <!-- <input v-model="jsonTestString.firstName" type="text" />
       <input v-model="jsonTestString.lastName" type="text" />
-      <input v-model="jsonTestString.howDoesItFeel" type="text" />
+      <input v-model="jsonTestString.howDoesItFeel" type="text" /> -->
+      <input v-model="shouldBeSeenOnTemplate" type="text" />
   </div>
      <!-- -> Model -->
      {{ jsonTestString }}
@@ -48,7 +49,10 @@ import { mapGetters } from 'vuex';
 ///
 import store from "../../store/index";
 import Vue from 'vue';
+// import minorStore from 'store-js';
+// import store from 'store';
 // import { mapState } from 'vuex';
+import lockr from 'lockr';
 
 // window.addEventListener("storage", function () {
 //     // do your checks to detect
@@ -64,11 +68,13 @@ export default {
     return {
       isPageOk: false,
       /// -> Model
-      currentMeetingId: Number,
+      // currentMeetingId: Number,
       ///
       tietoToimivuudesta: String, //*
       jsonTestString: String,
-      timer: ''
+      timer: '',
+      test: String,
+      shouldBeSeenOnTemplate: String
     };
   },
   computed: {
@@ -82,18 +88,38 @@ export default {
     }),
     ///
     ...mapMeetingGetters({ currentMeetingId: meetingGetters.getMeetingIdForCurrentMeeting }),
+    getLockStoreItems(){
+      this.jsonTestString = lockr.get('meetings_testingOfJsonData');
+    }
+
+    
   },
+  // beforeMount(){
+  //   this.getSomeDataFromLocalStorage();
+  
+
+  // },
   mounted(){
-    ///
-    // setInterval(this.getSomeDataFromLocalStorage(), 1000);
-    this.getSomeDataFromLocalStorage();
+    // ///
+    // // setInterval(this.getSomeDataFromLocalStorage(), 1000);
+    ///Minor
+
+        /// Minor
     },
 
   async created() {
     await this.getMeeting(localStorage.getItem("currentMeetingId"));
-    await this.getSomeDataFromLocalStorage()
-    this.timer = setInterval(this.getSomeDataFromLocalStorage)
+    // this.jsonTestString = lockr.get('meetings_testingOfJsonData');
+    // this.jsonTestString = await this.getSomeDataFromLocalStorage();
+    // console.log(lockr.get('meetings_testingOfJsonData'));
     ///
+    
+    ///
+    // this.timer = setInterval(this.getSomeDataFromLocalStorage)
+    ///
+  },
+  updated(){
+    this.shouldBeSeenOnTemplate = localStorage.getItem("updatedHookTest")
   },
   // watch: {
   //   jsonTestString(newJsonTestString) {
@@ -146,8 +172,18 @@ export default {
       }
     },
     getSomeDataFromLocalStorage(){
-      this.jsonTestString = JSON.parse(localStorage.getItem('testingOfJsonData'));
-      console.log(this.jsonTestString), 1000;
+      // this.test = lockr.get('someValue');
+      // console.log(this.test);
+      return lockr.get('meetings_testingOfJsonData');
+      // console.log(this.jsonTestString);
+    // const test = lockr.get('someValue');
+    // console.log(test);
+    // this.jsonTestString = lockr.get('meetings_testingOfJsonData');
+    // console.log(this.jsonTestString);
+
+
+    // this.jsonTestString = lockr.get('meetings_testingOfJsonData');
+      // console.log(this.jsonTestString);
     }
     // getSomeDataFromLocalStorage(){  
     // // const self = this;          

@@ -8,8 +8,9 @@ COPY ./web/package*.json /tmp/
 RUN cd /tmp && npm install && npm audit fix
 
 #RUN npm install -g yarn
-
+# RUN npm install --save store
 #RUN yarn add @caohenghu/vue-colorpicker
+RUN npm i lockr
 
 WORKDIR /app
 

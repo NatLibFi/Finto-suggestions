@@ -4,7 +4,7 @@ from ..authentication import admin_only
 from ..models import db, Meeting, Suggestion
 from .common import (get_one_or_404, get_all_or_400, create_or_400,
                      delete_or_404, update_or_404, patch_or_404,
-                     create_response)
+                     create_response, get_selected_or_400, get_all_or_400_custom)
 
 
 def get_meetings(limit: int = None, offset: int = None) -> str:
@@ -19,6 +19,21 @@ def get_meetings(limit: int = None, offset: int = None) -> str:
     """
 
     return get_all_or_400(Meeting, limit, offset)
+
+def get_meetings_basics(limit: int = None, offset: int = None) -> str:
+    """
+    Returns id, name, created, modified, meeting_date of meetings.
+
+    Todo: Adjust parameters in the meetings.yaml    
+
+    Request query can be limited with additional parameters.
+
+    :param limit: Cap the results to :limit: results
+    :param offset: Start the query from offset (e.g. for paging)
+    :returns: All meetings matching the query in json format
+    """
+
+    return get_selected_or_400(Meeting)
 
 
 def get_meeting(meeting_id: int) -> str:

@@ -7,6 +7,8 @@ COPY ./web/package*.json /tmp/
 
 RUN cd /tmp && npm install && npm audit fix
 
+RUN npm i lockr
+
 WORKDIR /app
 
 RUN cp -a /tmp/node_modules /app/

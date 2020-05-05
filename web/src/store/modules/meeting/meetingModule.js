@@ -22,6 +22,7 @@ export default {
     currentMeetingId: null,
     meetingIdForCurrentMeeting: null,
     [storeStateNames.ITEMS]: [],
+    [storeStateNames.TINY_ITEMS]: [],
     [storeStateNames.ITEM]: null,
     [storeStateNames.MEETINGS_SELECTED_SORT]: null,
     [storeStateNames.UPDATE_MEETING_SUGGESTIONS_PROGRESS_STATUS]: false,
@@ -30,6 +31,7 @@ export default {
   getters: {
     getMeetingIdForCurrentMeeting: state => state['meetingIdForCurrentMeeting'],
     [meetingGetters.GET_MEETINGS]: state => state[storeStateNames.ITEMS],
+    [meetingGetters.GET_MEETINGS_BASICS]: state => state[storeStateNames.TINY_ITEMS],
     [meetingGetters.GET_MEETINGS_AS_PITHY]: state => state[storeStateNames.ITEMS],
     [meetingGetters.GET_CURRENT_MEETING_ID]: state => state[storeStateNames.GET_CURRENT_MEETING_ID],
     [meetingGetters.GET_MEETING]: state => state[storeStateNames.ITEM],
@@ -47,6 +49,9 @@ export default {
         meetings.sort(comparerAsc('meeting_date'));
       }
       Vue.set(state, storeStateNames.ITEMS, meetings);
+    },
+    [meetingMutations.SET_MEETINGS_BASICS](state, meetingsBasics) {
+      Vue.set(state, storeStateNames.TINY_ITEMS, meetingsBasics);
     },
     [meetingMutations.SET_MEETINGS_AS_PITHY](state, meetingsAsPithy) {
       Vue.set(state, storeStateNames.ITEMS, meetingsAsPithy);
@@ -72,6 +77,12 @@ export default {
       const response = await api.meeting.getMeetings();
       if (response && response.code === 200) {
         commit(meetingMutations.SET_MEETINGS, response.data);
+      }
+    },
+    async [meetingActions.GET_MEETINGS_BASICS]({ commit }) {
+      const response = await api.meeting.getMeetingsBasics();
+      if (response && response.code === 200) {
+        commit(meetingMutations.SET_MEETINGS_BASICS, response.data);
       }
     },
     async [meetingActions.GET_MEETINGS_AS_PITHY]({ commit }) {
