@@ -11,6 +11,8 @@ import json
 # from sqlalchemy import Table
 # from sqlalchemy.ext.compiler import compiles
 # from sqlalchemy.sql.expression import Executable, ClauseElement
+# from sqlalchemy_utils import create_view
+# from sqlalchemy import select, func
 
 from flask_sqlalchemy import SQLAlchemy as _NSQLAlc
 from sqlalchemy.ext.hybrid import hybrid_property
@@ -353,3 +355,6 @@ class TokenBlacklist(db.Model, SerializableMixin):
     token_type = db.Column(db.String(10), nullable=False)
     revoked = db.Column(db.Boolean, nullable=False)
     expires = db.Column(db.DateTime, nullable=False)
+
+
+# And finally here you find views

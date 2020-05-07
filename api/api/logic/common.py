@@ -9,10 +9,11 @@ from typing import Dict
 
 from sqlalchemy import exists
 from sqlalchemy.exc import IntegrityError
-
+from sqlalchemy import text
+# from sqlalchemy import Table, MetaData
+# from sqlalchemy_views import CreateView, DropView
 from ..models import db
 from ..authentication import verify_user_access_to_resource
-
 # from sqlalchemy import create_engine  
 from sqlalchemy import Table, Column, String, MetaData
 
@@ -46,7 +47,7 @@ def id_exists(model: object, object_id: int) -> bool:
 
     :param object_id: id to search
     :param model: model to search from
-    :returns: True if id exists, or id is None. False if user was not found in the model.
+    :returns: True if id exists, or id is None. False if user was no__table__t found in the model.
     """
 
     if object_id is None:
@@ -94,23 +95,36 @@ def get_all_or_400(model: object, limit: int, offset: int) -> str:
 
 def get_selected_or_400(model: object):
     """
-    Todo: Must be fixed to read selected entities as an argument.
+    Todo: Must be fixed to read selected entities as an argument
+
+    OR
+
+    Must be in the new component for "special cases" joining to handling database tables and entities 
 
     Returns all queried objects.
 
     :returns: All columns matching the query or 400 and error message
     """
- 
-    db_selected_objs = model.query.with_entities(model.id, model.name, model.created, model.modified, model.meeting_date)
-    serialized_objects = []
+    db_selected_objs = model.query.with_entities(model.id, model.name, model.created, model.modified, model.meeting_date).all()
+
+    serialized_objects = {}
+    helper_dict = {}
+    content_array = []
     if db_selected_objs:
         serialized_objects = [o for o in db_selected_objs]
+        for val in serialized_objects:
+            helper_dict["id"] = val[0]
+            helper_dict["name"] = val[1]
+            helper_dict["created"] = val[2]
+            helper_dict["modified"] = val[3]
+            helper_dict["meeting_date"] = val[4]
+            content_array.append(helper_dict)
+            helper_dict = {}
     
     error_msg = "Did not find any data"
 
     if db_selected_objs:
-        return create_response(serialized_objects, 200)
-
+        return create_response(content_array, 200)
     return create_response(None, 404, error_msg)
     
 

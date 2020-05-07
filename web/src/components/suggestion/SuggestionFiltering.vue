@@ -203,7 +203,8 @@ export default {
   }),
   computed: {
 ...mapMeetingGetters({
-      meetings: meetingGetters.GET_MEETINGS
+      // meetings: meetingGetters.GET_MEETINGS //Mika
+      meetings: meetingGetters.GET_MEETINGS_BASICS
     }),
     ...mapTagGetters({
       tags: tagGetters.GET_TAGS
@@ -222,7 +223,8 @@ export default {
   },
   methods: {
     ...mapMeetingActions({
-      getMeetings: meetingActions.GET_MEETINGS
+      // getMeetings: meetingActions.GET_MEETINGS // Mika Katso inspectorista miksi meetingeillä ei ole key-arvoja, muita kuin pelkät numerot
+      getMeetings: meetingActions.GET_MEETINGS_BASICS
     }),
     ...mapTagActions({
       getTags: tagActions.GET_TAGS
@@ -282,7 +284,6 @@ export default {
     },
     mapMeetingsToDropDown() {
       let meetings = [];
-
       if (this.meetings && this.meetings.length > 0) {
         this.meetings.forEach(meeting => {
           if (meeting) {
@@ -349,10 +350,7 @@ export default {
         type: 'type:' + this.selectedOptionIndex.TYPE,
         meeting: 'meeting_id:'
       };
-      console.log(this.selectedOptionIndex.STATUS);
-      console.log(this.selectedOptionIndex.TAGS);
-      console.log(this.selectedOptionIndex.TYPE);
-      console.log(this.selectedOptionIndex.MEETING);
+    
 
       // selectedOptionIndex
 
