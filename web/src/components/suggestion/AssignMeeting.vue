@@ -94,7 +94,7 @@ export default {
       assignSuggestionToMeeting: suggestionActions.ASSIGN_SUGGESTION_TO_MEETING
     }),
     ...mapMeetingActions({
-      getMeetings: meetingActions.GET_MEETINGS,
+      // getMeetings: meetingActions.GET_MEETINGS,
       getMeeting: meetingActions.GET_MEETING
     }),
     ...mapMeetingMutations({ setMeetings: meetingMutations.SET_MEETINGS }),

@@ -19,13 +19,21 @@ export const mapMeetingMutations = mutations => mapMutations(namespace, mutation
 export default {
   namespaced: true,
   state: {
+    currentMeetingId: null,
+    meetingIdForCurrentMeeting: null,
     [storeStateNames.ITEMS]: [],
+    [storeStateNames.TINY_ITEMS]: [],
     [storeStateNames.ITEM]: null,
     [storeStateNames.MEETINGS_SELECTED_SORT]: null,
-    [storeStateNames.UPDATE_MEETING_SUGGESTIONS_PROGRESS_STATUS]: false
+    [storeStateNames.UPDATE_MEETING_SUGGESTIONS_PROGRESS_STATUS]: false,
+    [storeStateNames.SET_CURRENT_MEETING_ID]: Number
   },
   getters: {
+    getMeetingIdForCurrentMeeting: state => state['meetingIdForCurrentMeeting'],
     [meetingGetters.GET_MEETINGS]: state => state[storeStateNames.ITEMS],
+    [meetingGetters.GET_MEETINGS_BASICS]: state => state[storeStateNames.TINY_ITEMS],
+    [meetingGetters.GET_MEETINGS_AS_PITHY]: state => state[storeStateNames.ITEMS],
+    [meetingGetters.GET_CURRENT_MEETING_ID]: state => state[storeStateNames.GET_CURRENT_MEETING_ID],
     [meetingGetters.GET_MEETING]: state => state[storeStateNames.ITEM],
     [meetingGetters.GET_MEETINGS_SELECTED_SORT]: state =>
       state[storeStateNames.MEETINGS_SELECTED_SORT],
@@ -33,14 +41,26 @@ export default {
       state[storeStateNames.UPDATE_MEETING_SUGGESTIONS_PROGRESS_STATUS]
   },
   mutations: {
+    setCurrentMeetingIdInState (id) {
+      Vue.set(this.state, currentMeetingId, id);
+    },
     [meetingMutations.SET_MEETINGS](state, meetings) {
       if (meetings && meetings.length > 0) {
         meetings.sort(comparerAsc('meeting_date'));
       }
       Vue.set(state, storeStateNames.ITEMS, meetings);
     },
+    [meetingMutations.SET_MEETINGS_BASICS](state, meetingsBasics) {
+      Vue.set(state, storeStateNames.TINY_ITEMS, meetingsBasics);
+    },
+    [meetingMutations.SET_MEETINGS_AS_PITHY](state, meetingsAsPithy) {
+      Vue.set(state, storeStateNames.ITEMS, meetingsAsPithy);
+    },
     [meetingMutations.SET_MEETING](state, meeting) {
       Vue.set(state, storeStateNames.ITEM, meeting);
+    },
+    [meetingMutations.SET_CURRENT_MEETING_ID](state, currentMeetingId) {
+      Vue.set(state, storeStateNames.SET_CURRENT_MEETING_ID, currentMeetingId)
     },
     [meetingMutations.SET_MEETINGS_SELECTED_SORT](state, sortKey) {
       Vue.set(state, storeStateNames.MEETINGS_SELECTED_SORT, sortKey);
@@ -57,6 +77,18 @@ export default {
       const response = await api.meeting.getMeetings();
       if (response && response.code === 200) {
         commit(meetingMutations.SET_MEETINGS, response.data);
+      }
+    },
+    async [meetingActions.GET_MEETINGS_BASICS]({ commit }) {
+      const response = await api.meeting.getMeetingsBasics();
+      if (response && response.code === 200) {
+        commit(meetingMutations.SET_MEETINGS_BASICS, response.data);
+      }
+    },
+    async [meetingActions.GET_MEETINGS_AS_PITHY]({ commit }) {
+      const response = await api.meeting.getMeetings();
+      if (response && response.code === 200) {
+        commit(meetingMutations.SET_MEETINGS_AS_PITHY, response.data);
       }
     },
     async [meetingActions.GET_MEETING]({ commit }, meetingId) {
@@ -93,6 +125,11 @@ export default {
       if (sortKey) {
         commit(meetingMutations.SET_MEETINGS_SELECTED_SORT, sortKey);
         commit(meetingMutations.SET_MEETINGS_SELECTED_STORE_SORT, sortKey);
+      }
+    },
+    [meetingActions.SET_CURRENT_MEETING_ID]({ commit }, meetingId) {
+      if (sortKey) {
+        commit(meetingMutations.SET_CURRENT_MEETING_ID, meetingId);
       }
     }
   }

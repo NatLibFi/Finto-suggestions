@@ -12,6 +12,7 @@ RUN apk update \
   && apk --no-cache add py3-psycopg2 \
   && apk add libpq postgresql-dev \
   && apk add build-base
+#command: ["postgres", "-c", "logging_collector=on", "-c", "log_directory=/logs", "-c", "log_filename=postgresql.log", "-c", "log_statement=all"]
 
 # Intall and register frdlib-jsonld
 # EXTRA 
@@ -29,3 +30,4 @@ RUN pip install pipenv \
 EXPOSE 8050 587
 
 ENTRYPOINT ["gunicorn", "--config", "gunicorn_config_dev.conf", "wsgi:connexion_app"]
+

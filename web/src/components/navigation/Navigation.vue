@@ -132,6 +132,7 @@ import { mapAuthenticatedUserGetters, mapAuthenticatedUserActions } from '../../
 import { authenticatedUserGetters, authenticatedUserActions, storeKeyNames, authenticatedUserMutations } from '../../store/modules/authenticatedUser/authenticatedUserConsts';
 
 import { userNameInitials } from '../../utils/userHelpers.js';
+import { mapState} from 'vuex'
 
 //The following two lines are for testing purposes at the moment
 // eslint-disable-next-line no-unused-vars
@@ -180,9 +181,11 @@ export default {
     }),
     ...mapMeetingGetters({
       selectedSort: meetingGetters.GET_MEETINGS_SELECTED_SORT
-    })
+    }),
+    // ...mapState('meetingIdForCurrentMeeting')
   },
   async created() {
+    this.testFn();
     await this.validateAuthentication();
     if (this.isAuthenticated) {
       await this.refreshToken();
@@ -204,6 +207,9 @@ export default {
       registerLocalUser: userActions.CREATE_USER,
       getAuthenticatedUser: userActions.GET_AUTHENTICATED_USER
     }),
+   testFn() {
+      console.log(this.meetingIdForCurrentMeeting)
+   },
     async returnToHome() {
       this.$router.push('/');
     },

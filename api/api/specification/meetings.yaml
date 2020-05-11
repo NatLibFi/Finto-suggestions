@@ -33,6 +33,26 @@ paths:
           description:  Newly created meeting
           schema:
             $ref: '#/definitions/MeetingResponse'
+  
+  /meetingsBasics:
+    get:
+      operationId: api.logic.meetings.get_meetings_basics
+      parameters:
+        - name: limit
+          in: query
+          description: Maximum number of returned meetings
+          required: false
+          type: integer
+        - name: offset
+          in: query
+          description: Offset of the results (e.g. for paging)
+          required: false
+          type: integer
+      responses:
+        "200":
+          description:  An array of restricted data over meetings in the database
+          schema:
+            $ref: '#/definitions/MeetingResponseArray'
 
   /meetings/{meeting_id}:
     parameters:
