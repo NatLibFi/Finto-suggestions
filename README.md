@@ -69,7 +69,7 @@ FIRST: Copy or clone Git repository and checkout the `develop` branch
 
 1.  Copy the .env.default file and rename it to .env (from project root)
 2.  Modify the environment variables in .env as desired
-3.  Download and install [Docker CE](https://docs.docker.com/install/) to your computer. Docker-compose should be included with the installation. If not, (download and install it separately)[https://github.com/docker/compose/releases].
+3.  If you are not going to use Linux, download and install [Docker CE](https://docs.docker.com/install/) to your computer and Docker Compose should be included with the installation. If you are using Linux, you should first install the [Docker Engine](https://docs.docker.com/engine/install/debian/) and then download and install [Doker Compose](https://docs.docker.com/compose/install/) separately.
 4.  Download and install [Python 3.7+](https://www.python.org/downloads/) and after that install pipenv with command `pip install pipenv`. Pipenv is used to install/remove packages and run scripts api-side.
 5. Download and install latest LTS Node.Js (https://nodejs.org/en/download/)
 6.  Start the freshly installed Docker
