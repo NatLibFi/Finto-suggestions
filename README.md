@@ -69,7 +69,49 @@ FIRST: Copy or clone Git repository and checkout the `develop` branch
 
 1.  Copy the .env.default file and rename it to .env (from project root)
 2.  Modify the environment variables in .env as desired
-3.  If you are not going to use Linux, download and install [Docker CE](https://docs.docker.com/install/) to your computer and Docker Compose should be included with the installation. If you are using Linux, you should first install the [Docker Engine](https://docs.docker.com/engine/install/debian/) and then download and install [Doker Compose](https://docs.docker.com/compose/install/) separately.
+3.  If you are not going to use Linux, download and install [Docker CE](https://docs.docker.com/install/) (The Docker Engine package is now called docker-ce) to your computer and Docker Compose should be included with the installation. If you are using Debian Linux, you should first install the [Docker Engine](https://docs.docker.com/engine/install/debian/) and then download and install [Doker Compose](https://docs.docker.com/compose/install/) separately. For Debian 10 Buster instruction can be found [here](https://computingforgeeks.com/install-docker-and-docker-compose-on-debian-10-buster/). 
+3.1 For Debian 10 Buster:
+    - sudo apt update
+    - sudo apt -y install apt-transport-https ca-certificates curl gnupg2 software-properties-common
+    - curl -fsSL https://download.docker.com/linux/debian/gpg | sudo apt-key add -
+    - sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/debian $(lsb_release -cs) stable"
+    - sudo apt update
+    - sudo apt -y install docker-ce docker-ce-cli containerd.io
+    - sudo apt install -y curl
+    - curl -s https://api.github.com/repos/docker/compose/releases/latest \
+        | grep browser_download_url \
+        | grep docker-compose-Linux-x86_64 \
+        | cut -d '"' -f 4 \
+        | wget -qi -
+    - chmod +x docker-compose-Linux-x86_64
+    - sudo mv docker-compose-Linux-x86_64 /usr/local/bin/docker-compose
+    - docker-compose version
+    - sudo usermod -aG docker $USER
+    - newgrp docker
+    - docker version
+    - exit (log out and log in)
+    - docker run --rm -it  --name test alpine:latest /bin/sh
+    - cat /etc/os-release
+    - exit
+    - mv docker-compose.yml docker-compose.will_be_in_use
+    - vim docker-compose.yml
+    -> Paste and save the next following:
+        version: '3'  
+        services:
+        web:
+            image: nginx:latest
+            ports:
+            - "8080:80"
+            links:
+            - php
+        php:
+            image: php:7-fpm
+    - docker-compose up -d
+    - docker-compose down
+    - mv docker-compose.yml docker-compose.ymlForTestingPurposes
+    - mv docker-compose.will_be_in_use docker-compose.yml 
+
+
 4.  Download and install [Python 3.7+](https://www.python.org/downloads/) and after that install pipenv with command `pip install pipenv`. Pipenv is used to install/remove packages and run scripts api-side.
 5. Download and install latest LTS Node.Js (https://nodejs.org/en/download/)
 6.  Start the freshly installed Docker
