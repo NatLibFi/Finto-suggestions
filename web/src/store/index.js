@@ -11,7 +11,7 @@ import reactionModule from './modules/reaction/reactionModule';
 // "The fate" of the next module will be seen later on
 // import commonControlsModule from './modules/commonControls/commonControlsModule';
 
-Vue.use(Vuex);te
+Vue.use(Vuex);
 
 export default new Vuex.Store({
   modules: {
