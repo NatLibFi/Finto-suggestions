@@ -8,7 +8,7 @@ import eventModule from './modules/event/eventModule';
 import userModule from './modules/user/userModule';
 import authenticatedUser from './modules/authenticatedUser/authenticatedUserModule';
 import reactionModule from './modules/reaction/reactionModule';
-import commonControlsModule from './modules/commonControls/commonControlsModule';
+// import commonControlsModule from './modules/commonControls/commonControlsModule';
 
 Vue.use(Vuex);
 
@@ -21,6 +21,6 @@ export default new Vuex.Store({
     user: userModule,
     authenticatedUser: authenticatedUser,
     reaction: reactionModule,
-    commonControls: commonControlsModule
+    // commonControls: commonControlsModule
   }
 });
