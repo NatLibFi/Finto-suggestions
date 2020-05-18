@@ -8,9 +8,10 @@ import eventModule from './modules/event/eventModule';
 import userModule from './modules/user/userModule';
 import authenticatedUser from './modules/authenticatedUser/authenticatedUserModule';
 import reactionModule from './modules/reaction/reactionModule';
+// "The fate" of the next module will be seen later on
 // import commonControlsModule from './modules/commonControls/commonControlsModule';
 
-Vue.use(Vuex);
+Vue.use(Vuex);te
 
 export default new Vuex.Store({
   modules: {
