@@ -110,7 +110,9 @@ export default {
   },
   methods: {
     ...mapSuggestionActions({
+      //This implementation must be changed in order to achieve better performance
       getSuggestions: suggestionActions.GET_SUGGESTIONS,
+      //
       getSuggestionsByUserId: suggestionActions.GET_SUGGESTIONS_BY_USER_ID,
       getSuggestionsCount: suggestionActions.GET_SUGGESTIONS_COUNT,
       getArchivedSuggestionCount: suggestionActions.GET_ARCHIVED_SUGGESTIONS_COUNT

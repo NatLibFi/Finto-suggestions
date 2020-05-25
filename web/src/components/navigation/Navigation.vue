@@ -185,7 +185,7 @@ export default {
     // ...mapState('meetingIdForCurrentMeeting')
   },
   async created() {
-    this.testFn();
+    // this.testFn();
     await this.validateAuthentication();
     if (this.isAuthenticated) {
       await this.refreshToken();
@@ -207,9 +207,9 @@ export default {
       registerLocalUser: userActions.CREATE_USER,
       getAuthenticatedUser: userActions.GET_AUTHENTICATED_USER
     }),
-   testFn() {
-      console.log(this.meetingIdForCurrentMeeting)
-   },
+  //  testFn() {
+  //     console.log(this.meetingIdForCurrentMeeting)
+  //  },
     async returnToHome() {
       this.$router.push('/');
     },

@@ -3,6 +3,7 @@ import os
 import smtplib
 import codecs
 import json
+import dictalchemy
 from email.mime.text import MIMEText
 from datetime import datetime
 from typing import Dict
@@ -15,7 +16,12 @@ from sqlalchemy import text
 from ..models import db
 from ..authentication import verify_user_access_to_resource
 # from sqlalchemy import create_engine  
+# from dictalchemy import make_class_dictable
+# from sqlalchemy.ext.declarative import declarative_base
+# from sqlalchemy import as_dict
 from sqlalchemy import Table, Column, String, MetaData
+# For asdict()-testing
+from dictalchemy import make_class_dictable 
 
 
 
@@ -105,6 +111,21 @@ def get_selected_or_400(model: object):
 
     :returns: All columns matching the query or 400 and error message
     """
+    # make_class_dictable(model)
+    # testing = model.query.asdict(exclude_pk=True)
+    # print("A")
+    # print("B")
+    # print("C")
+    # print("D")
+    # print("E")
+    # print("F")
+    # print(testing)
+
+
+#     >>> session.query(User).asdict(exclude_pk=True)
+# {'username': 'Gerald'}
+
+
     db_selected_objs = model.query.with_entities(model.id, model.name, model.created, model.modified, model.meeting_date).all()
 
     serialized_objects = {}
@@ -126,6 +147,54 @@ def get_selected_or_400(model: object):
     if db_selected_objs:
         return create_response(content_array, 200)
     return create_response(None, 404, error_msg)
+
+
+# def get_selected_from_model_or_400(model: db.model, limit: int, offset: int):
+#     """
+#         A generic get all, with a custom query function
+
+#         :param query: query instance
+#         :returns: All columns matching the query or 400
+#     """
+#     # model: object, limit: int, offset: int
+
+# # def calculateAverage(*args):
+# # ''' Calculates the average of n numbers | Accepts variable length arguments '''
+# # # get the number of total arguments passed 
+# # argCount = len(args)
+# # if argCount > 0 :
+# # sumOfNums = 0
+# # # Iterate over all the arguments and calculate average
+# # for elem in args :
+# # sumOfNums += elem
+# # return sumOfNums / argCount
+# # else:
+# # return 0
+#     # query = model.query
+#     # if limit:
+#     #     query = query.limit(limit)
+#     # if offset:
+#     #     query = query.offset(offset)
+
+#     # return get_all_or_400_custom(query)
+
+#     error_msg = "Did not find any data"
+
+#     db_selected_objs = model.query.with_entities(model.id, model.name, model.created, model.status).all()
+#     if limit:
+#         db_selected_objs = db_selected_objs.limit(limit)
+#     if offset:
+#         db_selected_objs = db_selected_objs.offset(offset)
+
+#     # return create_response(db_obj.as_dict(), 200)
+
+
+#     if db_selected_objs:
+#         return create_response(db_selected_objs.as_dict(), 200)
+#     return create_response(None, 404, error_msg)
+
+
+
     
 
 def get_one_or_404(model: object, primary_key: int) -> str:

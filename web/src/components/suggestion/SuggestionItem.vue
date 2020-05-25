@@ -110,7 +110,7 @@ export default {
       type: [Number, String],
       default: null
     },
-    suggestions: String
+    // suggestions: String
   },
   data() {
     return {

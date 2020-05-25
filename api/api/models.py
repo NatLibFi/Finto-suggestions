@@ -3,21 +3,51 @@ from collections import Counter
 import enum
 import json
 
-# import sqlalchemy_views
-# from sqlalchemy import Table
-# from sqlalchemy.ext.compiler import compiles
-# from sqlalchemy.sql.ddl import DropTable
-
-# from sqlalchemy import Table
-# from sqlalchemy.ext.compiler import compiles
-# from sqlalchemy.sql.expression import Executable, ClauseElement
-# from sqlalchemy_utils import create_view
-# from sqlalchemy import select, func
-
+from sqlalchemy import Table, MetaData
+from sqlalchemy.sql import text
+from sqlalchemy_views import CreateView, DropView
 from flask_sqlalchemy import SQLAlchemy as _NSQLAlc
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import validates
 from passlib.hash import pbkdf2_sha256 as hash_algorithm
+
+# For views
+# from sqlalchemy_utils import create_view
+from sqlalchemy import select, func
+
+viewForMinimumAmountOfData = Table('suggestion_minimums', MetaData())
+definition = text("SELECT id, status, uri FROM suggestions")
+create_view = CreateView(viewForMinimumAmountOfData, definition)
+print("HOUHOUHOUHOUHOOOOUUUUU")
+print("HOUHOUHOUHOUHOOOOUUUUU")
+print("HOUHOUHOUHOUHOOOOUUUUU")
+print("HOUHOUHOUHOUHOOOOUUUUU")
+print("HOUHOUHOUHOUHOOOOUUUUU")
+print(str(create_view.compile()).strip())
+
+# For asdict()-testing
+# from dictalchemy import make_class_dictable
+
+###
+# selectForSuggestionMinorView = select([
+#     Suggestion.id,
+#     Suggestion.preferred_label.fi,
+#     Suggestion.status,
+#     Suggestion.created,
+#     Suggestion.meeting_id,
+#     Suggestion.suggestion_type,
+#     # SuggestionTag. // where suggestion_id = n 
+#     # Event // where event_type='COMMENT' // where suggestion_id = n // ---> count()
+# ]).select_from(SuggestionTag.__table__.outerjoin(Suggestion, SuggestionTag.generate_action == SuggestionTag.id))
+
+# class SuggestionMinor(db.Model, SerializableMixin):
+#     __table__ = selectForSuggestionMinorView
+
+
+###
+
+
+
 
 class SQLAlchemy(_NSQLAlc):
     def apply_pool_defaults(self, app, options):
@@ -34,6 +64,9 @@ def mDecoder(obj):
 # If you want go switch a logging on, do it here: 'echo': False
 db = SQLAlchemy(engine_options={'encoding': 'utf-8',
                                 'echo': False, 'json_serializer': mDecoder})
+
+## M1
+# make_class_dictable(db.Model)
 
 class EventTypes(enum.IntEnum):
     ACTION = 0
@@ -88,6 +121,17 @@ class SerializableMixin():
         if strip:  # strip hidden fields, such as meeting_id
             d = {k: v for k, v in d.items() if k in self.__public__}
         return d
+
+    # def mikan_testi(self, sana: str):
+    #     self.sana = sana
+    #     return self.sana
+
+    # def as_minimum_dict(self, model: object, strip=True):
+    #     # relationships (joins) should be expanded carefully
+    #     serialized = super(model, self).as_dict()
+    #     # serialized['events'] = [e.as_dict() for e in self.events]
+    #     # serialized['reactions'] = [e.id for e in self.reactions]  # only ids
+    #     # serialized['tags'] = [e.as_dict(strip=strip) for e in self.tags]    
 
 
 class SuggestionTag(db.Model, SerializableMixin):
@@ -209,6 +253,9 @@ class Meeting(db.Model, SerializableMixin):
     # lazy = ‘dynamic’
     # lazy = ‘joined’ (or False)
     # lazy = ‘subquery’
+    # Tämä on yksi miettimisen paikka. Voisiko käyttää meetingin omia tietoja queryssä (select)
+    # mieti dictien ja kutsujen suhde
+
 
     def __repr__(self):
         return '<Meeting {}>'.format(self.id)
@@ -229,6 +276,9 @@ class Suggestion(db.Model, SerializableMixin):
     __public__ = ["alternative_labels", "broader_labels", "created", "description", "groups", "id", "created", "modified",
                   "narrower_labels", "organization", "preferred_label", "reason", "related_labels", "status", "suggestion_type",
                   "uri", "scopeNote", "exactMatches", "neededFor", "yse_term", "meeting_id", "user_id"]
+
+    #M2
+    # make_class_dictable(db.Model)
 
     id = db.Column(db.Integer, primary_key=True)
     created = db.Column(db.DateTime, index=True, default=datetime.utcnow)
@@ -278,7 +328,17 @@ class Suggestion(db.Model, SerializableMixin):
         serialized['events'] = [e.as_dict() for e in self.events]
         serialized['reactions'] = [e.id for e in self.reactions]  # only ids
         serialized['tags'] = [e.as_dict(strip=strip) for e in self.tags]
-        return serialized
+
+    # def as_minimum_dict(self, model: object, strip=True):
+    #     # relationships (joins) should be expanded carefully
+    #     serialized = super(Suggestion, self).as_dict()
+    #     # serialized['events'] = [e.as_dict() for e in self.events]
+    #     # serialized['reactions'] = [e.id for e in self.reactions]  # only ids
+    #     # serialized['tags'] = [e.as_dict(strip=strip) for e in self.tags]
+
+    #     return serialized
+        #as_dict pitää kirjoittaa monena versiona, suppeammin tai laajemmin. Palauttaisi dictissä vain välttämättömät - fronttia varten. Full palauttaisi kaikki tiedot
+        #ehdotussivua varten
 
 
 class Tag(db.Model, SerializableMixin):

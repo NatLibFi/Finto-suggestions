@@ -18,6 +18,7 @@ def get_meetings(limit: int = None, offset: int = None) -> str:
     :returns: All meetings matching the query in json format
     """
 
+
     return get_all_or_400(Meeting, limit, offset)
 
 def get_meetings_basics(limit: int = None, offset: int = None) -> str:
@@ -32,6 +33,7 @@ def get_meetings_basics(limit: int = None, offset: int = None) -> str:
     :param offset: Start the query from offset (e.g. for paging)
     :returns: All meetings matching the query in json format
     """
+
 
     return get_selected_or_400(Meeting)
 

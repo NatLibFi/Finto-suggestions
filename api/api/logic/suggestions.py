@@ -8,6 +8,7 @@ from .validators import suggestion_parameter_validator, suggestion_id_validator,
 # pylint: disable=unused-import
 from .common import (create_response, get_one_or_404, get_all_or_400, get_all_or_400_custom,
                      get_count_or_400_custom, create_or_400, delete_or_404, patch_or_404, update_or_404)
+                    #  get_selected_from_model_or_400
 # pylint: enable=unused-import
 from .utils import SUGGESTION_FILTER_FUNCTIONS, SUGGESTION_SORT_FUNCTIONS
 from ..models import db, Suggestion, Tag, User
@@ -121,8 +122,33 @@ def get_suggestions(limit: int = 0, offset: int = 0, filters: str = "", search: 
     :param sort: Sort the results before returning them
     :returns: All suggestion matching the query in json format
     """
+    # get_selected_from_model_or_400(Suggestion, limit=limit, offset=offset)
+    # Reaction.as_dict
 
     query = getQuery(limit=limit, offset=offset, filters=filters, queryString=search, sort=sort)
+
+
+    # test_suggestions = query
+    # serialized_objects2 = [o.as_dict() for o in test_suggestions]
+    # # print {'data': serialized_objects2, 'code': 200}, 200
+    # print("*")
+    # print("**")
+    # print("***")
+    # print("****")
+    # print("*****")
+    # print("******")
+    # print("*******")
+    # print(serialized_objects2)
+
+
+
+
+
+    #M4
+    # query2 = model
+
+
+
     return  get_all_or_400_custom(query)
 
 
