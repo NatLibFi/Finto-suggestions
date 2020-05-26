@@ -3,7 +3,7 @@ import connexion
 
 from ..models import Event, Suggestion, db
 from ..authentication import authorized
-from .common import (get_all_or_400_custom, get_one_or_404, create_or_400, delete_or_404, patch_or_404, update_or_404)
+from .common import (get_all_or_400_custom, get_one_or_404, create_or_400, delete_or_404, patch_or_404, update_or_404, get_selected_from_model_or_400)
 from .validators import event_parameter_validator
 
 def get_events(limit: int = None, offset: int = None, user_id: int = None, suggestion_id: int = None) -> str:
@@ -16,6 +16,8 @@ def get_events(limit: int = None, offset: int = None, user_id: int = None, sugge
     :param offset: Start the query from offset (e.g. for paging)
     :returns: All events matching the query in json format
     """
+
+    get_selected_from_model_or_400(Event, "moi")
 
     query = Event.query
     if user_id:

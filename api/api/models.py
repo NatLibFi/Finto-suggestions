@@ -355,6 +355,3 @@ class TokenBlacklist(db.Model, SerializableMixin):
     token_type = db.Column(db.String(10), nullable=False)
     revoked = db.Column(db.Boolean, nullable=False)
     expires = db.Column(db.DateTime, nullable=False)
-
-
-# And finally here you find views

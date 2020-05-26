@@ -1,6 +1,6 @@
 import connexion
 from flask import jsonify
-from sqlalchemy import or_, func, and_
+from sqlalchemy import or_, func, and_, Table, Column, String, MetaData, literal, select
 from sqlalchemy.types import Unicode
 
 from ..authentication import admin_only
@@ -10,7 +10,7 @@ from .common import (create_response, get_one_or_404, get_all_or_400, get_all_or
                      get_count_or_400_custom, create_or_400, delete_or_404, patch_or_404, update_or_404)
 # pylint: enable=unused-import
 from .utils import SUGGESTION_FILTER_FUNCTIONS, SUGGESTION_SORT_FUNCTIONS
-from ..models import db, Suggestion, Tag, User
+from ..models import db, Suggestion, Tag, User, Event
 from .skos import suggestionToGraph
 
 # Profiler decorator, enable if needed
@@ -108,6 +108,46 @@ def getQuery(limit: int = 0, offset: int = 0, filters: str = "", queryString: st
 
     return query
 
+
+def getTestQuery(model: object) -> db.Query:
+    """
+    Returns query for querying all suggestions.
+
+    Query can be sorted and limited with additional parameters.
+
+    :param limit: Cap the results to :limit: results
+    :param offset: Start the query from offset (e.g. for paging)
+    :param filters: Filter the results based on filter selections
+    :param queryString: Filter the results based on search term
+    :param sort: Sort the result set
+    :returns: Query object for querying the database
+    """
+    # , limit: int = 0, offset: int = 0
+    query = SUGGESTION_SORT_FUNCTIONS.get('CREATED_DESC')(db.session)
+    query = query.get(4321)
+    #  filter(or_(func(Suggestion.preferred_label['fi']['value'].cast(Unicode)), func(Suggestion.id.cast(Unicode))))
+    print("OOOOOOOOOOOOOOOOOOOOOOOOOOO")
+    # print(query)
+
+        #     query = query.filter(or_(
+        #         func.lower(Suggestion.preferred_label['fi']['value'].cast(
+        #             Unicode)).contains(queryStringForOnlytTitlesSearch),
+        #         func.lower(Suggestion.preferred_label['sv'].cast(
+        #             Unicode)).contains(queryStringForOnlytTitlesSearch),
+        #         func.lower(Suggestion.preferred_label['en'].cast(
+        #             Unicode)).contains(queryStringForOnlytTitlesSearch),
+        #         func.lower(Suggestion.id.cast(Unicode)).contains(queryStringForOnlytTitlesSearch),
+        #     ))
+        # else:
+
+
+    # if limit:
+    #     query = query.limit(limit)
+    # if offset:
+    #     query = query.offset(offset)
+
+    return query
+
 def get_suggestions(limit: int = 0, offset: int = 0, filters: str = "", search: str = "", sort: str = 'DEFAULT') -> str:
     """
     Returns all suggestions.
@@ -122,7 +162,16 @@ def get_suggestions(limit: int = 0, offset: int = 0, filters: str = "", search: 
     :returns: All suggestion matching the query in json format
     """
 
+    # print("*************************************")
+    # queryTest = getTestQuery(Event)
+    # print(queryTest)
+    # # get_all_or_400_custom(queryTest)
+    # # bigQuery = get_all_or_400_custom(queryTest)
+    # # print(bigQuery)
+    # print("*************************************")
+
     query = getQuery(limit=limit, offset=offset, filters=filters, queryString=search, sort=sort)
+
     return  get_all_or_400_custom(query)
 
 

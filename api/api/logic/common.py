@@ -12,10 +12,10 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy import text
 # from sqlalchemy import Table, MetaData
 # from sqlalchemy_views import CreateView, DropView
-from ..models import db
+from ..models import db, Suggestion, Event
 from ..authentication import verify_user_access_to_resource
 # from sqlalchemy import create_engine  
-from sqlalchemy import Table, Column, String, MetaData
+from sqlalchemy import Table, Column, String, MetaData, func, literal, select
 
 
 
@@ -63,6 +63,11 @@ def get_all_or_400_custom(query) -> str:
         :param query: query instance
         :returns: All columns matching the query or 400
     """
+# BBB
+    print("*************************************")
+    print(get_selected_from_model_or_400(Event, "moi"))
+    print("*************************************")
+
     try:
         db_objs = query.all()
     except InvalidFilterException as e:
@@ -126,6 +131,230 @@ def get_selected_or_400(model: object):
     if db_selected_objs:
         return create_response(content_array, 200)
     return create_response(None, 404, error_msg)
+
+# def get_selected_from_model_or_400(model: object, fieldNameArray: []):
+def get_selected_from_model_or_400(model: object, jotain: str) -> str:
+    """
+    Todo: Must be fixed to read selected entities as an argument
+
+    OR
+
+    Must be in the new component for "special cases" joining to handling database tables and entities 
+
+    Returns all queried objects.
+
+    :returns: All columns matching the query or 400 and error message
+    """
+    # aaa
+
+    print("||||||||||||||||||||||||||||||")
+    print("||||||||||||||||||||||||||||||")
+    print("||||||||||||||||||||||||||||||")
+    print("||||||||||||||||||||||||||||||")
+    print("||||||||||||||||||||||||||||||")
+    print("||||||||||||||||||||||||||||||")
+    print("||||||||||||||||||||||||||||||")
+    print("||||||||||||||||||||||||||||||")
+
+
+    # serialized_objects = {}
+    # helper_dict = {}
+    # content_array = []
+    # if db_selected_objs:
+    #     serialized_objects = [o for o in db_selected_objs]
+    #     for val in serialized_objects:
+    #         helper_dict["id"] = val[0]
+    #         helper_dict["name"] = val[1]
+    #         helper_dict["created"] = val[2]
+    #         helper_dict["modified"] = val[3]
+    #         helper_dict["meeting_date"] = val[4]
+    #         content_array.append(helper_dict)
+    #         helper_dict = {}
+    # Toimii: lukumäärä
+    # https://docs.sqlalchemy.org/en/13/orm/query.html
+
+    # OOOKOO palauttaa modelin (esim Events) lukumäärän
+    # something = model.query.with_entities(model.id).count()
+    
+    # OOOKOO palauttaa 25 kpl kommenttikenttiä ilman model-viittausta 
+    # something = [r.event_type for r in db.session.query(Event).limit(25)]
+    
+    # OOKOO palauttaa 25 kpl kommenttikenttiä
+    # something = [r.text for r in db.session.query(model).limit(25)]
+    # db.session.close()
+    
+    # OOKOO palauttaa kommenttien lukumäärän ehdotukselle x
+    # something = model.query.filter(model.suggestion_id == 5979).count()
+    # db.session.close()
+
+    # OOKOO palauttaa suggestionien määrän
+    # something = model.query.with_entities(Suggestion.id).count()
+    # db.session.close()
+
+    # OOKOO palauttaa preferred_labelit jsonina
+    # something = [r.preferred_label for r in db.session.query(Suggestion).limit(25)]
+    # db.session.close()
+    # IMPORTANT server_dict = {k:v for d in server_list for k,v in d.items()}
+
+    # OOKOO palauttaa yksittäisen suggestionin prefferd_labelin
+    # something = [r for r in Suggestion.query.filter(Suggestion.id == 5979)]
+    # print("000000000000000000000000000000000000")
+    # for some in something:   
+    #     print(some.preferred_label)
+
+    # db.session.close()
+
+    something = [r for r in Suggestion.query.filter(Suggestion.id == 5979)]
+    print("000000000000000000000000000000000000")
+    for some in something:   
+        print(some.preferred_label)
+
+    db.session.close()
+
+
+# select count(text) from events where suggestion_id = 5979;
+
+
+# q = session.query(User).filter(User.name == 'fred')
+# session.query(q.exists())
+
+# Producing SQL similar to:
+
+# SELECT EXISTS (
+#     SELECT 1 FROM users WHERE users.name = :name_1
+# ) AS anon_1
+
+
+
+
+
+    # someQuery = model.query.with_entities(model.id).limit(25)
+    # serialized_objects = {}
+    # text_stmt = text("select id, event_type from events").columns(model.id, model.event_type)
+    # something_raw = model.query.select_entity_from(text_stmt)
+    # # for row in something_raw:
+    # serialized_objects = [o for o in something_raw]
+    # something = serialized_objects
+
+    # something = "fine"
+
+    # select_stmt = select(Event).where(Event.suggestion_id == 5979)
+
+    # something = Event.query.select_entity_from(select_stmt).filter(Event.event_type == 'COMMENT')
+    # something = "fine"
+    # somethingX = model.query.filter(model.event_type == 'COMMENT')
+    # something = model.query.filter(somethingX.exists()).scalar()
+
+    # something = model.query(literal(True)).filter(somethingX.exists()).scalar()
+    # something = something.exists()
+    # session.query(q.exists())
+
+# q = session.query(User).filter(User.name == 'fred')
+# session.query(q.exists())
+
+
+    # something = db.session.query(func.count(Suggestion.id))
+
+
+    # try:
+    #     db_objs = something
+    # except InvalidFilterException as e:
+    #     return create_response({}, 400, str(e))
+
+    # serialized_objects = []
+    # if db_objs:
+    #     serialized_objects = [o.as_dict() for o in db_objs]
+
+    return create_response(something, 200)
+# Epäselviä
+# # 1)
+#     for instance in db.session.query(Suggestion).order_by(Suggestion.id).limit(25).offset(25):
+#         print(instance.created, instance.status)
+# 2)
+    # Palauttaa vähän hämäriä
+    # for itemPair in db.session.query(Suggestion).filter(Suggestion.status=='RECEIVED').filter(Suggestion.suggestion_type=='NEW').\
+    #     limit(25).offset(25):
+    #     print(itemPair)
+# 3)
+    # queryString = text("SELECT id, event_type, text FROM events WHERE suggestion_id=5979")
+    # # print(queryString)
+    # queryString = queryString.columns(Event.id, Event.event_type, Event.text)
+    # # print(queryString)
+    # someResult = db.session.query(Event).from_statement(queryString).all()
+    # print(someResult)
+# 5)
+
+
+
+# AAA https://docs.sqlalchemy.org/en/13/orm/tutorial.html
+    # # This is test area
+    
+# >>> stmt = text("SELECT name, id, fullname, nickname "
+# ...             "FROM users where name=:name")
+# >>> stmt = stmt.columns(User.name, User.id, User.fullname, User.nickname)
+# sql
+# >>> session.query(User).from_statement(stmt).params(name='ed').all()
+# [<User(name='ed', fullname='Ed Jones', nickname='eddie')>]
+    # return "moikka"
+
+
+
+
+    # return something
+
+# 4)
+    # queryX = db.session.query.filter(or_(
+    #     func.lower(Suggestion.preferred_label['fi']['value'].cast(
+    #         Unicode)).contains(queryStringForOnlytTitlesSearch),
+    #     func.lower(Suggestion.preferred_label['sv'].cast(
+    #         Unicode)).contains(queryStringForOnlytTitlesSearch),
+    #     func.lower(Suggestion.preferred_label['en'].cast(
+    #         Unicode)).contains(queryStringForOnlytTitlesSearch),
+    #     func.lower(Suggestion.id.cast(Unicode)).contains(queryStringForOnlytTitlesSearch),
+
+
+
+    # records = Suggestion.query(func.count(Suggestion.tags)).all()
+    # print(db.session.query(Suggestion).filter(Suggestion.status.notin_(['RECEIVED']).count())
+    # print("||||||||||||||||||||||||||||||")
+    # for record in records:
+    #     print(record)
+
+
+    #  query = Reaction.query
+    # if suggestion_id:
+    #     query = query.filter(Reaction.suggestion_id == suggestion_id)
+    # if limit:
+    #     query = query.limit(limit)
+    # if offset:
+    #     query = query.offset(offset)
+
+    # return get_all_or_400_custom(query)       
+    
+
+
+    # db_selected_objs = model.query.with_entities(model.id, model.name, model.created, model.modified, model.meeting_date).all()
+
+    # serialized_objects = {}
+    # helper_dict = {}
+    # content_array = []
+    # if db_selected_objs:
+    #     serialized_objects = [o for o in db_selected_objs]
+    #     for val in serialized_objects:
+    #         helper_dict["id"] = val[0]
+    #         helper_dict["name"] = val[1]
+    #         helper_dict["created"] = val[2]
+    #         helper_dict["modified"] = val[3]
+    #         helper_dict["meeting_date"] = val[4]
+    #         content_array.append(helper_dict)
+    #         helper_dict = {}
+    
+    # error_msg = "Did not find any data"
+
+    # if db_selected_objs:
+    #     return create_response(content_array, 200)
+    # return create_response(None, 404, error_msg)
+    # return jotain
     
 
 def get_one_or_404(model: object, primary_key: int) -> str:
@@ -289,7 +518,7 @@ def patch_or_404(model: object, primary_key: int, payload: Dict) -> str:
 
     verify_user_access_to_resource(db_obj)
 
-    # make sure that the `id` and `created` fields never get updated
+    # make sure that the `id` and `created` fisomething = model.query.with_entities(model.id).count()elds never get updated
     payload.pop("id", None)
     payload.pop("created", None)
 
