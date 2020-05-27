@@ -219,15 +219,16 @@ def get_selected_from_model_or_400(model: object, jotain: str) -> str:
     #     print(something)
     #Muista: lopuksi pitää kerätä ja koostaaa, appendeilla hoitaa yksi iso array, joka syötetään create_responselle, kuten something
 
+    # OOKOO Palauttaa yhden suggestionin tyypin
     something = {}
     somethingX = {}
-    somethingY = {r for r in Suggestion.query.with_entities(Suggestion.status).filter(Suggestion.id == 7771)}
+    somethingY = {r for r in Suggestion.query.with_entities(Suggestion.suggestion_type).filter(Suggestion.id == 7771)}
     print("000000000000000000000000000000000000")
     for some in somethingY:
-        # SuggestionStatusTypes.
+        # SuggestionTypes.
         print("XX")
         print(type(some))
-        something["status"] = str(some[0]).rsplit('.', 1)[1]
+        something["suggestion_type"] = str(some[0]).rsplit('.', 1)[1]
         print(something)
     #Muista: lopuksi pitää kerätä ja koostaaa, appendeilla hoitaa yksi iso array, joka syötetään create_responselle, kuten something
 
