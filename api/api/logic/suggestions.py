@@ -122,29 +122,6 @@ def getTestQuery(model: object) -> db.Query:
     :param sort: Sort the result set
     :returns: Query object for querying the database
     """
-    # , limit: int = 0, offset: int = 0
-    # query = SUGGESTION_SORT_FUNCTIONS.get('CREATED_DESC')(db.session)
-    # query = query.get(4321)
-    #  filter(or_(func(Suggestion.preferred_label['fi']['value'].cast(Unicode)), func(Suggestion.id.cast(Unicode))))
-    # print("OOOOOOOOOOOOOOOOOOOOOOOOOOO")
-    # print(query)
-
-        #     query = query.filter(or_(
-        #         func.lower(Suggestion.preferred_label['fi']['value'].cast(
-        #             Unicode)).contains(queryStringForOnlytTitlesSearch),
-        #         func.lower(Suggestion.preferred_label['sv'].cast(
-        #             Unicode)).contains(queryStringForOnlytTitlesSearch),
-        #         func.lower(Suggestion.preferred_label['en'].cast(
-        #             Unicode)).contains(queryStringForOnlytTitlesSearch),
-        #         func.lower(Suggestion.id.cast(Unicode)).contains(queryStringForOnlytTitlesSearch),
-        #     ))
-        # else:
-
-
-    # if limit:
-    #     query = query.limit(limit)
-    # if offset:
-    #     query = query.offset(offset)
 
     return db.Query
 
@@ -161,14 +138,6 @@ def get_suggestions(limit: int = 0, offset: int = 0, filters: str = "", search: 
     :param sort: Sort the results before returning them
     :returns: All suggestion matching the query in json format
     """
-
-    # print("*************************************")
-    # queryTest = getTestQuery(Event)
-    # print(queryTest)
-    # # get_all_or_400_custom(queryTest)
-    # # bigQuery = get_all_or_400_custom(queryTest)
-    # # print(bigQuery)
-    # print("*************************************")
 
     query = getQuery(limit=limit, offset=offset, filters=filters, queryString=search, sort=sort)
 

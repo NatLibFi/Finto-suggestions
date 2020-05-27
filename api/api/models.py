@@ -173,23 +173,6 @@ class Reaction(db.Model, SerializableMixin):
         return '<Emoji {}>'.format(self.code)
 
 
-# class CreateView(Executable, ClauseElement):
-#     def __init__(self, name, select):
-#         self.name = name
-#         self.select = select
-
-# @compiles(CreateView)
-# def visit_create_view(element, compiler, **kw):
-#     return "CREATE VIEW %s AS %s" % (
-#          element.name,
-#          compiler.process(element.select, literal_binds=True)
-#          )
-
-# createview = CreateView('meetingsCollection, t.select().where(t.c.id>5))
-
-
-
-
 class Meeting(db.Model, SerializableMixin):
     __tablename__ = 'meetings'
     __public__ = ['id', 'name', 'created', 'modified', 'meeting_date']
