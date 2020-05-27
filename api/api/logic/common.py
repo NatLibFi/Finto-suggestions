@@ -16,6 +16,7 @@ from ..models import db, Suggestion, Event, SuggestionTypes, SuggestionStatusTyp
 from ..authentication import verify_user_access_to_resource
 # from sqlalchemy import create_engine  
 from sqlalchemy import Table, Column, String, MetaData, func, literal, select
+from sqlalchemy.orm import defer, undefer, load_only
 
 
 
@@ -172,6 +173,8 @@ def get_selected_from_model_or_400(model: object, jotain: str) -> str:
     #         helper_dict = {}
     # Toimii: lukumäärä
     # https://docs.sqlalchemy.org/en/13/orm/query.html
+    # Deferred: https://docs.sqlalchemy.org/en/13/orm/loading_columns.html#deferred-column-loader-query-options
+    # load_only: https://docs.sqlalchemy.org/en/13/orm/loading_columns.html#sqlalchemy.orm.load_only
 
     # OOOKOO palauttaa modelin (esim Events) lukumäärän
     # something = model.query.with_entities(model.id).count()
@@ -184,8 +187,17 @@ def get_selected_from_model_or_400(model: object, jotain: str) -> str:
     # db.session.close()
     
     # OOKOO palauttaa kommenttien lukumäärän ehdotukselle x
-    # something = model.query.filter(model.suggestion_id == 5979).count()
+    # something = Event.query.with_entities(Event.event_type).filter(Event.event_type == 'COMMENT').filter(Event.suggestion_id == 5979).count()
+    # print(something)
     # db.session.close()
+
+    # OOKOO palauttaa kommenttien lukumäärän ehdotukselle x "laiskasti" eli hakee vain tietyn kolumnin
+    # something = {}
+    # something = Event.query.with_entities(Event.event_type)
+    something = Event.query.options(load_only("event_type"))
+    something = something.filter(Event.event_type == 'COMMENT')
+    something = something.filter(Event.suggestion_id == 5979).count()
+    print(something)
 
     # OOKOO palauttaa suggestionien määrän
     # something = model.query.with_entities(Suggestion.id).count()
@@ -220,19 +232,19 @@ def get_selected_from_model_or_400(model: object, jotain: str) -> str:
     #Muista: lopuksi pitää kerätä ja koostaaa, appendeilla hoitaa yksi iso array, joka syötetään create_responselle, kuten something
 
     # OOKOO Palauttaa yhden suggestionin tyypin
-    something = {}
-    somethingX = {}
-    somethingY = {r for r in Suggestion.query.with_entities(Suggestion.suggestion_type).filter(Suggestion.id == 7771)}
-    print("000000000000000000000000000000000000")
-    for some in somethingY:
-        # SuggestionTypes.
-        print("XX")
-        print(type(some))
-        something["suggestion_type"] = str(some[0]).rsplit('.', 1)[1]
-        print(something)
+    # something = {}
+    # somethingX = {}
+    # somethingY = {r for r in Suggestion.query.with_entities(Suggestion.suggestion_type).filter(Suggestion.id == 7771)}
+    # print("000000000000000000000000000000000000")
+    # for some in somethingY:
+    #     # SuggestionTypes.
+    #     print("XX")
+    #     print(type(some))
+    #     something["suggestion_type"] = str(some[0]).rsplit('.', 1)[1]
+    #     print(something)
     #Muista: lopuksi pitää kerätä ja koostaaa, appendeilla hoitaa yksi iso array, joka syötetään create_responselle, kuten something
 
-
+ 
     #SWAP
     # db.session.close()
 
@@ -356,7 +368,6 @@ def get_selected_from_model_or_400(model: object, jotain: str) -> str:
     #     func.lower(Suggestion.preferred_label['en'].cast(
     #         Unicode)).contains(queryStringForOnlytTitlesSearch),
     #     func.lower(Suggestion.id.cast(Unicode)).contains(queryStringForOnlytTitlesSearch),
-
 
 
     # records = Suggestion.query(func.count(Suggestion.tags)).all()
