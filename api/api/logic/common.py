@@ -204,12 +204,38 @@ def get_selected_from_model_or_400(model: object, jotain: str) -> str:
 
     # db.session.close()
 
-    something = [r for r in Suggestion.query.filter(Suggestion.id == 5979)]
+    # OOKOO palauttaa preferred_labelin oikein
+    something = {}
+    somethingX = [r for r in Suggestion.query.filter(Suggestion.id == 5979)]
     print("000000000000000000000000000000000000")
-    for some in something:   
-        print(some.preferred_label)
+    for some in somethingX:
+        print("XX")
+        # something["preferred_label"] = some.preferred_label  
+        something["preferred_label"] = some.preferred_label  
+        print(something)
 
-    db.session.close()
+    #SWAP
+    # db.session.close()
+
+
+
+    # response_dict = {}
+    # data = data if data else {}
+
+    # if kwargs:
+    #     response_dict.update(kwargs)
+    # if message:
+    #     response_dict["message"] = message
+
+    # response_dict["code"] = status_code
+    # response_dict["data"] = data
+
+    # if isinstance(data, list):
+    #     response_dict["items"] = len(data)
+
+    # return response_dict, status_code
+
+
 
 
 # select count(text) from events where suggestion_id = 5979;
@@ -264,7 +290,7 @@ def get_selected_from_model_or_400(model: object, jotain: str) -> str:
     # serialized_objects = []
     # if db_objs:
     #     serialized_objects = [o.as_dict() for o in db_objs]
-
+    print("YY")
     return create_response(something, 200)
 # Epäselviä
 # # 1)

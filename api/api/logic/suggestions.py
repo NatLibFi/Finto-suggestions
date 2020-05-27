@@ -123,10 +123,10 @@ def getTestQuery(model: object) -> db.Query:
     :returns: Query object for querying the database
     """
     # , limit: int = 0, offset: int = 0
-    query = SUGGESTION_SORT_FUNCTIONS.get('CREATED_DESC')(db.session)
-    query = query.get(4321)
+    # query = SUGGESTION_SORT_FUNCTIONS.get('CREATED_DESC')(db.session)
+    # query = query.get(4321)
     #  filter(or_(func(Suggestion.preferred_label['fi']['value'].cast(Unicode)), func(Suggestion.id.cast(Unicode))))
-    print("OOOOOOOOOOOOOOOOOOOOOOOOOOO")
+    # print("OOOOOOOOOOOOOOOOOOOOOOOOOOO")
     # print(query)
 
         #     query = query.filter(or_(
