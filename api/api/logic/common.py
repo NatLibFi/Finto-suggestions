@@ -12,7 +12,7 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy import text
 # from sqlalchemy import Table, MetaData
 # from sqlalchemy_views import CreateView, DropView
-from ..models import db, Suggestion, Event, SuggestionTypes, SuggestionStatusTypes
+from ..models import db, Suggestion, Event, Tag, SuggestionTypes, SuggestionStatusTypes, SuggestionTag
 from ..authentication import verify_user_access_to_resource
 # from sqlalchemy import create_engine  
 from sqlalchemy import Table, Column, String, MetaData, func, literal, select
@@ -32,7 +32,7 @@ def create_response(data: Dict, status_code: int, message: str = None, **kwargs)
         response_dict.update(kwargs)
     if message:
         response_dict["message"] = message
-
+    # if status_code:
     response_dict["code"] = status_code
     response_dict["data"] = data
 
@@ -192,12 +192,16 @@ def get_selected_from_model_or_400(model: object, jotain: str) -> str:
     # db.session.close()
 
     # OOKOO palauttaa kommenttien lukumäärän ehdotukselle x "laiskasti" eli hakee vain tietyn kolumnin
-    # something = {}
-    # something = Event.query.with_entities(Event.event_type)
-    something = Event.query.options(load_only("event_type"))
-    something = something.filter(Event.event_type == 'COMMENT')
-    something = something.filter(Event.suggestion_id == 5979).count()
-    print(something)
+    # function sqlalchemy.orm.load_only(*attrs)
+    # Indicate that for a particular entity, only the given list of column-based attribute names should be loaded; all others will be deferred.
+    # This function is part of the Load interface and supports both method-chained and standalone operation.
+    # Example - given a class User, load only the name and fullname attributes:
+    # session.query(User).options(load_only("name", "fullname"))
+
+    # something = Event.query.options(load_only("event_type"))
+    # something = something.filter(Event.event_type == 'COMMENT')
+    # something = something.filter(Event.suggestion_id == 5979).count()
+    # print(something)
 
     # OOKOO palauttaa suggestionien määrän
     # something = model.query.with_entities(Suggestion.id).count()
@@ -244,7 +248,53 @@ def get_selected_from_model_or_400(model: object, jotain: str) -> str:
     #     print(something)
     #Muista: lopuksi pitää kerätä ja koostaaa, appendeilla hoitaa yksi iso array, joka syötetään create_responselle, kuten something
 
- 
+    # OOKOO Palauttaa yhden suggestionin kaikkien tagien labelit
+    something = {}
+    somethingX = []
+    somethingY = {r for r in SuggestionTag.query.options(load_only("tag_label")).\
+        filter(SuggestionTag.suggestion_id == 5979)}
+    print("000000000000000000000000000000000000")
+    # somethingY.add("'code': '200'")
+    # something = somethingY
+    print(somethingY)
+    for some in somethingY:
+        # SuggestionTypes.
+        print("XX")
+        print(type(some))
+        # print(str(some).split(" ", 1))
+        # something["tags"] = str(some[0]).rsplit(' ', 1)[1]
+        somethingX.append(str(some).split(" ", 1)[1][:-1])
+    something["tags"] = somethingX
+    print(something)
+    somethingX = []
+
+# string:  "foobar"[3] == "b"
+# tuple:   (1,2,3,4)[3] == 4
+# list:    [1,2,3,4][3] == 4
+# dict:    {"a":1, "b":2, "c":3}["c"] == 3
+    # Muista: lopuksi pitää kerätä ja koostaaa, appendeilla hoitaa yksi iso array, joka syötetään create_responselle, kuten something
+# response_dict["code"] = status_code
+
+    # __tablename__ = 'suggestion_tags_association'
+    # __public__ = ['tag_label', 'suggestion_id', 'event_id']
+
+    # tag_label = db.Column(db.String, db.ForeignKey(
+    #     'tags.label'), primary_key=True)
+    # suggestion_id = db.Column(db.Integer, db.ForeignKey(
+    #     'suggestions.id'), primary_key=True)
+    # event_id = db.Column(db.Integer, db.ForeignKey('events.id'))
+
+
+    # something = Event.query.options(load_only("event_type"))
+    # something = something.filter(Event.event_type == 'COMMENT')
+    # something = something.filter(Event.suggestion_id == 5979).count()
+    # print(something)
+
+
+
+
+
+
     #SWAP
     # db.session.close()
 

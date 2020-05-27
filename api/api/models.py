@@ -101,7 +101,9 @@ class SuggestionTag(db.Model, SerializableMixin):
     event_id = db.Column(db.Integer, db.ForeignKey('events.id'))
 
     def __repr__(self):
-        return '<SuggestionTag {}>'.format(self.code)
+        # Do not forget next following. How should be used: self.code or ...
+        # return '<SuggestionTag {}>'.format(self.code)
+        return '<SuggestionTag {}>'.format(self.tag_label)
 
 
 class Event(db.Model, SerializableMixin):
