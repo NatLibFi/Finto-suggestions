@@ -146,7 +146,7 @@ def getTestQuery(model: object) -> db.Query:
     # if offset:
     #     query = query.offset(offset)
 
-    return query
+    return db.Query
 
 def get_suggestions(limit: int = 0, offset: int = 0, filters: str = "", search: str = "", sort: str = 'DEFAULT') -> str:
     """

@@ -12,7 +12,7 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy import text
 # from sqlalchemy import Table, MetaData
 # from sqlalchemy_views import CreateView, DropView
-from ..models import db, Suggestion, Event
+from ..models import db, Suggestion, Event, SuggestionTypes, SuggestionStatusTypes
 from ..authentication import verify_user_access_to_resource
 # from sqlalchemy import create_engine  
 from sqlalchemy import Table, Column, String, MetaData, func, literal, select
@@ -148,7 +148,7 @@ def get_selected_from_model_or_400(model: object, jotain: str) -> str:
     # aaa
 
     print("||||||||||||||||||||||||||||||")
-    print("||||||||||||||||||||||||||||||")
+    print("|||||||||||||||||||||SuggestionTypes, SuggestionStatusTypes|||||||||")
     print("||||||||||||||||||||||||||||||")
     print("||||||||||||||||||||||||||||||")
     print("||||||||||||||||||||||||||||||")
@@ -196,23 +196,41 @@ def get_selected_from_model_or_400(model: object, jotain: str) -> str:
     # db.session.close()
     # IMPORTANT server_dict = {k:v for d in server_list for k,v in d.items()}
 
-    # OOKOO palauttaa yksittäisen suggestionin prefferd_labelin
-    # something = [r for r in Suggestion.query.filter(Suggestion.id == 5979)]
+    # OOKOO palauttaa preferred_labelin oikein (Saadaan ehdotuksen nimi id:llä oikein frontissakin)
+    # something = {}
+    # somethingX = [r for r in Suggestion.query.filter(Suggestion.id == 7771)]
     # print("000000000000000000000000000000000000")
-    # for some in something:   
-    #     print(some.preferred_label)
+    # for some in somethingX:
+    #     print("XX")
+    #     # something["preferred_label"] = some.preferred_label  
+    #     something["preferred_label"] = some.preferred_label  
+    #     print(something)
 
-    # db.session.close()
+    # OOKOO Palauttaa yhden suggestionin statuksen
+    # something = {}
+    # somethingX = {}
+    # somethingY = {r for r in Suggestion.query.with_entities(Suggestion.status).filter(Suggestion.id == 7771)}
+    # print("000000000000000000000000000000000000")
+    # for some in somethingY:
+    #     # SuggestionStatusTypes.
+    #     print("XX")
+    #     print(type(some))
+    #     something["status"] = str(some[0]).rsplit('.', 1)[1]
+    #     print(something)
+    #Muista: lopuksi pitää kerätä ja koostaaa, appendeilla hoitaa yksi iso array, joka syötetään create_responselle, kuten something
 
-    # OOKOO palauttaa preferred_labelin oikein
     something = {}
-    somethingX = [r for r in Suggestion.query.filter(Suggestion.id == 5979)]
+    somethingX = {}
+    somethingY = {r for r in Suggestion.query.with_entities(Suggestion.status).filter(Suggestion.id == 7771)}
     print("000000000000000000000000000000000000")
-    for some in somethingX:
+    for some in somethingY:
+        # SuggestionStatusTypes.
         print("XX")
-        # something["preferred_label"] = some.preferred_label  
-        something["preferred_label"] = some.preferred_label  
+        print(type(some))
+        something["status"] = str(some[0]).rsplit('.', 1)[1]
         print(something)
+    #Muista: lopuksi pitää kerätä ja koostaaa, appendeilla hoitaa yksi iso array, joka syötetään create_responselle, kuten something
+
 
     #SWAP
     # db.session.close()
