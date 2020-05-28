@@ -194,10 +194,17 @@ def get_selected_from_model_or_400(model: object, jotain: str) -> str:
     #     something["suggestion_type"] = str(some[0]).rsplit('.', 1)[1]
     #     print(something)
 
+    # 4)
     # OOKOO palauttaa kommenttien lukumäärän ehdotukselle x
-    something = Event.query.options(load_only("event_type")).with_entities(Event.event_type).filter(Event.event_type == 'COMMENT').filter(Event.suggestion_id == 5979).count()
-    print(something)
+    # something = {}
+    # something['comments_counted'] = Event.query.options(load_only("event_type")).filter(Event.event_type == 'COMMENT').filter(Event.suggestion_id == 5979).count()
+    # print(something)
 
+    # 5)
+    # OOKOO palauttaa suggestionien määrän
+    something = {}
+    something['suggestions_count'] = model.query.options(load_only("id")).with_entities(Suggestion.id).count()
+    
     # serialized_objects = {}
     # helper_dict = {}
     # content_array = []
@@ -241,8 +248,6 @@ def get_selected_from_model_or_400(model: object, jotain: str) -> str:
     # something = something.filter(Event.suggestion_id == 5979).count()
     # print(something)
 
-    # OOKOO palauttaa suggestionien määrän
-    # something = model.query.with_entities(Suggestion.id).count()
     # db.session.close()
 
     # OOKOO palauttaa preferred_labelit jsonina
