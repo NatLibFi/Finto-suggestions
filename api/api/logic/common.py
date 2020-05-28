@@ -161,233 +161,216 @@ def get_selected_from_model_or_400(model: object, jotain: str) -> str:
     s_created = True
     if s_created:
         # # 0.1) OOKOO palauttaa ehdotuksen luontihetken
-        somethingX = []
-        somethingY = {r for r in Suggestion.query.options(load_only("created")).with_entities(Suggestion.created).\
+        valueArray = []
+        iterHelper = {r for r in Suggestion.query.options(load_only("created")).with_entities(Suggestion.created).\
             filter(Suggestion.id == 5979)}
-        for some in somethingY:
+        for tempItem in iterHelper:
             print("XX")
-            print(type(some))
-            some_substring = str(some[0]).split(".", 1)[0]
-            some_substring = some_substring[1:-1] 
-            somethingX.append(some_substring)
-        result_to_be_finalised["created"] = somethingX
-        # print(result_to_be_finalised)
-        somethingX = []
+            print(type(tempItem))
+            tempItem_substring = str(tempItem[0]).split(".", 1)[0]
+            tempItem_substring = tempItem_substring[1:-1] 
+            valueArray.append(tempItem_substring)
+        result_to_be_finalised["created"] = valueArray
+        valueArray = []
 
     s_modified = True
     if s_modified:
     # 0.2) OOKOO palauttaa ehdotuksen muokkaushetken
-        # result_to_be_finalised = {}
-        somethingX = []
-        somethingY = {r for r in Suggestion.query.options(load_only("modified")).with_entities(Suggestion.modified).\
+        valueArray = []
+        iterHelper = {r for r in Suggestion.query.options(load_only("modified")).with_entities(Suggestion.modified).\
             filter(Suggestion.id == 5979)}
-        for some in somethingY:
+        for tempItem in iterHelper:
             print("XX")
-            print(type(some))
-            some_substring = str(some[0]).split(".", 1)[0]
-            some_substring = some_substring[1:-1] 
-            somethingX.append(some_substring)
-        result_to_be_finalised["modified"] = somethingX
-        # print(result_to_be_finalised)
-        somethingX = []
+            print(type(tempItem))
+            tempItem_substring = str(tempItem[0]).split(".", 1)[0]
+            tempItem_substring = tempItem_substring[1:-1] 
+            valueArray.append(tempItem_substring)
+        result_to_be_finalised["modified"] = valueArray
+        valueArray = []
 
     s_tags = True
     if s_tags:
     # 1)
     # OOKOO TAGS Palauttaa yhden suggestionin kaikkien tagien labelit
-        # result_to_be_finalised = {}
-        somethingX = []
-        somethingY = {r for r in SuggestionTag.query.options(load_only("tag_label")).\
+        valueArray = []
+        iterHelper = {r for r in SuggestionTag.query.options(load_only("tag_label")).\
             filter(SuggestionTag.suggestion_id == 5979)}
-        for some in somethingY:
+        for tempItem in iterHelper:
             print("XX")
-            print(type(some))
-            somethingX.append(str(some).split(" ", 1)[1][:-1])
-        result_to_be_finalised["tags"] = somethingX
-        # print(result_to_be_finalised)
-        somethingX = []
+            print(type(tempItem))
+            valueArray.append(str(tempItem).split(" ", 1)[1][:-1])
+        result_to_be_finalised["tags"] = valueArray
+        valueArray = []
 
     s_status = True
     if s_status:
     # 2)
     # OOKOO Palauttaa yhden suggestionin statuksen
-        # result_to_be_finalised = {}
-        somethingX = []
-        somethingY = {r for r in Suggestion.query.options(load_only("status")).with_entities(Suggestion.status).filter(Suggestion.id == 5979)}
-        print(somethingY)
+        valueArray = []
+        iterHelper = {r for r in Suggestion.query.options(load_only("status")).with_entities(Suggestion.status).filter(Suggestion.id == 5979)}
+        print(iterHelper)
         print("000000000000000000000000000000000000")
-        for some in somethingY:
-            # SuggestionStatusTypes.
+        for tempItem in iterHelper:
             print("XX")
-            print(type(some))
-            somethingX.append(str(some[0]).rsplit('.', 1)[1])
-            # something["status"] = str(some[0]).rsplit('.', 1)[1]
-        result_to_be_finalised["status"] = somethingX[0]
-        # print(result_to_be_finalised)
+            print(type(tempItem))
+            valueArray.append(str(tempItem[0]).rsplit('.', 1)[1])
+        result_to_be_finalised["status"] = valueArray[0]
     # ------
     s_type = True
     if s_type:
     # 3)
     # OOKOO Palauttaa yhden suggestionin tyypin
-        # result_to_be_finalised = {}
-        somethingY = {r for r in Suggestion.query.options(load_only("suggestion_type")).with_entities(Suggestion.suggestion_type).filter(Suggestion.id == 5979)}
+        iterHelper = {r for r in Suggestion.query.options(load_only("suggestion_type")).with_entities(Suggestion.suggestion_type).filter(Suggestion.id == 5979)}
         print("000000000000000000000000000000000000")
-        for some in somethingY:
-            # SuggestionTypes.
+        for tempItem in iterHelper:
             print("XX")
-            print(type(some))
-            result_to_be_finalised["suggestion_type"] = str(some[0]).rsplit('.', 1)[1]
-            # print(result_to_be_finalised)
+            print(type(tempItem))
+            result_to_be_finalised["suggestion_type"] = str(tempItem[0]).rsplit('.', 1)[1]
 
     s_comments_counted = True
     if s_comments_counted:
     # 4)
     # OOKOO palauttaa kommenttien lukumäärän ehdotukselle x
-        # result_to_be_finalised = {}
         result_to_be_finalised['comments_counted'] = Event.query.options(load_only("event_type")).filter(Event.event_type == 'COMMENT').filter(Event.suggestion_id == 5979).count()
-        # print(result_to_be_finalised)
 
     s_preferred_label = True
     if s_preferred_label:
     # 5)
     # OOKOO palauttaa preferred_labelin oikein (Saadaan ehdotuksen nimi id:llä oikein frontissakin)
-        # result_to_be_finalised = {}
-        somethingX = [r for r in Suggestion.query.options(load_only("id", "preferred_label")).filter(Suggestion.id == 5979)]
+        valueArray = [r for r in Suggestion.query.options(load_only("id", "preferred_label")).filter(Suggestion.id == 5979)]
         print("000000000000000000000000000000000000")
-        for some in somethingX:
+        for tempItem in valueArray:
             print("XX")
-            result_to_be_finalised["preferred_label"] = some.preferred_label
-            # something.pop("url")
+            result_to_be_finalised["preferred_label"] = tempItem.preferred_label
+            # tempItemthing.pop("url")
             # print(result_to_be_finalised)
 
     s_ids = True
     if s_ids:
     # 6) OOKOO palauttaa ehdotusten haun offsetin ja limitin mukaisesti id-listan
-        # result_to_be_finalised = {}
-        somethingY = []
-        somethingX = []
-        somethingY = [r for r in Suggestion.query.options(load_only("id")).with_entities(Suggestion.id).limit(25).offset(25)]
-        for some in somethingY:
+        iterHelper = []
+        valueArray = []
+        iterHelper = [r for r in Suggestion.query.options(load_only("id")).with_entities(Suggestion.id).limit(25).offset(25)]
+        for tempItem in iterHelper:
             print("XX")
-            print(type(some))
-            somethingX.append(some[0]) 
-        result_to_be_finalised["ids"] = somethingX
+            print(type(tempItem))
+            valueArray.append(tempItem[0]) 
+        result_to_be_finalised["ids"] = valueArray
 
     s_count = True
     if s_count:
     # 7)
     # OOKOO palauttaa suggestionien määrän
-        # result_to_be_finalised = {}
         result_to_be_finalised['suggestions_count'] = model.query.options(load_only("id")).with_entities(Suggestion.id).count()
     
 
 # Backup-alue alkaa
 
     # # 0.1) OOKOO palauttaa ehdotuksen luontihetken
-    # something = {}
-    # somethingX = []
-    # somethingY = {r for r in Suggestion.query.options(load_only("created")).with_entities(Suggestion.created).\
+    # tempItemthing = {}
+    # valueArray = []
+    # iterHelper = {r for r in Suggestion.query.options(load_only("created")).with_entities(Suggestion.created).\
     #     filter(Suggestion.id == 5979)}
-    # for some in somethingY:
+    # for tempItem in iterHelper:
     #     print("XX")
-    #     print(type(some))
-    #     some_substring = str(some[0]).split(".", 1)[0]
-    #     some_substring = some_substring[1:-1] 
-    #     somethingX.append(some_substring)
-    # something["created"] = somethingX
-    # print(something)
-    # somethingX = []
+    #     print(type(tempItem))
+    #     tempItem_substring = str(tempItem[0]).split(".", 1)[0]
+    #     tempItem_substring = tempItem_substring[1:-1] 
+    #     valueArray.append(tempItem_substring)
+    # tempItemthing["created"] = valueArray
+    # print(tempItemthing)
+    # valueArray = []
 
 # 0.2) OOKOO palauttaa ehdotuksen muokkaushetken
-    # something = {}
-    # somethingX = []
-    # somethingY = {r for r in Suggestion.query.options(load_only("modified")).with_entities(Suggestion.modified).\
+    # tempItemthing = {}
+    # valueArray = []
+    # iterHelper = {r for r in Suggestion.query.options(load_only("modified")).with_entities(Suggestion.modified).\
     #     filter(Suggestion.id == 5979)}
-    # for some in somethingY:
+    # for tempItem in iterHelper:
     #     print("XX")
-    #     print(type(some))
-    #     some_substring = str(some[0]).split(".", 1)[0]
-    #     some_substring = some_substring[1:-1] 
-    #     somethingX.append(some_substring)
-    # something["modified"] = somethingX
-    # print(something)
-    # somethingX = []
+    #     print(type(tempItem))
+    #     tempItem_substring = str(tempItem[0]).split(".", 1)[0]
+    #     tempItem_substring = tempItem_substring[1:-1] 
+    #     valueArray.append(tempItem_substring)
+    # tempItemthing["modified"] = valueArray
+    # print(tempItemthing)
+    # valueArray = []
 
 
     # 1)
     # # OOKOO TAGS Palauttaa yhden suggestionin kaikkien tagien labelit
-    # something = {}
-    # somethingX = []
-    # somethingY = {r for r in SuggestionTag.query.options(load_only("tag_label")).\
+    # tempItemthing = {}
+    # valueArray = []
+    # iterHelper = {r for r in SuggestionTag.query.options(load_only("tag_label")).\
     #     filter(SuggestionTag.suggestion_id == 5979)}
-    # for some in somethingY:
+    # for tempItem in iterHelper:
     #     print("XX")
-    #     print(type(some))
-    #     somethingX.append(str(some).split(" ", 1)[1][:-1])
-    # something["tags"] = somethingX
-    # print(something)
-    # somethingX = []
+    #     print(type(tempItem))
+    #     valueArray.append(str(tempItem).split(" ", 1)[1][:-1])
+    # tempItemthing["tags"] = valueArray
+    # print(tempItemthing)
+    # valueArray = []
 
     # 2)
     # OOKOO Palauttaa yhden suggestionin statuksen
-    # something = {}
-    # somethingX = []
-    # somethingY = {r for r in Suggestion.query.options(load_only("status")).with_entities(Suggestion.status).filter(Suggestion.id == 5979)}
-    # print(somethingY)
+    # tempItemthing = {}
+    # valueArray = []
+    # iterHelper = {r for r in Suggestion.query.options(load_only("status")).with_entities(Suggestion.status).filter(Suggestion.id == 5979)}
+    # print(iterHelper)
     # print("000000000000000000000000000000000000")
-    # for some in somethingY:
+    # for tempItem in iterHelper:
     #     # SuggestionStatusTypes.
     #     print("XX")
-    #     print(type(some))
-    #     somethingX.append(str(some[0]).rsplit('.', 1)[1])
-    #     # something["status"] = str(some[0]).rsplit('.', 1)[1]
-    # something["status"] = somethingX[0]
-    # print(something)
+    #     print(type(tempItem))
+    #     valueArray.append(str(tempItem[0]).rsplit('.', 1)[1])
+    #     # tempItemthing["status"] = str(tempItem[0]).rsplit('.', 1)[1]
+    # tempItemthing["status"] = valueArray[0]
+    # print(tempItemthing)
 
     # 3)
     # OOKOO Palauttaa yhden suggestionin tyypin
-    # something = {}
-    # somethingY = {r for r in Suggestion.query.options(load_only("suggestion_type")).with_entities(Suggestion.suggestion_type).filter(Suggestion.id == 5979)}
+    # tempItemthing = {}
+    # iterHelper = {r for r in Suggestion.query.options(load_only("suggestion_type")).with_entities(Suggestion.suggestion_type).filter(Suggestion.id == 5979)}
     # print("000000000000000000000000000000000000")
-    # for some in somethingY:
+    # for tempItem in iterHelper:
     #     # SuggestionTypes.
     #     print("XX")
-    #     print(type(some))
-    #     something["suggestion_type"] = str(some[0]).rsplit('.', 1)[1]
-    #     print(something)
+    #     print(type(tempItem))
+    #     tempItemthing["suggestion_type"] = str(tempItem[0]).rsplit('.', 1)[1]
+    #     print(tempItemthing)
 
     # 4)
     # OOKOO palauttaa kommenttien lukumäärän ehdotukselle x
-    # something = {}
-    # something['comments_counted'] = Event.query.options(load_only("event_type")).filter(Event.event_type == 'COMMENT').filter(Event.suggestion_id == 5979).count()
-    # print(something)
+    # tempItemthing = {}
+    # tempItemthing['comments_counted'] = Event.query.options(load_only("event_type")).filter(Event.event_type == 'COMMENT').filter(Event.suggestion_id == 5979).count()
+    # print(tempItemthing)
 
     # 5)
     # OOKOO palauttaa preferred_labelin oikein (Saadaan ehdotuksen nimi id:llä oikein frontissakin)
-    # something = {}
-    # somethingX = [r for r in Suggestion.query.options(load_only("id", "preferred_label")).filter(Suggestion.id == 5979)]
+    # tempItemthing = {}
+    # valueArray = [r for r in Suggestion.query.options(load_only("id", "preferred_label")).filter(Suggestion.id == 5979)]
     # print("000000000000000000000000000000000000")
-    # for some in somethingX:
+    # for tempItem in valueArray:
     #     print("XX")
-    #     something["preferred_label"] = some.preferred_label
-    #     # something.pop("url")
-    #     print(something)
+    #     tempItemthing["preferred_label"] = tempItem.preferred_label
+    #     # tempItemthing.pop("url")
+    #     print(tempItemthing)
 
     # 6) OOKOO palauttaa ehdotusten hauen offsetin ja limitin mukaisesti id-listan
-    # something = {}
-    # somethingY = []
-    # somethingX = []
-    # somethingY = [r for r in Suggestion.query.options(load_only("id")).with_entities(Suggestion.id).limit(25).offset(25)]
-    # for some in somethingY:
+    # tempItemthing = {}
+    # iterHelper = []
+    # valueArray = []
+    # iterHelper = [r for r in Suggestion.query.options(load_only("id")).with_entities(Suggestion.id).limit(25).offset(25)]
+    # for tempItem in iterHelper:
     #     print("XX")
-    #     print(type(some))
-    #     somethingX.append(some[0]) 
-    # something["ids"] = somethingX
+    #     print(type(tempItem))
+    #     valueArray.append(tempItem[0]) 
+    # tempItemthing["ids"] = valueArray
 
     # 7)
     # OOKOO palauttaa suggestionien määrän
-    # something = {}
-    # something['suggestions_count'] = model.query.options(load_only("id")).with_entities(Suggestion.id).count()
+    # tempItemthing = {}
+    # tempItemthing['suggestions_count'] = model.query.options(load_only("id")).with_entities(Suggestion.id).count()
 
 # Backup-alue loppuu
 
@@ -415,13 +398,13 @@ def get_selected_from_model_or_400(model: object, jotain: str) -> str:
     # load_only: https://docs.sqlalchemy.org/en/13/orm/loading_columns.html#sqlalchemy.orm.load_only
 
     # OOOKOO palauttaa modelin (esim Events) lukumäärän
-    # something = model.query.with_entities(model.id).count()
+    # tempItemthing = model.query.with_entities(model.id).count()
     
     # OOOKOO palauttaa 25 kpl kommenttikenttiä ilman model-viittausta 
-    # something = [r.event_type for r in db.session.query(Event).limit(25)]
+    # tempItemthing = [r.event_type for r in db.session.query(Event).limit(25)]
     
     # OOKOO palauttaa 25 kpl kommenttikenttiä
-    # something = [r.text for r in db.session.query(model).limit(25)]
+    # tempItemthing = [r.text for r in db.session.query(model).limit(25)]
     # db.session.close()
     
     # db.session.close()
@@ -434,22 +417,22 @@ def get_selected_from_model_or_400(model: object, jotain: str) -> str:
     # Example - given a class User, load only the name and fullname attributes:
     # session.query(User).options(load_only("name", "fullname"))
 
-    # something = Event.query.options(load_only("event_type"))
-    # something = something.filter(Event.event_type == 'COMMENT')
-    # something = something.filter(Event.suggestion_id == 5979).count()
-    # print(something)
+    # tempItemthing = Event.query.options(load_only("event_type"))
+    # tempItemthing = tempItemthing.filter(Event.event_type == 'COMMENT')
+    # tempItemthing = tempItemthing.filter(Event.suggestion_id == 5979).count()
+    # print(tempItemthing)
 
     # db.session.close()
 
     # OOKOO palauttaa preferred_labelit jsonina
-    # something = [r.preferred_label for r in db.session.query(Suggestion).limit(25)]
+    # tempItemthing = [r.preferred_label for r in db.session.query(Suggestion).limit(25)]
     # db.session.close()
     # IMPORTANT server_dict = {k:v for d in server_list for k,v in d.items()}
 
 
-    #Muista: lopuksi pitää kerätä ja koostaaa, appendeilla hoitaa yksi iso array, joka syötetään create_responselle, kuten something
+    #Muista: lopuksi pitää kerätä ja koostaaa, appendeilla hoitaa yksi iso array, joka syötetään create_responselle, kuten tempItemthing
 
-    #Muista: lopuksi pitää kerätä ja koostaaa, appendeilla hoitaa yksi iso array, joka syötetään create_responselle, kuten something
+    #Muista: lopuksi pitää kerätä ja koostaaa, appendeilla hoitaa yksi iso array, joka syötetään create_responselle, kuten tempItemthing
 
 
 
@@ -624,7 +607,7 @@ def patch_or_404(model: object, primary_key: int, payload: Dict) -> str:
 
     verify_user_access_to_resource(db_obj)
 
-    # make sure that the `id` and `created` fisomething = model.query.with_entities(model.id).count()elds never get updated
+    # make sure that the `id` and `created` fitempItemthing = model.query.with_entities(model.id).count()elds never get updated
     payload.pop("id", None)
     payload.pop("created", None)
 
