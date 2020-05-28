@@ -152,6 +152,137 @@ def get_selected_from_model_or_400(model: object, jotain: str) -> str:
     print("||||||||||||||||||||||||||||||")
     print("||||||||||||||||||||||||||||||")
 
+    result_to_be_finalised = {}
+
+    s_id = 5979
+    if s_id > 0:
+        result_to_be_finalised["id"] = s_id
+
+    s_created = True
+    if s_created:
+        # # 0.1) OOKOO palauttaa ehdotuksen luontihetken
+        somethingX = []
+        somethingY = {r for r in Suggestion.query.options(load_only("created")).with_entities(Suggestion.created).\
+            filter(Suggestion.id == 5979)}
+        for some in somethingY:
+            print("XX")
+            print(type(some))
+            some_substring = str(some[0]).split(".", 1)[0]
+            some_substring = some_substring[1:-1] 
+            somethingX.append(some_substring)
+        result_to_be_finalised["created"] = somethingX
+        # print(result_to_be_finalised)
+        somethingX = []
+
+    s_modified = True
+    if s_modified:
+    # 0.2) OOKOO palauttaa ehdotuksen muokkaushetken
+        # result_to_be_finalised = {}
+        somethingX = []
+        somethingY = {r for r in Suggestion.query.options(load_only("modified")).with_entities(Suggestion.modified).\
+            filter(Suggestion.id == 5979)}
+        for some in somethingY:
+            print("XX")
+            print(type(some))
+            some_substring = str(some[0]).split(".", 1)[0]
+            some_substring = some_substring[1:-1] 
+            somethingX.append(some_substring)
+        result_to_be_finalised["modified"] = somethingX
+        # print(result_to_be_finalised)
+        somethingX = []
+
+    s_tags = True
+    if s_tags:
+    # 1)
+    # OOKOO TAGS Palauttaa yhden suggestionin kaikkien tagien labelit
+        # result_to_be_finalised = {}
+        somethingX = []
+        somethingY = {r for r in SuggestionTag.query.options(load_only("tag_label")).\
+            filter(SuggestionTag.suggestion_id == 5979)}
+        for some in somethingY:
+            print("XX")
+            print(type(some))
+            somethingX.append(str(some).split(" ", 1)[1][:-1])
+        result_to_be_finalised["tags"] = somethingX
+        # print(result_to_be_finalised)
+        somethingX = []
+
+    s_status = True
+    if s_status:
+    # 2)
+    # OOKOO Palauttaa yhden suggestionin statuksen
+        # result_to_be_finalised = {}
+        somethingX = []
+        somethingY = {r for r in Suggestion.query.options(load_only("status")).with_entities(Suggestion.status).filter(Suggestion.id == 5979)}
+        print(somethingY)
+        print("000000000000000000000000000000000000")
+        for some in somethingY:
+            # SuggestionStatusTypes.
+            print("XX")
+            print(type(some))
+            somethingX.append(str(some[0]).rsplit('.', 1)[1])
+            # something["status"] = str(some[0]).rsplit('.', 1)[1]
+        result_to_be_finalised["status"] = somethingX[0]
+        # print(result_to_be_finalised)
+    # ------
+    s_type = True
+    if s_type:
+    # 3)
+    # OOKOO Palauttaa yhden suggestionin tyypin
+        # result_to_be_finalised = {}
+        somethingY = {r for r in Suggestion.query.options(load_only("suggestion_type")).with_entities(Suggestion.suggestion_type).filter(Suggestion.id == 5979)}
+        print("000000000000000000000000000000000000")
+        for some in somethingY:
+            # SuggestionTypes.
+            print("XX")
+            print(type(some))
+            result_to_be_finalised["suggestion_type"] = str(some[0]).rsplit('.', 1)[1]
+            # print(result_to_be_finalised)
+
+    s_comments_counted = True
+    if s_comments_counted:
+    # 4)
+    # OOKOO palauttaa kommenttien lukumäärän ehdotukselle x
+        # result_to_be_finalised = {}
+        result_to_be_finalised['comments_counted'] = Event.query.options(load_only("event_type")).filter(Event.event_type == 'COMMENT').filter(Event.suggestion_id == 5979).count()
+        # print(result_to_be_finalised)
+
+    s_preferred_label = True
+    if s_preferred_label:
+    # 5)
+    # OOKOO palauttaa preferred_labelin oikein (Saadaan ehdotuksen nimi id:llä oikein frontissakin)
+        # result_to_be_finalised = {}
+        somethingX = [r for r in Suggestion.query.options(load_only("id", "preferred_label")).filter(Suggestion.id == 5979)]
+        print("000000000000000000000000000000000000")
+        for some in somethingX:
+            print("XX")
+            result_to_be_finalised["preferred_label"] = some.preferred_label
+            # something.pop("url")
+            # print(result_to_be_finalised)
+
+    s_ids = True
+    if s_ids:
+    # 6) OOKOO palauttaa ehdotusten haun offsetin ja limitin mukaisesti id-listan
+        # result_to_be_finalised = {}
+        somethingY = []
+        somethingX = []
+        somethingY = [r for r in Suggestion.query.options(load_only("id")).with_entities(Suggestion.id).limit(25).offset(25)]
+        for some in somethingY:
+            print("XX")
+            print(type(some))
+            somethingX.append(some[0]) 
+        result_to_be_finalised["ids"] = somethingX
+
+    s_count = True
+    if s_count:
+    # 7)
+    # OOKOO palauttaa suggestionien määrän
+        # result_to_be_finalised = {}
+        result_to_be_finalised['suggestions_count'] = model.query.options(load_only("id")).with_entities(Suggestion.id).count()
+    
+
+# Backup-alue alkaa
+
     # # 0.1) OOKOO palauttaa ehdotuksen luontihetken
     # something = {}
     # somethingX = []
@@ -168,19 +299,19 @@ def get_selected_from_model_or_400(model: object, jotain: str) -> str:
     # somethingX = []
 
 # 0.2) OOKOO palauttaa ehdotuksen muokkaushetken
-    something = {}
-    somethingX = []
-    somethingY = {r for r in Suggestion.query.options(load_only("modified")).with_entities(Suggestion.modified).\
-        filter(Suggestion.id == 5979)}
-    for some in somethingY:
-        print("XX")
-        print(type(some))
-        some_substring = str(some[0]).split(".", 1)[0]
-        some_substring = some_substring[1:-1] 
-        somethingX.append(some_substring)
-    something["modified"] = somethingX
-    print(something)
-    somethingX = []
+    # something = {}
+    # somethingX = []
+    # somethingY = {r for r in Suggestion.query.options(load_only("modified")).with_entities(Suggestion.modified).\
+    #     filter(Suggestion.id == 5979)}
+    # for some in somethingY:
+    #     print("XX")
+    #     print(type(some))
+    #     some_substring = str(some[0]).split(".", 1)[0]
+    #     some_substring = some_substring[1:-1] 
+    #     somethingX.append(some_substring)
+    # something["modified"] = somethingX
+    # print(something)
+    # somethingX = []
 
 
     # 1)
@@ -257,8 +388,13 @@ def get_selected_from_model_or_400(model: object, jotain: str) -> str:
     # OOKOO palauttaa suggestionien määrän
     # something = {}
     # something['suggestions_count'] = model.query.options(load_only("id")).with_entities(Suggestion.id).count()
-    
-    
+
+# Backup-alue loppuu
+
+
+
+
+
     
     # serialized_objects = {}
     # helper_dict = {}
@@ -321,7 +457,8 @@ def get_selected_from_model_or_400(model: object, jotain: str) -> str:
     # db.session.close()
 
     print("YY")
-    return create_response(something, 200)
+    # print(result_to_be_finalised)
+    return create_response(result_to_be_finalised, 200)
 
 # AAA https://docs.sqlalchemy.org/en/13/orm/tutorial.html
     
