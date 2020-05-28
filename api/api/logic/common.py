@@ -152,6 +152,51 @@ def get_selected_from_model_or_400(model: object, jotain: str) -> str:
     print("||||||||||||||||||||||||||||||")
     print("||||||||||||||||||||||||||||||")
 
+    # 1)
+    # # OOKOO TAGS Palauttaa yhden suggestionin kaikkien tagien labelit
+    # something = {}
+    # somethingX = []
+    # somethingY = {r for r in SuggestionTag.query.options(load_only("tag_label")).\
+    #     filter(SuggestionTag.suggestion_id == 5979)}
+    # for some in somethingY:
+    #     print("XX")
+    #     print(type(some))
+    #     somethingX.append(str(some).split(" ", 1)[1][:-1])
+    # something["tags"] = somethingX
+    # print(something)
+    # somethingX = []
+
+    # 2)
+    # OOKOO Palauttaa yhden suggestionin statuksen
+    # something = {}
+    # somethingX = []
+    # somethingY = {r for r in Suggestion.query.options(load_only("status")).with_entities(Suggestion.status).filter(Suggestion.id == 5979)}
+    # print(somethingY)
+    # print("000000000000000000000000000000000000")
+    # for some in somethingY:
+    #     # SuggestionStatusTypes.
+    #     print("XX")
+    #     print(type(some))
+    #     somethingX.append(str(some[0]).rsplit('.', 1)[1])
+    #     # something["status"] = str(some[0]).rsplit('.', 1)[1]
+    # something["status"] = somethingX[0]
+    # print(something)
+
+    # 3)
+    # OOKOO Palauttaa yhden suggestionin tyypin
+    # something = {}
+    # somethingY = {r for r in Suggestion.query.options(load_only("suggestion_type")).with_entities(Suggestion.suggestion_type).filter(Suggestion.id == 5979)}
+    # print("000000000000000000000000000000000000")
+    # for some in somethingY:
+    #     # SuggestionTypes.
+    #     print("XX")
+    #     print(type(some))
+    #     something["suggestion_type"] = str(some[0]).rsplit('.', 1)[1]
+    #     print(something)
+
+    # OOKOO palauttaa kommenttien lukumäärän ehdotukselle x
+    something = Event.query.options(load_only("event_type")).with_entities(Event.event_type).filter(Event.event_type == 'COMMENT').filter(Event.suggestion_id == 5979).count()
+    print(something)
 
     # serialized_objects = {}
     # helper_dict = {}
@@ -181,9 +226,6 @@ def get_selected_from_model_or_400(model: object, jotain: str) -> str:
     # something = [r.text for r in db.session.query(model).limit(25)]
     # db.session.close()
     
-    # OOKOO palauttaa kommenttien lukumäärän ehdotukselle x
-    # something = Event.query.with_entities(Event.event_type).filter(Event.event_type == 'COMMENT').filter(Event.suggestion_id == 5979).count()
-    # print(something)
     # db.session.close()
 
     # TÄMÄ ON OLEELLISIN POINTTI!
@@ -218,44 +260,10 @@ def get_selected_from_model_or_400(model: object, jotain: str) -> str:
     #     something["preferred_label"] = some.preferred_label  
     #     print(something)
 
-    # OOKOO Palauttaa yhden suggestionin statuksen
-    # something = {}
-    # somethingX = {}
-    # somethingY = {r for r in Suggestion.query.with_entities(Suggestion.status).filter(Suggestion.id == 7771)}
-    # print("000000000000000000000000000000000000")
-    # for some in somethingY:
-    #     # SuggestionStatusTypes.
-    #     print("XX")
-    #     print(type(some))
-    #     something["status"] = str(some[0]).rsplit('.', 1)[1]
-    #     print(something)
     #Muista: lopuksi pitää kerätä ja koostaaa, appendeilla hoitaa yksi iso array, joka syötetään create_responselle, kuten something
 
-    # OOKOO Palauttaa yhden suggestionin tyypin
-    # something = {}
-    # somethingX = {}
-    # somethingY = {r for r in Suggestion.query.with_entities(Suggestion.suggestion_type).filter(Suggestion.id == 7771)}
-    # print("000000000000000000000000000000000000")
-    # for some in somethingY:
-    #     # SuggestionTypes.
-    #     print("XX")
-    #     print(type(some))
-    #     something["suggestion_type"] = str(some[0]).rsplit('.', 1)[1]
-    #     print(something)
     #Muista: lopuksi pitää kerätä ja koostaaa, appendeilla hoitaa yksi iso array, joka syötetään create_responselle, kuten something
 
-    # OOKOO Palauttaa yhden suggestionin kaikkien tagien labelit
-    something = {}
-    somethingX = []
-    somethingY = {r for r in SuggestionTag.query.options(load_only("tag_label")).\
-        filter(SuggestionTag.suggestion_id == 5979)}
-    for some in somethingY:
-        print("XX")
-        print(type(some))
-        somethingX.append(str(some).split(" ", 1)[1][:-1])
-    something["tags"] = somethingX
-    print(something)
-    somethingX = []
 
 
     #SWAP
