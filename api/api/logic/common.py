@@ -152,6 +152,37 @@ def get_selected_from_model_or_400(model: object, jotain: str) -> str:
     print("||||||||||||||||||||||||||||||")
     print("||||||||||||||||||||||||||||||")
 
+    # # 0.1) OOKOO palauttaa ehdotuksen luontihetken
+    # something = {}
+    # somethingX = []
+    # somethingY = {r for r in Suggestion.query.options(load_only("created")).with_entities(Suggestion.created).\
+    #     filter(Suggestion.id == 5979)}
+    # for some in somethingY:
+    #     print("XX")
+    #     print(type(some))
+    #     some_substring = str(some[0]).split(".", 1)[0]
+    #     some_substring = some_substring[1:-1] 
+    #     somethingX.append(some_substring)
+    # something["created"] = somethingX
+    # print(something)
+    # somethingX = []
+
+# 0.2) OOKOO palauttaa ehdotuksen muokkaushetken
+    something = {}
+    somethingX = []
+    somethingY = {r for r in Suggestion.query.options(load_only("modified")).with_entities(Suggestion.modified).\
+        filter(Suggestion.id == 5979)}
+    for some in somethingY:
+        print("XX")
+        print(type(some))
+        some_substring = str(some[0]).split(".", 1)[0]
+        some_substring = some_substring[1:-1] 
+        somethingX.append(some_substring)
+    something["modified"] = somethingX
+    print(something)
+    somethingX = []
+
+
     # 1)
     # # OOKOO TAGS Palauttaa yhden suggestionin kaikkien tagien labelit
     # something = {}
@@ -201,9 +232,33 @@ def get_selected_from_model_or_400(model: object, jotain: str) -> str:
     # print(something)
 
     # 5)
+    # OOKOO palauttaa preferred_labelin oikein (Saadaan ehdotuksen nimi id:llä oikein frontissakin)
+    # something = {}
+    # somethingX = [r for r in Suggestion.query.options(load_only("id", "preferred_label")).filter(Suggestion.id == 5979)]
+    # print("000000000000000000000000000000000000")
+    # for some in somethingX:
+    #     print("XX")
+    #     something["preferred_label"] = some.preferred_label
+    #     # something.pop("url")
+    #     print(something)
+
+    # 6) OOKOO palauttaa ehdotusten hauen offsetin ja limitin mukaisesti id-listan
+    # something = {}
+    # somethingY = []
+    # somethingX = []
+    # somethingY = [r for r in Suggestion.query.options(load_only("id")).with_entities(Suggestion.id).limit(25).offset(25)]
+    # for some in somethingY:
+    #     print("XX")
+    #     print(type(some))
+    #     somethingX.append(some[0]) 
+    # something["ids"] = somethingX
+
+    # 7)
     # OOKOO palauttaa suggestionien määrän
-    something = {}
-    something['suggestions_count'] = model.query.options(load_only("id")).with_entities(Suggestion.id).count()
+    # something = {}
+    # something['suggestions_count'] = model.query.options(load_only("id")).with_entities(Suggestion.id).count()
+    
+    
     
     # serialized_objects = {}
     # helper_dict = {}
@@ -255,15 +310,6 @@ def get_selected_from_model_or_400(model: object, jotain: str) -> str:
     # db.session.close()
     # IMPORTANT server_dict = {k:v for d in server_list for k,v in d.items()}
 
-    # OOKOO palauttaa preferred_labelin oikein (Saadaan ehdotuksen nimi id:llä oikein frontissakin)
-    # something = {}
-    # somethingX = [r for r in Suggestion.query.filter(Suggestion.id == 7771)]
-    # print("000000000000000000000000000000000000")
-    # for some in somethingX:
-    #     print("XX")
-    #     # something["preferred_label"] = some.preferred_label  
-    #     something["preferred_label"] = some.preferred_label  
-    #     print(something)
 
     #Muista: lopuksi pitää kerätä ja koostaaa, appendeilla hoitaa yksi iso array, joka syötetään create_responselle, kuten something
 
