@@ -127,17 +127,20 @@ def getTestQuery(model: object) -> db.Query:
     return db.Query
 
 def get_suggestions_minimums(limit: int = 0, offset: int = 0) -> str:
-    print("*************************************")
+    """
+    Returns selected suggestions.
+
+    Request query can be limited with additional parameters.
+
+    :param limit: Cap the results to :limit: results
+    :param offset: Start the query from offset (e.g. for paging)
+    """
     
     tempArray = []
     imitateArray = [35,43,45,49,44,36,41,29,42,30,28,48,38,2,32,37,40,46,47,34,31,33,39,27,26,25] 
     # imitateArray = [4874, 8126, 8098, 8091, 5314, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49]
-    print("AAAAAAAAAAAAAAAAAAAAAAAAAAaa")
     for suggestion_id in imitateArray:
         tempArray.append(get_selected_from_model_or_400(suggestion_id, limit, offset))
-    # print(create_response(tempArray, 200))
-    print("*************************************")
-    # tempArray = []
     return create_response(tempArray, 200)
 
 
