@@ -7,7 +7,8 @@ from ..authentication import admin_only
 from .validators import suggestion_parameter_validator, suggestion_id_validator, _error_messagify
 # pylint: disable=unused-import
 from .common import (create_response, get_one_or_404, get_all_or_400, get_all_or_400_custom,
-                     get_count_or_400_custom, create_or_400, delete_or_404, patch_or_404, update_or_404)
+                     get_count_or_400_custom, create_or_400, delete_or_404, patch_or_404, update_or_404,
+                     get_selected_from_model_or_400)
 # pylint: enable=unused-import
 from .utils import SUGGESTION_FILTER_FUNCTIONS, SUGGESTION_SORT_FUNCTIONS
 from ..models import db, Suggestion, Tag, User, Event
@@ -138,10 +139,57 @@ def get_suggestions(limit: int = 0, offset: int = 0, filters: str = "", search: 
     :param sort: Sort the results before returning them
     :returns: All suggestion matching the query in json format
     """
+    print("*************************************")
+    
+    tempArray = []
+    tempDict = {}
+    imitateArray = [4874, 8126, 8098, 8091, 5314, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49]
+    # testDict = get_selected_from_model_or_400(sugg_id: 0, limit: int, offset: int)
+    print("AAAAAAAAAAAAAAAAAAAAAAAAAAaa")
+    # print("testDictin tyyppi")
+    # print(type(testDict))
+    # print("imitateArrayn tyyppi")
+    # print(type(imitateArray))
+    # print(imitateArray)
+    for suggestion_id in imitateArray:
+        tempArray.append(get_selected_from_model_or_400(suggestion_id, 25, 25))
+        # print(suggestion_id)
+    # tempDict["datax"] = tempArray
+    print(create_response(tempArray, 200))
+    tempArray = []
+    # for itemsA in testDict:
+    #     print("itemsA:n tyyppi")
+    #     print(type(itemsA))
+    #     print(itemsA)
+
+
+
+
+
+    print("*************************************")
 
     query = getQuery(limit=limit, offset=offset, filters=filters, queryString=search, sort=sort)
 
     return  get_all_or_400_custom(query)
+
+
+# def get_suggestions(limit: int = 0, offset: int = 0, filters: str = "", search: str = "", sort: str = 'DEFAULT') -> str:
+#     """
+#     Returns all suggestions.
+
+#     Request query can be limited with additional parameters.
+
+#     :param limit: Cap the results to :limit: results
+#     :param offset: Start the query from offset (e.g. for paging)
+#     :param filters: Filter the results based on filter selections
+#     :param search: Filter the results based on search term
+#     :param sort: Sort the results before returning them
+#     :returns: All suggestion matching the query in json format
+#     """
+
+#     query = getQuery(limit=limit, offset=offset, filters=filters, queryString=search, sort=sort)
+
+#     return  get_all_or_400_custom(query)
 
 
 def get_suggestions_count(filters: str = "", search: str = "") -> str:

@@ -65,9 +65,9 @@ def get_all_or_400_custom(query) -> str:
         :returns: All columns matching the query or 400
     """
 # BBB
-    print("*************************************")
-    print(get_selected_from_model_or_400(Event, "moi"))
-    print("*************************************")
+    # print("*************************************")
+    # print(get_selected_from_model_or_400(Event, "moi"))
+    # print("*************************************")
 
     try:
         db_objs = query.all()
@@ -134,7 +134,8 @@ def get_selected_or_400(model: object):
     return create_response(None, 404, error_msg)
 
 # def get_selected_from_model_or_400(model: object, fieldNameArray: []):
-def get_selected_from_model_or_400(model: object, jotain: str) -> str:
+# def get_selected_from_model_or_400(model: object, jotain: str) -> str: # toimii
+def get_selected_from_model_or_400(sugg_id: 0, limit: int, offset: int) -> str:
     """
     Todo: Must be fixed to read selected entities as an argument
 
@@ -148,13 +149,28 @@ def get_selected_from_model_or_400(model: object, jotain: str) -> str:
     """
     # aaa
 
+    jotain = "moimoi"
+
     print("||||||||||||||||||||||||||||||")
     print("||||||||||||||||||||||||||||||")
     print("||||||||||||||||||||||||||||||")
+    print("*************************************")
+    print(jotain)
+    print("*************************************")
+    print(jotain)
+    print("*************************************")
+    print(jotain)
+    print("*************************************")
+    print(jotain)
+    print("*************************************")
+    print(jotain)
+    print("*************************************")
+    print(jotain)
 
     result_to_be_finalised = {}
 
-    s_id = 5979
+    # s_id = 5979
+    s_id = sugg_id
     if s_id > 0:
         result_to_be_finalised["id"] = s_id
 
@@ -163,10 +179,8 @@ def get_selected_from_model_or_400(model: object, jotain: str) -> str:
         # # 0.1) OOKOO palauttaa ehdotuksen luontihetken
         valueArray = []
         iterHelper = {r for r in Suggestion.query.options(load_only("created")).with_entities(Suggestion.created).\
-            filter(Suggestion.id == 5979)}
+            filter(Suggestion.id == sugg_id)}
         for tempItem in iterHelper:
-            print("XX")
-            print(type(tempItem))
             tempItem_substring = str(tempItem[0]).split(".", 1)[0]
             tempItem_substring = tempItem_substring[1:-1] 
             valueArray.append(tempItem_substring)
@@ -178,10 +192,8 @@ def get_selected_from_model_or_400(model: object, jotain: str) -> str:
     # 0.2) OOKOO palauttaa ehdotuksen muokkaushetken
         valueArray = []
         iterHelper = {r for r in Suggestion.query.options(load_only("modified")).with_entities(Suggestion.modified).\
-            filter(Suggestion.id == 5979)}
+            filter(Suggestion.id == sugg_id)}
         for tempItem in iterHelper:
-            print("XX")
-            print(type(tempItem))
             tempItem_substring = str(tempItem[0]).split(".", 1)[0]
             tempItem_substring = tempItem_substring[1:-1] 
             valueArray.append(tempItem_substring)
@@ -194,10 +206,8 @@ def get_selected_from_model_or_400(model: object, jotain: str) -> str:
     # OOKOO TAGS Palauttaa yhden suggestionin kaikkien tagien labelit
         valueArray = []
         iterHelper = {r for r in SuggestionTag.query.options(load_only("tag_label")).\
-            filter(SuggestionTag.suggestion_id == 5979)}
+            filter(SuggestionTag.suggestion_id == sugg_id)}
         for tempItem in iterHelper:
-            print("XX")
-            print(type(tempItem))
             valueArray.append(str(tempItem).split(" ", 1)[1][:-1])
         result_to_be_finalised["tags"] = valueArray
         valueArray = []
@@ -207,61 +217,52 @@ def get_selected_from_model_or_400(model: object, jotain: str) -> str:
     # 2)
     # OOKOO Palauttaa yhden suggestionin statuksen
         valueArray = []
-        iterHelper = {r for r in Suggestion.query.options(load_only("status")).with_entities(Suggestion.status).filter(Suggestion.id == 5979)}
-        print(iterHelper)
-        print("000000000000000000000000000000000000")
+        iterHelper = {r for r in Suggestion.query.options(load_only("status")).with_entities(Suggestion.status).filter(Suggestion.id == sugg_id)}
         for tempItem in iterHelper:
-            print("XX")
-            print(type(tempItem))
             valueArray.append(str(tempItem[0]).rsplit('.', 1)[1])
         result_to_be_finalised["status"] = valueArray[0]
+        valueArray = []
     # ------
     s_type = True
     if s_type:
     # 3)
     # OOKOO Palauttaa yhden suggestionin tyypin
-        iterHelper = {r for r in Suggestion.query.options(load_only("suggestion_type")).with_entities(Suggestion.suggestion_type).filter(Suggestion.id == 5979)}
-        print("000000000000000000000000000000000000")
+        iterHelper = {r for r in Suggestion.query.options(load_only("suggestion_type")).with_entities(Suggestion.suggestion_type).filter(Suggestion.id == sugg_id)}
         for tempItem in iterHelper:
-            print("XX")
-            print(type(tempItem))
             result_to_be_finalised["suggestion_type"] = str(tempItem[0]).rsplit('.', 1)[1]
 
     s_comments_counted = True
     if s_comments_counted:
     # 4)
     # OOKOO palauttaa kommenttien lukumäärän ehdotukselle x
-        result_to_be_finalised['comments_counted'] = Event.query.options(load_only("event_type")).filter(Event.event_type == 'COMMENT').filter(Event.suggestion_id == 5979).count()
+        result_to_be_finalised['comments_counted'] = Event.query.options(load_only("event_type")).filter(Event.event_type == 'COMMENT').filter(Event.suggestion_id == sugg_id).count()
 
     s_preferred_label = True
     if s_preferred_label:
     # 5)
     # OOKOO palauttaa preferred_labelin oikein (Saadaan ehdotuksen nimi id:llä oikein frontissakin)
-        valueArray = [r for r in Suggestion.query.options(load_only("id", "preferred_label")).filter(Suggestion.id == 5979)]
-        print("000000000000000000000000000000000000")
+        valueArray = [r for r in Suggestion.query.options(load_only("id", "preferred_label")).filter(Suggestion.id == sugg_id)]
         for tempItem in valueArray:
-            print("XX")
             result_to_be_finalised["preferred_label"] = tempItem.preferred_label
-            # tempItemthing.pop("url")
-            # print(result_to_be_finalised)
+        valueArray = []
 
-    s_ids = True
+
+    s_ids = False
     if s_ids:
     # 6) OOKOO palauttaa ehdotusten haun offsetin ja limitin mukaisesti id-listan
         iterHelper = []
         valueArray = []
-        iterHelper = [r for r in Suggestion.query.options(load_only("id")).with_entities(Suggestion.id).limit(25).offset(25)]
+        iterHelper = [r for r in Suggestion.query.options(load_only("id")).with_entities(Suggestion.id).limit(limit).offset(offset)]
         for tempItem in iterHelper:
-            print("XX")
-            print(type(tempItem))
             valueArray.append(tempItem[0]) 
         result_to_be_finalised["ids"] = valueArray
+        valueArray = []
 
-    s_count = True
+    s_count = False
     if s_count:
     # 7)
     # OOKOO palauttaa suggestionien määrän
-        result_to_be_finalised['suggestions_count'] = model.query.options(load_only("id")).with_entities(Suggestion.id).count()
+        result_to_be_finalised['suggestions_count'] = Suggestion.query.options(load_only("id")).with_entities(Suggestion.id).count()
     
 
 # Backup-alue alkaa
@@ -441,7 +442,29 @@ def get_selected_from_model_or_400(model: object, jotain: str) -> str:
 
     print("YY")
     # print(result_to_be_finalised)
-    return create_response(result_to_be_finalised, 200)
+
+    # response_dict = {}
+    # data = data if data else {}
+
+    # if kwargs:
+    #     response_dict.update(kwargs)
+    # if message:
+    #     response_dict["message"] = message
+    # # if status_code:
+    # response_dict["code"] = status_code
+    # response_dict["data"] = data
+
+    # if isinstance(data, list):
+    #     response_dict["items"] = len(data)
+
+    # return response_dict, status_code
+
+
+# ({'code': 200, 'data': 
+
+    # return {}
+    # ORIG return create_response(result_to_be_finalised, 200)
+    return result_to_be_finalised
 
 # AAA https://docs.sqlalchemy.org/en/13/orm/tutorial.html
     
