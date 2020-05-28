@@ -126,6 +126,22 @@ def getTestQuery(model: object) -> db.Query:
 
     return db.Query
 
+def get_suggestions_minimums(limit: int = 0, offset: int = 0) -> str:
+    print("*************************************")
+    
+    tempArray = []
+    imitateArray = [35,43,45,49,44,36,41,29,42,30,28,48,38,2,32,37,40,46,47,34,31,33,39,27,26,25] 
+    # imitateArray = [4874, 8126, 8098, 8091, 5314, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49]
+    print("AAAAAAAAAAAAAAAAAAAAAAAAAAaa")
+    for suggestion_id in imitateArray:
+        tempArray.append(get_selected_from_model_or_400(suggestion_id, limit, offset))
+    # print(create_response(tempArray, 200))
+    print("*************************************")
+    # tempArray = []
+    return create_response(tempArray, 200)
+
+
+
 def get_suggestions(limit: int = 0, offset: int = 0, filters: str = "", search: str = "", sort: str = 'DEFAULT') -> str:
     """
     Returns all suggestions.
@@ -139,34 +155,17 @@ def get_suggestions(limit: int = 0, offset: int = 0, filters: str = "", search: 
     :param sort: Sort the results before returning them
     :returns: All suggestion matching the query in json format
     """
-    print("*************************************")
+    # print("*************************************")
     
-    tempArray = []
-    tempDict = {}
-    imitateArray = [4874, 8126, 8098, 8091, 5314, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49]
-    # testDict = get_selected_from_model_or_400(sugg_id: 0, limit: int, offset: int)
-    print("AAAAAAAAAAAAAAAAAAAAAAAAAAaa")
-    # print("testDictin tyyppi")
-    # print(type(testDict))
-    # print("imitateArrayn tyyppi")
-    # print(type(imitateArray))
-    # print(imitateArray)
-    for suggestion_id in imitateArray:
-        tempArray.append(get_selected_from_model_or_400(suggestion_id, 25, 25))
-        # print(suggestion_id)
-    # tempDict["datax"] = tempArray
-    print(create_response(tempArray, 200))
-    tempArray = []
-    # for itemsA in testDict:
-    #     print("itemsA:n tyyppi")
-    #     print(type(itemsA))
-    #     print(itemsA)
+    # tempArray = []
+    # imitateArray = [4874, 8126, 8098, 8091, 5314, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49]
+    # print("AAAAAAAAAAAAAAAAAAAAAAAAAAaa")
+    # for suggestion_id in imitateArray:
+    #     tempArray.append(get_selected_from_model_or_400(suggestion_id, 25, 25))
+    # print(create_response(tempArray, 200))
+    # tempArray = []
 
-
-
-
-
-    print("*************************************")
+    # print("*************************************")
 
     query = getQuery(limit=limit, offset=offset, filters=filters, queryString=search, sort=sort)
 

@@ -56,6 +56,30 @@ paths:
           description: The created suggestion
           schema:
             $ref: '#/definitions/SuggestionResponse'
+  /suggestions/minimums:
+    get:
+      operationId: api.logic.suggestions.get_suggestions_minimums
+      description:
+        Get all suggestions.
+        Optional query parameters can be used to limit the request.
+        Parameter **limit** determines the size of the returned array and **offset**
+        determines the starting offset.
+      parameters:
+        - name: limit
+          in: query
+          description: Maximum number of returned suggestions
+          required: false
+          type: integer
+        - name: offset
+          in: query
+          description: Offset of the results (e.g. for paging)
+          required: false
+          type: integer
+      responses:
+        '200':
+          description: An array of suggestion objects
+          schema:
+            $ref: '#/definitions/SuggestionResponseArray'
   /suggestions/count:
     get:
       operationId: api.logic.suggestions.get_suggestions_count
