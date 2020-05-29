@@ -2,6 +2,7 @@ import connexion
 from flask import jsonify
 from sqlalchemy import or_, func, and_, Table, Column, String, MetaData, literal, select
 from sqlalchemy.types import Unicode
+from sqlalchemy.orm import load_only
 
 from ..authentication import admin_only
 from .validators import suggestion_parameter_validator, suggestion_id_validator, _error_messagify
@@ -134,12 +135,15 @@ def get_suggestions_minimums(limit: int = 0, offset: int = 0) -> str:
 
     :param limit: Cap the results to :limit: results
     :param offset: Start the query from offset (e.g. for paging)
-    """
-    
+    """ 
+
+    iterHelper = []
+    valueArray = []
+    iterHelper = [r for r in Suggestion.query.options(load_only("id")).with_entities(Suggestion.id).limit(limit).offset(offset)]
+    for tempItem in iterHelper:
+        valueArray.append(tempItem[0]) 
     tempArray = []
-    imitateArray = [35,43,45,49,44,36,41,29,42,30,28,48,38,2,32,37,40,46,47,34,31,33,39,27,26,25] 
-    # imitateArray = [4874, 8126, 8098, 8091, 5314, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49]
-    for suggestion_id in imitateArray:
+    for suggestion_id in valueArray:
         tempArray.append(get_selected_from_model_or_400(suggestion_id, limit, offset))
     return create_response(tempArray, 200)
 
@@ -158,17 +162,6 @@ def get_suggestions(limit: int = 0, offset: int = 0, filters: str = "", search: 
     :param sort: Sort the results before returning them
     :returns: All suggestion matching the query in json format
     """
-    # print("*************************************")
-    
-    # tempArray = []
-    # imitateArray = [4874, 8126, 8098, 8091, 5314, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49]
-    # print("AAAAAAAAAAAAAAAAAAAAAAAAAAaa")
-    # for suggestion_id in imitateArray:
-    #     tempArray.append(get_selected_from_model_or_400(suggestion_id, 25, 25))
-    # print(create_response(tempArray, 200))
-    # tempArray = []
-
-    # print("*************************************")
 
     query = getQuery(limit=limit, offset=offset, filters=filters, queryString=search, sort=sort)
 
