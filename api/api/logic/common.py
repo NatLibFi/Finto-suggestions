@@ -217,6 +217,7 @@ def get_selected_from_model_or_400(sugg_id: 0, limit: int, offset: int) -> str:
         # Muotoile {(<SuggestionTypes.NEW: 0>,)} ilman for-loopia
         for tempItem in iterHelper:
             result_to_be_finalised["suggestion_type"] = str(tempItem[0]).rsplit('.', 1)[1]
+            
     s_comments_counted = True
     if s_comments_counted:
     # 4)

@@ -240,7 +240,12 @@ class Suggestion(db.Model, SerializableMixin):
     neededFor = db.Column(db.String(500))
     yse_term = db.Column(db.JSON)
 
-    events = db.relationship('Event', backref='suggestion', lazy='joined')
+
+    # https://docs.sqlalchemy.org/en/13/orm/loading_relationships.html
+    # Orig
+    # events = db.relationship('Event', backref='suggestion', lazy='joined')
+    # New
+    events = db.relationship('Event', backref='suggestion', lazy='select')
     reactions = db.relationship(
         'Reaction', backref='suggestion', lazy='joined')
 

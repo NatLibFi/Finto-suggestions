@@ -62,7 +62,8 @@
         @closeDropDown="closeDropDown"
       />
     </div>
-    <div
+    <!-- Meetings will be disabled so far -->
+    <!-- <div
       v-if="!meetingId && mapMeetingsToDropDown().length > 0"
       @click="isDropDownOpened.MEETING = !isDropDownOpened.MEETING"
       :class="[filterStrings.meeting.length > 0 ? 'active-filter' : '', 'filter-item']"
@@ -85,14 +86,14 @@
         @refreshSelectedIndex="selectedOptionIndex.MEETING = $event"
         @closeDropDown="closeDropDown"
       />
-    </div>
-    <a
+    </div> -->
+    <!-- <a
       v-if="isDropDownOpened.MEETING && filterStrings.meeting.length > 0"
       @click="resetMeetings()"
       class="clear-button"
     >
       Tyhjennä kokoukset
-    </a>
+    </a> -->
   </div>
 </template>
 
@@ -105,14 +106,16 @@ import IconTriangle from '../icons/IconTriangle';
 import {
   filterType,
   handleQueries,
-  handleMeetingQueries,
+  // <!-- Meetings will be disabled so far -->
+  // handleMeetingQueries,
   findSelectionIndex,
   findTagSelectionIndex,
   findMeetingSelectionIndex
 } from '../../utils/suggestionHelpers.js';
 
-import { mapMeetingActions, mapMeetingGetters } from '../../store/modules/meeting/meetingModule.js';
-import { meetingActions, meetingGetters } from '../../store/modules/meeting/meetingConsts.js';
+// <!-- Meetings will be disabled so far -->
+// import { mapMeetingActions, mapMeetingGetters } from '../../store/modules/meeting/meetingModule.js';
+// import { meetingActions, meetingGetters } from '../../store/modules/meeting/meetingConsts.js';
 
 import { mapTagActions, mapTagGetters } from '../../store/modules/tag/tagModule.js';
 import { tagActions, tagGetters } from '../../store/modules/tag/tagConst.js';
@@ -132,7 +135,8 @@ export default {
     IconTriangle
   },
   props: {
-    meetingId: [String, Number],
+    // <!-- Meetings will be disabled so far -->
+    // meetingId: [String, Number],
     filters: String,
     searchWord: String,
     sort: String
@@ -142,19 +146,22 @@ export default {
       status: '',
       type: '',
       tags: '',
-      meeting: ''
+      // <!-- Meetings will be disabled so far -->
+      // meeting: ''
     },
     selectedOptionIndex: {
       STATUS: 0, // one always selected
       TYPE: 0, // one always selected
       TAGS: [], // multiple choice
-      MEETING: null // no default
+      // <!-- Meetings will be disabled so far -->
+      // MEETING: null // no default
     },
     isDropDownOpened: {
       STATUS: false,
       TYPE: false,
       TAG: false,
-      MEETING: false
+      // <!-- Meetings will be disabled so far -->
+      // MEETING: false
     },
     suggestionStateStatuses: [
       {
@@ -202,10 +209,11 @@ export default {
     ]
   }),
   computed: {
-...mapMeetingGetters({
-      // meetings: meetingGetters.GET_MEETINGS //Mika
-      meetings: meetingGetters.GET_MEETINGS_BASICS
-    }),
+    // <!-- Meetings will be disabled so far -->
+// ...mapMeetingGetters({
+//       // meetings: meetingGetters.GET_MEETINGS //Mika
+//       meetings: meetingGetters.GET_MEETINGS_BASICS
+//     }),
     ...mapTagGetters({
       tags: tagGetters.GET_TAGS
     })
@@ -215,58 +223,66 @@ export default {
       status: '',
       type: '',
       tags: '',
-      meeting: ''
+      // <!-- Meetings will be disabled so far -->
+      // meeting: ''
     };
-    await this.getMeetings();
+    // <!-- Meetings will be disabled so far -->
+    // await this.getMeetings();
     await this.getTags();
     this.parseRouteIntoSelections();
   },
   methods: {
-    ...mapMeetingActions({
-      // getMeetings: meetingActions.GET_MEETINGS // Mika Katso inspectorista miksi meetingeillä ei ole key-arvoja, muita kuin pelkät numerot
-      getMeetings: meetingActions.GET_MEETINGS_BASICS
-    }),
+    // <!-- Meetings will be disabled so far -->
+    // ...mapMeetingActions({
+    //   // getMeetings: meetingActions.GET_MEETINGS // Mika Katso inspectorista miksi meetingeillä ei ole key-arvoja, muita kuin pelkät numerot
+    //   getMeetings: meetingActions.GET_MEETINGS_BASICS
+    // }),
     ...mapTagActions({
       getTags: tagActions.GET_TAGS
     }),
     stateChanged(selected) {
       let stateString = this.createFilterString(filterType.STATUS, selected);
       let filters = this.combineStateStrings(filterType.STATUS, stateString);
-      if (this.meetingId) {
+      // <!-- Meetings will be disabled so far -->
+      // if (this.meetingId) {
+      if ('a' !== 'a') {
         handleMeetingQueries(this.meetingId, filters, this.searchWord, this.sort, this.$router);
       } else {
         handleQueries(filters, this.searchWord, this.sort, this.$router);
       }
     },
-    meetingChanged(selected) {
-      if (this.meetingId) {
-        handleMeetingQueries(
-          this.meetingId,
-          this.filters,
-          this.searchWord,
-          this.sort,
-          this.$router
-        );
-      } else {
-        let stateString = 'meeting_id:' + selected.toString().toLowerCase();
-        let filters = this.combineStateStrings(filterType.MEETING, stateString);
-        handleQueries(filters, this.searchWord, this.sort, this.$router);
-      }
-    },
-
-    meetingOutFromTheFilters() {
-      if (this.meetingId) {
-        handleMeetingQueries(null, this.filters, this.searchWord, this.sort, this.$router);
-      } else {
-        let stateString = '';
-        let filters = this.combineStateStrings(filterType.MEETING, stateString);
-        handleQueries(filters, this.searchWord, this.sort, this.$router);
-      }
-    },
+    // <!-- Meetings will be disabled so far -->
+    // meetingChanged(selected) {
+    //   if (this.meetingId) {
+    //     handleMeetingQueries(
+    //       this.meetingId,
+    //       this.filters,
+    //       this.searchWord,
+    //       this.sort,
+    //       this.$router
+    //     );
+    //   } else {
+    //     let stateString = 'meeting_id:' + selected.toString().toLowerCase();
+    //     let filters = this.combineStateStrings(filterType.MEETING, stateString);
+    //     handleQueries(filters, this.searchWord, this.sort, this.$router);
+    //   }
+    // },
+// <!-- Meetings will be disabled so far -->
+    // meetingOutFromTheFilters() {
+    //   if (this.meetingId) {
+    //     handleMeetingQueries(null, this.filters, this.searchWord, this.sort, this.$router);
+    //   } else {
+    //     let stateString = '';
+    //     let filters = this.combineStateStrings(filterType.MEETING, stateString);
+    //     handleQueries(filters, this.searchWord, this.sort, this.$router);
+    //   }
+    // },
 
     tagChanged(selected) {
       let filters = this.combineStateStrings(filterType.TAGS, selected);
-      if (this.meetingId) {
+      // <!-- Meetings will be disabled so far -->
+      // if (this.meetingId) {
+        if ('a' !== 'a') {
         handleMeetingQueries(this.meetingId, filters, this.searchWord, this.sort, this.$router);
       } else {
         handleQueries(filters, this.searchWord, this.sort, this.$router);
@@ -276,27 +292,30 @@ export default {
     typeChanged(selected) {
       let stateString = this.createFilterString(filterType.TYPE, selected);
       let filters = this.combineStateStrings(filterType.TYPE, stateString);
-      if (this.meetingId) {
+      // <!-- Meetings will be disabled so far -->
+      if ('a' !== 'a') {
+      // if (this.meetingId) {
         handleMeetingQueries(this.meetingId, filters, this.searchWord, this.sort, this.$router);
       } else {
         handleQueries(filters, this.searchWord, this.sort, this.$router);
       }
     },
-    mapMeetingsToDropDown() {
-      let meetings = [];
-      if (this.meetings && this.meetings.length > 0) {
-        this.meetings.forEach(meeting => {
-          if (meeting) {
-            meetings.push({
-              label: meeting.name,
-              value: meeting.id
-            });
-          }
-        });
-      }
-      meetings.reverse();
-      return meetings;
-    },
+    // <!-- Meetings will be disabled so far -->
+    // mapMeetingsToDropDown() {
+    //   let meetings = [];
+    //   if (this.meetings && this.meetings.length > 0) {
+    //     this.meetings.forEach(meeting => {
+    //       if (meeting) {
+    //         meetings.push({
+    //           label: meeting.name,
+    //           value: meeting.id
+    //         });
+    //       }
+    //     });
+    //   }
+    //   meetings.reverse();
+    //   return meetings;
+    // },
     mapTagsToDropDown() {
       let tags = [];
       if (this.tags && this.tags.length > 0) {
@@ -318,57 +337,60 @@ export default {
       this.tagChanged('');
       this.selectedOptionIndex.TAGS = [];
     },
-
-    resetMeetings() {
-      this.meetingOutFromTheFilters();
-      this.selectedOptionIndex.MEETING = null;
-    },
+// <!-- Meetings will be disabled so far -->
+    // resetMeetings() {
+    //   this.meetingOutFromTheFilters();
+    //   this.selectedOptionIndex.MEETING = null;
+    // },
 
     resetFilters() {
       this.selectedOptionIndex = {
         STATUS: 0,
         TAGS: [],
-        TYPE: 0,
-        MEETING: null
+        TYPE: 0
+        // <!-- Meetings will be disabled so far -->
+        // MEETING: null
       };
       this.filterStrings = {
         status: '',
         tags: '',
-        type: '',
-        meeting: '',
+        type: ''
+        // <!-- Meetings will be disabled so far -->
+        // meeting: '',
       };
 
       handleQueries('', this.searchWord, this.sort, this.$router);
       this.hasTouchedFilters = false;
     },
-
-    resetFiltersFromMeetings() {
-      this.filterStrings = {
-        status: 'status:' + this.selectedOptionIndex.STATUS.indexOf(this.tagIndex),
-        // this.selectedOptionIndex.TAGS.indexOf(tagIndex)
-        tags: 'tags:' + this.selectedOptionIndex.TAGS,
-        type: 'type:' + this.selectedOptionIndex.TYPE,
-        meeting: 'meeting_id:'
-      };
+// <!-- Meetings will be disabled so far -->
+    // resetFiltersFromMeetings() {
+    //   this.filterStrings = {
+    //     status: 'status:' + this.selectedOptionIndex.STATUS.indexOf(this.tagIndex),
+    //     // this.selectedOptionIndex.TAGS.indexOf(tagIndex)
+    //     tags: 'tags:' + this.selectedOptionIndex.TAGS,
+    //     type: 'type:' + this.selectedOptionIndex.TYPE,
+    //     meeting: 'meeting_id:'
+    //   };
     
 
       // selectedOptionIndex
 
-      this.selectedOptionIndex = {
-        STATUS: 0,
-        TAGS: [],
-        TYPE: 0,
-        MEETING: null
-      };
+      // this.selectedOptionIndex = {
+      //   STATUS: 0,
+      //   TAGS: [],
+      //   TYPE: 0,
+      //   MEETING: null
+      // };
 
-      handleQueries('', this.searchWord, this.sort, this.$router);
-      this.hasTouchedFilters = false;
-    },
+      // handleQueries('', this.searchWord, this.sort, this.$router);
+      // this.hasTouchedFilters = false;
+    // },
     closeDropDown() {
       this.isDropDownOpened.STATUS = false;
       this.isDropDownOpened.TAG = false;
       this.isDropDownOpened.TYPE = false;
-      this.isDropDownOpened.MEETING = false;
+      // <!-- Meetings will be disabled so far -->
+      // this.isDropDownOpened.MEETING = false;
     },
     createFilterString(filterType, selected) {
       if (selected) {
@@ -398,9 +420,11 @@ export default {
         this.updateTags();
       } else if (filter === filterType.TYPE) {
         this.filterStrings.type = string;
-      } else if (filter === filterType.MEETING) {
-        this.filterStrings.meeting = string;
-      }
+      } 
+      // <!-- Meetings will be disabled so far -->
+      //   else if (filter === filterType.MEETING) {
+      //   this.filterStrings.meeting = string;
+      // }
     },
     updateStateString(filter, string) {
       this.updateFilterStrings(filter, string);
@@ -463,12 +487,14 @@ export default {
           let arr = Object.values(this.mapTagsToDropDown());
           this.selectedOptionIndex['TAGS'] = findTagSelectionIndex(splittedFilter, arr);
           this.updateStateString('tags', item);
-        } else if (item.includes('meeting_id:')) {
-          let splittedFilter = item.split(':');
-          let arr = Object.values(this.mapMeetingsToDropDown());
-          this.selectedOptionIndex['MEETING'] = findMeetingSelectionIndex(splittedFilter, arr);
-          this.updateStateString('meeting', item);
-        }
+        } 
+        // <!-- Meetings will be disabled so far -->
+        //   else if (item.includes('meeting_id:')) {
+        //   let splittedFilter = item.split(':');
+        //   let arr = Object.values(this.mapMeetingsToDropDown());
+        //   this.selectedOptionIndex['MEETING'] = findMeetingSelectionIndex(splittedFilter, arr);
+        //   this.updateStateString('meeting', item);
+        // }
       }
     }
   }

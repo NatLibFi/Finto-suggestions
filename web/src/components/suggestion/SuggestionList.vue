@@ -2,20 +2,20 @@
   <div>
     <suggestion-search
       v-if="!isUserPage"
-      :meetingId="meetingId"
       :filters="filters"
       :searchWord="searchWord"
       :sort="sort"
     />
+      <!-- :meetingId="meetingId" ylös -->
     <suggestion-list-header
       v-if="!isUserPage"
-      :meetingId="meetingId"
       :filters="filters"
       :searchWord="searchWord"
       :sort="sort"
       :suggestionCount="suggestionCount"
       :archivedSuggestionCount="archivedSuggestionCount"
     />
+      <!-- :meetingId="meetingId" ylös -->
     <div class="list-container">
       <ul class="list">
         <div id="itemListContainer">
@@ -24,8 +24,8 @@
             v-for="suggestion in suggestions"
             :key="suggestion.id"
             :suggestion="suggestion"
-            :meetingId="meetingId"
           />
+            <!-- :meetingId="meetingId" ylös-->
         </div>
       </ul>
       <suggestion-list-pagination
@@ -33,13 +33,13 @@
         :pageCountLoading="pageCountLoading"
         :userId="userId"
         :isUserPage="isUserPage"
-        :meetingId="meetingId"
         :page="page"
         :filters="filters"
         :searchWord="searchWord"
         :sort="sort"
         @pageChanged="updateSuggestionList"
       />
+        <!-- :meetingId="meetingId" ylös-->
     </div>
   </div>
 </template>

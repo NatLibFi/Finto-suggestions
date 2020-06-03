@@ -1,15 +1,37 @@
 import { get, put, post, del, patch } from '../utils';
+// Can be removed
+import axios from 'axios';
+//
 
 // For adjusting the list length on the front page.
 // Remember to set this also at the SuggestionsList.vue
 const defaultLimit = 25;
 
 export default {
+  // ORIG
   getSuggestions: (offset = 0, sort = '', filters = '', searchWord = '') =>
     get({
       // eslint-disable-next-line max-len
       resource: `/suggestions?limit=${defaultLimit}&offset=${offset}&sort=${sort}&filters=${filters}&search=${searchWord}`
     }),
+  //  Test 1
+  // getSuggestions: (offset = 0, sort = '', filters = '', searchWord = '') =>
+  //   axios.get(`http://localhost:8080/api/suggestions?limit=${defaultLimit}&offset=${offset}&sort=${sort}&filters=${filters}&search=${searchWord}`
+  
+  //   // get({
+  //   //   // eslint-disable-next-line max-len
+  //   //   resource: `/suggestions?limit=${defaultLimit}&offset=${offset}&sort=${sort}&filters=${filters}&search=${searchWord}`
+  //   // }
+  //   ),
+  //  Test 2
+  // getSuggestions: (offset = 0, sort = '', filters = '', searchWord = '') =>
+  //   axios.get(`http://localhost:8080/api/suggestions?limit=${defaultLimit}&offset=${offset}&sort=${sort}&filters=${filters}&search=${searchWord}`
+  
+  //   // get({
+  //   //   // eslint-disable-next-line max-len
+  //   //   resource: `/suggestions?limit=${defaultLimit}&offset=${offset}&sort=${sort}&filters=${filters}&search=${searchWord}`
+  //   // }
+    // ),
   getSuggestionsCount: (filters, searchWord) =>
     get({ resource: `/suggestions/count?filters=${filters}&search=${searchWord}` }),
   getArchivedSuggestionsCount: (filters, searchWord) =>

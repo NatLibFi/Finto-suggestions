@@ -64,12 +64,13 @@
         <p>
           <strong>#{{ suggestion.id }}</strong>
           {{ dateTimeFormatLabel(suggestion.created) }}
-          <span v-if="suggestion.meeting_id">
+          <!-- Meetings will be disabled so far -->
+          <!-- <span v-if="suggestion.meeting_id">
             –
             <a @click.stop="goToMeeting(suggestion.meeting_id)">
               Kokous {{ suggestion.meeting_id }}
             </a>
-          </span>
+          </span> -->
         </p>
       </div>
     </div>
@@ -106,10 +107,11 @@ export default {
       type: Object,
       required: true
     },
-    meetingId: {
-      type: [Number, String],
-      default: null
-    },
+    // <!-- Meetings will be disabled so far -->
+    // meetingId: {
+    //   type: [Number, String],
+    //   default: null
+    // },
     suggestions: String
   },
   data() {

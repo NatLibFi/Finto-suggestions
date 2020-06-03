@@ -1,11 +1,34 @@
 <template>
   <div class="meetings">
-    <a @click="setPageOk()" unselectable="on">
-      Swap the value:
-    </a>
-    {{ isPageOk }}
-
     <div>
+      <a @click="setPageOk()" unselectable="on">
+        Swap the value:
+      </a>
+      {{ isPageOk }}
+    </div>
+    <div>
+      <a @click="runTheSpeedTest()" unselectable="on">
+        Run the test:
+      </a>
+      {{ testSwitcher }}
+    </div>
+    <div>
+      <div>
+      <a @click="getTestData(true)" unselectable="on">
+        Get Test Data >>
+      </a>
+      </div>
+      <div>
+      <a @click="getTestData(false)" unselectable="on">
+        Empty >>
+      </a>
+      </div>
+      {{ responseAsString }}
+    <div>
+    </div>
+
+
+
       <ul>
         <span v-for="meeting in meetings" :key="meeting.id" >
                 <h4>*** {{ meeting.name }} / #{{ meeting.id }} ***</h4>
@@ -24,7 +47,6 @@
 <script>
 import SvgIcon from '../icons/SvgIcon';
 import IconArrow from '../icons/IconArrow';
-
 import { userRoles } from '../../utils/userHelpers.js';
 // eslint-disable-next-line
 import { authenticatedUserGetters } from '../../store/modules/authenticatedUser/authenticatedUserConsts.js';
@@ -39,6 +61,9 @@ import store from "../../store/index";
 import Vue from 'vue';
 import lockr from 'lockr';
 
+// For speedTesting
+import axios from 'axios';
+
 export default {
   components: {
     SvgIcon,
@@ -47,6 +72,8 @@ export default {
   data() {
     return {
       isPageOk: false,
+      testSwitcher: false,
+      responseAsString: String,
       currentMeetingId: Number,
       tietoToimivuudesta: String, //*
       updateTest: String
@@ -63,11 +90,11 @@ export default {
     setValueToStoreState: function(value) {
       Vue.set('updateMessage', value);
     },
-    getValueFromStoreState: function() {
-      const response = this.$store.state.obj.message;
-      conslole.log(response);
-      return this.$store.state.obj.message
-    },
+    // getValueFromStoreState: function() {
+    //   const response = this.$store.state.obj.message;
+    //   conslole.log(response);
+    //   return this.$store.state.obj.message
+    // },
 
   },
   async created() {
@@ -108,15 +135,41 @@ export default {
     },
     setPageOk() {
       if(!this.isPageOk) {
-      this.isPageOk = true; 
+        this.isPageOk = true; 
     } else {
-      this.isPageOk = false;
+        this.isPageOk = false;
       }
     },
+    runTheSpeedTest() {
+      if(!this.testSwitcher) {
+        this.testSwitcher = true; 
+      } else {
+        this.testSwitcher = false;
+      }
+    },
+    async getTestData(trueOrFalse) {
+      // axios.interceptors.response.use( x => {
+      //   x.responseTime = new Date().getTime() - x.config.meta.beginTimer;
+      //   return x;
+      //   })
+      if (true === trueOrFalse) {
+        try {
+          this.responseAsString = await axios.get('http://localhost:8080/api/suggestions?limit=25&sort=COMMENTS_DESC')
+          // .then( x => console.log(x.responseTime));
+          // console.log(response);
+        } catch (error) {
+          console.error(error);
+        }        
+      } else {
+        this.responseAsString = '';
+      }
+
+    },
+  
   },
-  mounted(){
-    window.addEventListener("storage", this.getValueFromStoreState);
-  },
+  // mounted(){
+  //   window.addEventListener("storage", this.getValueFromStoreState);
+  // },
   watch: {
     name(newName) {
       localStorage.name = newName;

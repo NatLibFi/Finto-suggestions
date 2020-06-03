@@ -14,11 +14,12 @@
           <p v-if="isShown">{{ welcomeExplanation }}</p>
           <p class="meetings-link">
             <strong>
-              <div>
+              <!-- Meetings will be disabled so far -->
+              <!-- <div>
                 Voit tarkastella tulevia YSO-kokouksia <a @click="goToMeetings()">täällä</a>.
-              </div>
+              </div> -->
               <div>
-                Voit seurata uuden kokoustoiminnon kehittämistä <a @click="goToMeetingsAsPithy()">täällä</a>.
+                Go to the testing page -> <a @click="goToMeetingsAsPithy()">from here</a>
               </div>
             </strong>
           </p>

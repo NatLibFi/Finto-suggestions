@@ -3,6 +3,7 @@ import { storeKeyNames } from '../store/modules/authenticatedUser/authenticatedU
 
 const client = axios.create({
   baseURL: '/api',
+  // baseURL: 'http://localhost:8080/api',
   json: true
 });
 const execute = async (method, resource, data, useRefreshToken) => {
@@ -25,6 +26,12 @@ const execute = async (method, resource, data, useRefreshToken) => {
     }
   })
     .then(request => {
+      // Testing
+      var start = +new Date();
+      console.log(JSON.stringify(request))
+      var end = +new Date();
+      var time = end - start;
+      console.log('Response time in the utils.js: >>>>>>>>>>>>>>>>> '+ time + 'ms');
       return request.data;
     })
     .catch(error => {
