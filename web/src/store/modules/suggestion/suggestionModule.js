@@ -41,11 +41,7 @@ export default {
   },
   mutations: {
     [suggestionMutations.SET_SUGGESTIONS](state, suggestions) {
-      var start = +new Date();
       Vue.set(state, storeStateNames.ITEMS, suggestions);
-      var end = +new Date();
-      var time = end - start;
-      console.log('Response time in the suggestionModule.js for the SET_SUGGESTIONS mutation: >>>>>>>>>>>>>>>>> '+ time + 'ms');
     },
     [suggestionMutations.SET_SUGGESTIONS_COUNT](state, count) {
       Vue.set(state, storeStateNames.COUNT, count);
@@ -81,24 +77,9 @@ export default {
       Vue.set(sessionStorage, sessionStorageKeyNames.SELECTED_FILTERS, filters);
     }
   },
-  // var start = +new Date();
-  // console.log(JSON.stringify(request))
-  // var end = +new Date();
-  // var time = end - start;
-  // console.log('Response time at the utils.js: >>>>>>>>>>>>>>>>> '+ time + 'ms');
   actions: {
     async [suggestionActions.GET_SUGGESTIONS]({ commit }, { offset, sort, filters, searchWord }) {
-      var start = +new Date();
-      // const response = await axios.get('http://localhost:8080/api/suggestions?limit=25&offset=25')
-      // const response = await api.suggestion.getSuggestions(offset, sort, filters, searchWord);
-      // const response = await axios.get('http://localhost:8080/api/suggestions/minimums?limit=25&offset=25')
-      // ORIG
       const response = await api.suggestion.getSuggestions(offset, sort, filters, searchWord);
-      console.log(">>>> response >>>>")
-      console.log(response);
-      var end = +new Date();
-      var time = end - start;
-      console.log('Response time in the suggestionModule.js: >>>>>>>>>>>>>>>>> '+ time + 'ms');
       if (response && response.code == 200) {
         commit(suggestionMutations.SET_SUGGESTIONS, response.data);
         return response.items;

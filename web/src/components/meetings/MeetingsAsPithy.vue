@@ -8,9 +8,13 @@
     </div>
     <div>
       <a @click="runTheSpeedTest()" unselectable="on">
-        Run the test:
+        Run the store state test:
       </a>
       {{ testSwitcher }}
+      <div v-if='testSwitcher'>
+        {{ getEntireStoreState }}
+      </div>
+
     </div>
     <div>
       <div>
@@ -76,7 +80,9 @@ export default {
       responseAsString: String,
       currentMeetingId: Number,
       tietoToimivuudesta: String, //*
-      updateTest: String
+      updateTest: String,
+      somethingToManipulate: String,
+      somethingToJsonify: String
     };
   },
   computed: {
@@ -90,6 +96,10 @@ export default {
     setValueToStoreState: function(value) {
       Vue.set('updateMessage', value);
     },
+    getEntireStoreState() {
+      this.somethingToManipulate = this.$store.state;
+      return this.somethingToManipulate;
+    }
     // getValueFromStoreState: function() {
     //   const response = this.$store.state.obj.message;
     //   conslole.log(response);
