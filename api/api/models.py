@@ -101,7 +101,9 @@ class SuggestionTag(db.Model, SerializableMixin):
     event_id = db.Column(db.Integer, db.ForeignKey('events.id'))
 
     def __repr__(self):
-        return '<SuggestionTag {}>'.format(self.code)
+        # Do not forget next following. How should be used: self.code or ...
+        # return '<SuggestionTag {}>'.format(self.code)
+        return '<SuggestionTag {}>'.format(self.tag_label)
 
 
 class Event(db.Model, SerializableMixin):
@@ -171,23 +173,6 @@ class Reaction(db.Model, SerializableMixin):
         return '<Emoji {}>'.format(self.code)
 
 
-# class CreateView(Executable, ClauseElement):
-#     def __init__(self, name, select):
-#         self.name = name
-#         self.select = select
-
-# @compiles(CreateView)
-# def visit_create_view(element, compiler, **kw):
-#     return "CREATE VIEW %s AS %s" % (
-#          element.name,
-#          compiler.process(element.select, literal_binds=True)
-#          )
-
-# createview = CreateView('meetingsCollection, t.select().where(t.c.id>5))
-
-
-
-
 class Meeting(db.Model, SerializableMixin):
     __tablename__ = 'meetings'
     __public__ = ['id', 'name', 'created', 'modified', 'meeting_date']
@@ -255,7 +240,12 @@ class Suggestion(db.Model, SerializableMixin):
     neededFor = db.Column(db.String(500))
     yse_term = db.Column(db.JSON)
 
-    events = db.relationship('Event', backref='suggestion', lazy='joined')
+
+    # https://docs.sqlalchemy.org/en/13/orm/loading_relationships.html
+    # Orig
+    # events = db.relationship('Event', backref='suggestion', lazy='joined')
+    # New
+    events = db.relationship('Event', backref='suggestion', lazy='select')
     reactions = db.relationship(
         'Reaction', backref='suggestion', lazy='joined')
 
@@ -355,6 +345,3 @@ class TokenBlacklist(db.Model, SerializableMixin):
     token_type = db.Column(db.String(10), nullable=False)
     revoked = db.Column(db.Boolean, nullable=False)
     expires = db.Column(db.DateTime, nullable=False)
-
-
-# And finally here you find views

@@ -9,6 +9,7 @@ import {
   suggestionGetters,
   suggestionActions
 } from './suggestionConsts';
+import axios from 'axios';
 
 export const mapSuggestionGetters = getters => mapGetters(namespace, getters);
 export const mapSuggestionActions = actions => mapActions(namespace, actions);

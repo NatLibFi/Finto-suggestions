@@ -3,6 +3,7 @@ import { storeKeyNames } from '../store/modules/authenticatedUser/authenticatedU
 
 const client = axios.create({
   baseURL: '/api',
+  // baseURL: 'http://localhost:8080/api',
   json: true
 });
 const execute = async (method, resource, data, useRefreshToken) => {

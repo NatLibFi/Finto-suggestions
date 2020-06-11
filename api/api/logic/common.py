@@ -10,12 +10,14 @@ from typing import Dict
 from sqlalchemy import exists
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy import text
+# from sqlalchemy import __version__
 # from sqlalchemy import Table, MetaData
 # from sqlalchemy_views import CreateView, DropView
-from ..models import db
+from ..models import db, Suggestion, Event, Tag, SuggestionTypes, SuggestionStatusTypes, SuggestionTag
 from ..authentication import verify_user_access_to_resource
 # from sqlalchemy import create_engine  
-from sqlalchemy import Table, Column, String, MetaData
+from sqlalchemy import Table, Column, String, MetaData, func, literal, select
+from sqlalchemy.orm import defer, undefer, load_only
 
 
 
@@ -31,7 +33,7 @@ def create_response(data: Dict, status_code: int, message: str = None, **kwargs)
         response_dict.update(kwargs)
     if message:
         response_dict["message"] = message
-
+    # if status_code:
     response_dict["code"] = status_code
     response_dict["data"] = data
 
@@ -63,6 +65,7 @@ def get_all_or_400_custom(query) -> str:
         :param query: query instance
         :returns: All columns matching the query or 400
     """
+
     try:
         db_objs = query.all()
     except InvalidFilterException as e:
@@ -126,6 +129,133 @@ def get_selected_or_400(model: object):
     if db_selected_objs:
         return create_response(content_array, 200)
     return create_response(None, 404, error_msg)
+
+# def get_selected_from_model_or_400(model: object, fieldNameArray: []):
+# def get_selected_from_model_or_400(model: object, jotain: str) -> str: # toimii
+def get_selected_from_model_or_400(sugg_id: 0, limit: int, offset: int) -> str:
+    """
+    Todo: Must be fixed to read selected entities as an argument
+
+    OR
+
+    Must be in the new component for "special cases" joining to handling database tables and entities 
+
+    Returns all queried objects.
+
+    :returns: All columns matching the query or 400 and error message
+    """
+    # aaa
+
+
+    # print("||||||||||||||||||||||||||||||")
+    # print(__version__)
+
+    result_to_be_finalised = {}
+
+    # s_id = 5979
+    s_id = sugg_id
+    if s_id > 0:
+        result_to_be_finalised["id"] = s_id
+
+    s_created = True
+    if s_created:
+        # # 0.1)  palauttaa ehdotuksen luontihetken
+        valueArray = []
+        iterHelper = {r for r in Suggestion.query.options(load_only("created")).with_entities(Suggestion.created).\
+            filter(Suggestion.id == sugg_id)}
+        # For-loopista eroon - muotoile {(datetime.datetime(2016, 4, 28, 10, 16, 43),)}
+        for tempItem in iterHelper:
+            tempItem_substring = str(tempItem[0]).split(".", 1)[0]
+            tempItem_substring = tempItem_substring[1:-1] 
+            valueArray.append(tempItem_substring)
+        result_to_be_finalised["created"] = valueArray
+        valueArray = []
+
+    s_modified = True
+    if s_modified:
+    # 0.2)  palauttaa ehdotuksen muokkaushetken
+        valueArray = []
+        iterHelper = {r for r in Suggestion.query.options(load_only("modified")).with_entities(Suggestion.modified).\
+            filter(Suggestion.id == sugg_id)}
+        # For-loopista eroon - muotoile {(datetime.datetime(2016, 4, 28, 10, 16, 43),)} paremmaksi
+        for tempItem in iterHelper:
+            tempItem_substring = str(tempItem[0]).split(".", 1)[0]
+            tempItem_substring = tempItem_substring[1:-1] 
+            valueArray.append(tempItem_substring)
+        result_to_be_finalised["modified"] = valueArray
+        valueArray = []
+
+    s_tags = True
+    if s_tags:
+    # 1)
+    #  TAGS Palauttaa yhden suggestionin kaikkien tagien labelit
+        valueArray = []
+        iterHelper = {r for r in SuggestionTag.query.options(load_only("tag_label")).\
+            filter(SuggestionTag.suggestion_id == sugg_id)}
+        for tempItem in iterHelper:
+            valueArray.append(str(tempItem).split(" ", 1)[1][:-1])
+        result_to_be_finalised["tags"] = valueArray
+        valueArray = []
+
+    s_status = True
+    if s_status:
+    # 2)
+    #  Palauttaa yhden suggestionin statuksen
+        valueArray = []
+        iterHelper = {r for r in Suggestion.query.options(load_only("status")).with_entities(Suggestion.status).filter(Suggestion.id == sugg_id)}
+        # Poista for-looppi ja muotoile {(<SuggestionStatusTypes.RECEIVED: 0>,)} oikein
+        for tempItem in iterHelper:
+            valueArray.append(str(tempItem[0]).rsplit('.', 1)[1])
+        result_to_be_finalised["status"] = valueArray[0]
+        valueArray = []
+    # ------
+    s_type = True
+    if s_type:
+    # 3)
+    #  Palauttaa yhden suggestionin tyypin
+        iterHelper = {r for r in Suggestion.query.options(load_only("suggestion_type")).with_entities(Suggestion.suggestion_type).filter(Suggestion.id == sugg_id)}
+        # Muotoile {(<SuggestionTypes.NEW: 0>,)} ilman for-loopia
+        for tempItem in iterHelper:
+            result_to_be_finalised["suggestion_type"] = str(tempItem[0]).rsplit('.', 1)[1]
+            
+    s_comments_counted = True
+    if s_comments_counted:
+    # 4)
+    #  palauttaa kommenttien lukumäärän ehdotukselle x
+        result_to_be_finalised['comments_counted'] = Event.query.options(load_only("event_type")).filter(Event.event_type == 'COMMENT').filter(Event.suggestion_id == sugg_id).count()
+
+    s_preferred_label = True
+    if s_preferred_label:
+    # 5)
+    #  palauttaa preferred_labelin oikein (Saadaan ehdotuksen nimi id:llä oikein frontissakin)
+        valueArray = [r for r in Suggestion.query.options(load_only("id", "preferred_label")).filter(Suggestion.id == sugg_id)]
+        for tempItem in valueArray:
+            result_to_be_finalised["preferred_label"] = tempItem.preferred_label
+        valueArray = []
+
+
+    s_ids = False
+    if s_ids:
+    # 6)  palauttaa ehdotusten haun offsetin ja limitin mukaisesti id-listan
+        iterHelper = []
+        valueArray = []
+        iterHelper = [r for r in Suggestion.query.options(load_only("id")).with_entities(Suggestion.id).limit(limit).offset(offset)]
+        for tempItem in iterHelper:
+            valueArray.append(tempItem[0]) 
+        result_to_be_finalised["ids"] = valueArray
+        valueArray = []
+
+    s_count = False
+    if s_count:
+    # 7)
+    #  palauttaa suggestionien määrän
+        result_to_be_finalised['suggestions_count'] = Suggestion.query.options(load_only("id")).with_entities(Suggestion.id).count()
+    
+
+
+    return result_to_be_finalised
+
+# AAA https://docs.sqlalchemy.org/en/13/orm/tutorial.html
     
 
 def get_one_or_404(model: object, primary_key: int) -> str:
@@ -289,7 +419,7 @@ def patch_or_404(model: object, primary_key: int, payload: Dict) -> str:
 
     verify_user_access_to_resource(db_obj)
 
-    # make sure that the `id` and `created` fields never get updated
+    # make sure that the `id` and `created` fitempItemthing = model.query.with_entities(model.id).count()elds never get updated
     payload.pop("id", None)
     payload.pop("created", None)
 

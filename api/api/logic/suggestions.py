@@ -1,16 +1,18 @@
 import connexion
 from flask import jsonify
-from sqlalchemy import or_, func, and_
+from sqlalchemy import or_, func, and_, Table, Column, String, MetaData, literal, select
 from sqlalchemy.types import Unicode
+from sqlalchemy.orm import load_only
 
 from ..authentication import admin_only
 from .validators import suggestion_parameter_validator, suggestion_id_validator, _error_messagify
 # pylint: disable=unused-import
 from .common import (create_response, get_one_or_404, get_all_or_400, get_all_or_400_custom,
-                     get_count_or_400_custom, create_or_400, delete_or_404, patch_or_404, update_or_404)
+                     get_count_or_400_custom, create_or_400, delete_or_404, patch_or_404, update_or_404,
+                     get_selected_from_model_or_400)
 # pylint: enable=unused-import
 from .utils import SUGGESTION_FILTER_FUNCTIONS, SUGGESTION_SORT_FUNCTIONS
-from ..models import db, Suggestion, Tag, User
+from ..models import db, Suggestion, Tag, User, Event
 from .skos import suggestionToGraph
 
 # Profiler decorator, enable if needed
@@ -108,6 +110,45 @@ def getQuery(limit: int = 0, offset: int = 0, filters: str = "", queryString: st
 
     return query
 
+
+def getTestQuery(model: object) -> db.Query:
+    """
+    Returns query for querying all suggestions.
+
+    Query can be sorted and limited with additional parameters.
+
+    :param limit: Cap the results to :limit: results
+    :param offset: Start the query from offset (e.g. for paging)
+    :param filters: Filter the results based on filter selections
+    :param queryString: Filter the results based on search term
+    :param sort: Sort the result set
+    :returns: Query object for querying the database
+    """
+
+    return db.Query
+
+def get_suggestions_minimums(limit: int = 0, offset: int = 0) -> str:
+    """
+    Returns selected suggestions.
+
+    Request query can be limited with additional parameters.
+
+    :param limit: Cap the results to :limit: results
+    :param offset: Start the query from offset (e.g. for paging)
+    """ 
+
+    iterHelper = []
+    valueArray = []
+    iterHelper = [r for r in Suggestion.query.options(load_only("id")).with_entities(Suggestion.id).limit(limit).offset(offset)]
+    for tempItem in iterHelper:
+        valueArray.append(tempItem[0]) 
+    tempArray = []
+    for suggestion_id in valueArray:
+        tempArray.append(get_selected_from_model_or_400(suggestion_id, limit, offset))
+    return create_response(tempArray, 200)
+
+
+
 def get_suggestions(limit: int = 0, offset: int = 0, filters: str = "", search: str = "", sort: str = 'DEFAULT') -> str:
     """
     Returns all suggestions.
@@ -123,7 +164,27 @@ def get_suggestions(limit: int = 0, offset: int = 0, filters: str = "", search: 
     """
 
     query = getQuery(limit=limit, offset=offset, filters=filters, queryString=search, sort=sort)
+
     return  get_all_or_400_custom(query)
+
+
+# def get_suggestions(limit: int = 0, offset: int = 0, filters: str = "", search: str = "", sort: str = 'DEFAULT') -> str:
+#     """
+#     Returns all suggestions.
+
+#     Request query can be limited with additional parameters.
+
+#     :param limit: Cap the results to :limit: results
+#     :param offset: Start the query from offset (e.g. for paging)
+#     :param filters: Filter the results based on filter selections
+#     :param search: Filter the results based on search term
+#     :param sort: Sort the results before returning them
+#     :returns: All suggestion matching the query in json format
+#     """
+
+#     query = getQuery(limit=limit, offset=offset, filters=filters, queryString=search, sort=sort)
+
+#     return  get_all_or_400_custom(query)
 
 
 def get_suggestions_count(filters: str = "", search: str = "") -> str:

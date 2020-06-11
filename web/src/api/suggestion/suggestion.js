@@ -1,10 +1,14 @@
 import { get, put, post, del, patch } from '../utils';
+// Can be removed
+import axios from 'axios';
+//
 
 // For adjusting the list length on the front page.
 // Remember to set this also at the SuggestionsList.vue
 const defaultLimit = 25;
 
 export default {
+  // ORIG
   getSuggestions: (offset = 0, sort = '', filters = '', searchWord = '') =>
     get({
       // eslint-disable-next-line max-len

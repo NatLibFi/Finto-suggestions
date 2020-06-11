@@ -53,7 +53,7 @@
                 <strong>#{{ suggestion.id }} </strong>
               </span>
               <span>{{ dateTimeFormatLabel(suggestion.created) }} </span>
-              <assign-meeting
+              <!-- <assign-meeting
                 @closeDropdown="dropdownOpen = false"
                 @goToMeeting="goToMeeting($event)"
                 :suggestion="suggestion"
@@ -61,7 +61,7 @@
                 :isAuthenticated="isAuthenticated"
                 :isAdmin="role === userRoles.ADMIN"
                 class="assign-meeting"
-              />
+              /> -->
             </div>
           </transition>
           <div class="tags">
