@@ -1,6 +1,7 @@
 <template>
   <div class="meetings">
     <div>
+      {{ doesItHappen }}
       <a @click="setPageOk()" unselectable="on">
         Swap the value:
       </a>
@@ -58,12 +59,16 @@ import { authenticatedUserGetters } from '../../store/modules/authenticatedUser/
 import { mapAuthenticatedUserGetters } from '../../store/modules/authenticatedUser/authenticatedUserModule.js';
 import meetingModule, { mapMeetingGetters, mapMeetingActions, mapMeetingMutations } from '../../store/modules/meeting/meetingModule.js';
 import { meetingGetters, meetingActions, meetingMutations } from '../../store/modules/meeting/meetingConsts.js';
-import { mapsState} from 'vuex';
+import 
+  bundledStoreItemsModule, {actions, mutations, getters
+} from '../../store/modules/bundledStoreItems/bundledStoreItemsModule';
+// import { mapsState} from 'vuex';
 // import { mapCommonControlsMutations, mapCommonControlsActions, mapCommonControlsGetters } from '../../store/modules/commonControls/commonControlsModule';
 // import { commonControlsMutations, commonControlsActions, commonControlsGetters} from '../../store/modules/commonControls/commonControlsConsts';
 import store from "../../store/index";
 import Vue from 'vue';
 import lockr from 'lockr';
+import { mapGetters, mapActions, mapMutations, mapState, namespaced } from 'vuex';
 
 // For speedTesting
 import axios from 'axios';
@@ -82,7 +87,8 @@ export default {
       tietoToimivuudesta: String, //*
       updateTest: String,
       somethingToManipulate: String,
-      somethingToJsonify: String
+      somethingToJsonify: String,
+      something: String 
     };
   },
   computed: {
@@ -97,11 +103,13 @@ export default {
       Vue.set('updateMessage', value);
     },
     getEntireStoreState() {
-      this.somethingToManipulate = this.$store.state;
+      this.somethingToManipulate = this.$store.state.bundledStoreItems;
       return this.somethingToManipulate;
-    }
+    },
+    // ...mapState('bundledStoreItems', ['getSuggestions2']),
+    // getSuggestions2
     // getValueFromStoreState: function() {
-    //   const response = this.$store.state.obj.message;
+      //   const response = this.$store.state.obj.message;
     //   conslole.log(response);
     //   return this.$store.state.obj.message
     // },
@@ -115,6 +123,7 @@ export default {
     ///
     this.helper();
     await this.getMeetings();
+    this.doesItHappen();
   },
   methods: {
     helper(){
@@ -124,9 +133,18 @@ export default {
     ...mapMeetingActions({
       getMeetings: meetingActions.GET_MEETINGS_AS_PITHY,
     }),
+    // ...mapActions(['getSuggestions2']),
+    doesItHappen(){
+      this.something = bundledStoreItemsModule.getSuggestions2()
+    },
+
+    // ...mapActions('namespaced/module', [
+    //         'myAction',
+    //         'myOtherAction'
+    //     ])
 
     getStoreStateItem(){
-        this.tietoToimivuudesta = store.state.idUsedtoGetCurrentMeeting
+      this.tietoToimivuudesta = store.state.idUsedtoGetCurrentMeeting
     }, //** 
     keyValuePairIsAddedToState(key, value) {
         Vue.set(store.state, key, value);
