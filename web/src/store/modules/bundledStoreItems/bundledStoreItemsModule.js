@@ -1,12 +1,7 @@
 import Vue from 'vue';
-import { mapGetters, mapActions } from 'vuex';
 import api from '../../../api';
-import {
-  namespace,
-  storeStateNames,
-} from './bundledStoreItemsConst';
 
-// something = 'thumbs_up' || 'thumbs_down || ''happy ...;
+// anotherWay = 'thumbs_up' || 'thumbs_down || ''happy ...;
 // export const emojis = {
 //   THUMBS_UP: 'thumbs_up',
 //   THUMBS_DOWN: 'thumbs_down',
@@ -18,61 +13,60 @@ import {
 //   HOORAY: 'hooray'
 // };
 
-let Tag = function(){
-  this.label = '';
-  this.color = '';
+class Tag {
+  constructor(){
+    this.label = '';
+    this.color = '';
+  }
 }
-let Reaction = function(){
-  this.user_id = 0;
-  this.user_name = '';
-  this.code = 0;
+class Reaction{
+  constructor() {
+    this.user_id = 0;
+    this.user_name = '';
+    this.code = 0;
+  }
 }
-let Comment = function(){
-  this.id = 0;
-  this.user_id = 0;
-  this.created = '';
-  this.modified = '';
-  this.text = '';
+class Comment{
+  constructor() {
+    this.id = 0;
+    this.user_id = 0;
+    this.created = '';
+    this.modified = '';
+    this.text = '';
+  }
 }
-let Suggestion = function () {
-  this.id = 0;
-  this.suggestion_type = '';
-  this.preferred_label = []; // [fi, sv ,en]
-  this.alternative_labels = []; // [0..n]
-  this.broader_labels = []; // [0..1]
-  this.created = '';
-  this.description = '';
-  this.status = '';
-  this.groups = []; // [0..n]
-  this.created = '';
-  this.modified = '';
-  this.narrower_labels = []; // [0..n]
-  this.organization = '';
-  this.reason = '';
-  this.related_labels = []; // [0..n]
-  this.uri = ''
-  this.scopeNote = '';
-  this.exactMatches = '' 
-  this.neededFor = ''
-  this.yse_term = '';
-  this.user_id = 0,
-  this.reactions = [];
-  this.tags = [];
-  this.comments = [];
+class Suggestion{
+  constructor() {
+    this.id = 0;
+    this.suggestion_type = '';
+    this.preferred_label = []; // [fi, sv ,en]
+    this.alternative_labels = []; // [0..n]
+    this.broader_labels = []; // [0..1]
+    this.created = '';
+    this.description = '';
+    this.status = '';
+    this.groups = []; // [0..n]
+    this.created = '';
+    this.modified = '';
+    this.narrower_labels = []; // [0..n]
+    this.organization = '';
+    this.reason = '';
+    this.related_labels = []; // [0..n]
+    this.uri = ''
+    this.scopeNote = '';
+    this.exactMatches = '' 
+    this.neededFor = ''
+    this.yse_term = '';
+    this.user_id = 0,
+    this.reactions = [];
+    this.tags = [];
+    this.comments = [];
+  }
 }
 
-// const state = () => {
-//   return {
-//     ...
-//   }
-// }
-
-
-export default {
-
+const bundledItems = {
   namespaced: true,
   state: {
-    // [storeStateNames.ITEMS]: [],
     directives2: {
       sorting: 
       {
@@ -103,67 +97,65 @@ export default {
       title: '' 
     },
     suggestions2: [],
-    // storeStateItems: []
   },
   getters: {
     getSuggestions2: state => state[suggestions2]
   },
   mutations: {
-    // Kokeillaan aluksi tapaa, jossa mutaatiolle tarjotaan actionissa Suggestion-tyyppinen
-    // taulukko eli tämän tyyppinen taulukko muodostetaan actionissa 
-    setSuggestions2(state, suggestions) {
-      Vue.set(state, suggestions2, suggestions);
+    setSuggestions2(state, data) {
+      state.suggestions2 = data;
     },
-    // setInitialData(state, initialData) {
-    //   Vue.set(state, storeStateItems.ITEMS, initialData);
-    // }
   },
   actions: {
-    async getSuggestions2({ commit }, { offset, sort, filters, searchWord }) {
+    async getSuggestionsFromDBandCommitState({ commit }, { offset, sort, filters, searchWord }) {
       const response = await api.suggestion.getSuggestions(offset, sort, filters, searchWord);
       if (response && response.code == 200) {
         console.log("Tähän alamme muodostaa responssia statelle sopivaan muotoon");
-        console.log(response);
-        // commit(suggestionMutations.SET_SUGGESTIONS, response.data);
+        console.log(response.data);
+        commit('setSuggestions2', response);
         return response.items;
       } else {
         return '';
       }
     },
-    // async addInitialData({ dispatch }, { data, suggestionId }) {
-    //   const response = await api.suggestion.addInitialData()(data, suggestionId);
-    //   if (response && response.code === 201) {
-    //     commit(mutations.setInitialData(data));
-    //   }
-    // },
   },
+  // *** The mutations will be dealt with a dedicated function.
+  // *** It is a way to dramatically decrease the amount of boilerplate code
+  // *** for the mutatons. It is same with the actions. There will be only one
+  // *** action for all the "actions"
+  // *** FOR MUTATIONs something like this:
   // mutations: {
   //   mutate(state, payload) {
   //       state[payload.property] = payload.with;
   //     }
   //   },
-    
-  async fetchAndCommitData({ state, commit }, payload) {
-    try {
-        let body = { jokuAvain: state.jokuArvo };
-        if (payload) {
-            body = Object.assign({}, payload.body, body);
-        }
-        let response = await api.post(
-            body,
-            state.config.serviceHeaders
-        );
-        if (payload.commit) {
-            commit('mutate', {
-                property: payload.stateProperty,
-                with: response.data[payload.stateProperty]
-            });
-        }
-        return response.data;
-    } catch (error) {
-        throw error;
-    }
-  },
-
-
+  // *** FOR ACTIONSs something like this:
+  // async fetchAndCommitData({ state, commit }, payload) {
+  //   try {
+  //       let body = { jokuAvain: state.jokuArvo };
+  //       if (payload) {
+  //           body = Object.assign({}, payload.body, body);
+  //       }
+  //       let response = await api.somePathToEndPoint.post(
+  //           body,
+  //           state.config.serviceHeaders
+  //       );
+  //       if (payload.commit) {
+  //           commit('mutate', {
+  //               property: payload.stateProperty,
+  //               with: response.data[payload.stateProperty]
+  //           });
+  //           // or without 'mutate'
+  //           commit({
+  //             property: payload.stateProperty,
+  //             with: response.data[payload.stateProperty]
+  //         });
+  //       }
+  //       return response.data;
+  //   } catch (error) {
+  //       throw error;
+  //   }
+  // },
 };
+
+export default bundledItems

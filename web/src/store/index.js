@@ -8,7 +8,8 @@ import eventModule from './modules/event/eventModule';
 import userModule from './modules/user/userModule';
 import authenticatedUser from './modules/authenticatedUser/authenticatedUserModule';
 import reactionModule from './modules/reaction/reactionModule';
-import bundledStoreItemsModule from './modules/bundledStoreItems/bundledStoreItemsModule';
+// import bundledItemsStoreModule from './modules/bundledStoreItems/bundledStoreItemsModule';
+import bundledItems from './modules/bundledStoreItems/bundledStoreItemsModule';
 // "The fate" of the next module will be seen later on
 // import commonControlsModule from './modules/commonControls/commonControlsModule';
 
@@ -23,7 +24,7 @@ export default new Vuex.Store({
     user: userModule,
     authenticatedUser: authenticatedUser,
     reaction: reactionModule,
-    bundledStoreItems: bundledStoreItemsModule
+    bundledItems
     // commonControls: commonControlsModule
   }
 });

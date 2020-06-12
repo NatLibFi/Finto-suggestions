@@ -1,11 +1,15 @@
 <template>
   <div class="meetings">
     <div>
-      {{ doesItHappen }}
       <a @click="setPageOk()" unselectable="on">
         Swap the value:
       </a>
       {{ isPageOk }}
+      <div v-if='isPageOk'>
+        <div v-for='suggestion in suggestions2' :key='suggestion.id' >
+          {{ suggestion }}
+        </div>
+      </div>
     </div>
     <div>
       <a @click="runTheSpeedTest()" unselectable="on">
@@ -31,16 +35,11 @@
       {{ responseAsString }}
     <div>
     </div>
-
-
-
       <ul>
         <span v-for="meeting in meetings" :key="meeting.id" >
                 <h4>*** {{ meeting.name }} / #{{ meeting.id }} ***</h4>
-                <!-- <li>#{{ meeting.id }}</li> -->
                 <li>Luontipäivä: {{ meeting.created }}</li>
                 <li>Kokouspäivä: {{ meeting.meeting_date }}</li>
-                <!-- <li @click="goToMeetingList()" class="item"> -->
                 <a @click="setCurrentMeetingIdForLinkToMeeting(meeting.id), goToSingleMeetingPage()" unselectable="on">Tästä pääset tapaamiseen</a>
                 <div>...</div>
         </span>
@@ -59,19 +58,15 @@ import { authenticatedUserGetters } from '../../store/modules/authenticatedUser/
 import { mapAuthenticatedUserGetters } from '../../store/modules/authenticatedUser/authenticatedUserModule.js';
 import meetingModule, { mapMeetingGetters, mapMeetingActions, mapMeetingMutations } from '../../store/modules/meeting/meetingModule.js';
 import { meetingGetters, meetingActions, meetingMutations } from '../../store/modules/meeting/meetingConsts.js';
-import 
-  bundledStoreItemsModule, {actions, mutations, getters
-} from '../../store/modules/bundledStoreItems/bundledStoreItemsModule';
-// import { mapsState} from 'vuex';
-// import { mapCommonControlsMutations, mapCommonControlsActions, mapCommonControlsGetters } from '../../store/modules/commonControls/commonControlsModule';
-// import { commonControlsMutations, commonControlsActions, commonControlsGetters} from '../../store/modules/commonControls/commonControlsConsts';
 import store from "../../store/index";
 import Vue from 'vue';
 import lockr from 'lockr';
-import { mapGetters, mapActions, mapMutations, mapState, namespaced } from 'vuex';
+import { mapGetters, mapActions, mapMutations, mapState} from 'vuex';
 
 // For speedTesting
 import axios from 'axios';
+
+// This component is a playground for code testings
 
 export default {
   components: {
@@ -92,6 +87,7 @@ export default {
     };
   },
   computed: {
+    ...mapState('bundledItems', ['suggestions2']),
     ...mapAuthenticatedUserGetters({
       isAuthenticated: authenticatedUserGetters.GET_IS_AUTHENTICATED,
       role: authenticatedUserGetters.GET_USER_ROLE
@@ -103,19 +99,18 @@ export default {
       Vue.set('updateMessage', value);
     },
     getEntireStoreState() {
-      this.somethingToManipulate = this.$store.state.bundledStoreItems;
+      this.somethingToManipulate = this.$store.state.bundledItems;
       return this.somethingToManipulate;
     },
-    // ...mapState('bundledStoreItems', ['getSuggestions2']),
-    // getSuggestions2
-    // getValueFromStoreState: function() {
-      //   const response = this.$store.state.obj.message;
-    //   conslole.log(response);
-    //   return this.$store.state.obj.message
-    // },
-
   },
   async created() {
+    this.$store.dispatch('bundledItems/getSuggestionsFromDBandCommitState',{
+      offset: 0,
+      sort: 'CREATED_DESC',
+      filters: '',
+      searchWord: ''      
+    });
+
     /// Minor
     this.testingOfUpdateHook();
     lockr.prefix = 'meetings_';
@@ -123,7 +118,6 @@ export default {
     ///
     this.helper();
     await this.getMeetings();
-    this.doesItHappen();
   },
   methods: {
     helper(){
@@ -133,16 +127,6 @@ export default {
     ...mapMeetingActions({
       getMeetings: meetingActions.GET_MEETINGS_AS_PITHY,
     }),
-    // ...mapActions(['getSuggestions2']),
-    doesItHappen(){
-      this.something = bundledStoreItemsModule.getSuggestions2()
-    },
-
-    // ...mapActions('namespaced/module', [
-    //         'myAction',
-    //         'myOtherAction'
-    //     ])
-
     getStoreStateItem(){
       this.tietoToimivuudesta = store.state.idUsedtoGetCurrentMeeting
     }, //** 
