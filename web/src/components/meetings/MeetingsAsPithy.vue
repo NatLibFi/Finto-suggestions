@@ -104,7 +104,7 @@ export default {
     },
   },
   async created() {
-    this.$store.dispatch('bundledItems/getSuggestionsFromDBandCommitState',{
+    this.$store.dispatch('bundledItems/getSuggestionsFromDBAndCommitState',{
       offset: 0,
       sort: 'CREATED_DESC',
       filters: '',
