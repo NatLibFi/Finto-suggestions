@@ -39,7 +39,7 @@ class Suggestion{
   constructor() {
     this.id = 0;
     this.suggestion_type = '';
-    this.preferred_label = []; // [fi, sv ,en]
+    this.preferred_label = {}; // [fi, sv ,en]
     this.alternative_labels = []; // [0..n]
     this.broader_labels = []; // [0..1]
     this.created = '';
@@ -54,7 +54,7 @@ class Suggestion{
     this.related_labels = []; // [0..n]
     this.uri = ''
     this.scopeNote = '';
-    this.exactMatches = '' 
+    this.exactMatches = []; 
     this.neededFor = ''
     this.yse_term = '';
     this.user_id = 0,
@@ -110,79 +110,85 @@ const bundledItems = {
     async getSuggestionsFromDBAndCommitState({ commit }, { offset, sort, filters, searchWord }) {
       const response = await api.suggestion.getSuggestions(offset, sort, filters, searchWord);
       if (response && response.code == 200) {
+        let suggestionItems = [];
         console.log("Tähän alamme muodostaa responssia statelle sopivaan muotoon");
-        // console.log(response.data);
-
-        // console.log(response.data['1'].id)
-        // console.log(response.data['1'].created)
-
+        const oneSuggestion = new Suggestion();
         console.log("The size of response.data for the looping under construction is:")
         console.log(Object.keys(response.data).length)
-        console.log("id: " + response.data[2].id)
-        console.log("suggestion_type: " + response.data[2].suggestion_type)
+        oneSuggestion.id = response.data[2].id; //
+        oneSuggestion.suggestion_type = response.data[2].suggestion_type;
         console.log("The size of preferred_label for the looping under construction is:")
         console.log(Object.keys(response.data[2].preferred_label).length)
-        console.log("preferred_label.fi: " + response.data[2].preferred_label['fi']['value'])
-        console.log("preferred_label.sv: " + response.data[2].preferred_label['sv']['value'])
-        console.log("preferred_label.en: " + response.data[2].preferred_label['en']['value'])
+        oneSuggestion.preferred_label["fi"] = response.data[2].preferred_label['fi']['value'] //
+        oneSuggestion.preferred_label["sv"] = response.data[2].preferred_label['sv']['value'] //
+        oneSuggestion.preferred_label["en"] = response.data[2].preferred_label['en']['value'] //
         console.log("The size of alternative_labels for the looping under construction is:")
         console.log(Object.keys(response.data[2].alternative_labels).length)
-        console.log("alternative_labels.0.value: " + response.data[2].alternative_labels[0]['value'])
-        console.log("alternative_labels.1.value: " + response.data[2].alternative_labels[1]['value'])
-        console.log("alternative_labels.2.value: " + response.data[2].alternative_labels[2]['value'])
+        oneSuggestion.alternative_labels.push(response.data[2].alternative_labels[0]['value'])
+        oneSuggestion.alternative_labels.push(response.data[2].alternative_labels[1]['value'])
+        oneSuggestion.alternative_labels.push(response.data[2].alternative_labels[2]['value'])
         console.log("The size of broader_labels for the looping under construction is:")
         console.log(Object.keys(response.data[2].broader_labels).length)
-        console.log(response.data[2].broader_labels[0]['uri'])
-        console.log(response.data[2].broader_labels[0]['value'])
-        console.log("created: " + response.data[2].created)
-        console.log("description: " + response.data[2].description)
-        console.log("status " + response.data[2].status)
-        console.log("groups.0.uri: " + response.data[2].groups[0]['uri'])
-        console.log("groups.0.value: " + response.data[2].groups[0]['value'])
-        console.log("created: " + response.data[2].created)
-        console.log("modified: " + response.data[2].modified)
+        let tempObjectForBroaderLabels = {}
+        tempObjectForBroaderLabels['uri'] = response.data[2].broader_labels[0]['uri']
+        tempObjectForBroaderLabels['value'] = response.data[2].broader_labels[0]['value']
+        oneSuggestion.broader_labels.push(tempObjectForBroaderLabels)
+        tempObjectForBroaderLabels = {}
+        oneSuggestion.created = response.data[2].created
+        oneSuggestion.description = response.data[2].description
+        oneSuggestion.status = response.data[2].status
+        let tempObjectForGroups = {}
+        tempObjectForGroups['uri'] = response.data[2].groups[0]['uri']
+        tempObjectForGroups['value'] = response.data[2].groups[0]['value']
+        oneSuggestion.groups.push(tempObjectForGroups)
+        tempObjectForGroups = {}
+        oneSuggestion.created = response.data[2].created
+        oneSuggestion.modified = response.data[2].modified
+        let tempObjectForNarrowerLabels = {}
         if(!!response.data[2].narrower_labels[0]){
           console.log("The size of narrower_labels for the looping under construction is:")
           console.log(Object.keys(response.data[2].narrower_labels).length)
-          console.log("narrower_labels.0.uri: " + response.data[2].narrower_labels[0]['uri'])
+          tempObjectForNarrowerLabels['uri'] = response.data[2].narrower_labels[0]['uri']
         }
         if(!!response.data[2].narrower_labels[0]){
           console.log("The size of narrower_labels for the looping under construction is:")
           console.log(Object.keys(response.data[2].narrower_labels).length)
-          console.log("narrower_labels.0.value: " + response.data[2].narrower_labels[0]['value'])
+          tempObjectForNarrowerLabels['value'] = response.data[2].narrower_labels[0]['value']
         }
-        console.log("organization: " + response.data['2'].organization)
-        console.log("reason: " + response.data['2'].reason)
+        oneSuggestion.narrower_labels.push(tempObjectForNarrowerLabels)
+        tempObjectForNarrowerLabels = {}
+        oneSuggestion.organization = response.data[2].organization
+        oneSuggestion.reason = response.data[2].reason
         if(!!response.data[2].related_labels[0]){
           console.log("The size of related_labels for the looping under construction is:")
           console.log(Object.keys(response.data[2].related_labels).length)
-          console.log("related_labels.0.uri: " + response.data[2].related_labels[0]['uri'])
         }
         if(!!response.data[2].related_labels[0]){
           console.log("The size of related_labels for the looping under construction is:")
           console.log(Object.keys(response.data[2].related_labels).length)
-          console.log("related_labels.0.value: " + response.data[2].related_labels[0]['value'])
         }
-        // console.log(response.data['2'].related_labels)
-        console.log("uri: " + response.data[2].uri)
-        console.log("scopeNote: " + response.data[2].scopeNote)
-        // console.log(response.data['2'].exactMatches) 
+        let tempObjectForExactMatches = {}
         if(!!response.data[2].exactMatches[0]){
           console.log("The size of exactMatches for the looping under construction is:")
           console.log(Object.keys(response.data[2].exactMatches).length)
-          console.log("exactMatches.0.vocab: " + response.data[2].exactMatches[0]['vocab'])
-          console.log("exactMatches.0.value: " + response.data[2].exactMatches[0]['value'])
+          tempObjectForExactMatches['vocab'] = response.data[2].exactMatches[0]['vocab']
+          tempObjectForExactMatches['value'] = response.data[2].exactMatches[0]['value']
         }
+        oneSuggestion.exactMatches.push(tempObjectForExactMatches)
+        tempObjectForExactMatches = {}
         if(!!response.data[2].exactMatches[1]){
           console.log("The size of exactMatches for the looping under construction is:")
           console.log(Object.keys(response.data[2].exactMatches).length)
-          console.log("exactMatches.1.vocab: " + response.data[2].exactMatches[1]['vocab'])
-          console.log("exactMatches.1.value: " + response.data[2].exactMatches[1]['value'])
+          tempObjectForExactMatches['vocab'] = response.data[2].exactMatches[1]['vocab']
+          tempObjectForExactMatches['value'] = response.data[2].exactMatches[1]['value']
         }
+        oneSuggestion.exactMatches.push(tempObjectForExactMatches)
+        tempObjectForExactMatches = {}
+        oneSuggestion.neededFor = response.data[2].neededFor; //
+        oneSuggestion.yse_term = response.data[2].yse_term; //
+        oneSuggestion.user_id = response.data[2].user_id; //
 
-        console.log("neededFor: " + response.data[2].neededFor)
-        console.log("yse_term: " + response.data[2].yse_term)
-        console.log("user_id: " + response.data[2].user_id)
+        suggestionItems.push(oneSuggestion)
         // this.reactions = [];
         // this.tags = [];
         // this.comments = [];        
@@ -207,8 +213,10 @@ const bundledItems = {
         //   }
         // }
         // goThroughEntireObjectTree(response.data);
-
-        commit('setSuggestions2', response.data);
+        // next toimii
+        // commit('setSuggestions2', response.data);
+        
+        commit('setSuggestions2', suggestionItems);
         return response.data;
       } else {
         return '';
@@ -218,7 +226,7 @@ const bundledItems = {
   // "ORIG"
   // actions: {
   //   async getSuggestionsFromDBAndCommitState({ commit }, { offset, sort, filters, searchWord }) {
-  //     const response = await api.suggestion.getSuggestions(offset, sort, filters, searchWord);
+  //     const response = await api.suggestion.getSuggestions(offset, 8138sort, filters, searchWord);
   //     if (response && response.code == 200) {
   //       console.log("Tähän alamme muodostaa responssia statelle sopivaan muotoon");
   //       console.log(response.data);
