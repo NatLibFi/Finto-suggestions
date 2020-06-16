@@ -111,133 +111,108 @@ const bundledItems = {
       const response = await api.suggestion.getSuggestions(offset, sort, filters, searchWord);
       if (response && response.code == 200) {
         let suggestionItems = [];
-        console.log("Tähän alamme muodostaa responssia statelle sopivaan muotoon");
-        const oneSuggestion = new Suggestion();
-        console.log("The size of response.data for the looping under construction is:")
-        console.log(Object.keys(response.data).length)
-        if(response.data[2].id) {
-          oneSuggestion.id = response.data[2].id; //
-        }
-        if(response.data[2].suggestion_type) {
-          oneSuggestion.suggestion_type = response.data[2].suggestion_type;
-        }
-        if(response.data[2].preferred_label['fi']) {
-          oneSuggestion.preferred_label["fi"] = response.data[2].preferred_label['fi']['value'] //
-        }
-        if(response.data[2].preferred_label['sv']) {
-          oneSuggestion.preferred_label["sv"] = response.data[2].preferred_label['sv']['value'] //
-        }
-        if(response.data[2].preferred_label['en']) {
-          oneSuggestion.preferred_label["en"] = response.data[2].preferred_label['en']['value'] //
-        }
-        for (let index = 0; index < Object.keys(response.data[2].alternative_labels).length; index++) {
-          oneSuggestion.alternative_labels.push(response.data[2].alternative_labels[index]['value'])
-        }
-        if(response.data[2].broader_labels[0]){
-          let tempObjectForBroaderLabels = {}
-          for (let index = 0; index < Object.keys(response.data[2].broader_labels).length; index++) {
-            tempObjectForBroaderLabels['uri'] = response.data[2].broader_labels[index]['uri']
-            tempObjectForBroaderLabels['value'] = response.data[2].broader_labels[index]['value']
-            oneSuggestion.broader_labels.push(tempObjectForBroaderLabels)
-            tempObjectForBroaderLabels = {}
+        for (let rootIndex = 0; rootIndex < Object.keys(response.data).length; rootIndex++) {
+          const oneSuggestion = new Suggestion();
+          if(response.data[rootIndex].id) {
+            oneSuggestion.id = response.data[rootIndex].id; //
           }
-        }
-        if(response.data[2].created){
-          oneSuggestion.created = response.data[2].created
-        }
-        if(response.data[2].description){
-          oneSuggestion.description = response.data[2].description
-        }
-        if(response.data[2].status){
-          oneSuggestion.status = response.data[2].status
-        }
-        if(response.data[2].groups[0]){
-          let tempObjectForGroups = {}
-          for (let index = 0; index < Object.keys(response.data[2].groups).length; index++) {
-            tempObjectForGroups['uri'] = response.data[2].groups[index]['uri']
-            tempObjectForGroups['value'] = response.data[2].groups[index]['value']
-            oneSuggestion.groups.push(tempObjectForGroups)
-            tempObjectForGroups = {}
+          if(response.data[rootIndex].suggestion_type) {
+            oneSuggestion.suggestion_type = response.data[rootIndex].suggestion_type;
           }
-        }
-        if(response.data[2].created){
-          oneSuggestion.created = response.data[2].created
-        }
-        if(response.data[2].modified){
-          oneSuggestion.modified = response.data[2].modified
-        }
-        if(response.data[2].narrower_labels[0]){
-          let tempObjectForNarrowerLabels = {}
-          for (let index = 0; index < Object.keys(response.data[2].narrower_labels).length; index++) {
-            tempObjectForNarrowerLabels['uri'] = response.data[2].narrower_labels[index]['uri']
-            tempObjectForNarrowerLabels['value'] = response.data[2].narrower_labels[index]['value']
-            oneSuggestion.narrower_labels.push(tempObjectForNarrowerLabels)
-            tempObjectForNarrowerLabels = {}
+          if(response.data[rootIndex].preferred_label['fi']) {
+            oneSuggestion.preferred_label["fi"] = response.data[rootIndex].preferred_label['fi']['value'] //
           }
-        }
-        if(response.data[2].organization){
-          oneSuggestion.organization = response.data[2].organization
-        }
-        if(response.data[2].reason){
-          oneSuggestion.reason = response.data[2].reason
-        }
-        let tempObjectForRelatedLabels = {}
-        if(response.data[2].related_labels[0]){
-          for (let index = 0; index < Object.keys(response.data[2].related_labels).length; index++) {
-            tempObjectForRelatedLabels['uri'] = response.data[2].related_labels[index]['uri']
-            tempObjectForRelatedLabels['value'] = response.data[2].related_labels[index]['value']
-            oneSuggestion.related_labels.push(tempObjectForRelatedLabels)
-            tempObjectForRelatedLabels = {}
+          if(response.data[rootIndex].preferred_label['sv']) {
+            oneSuggestion.preferred_label["sv"] = response.data[rootIndex].preferred_label['sv']['value'] //
           }
-        }
-        if(response.data[2].exactMatches[0]){
-          let tempObjectForExactMatches = {}
-          for (let index = 0; index < Object.keys(response.data[2].exactMatches).length; index++) {
-            tempObjectForExactMatches['value'] = response.data[2].exactMatches[index]['value']
-            tempObjectForExactMatches['vocab'] = response.data[2].exactMatches[index]['vocab']
-            oneSuggestion.exactMatches.push(tempObjectForExactMatches)
-            tempObjectForExactMatches = {}
+          if(response.data[rootIndex].preferred_label['en']) {
+            oneSuggestion.preferred_label["en"] = response.data[rootIndex].preferred_label['en']['value'] //
           }
+          if(response.data[rootIndex].alternative_labels[0]){
+            for (let index = 0; index < Object.keys(response.data[rootIndex].alternative_labels).length; index++) {
+              oneSuggestion.alternative_labels.push(response.data[rootIndex].alternative_labels[index]['value'])
+            }
+          }
+          if(response.data[rootIndex].broader_labels[0]){
+            let tempObjectForBroaderLabels = {}
+            for (let index = 0; index < Object.keys(response.data[rootIndex].broader_labels).length; index++) {
+              tempObjectForBroaderLabels['uri'] = response.data[rootIndex].broader_labels[index]['uri']
+              tempObjectForBroaderLabels['value'] = response.data[rootIndex].broader_labels[index]['value']
+              oneSuggestion.broader_labels.push(tempObjectForBroaderLabels)
+              tempObjectForBroaderLabels = {}
+            }
+          }
+          if(response.data[rootIndex].created){
+            oneSuggestion.created = response.data[rootIndex].created
+          }
+          if(response.data[rootIndex].description){
+            oneSuggestion.description = response.data[rootIndex].description
+          }
+          if(response.data[rootIndex].status){
+            oneSuggestion.status = response.data[rootIndex].status
+          }
+          if(response.data[rootIndex].groups[0]){
+            let tempObjectForGroups = {}
+            for (let index = 0; index < Object.keys(response.data[rootIndex].groups).length; index++) {
+              tempObjectForGroups['uri'] = response.data[rootIndex].groups[index]['uri']
+              tempObjectForGroups['value'] = response.data[rootIndex].groups[index]['value']
+              oneSuggestion.groups.push(tempObjectForGroups)
+              tempObjectForGroups = {}
+            }
+          }
+          if(response.data[rootIndex].created){
+            oneSuggestion.created = response.data[rootIndex].created
+          }
+          if(response.data[rootIndex].modified){
+            oneSuggestion.modified = response.data[rootIndex].modified
+          }
+          if(response.data[rootIndex].narrower_labels[0]){
+            let tempObjectForNarrowerLabels = {}
+            for (let index = 0; index < Object.keys(response.data[rootIndex].narrower_labels).length; index++) {
+              tempObjectForNarrowerLabels['uri'] = response.data[rootIndex].narrower_labels[index]['uri']
+              tempObjectForNarrowerLabels['value'] = response.data[rootIndex].narrower_labels[index]['value']
+              oneSuggestion.narrower_labels.push(tempObjectForNarrowerLabels)
+              tempObjectForNarrowerLabels = {}
+            }
+          }
+          if(response.data[rootIndex].organization){
+            oneSuggestion.organization = response.data[rootIndex].organization
+          }
+          if(response.data[rootIndex].reason){
+            oneSuggestion.reason = response.data[rootIndex].reason
+          }
+          let tempObjectForRelatedLabels = {}
+          if(response.data[rootIndex].related_labels[0]){
+            for (let index = 0; index < Object.keys(response.data[rootIndex].related_labels).length; index++) {
+              tempObjectForRelatedLabels['uri'] = response.data[rootIndex].related_labels[index]['uri']
+              tempObjectForRelatedLabels['value'] = response.data[rootIndex].related_labels[index]['value']
+              oneSuggestion.related_labels.push(tempObjectForRelatedLabels)
+              tempObjectForRelatedLabels = {}
+            }
+          }
+          if(response.data[rootIndex].exactMatches[0]){
+            let tempObjectForExactMatches = {}
+            for (let index = 0; index < Object.keys(response.data[rootIndex].exactMatches).length; index++) {
+              tempObjectForExactMatches['value'] = response.data[rootIndex].exactMatches[index]['value']
+              tempObjectForExactMatches['vocab'] = response.data[rootIndex].exactMatches[index]['vocab']
+              oneSuggestion.exactMatches.push(tempObjectForExactMatches)
+              tempObjectForExactMatches = {}
+            }
+          }
+          if(response.data[rootIndex].neededFor){
+            oneSuggestion.neededFor = response.data[rootIndex].neededFor; //
+          }
+          if(response.data[rootIndex].yse_term){
+            oneSuggestion.yse_term = response.data[rootIndex].yse_term; //
+          }
+          if(response.data[rootIndex].user_id){
+            oneSuggestion.user_id = response.data[rootIndex].user_id; //
+          }
+          suggestionItems.push(oneSuggestion)
+          // console.log(oneSuggestion);
         }
-        if(response.data[2].neededFor){
-          oneSuggestion.neededFor = response.data[2].neededFor; //
-        }
-        if(response.data[2].yse_term){
-          oneSuggestion.yse_term = response.data[2].yse_term; //
-        }
-        if(response.data[2].user_id){
-          oneSuggestion.user_id = response.data[2].user_id; //
-        }
-
-        suggestionItems.push(oneSuggestion)
-        // this.reactions = [];
-        // this.tags = [];
-        // this.comments = [];        
-
-        // if (response.data.suggestions2['id'] === 8137){
-        // }
-        // function goThroughEntireObjectTree(o) {
-        //   for (var i in o) {
-        //       if (!!o[i] && typeof(o[i])=="object") {
-        //           // console.log(i, o[i]);
-        //           console.log("Avain on:");
-        //           console.log(i); // Tämä on avain
-        //           console.log("ja sen arvo on:");
-        //           console.log(o[i]);
-        //           goThroughEntireObjectTree(o[i]);
-        //       } 
-        //       // else {
-        //       //     // console.log(i, o[i]);
-        //       //     // console.log("Ei kuulu joukkoon")
-        //       //     null
-        //       // }
-        //   }
-        // }
-        // goThroughEntireObjectTree(response.data);
-        // next toimii
-        // commit('setSuggestions2', response.data);
-        
         commit('setSuggestions2', suggestionItems);
+        // suggestionItems = [];
         return response.data;
       } else {
         return '';
