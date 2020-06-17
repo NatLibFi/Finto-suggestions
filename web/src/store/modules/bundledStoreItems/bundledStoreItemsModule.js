@@ -108,9 +108,8 @@ const bundledItems = {
   },
   actions: {
     async getSuggestionsFromDBAndCommitState({ commit }, { offset, sort, filters, searchWord }) {
-      const response = await api.suggestion.getSuggestions(offset, sort, filters, searchWord);
+      const response = await api.suggestion.getSuggestions(offset, 'COMMENTS_DESC', filters, searchWord);
       if (response && response.code == 200) {
-        console.log(response.data)
         let suggestionItems = [];
         for (let rootIndex = 0; rootIndex < Object.keys(response.data).length; rootIndex++) {
           const oneSuggestion = new Suggestion();
@@ -210,9 +209,7 @@ const bundledItems = {
             oneSuggestion.user_id = response.data[rootIndex].user_id; //
           }
           if(response.data[rootIndex].events[0]){
-            console.log("#######################################################")
             let commentsArray = []
-            let tempObjectForComments = {}
             for (let index = 0; index < Object.keys(response.data[rootIndex].events).length; index++) {
               if (response.data[rootIndex].events[index].event_type === 'COMMENT') {
                 const oneComment = new Comment()
@@ -221,17 +218,35 @@ const bundledItems = {
                 oneComment.created = response.data[rootIndex].events[index].created
                 oneComment.modified = response.data[rootIndex].events[index].modified
                 oneComment.text = response.data[rootIndex].events[index].text
+
+
+                ///
+                // // async [reactionActions.GET_REACTIONS_BY_SUGGESTION]({ commit }, suggestion_id) {
+                //   // console.log(response.data[rootIndex].events[index].id)
+                // const reactionsForOneComment = await api.reaction.getReactionsByEvent(6064);
+                // // const reactionsForOneComment = await api.reaction.getReactionsByEvent(response.data[rootIndex].events[index].id);
+                // if (reactionsForOneComment && reactionsForOneComment.code === 200) {
+                //   const oneReaction = new Reaction()
+                //   // oneReaction.code = reactionsForOneComment.data[rootIndex].events[index].user_id
+                //   // commit(reactionMutations.SET_REACTIONS, response.data);
+                //   // console.log("SDSDSDSDSSDSDSSDSDSSDSDSDSDS")
+                //   for (let index = 0; index < Object.keys(reactionsForOneComment.data).length; index++) {
+                //     console.log(reactionsForOneComment.data[index].code)
+                    
+                //   }
+                // }
+                // }
+
+                ///
+
                 commentsArray.push(oneComment)
               }
-              // tempObjectForComments
               oneSuggestion.comments = commentsArray
             }
           }
           suggestionItems.push(oneSuggestion)
-          // console.log(oneSuggestion);
         }
         commit('setSuggestions2', suggestionItems);
-        // suggestionItems = [];
         return response.data;
       } else {
         return '';
