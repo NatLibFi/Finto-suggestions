@@ -23,7 +23,7 @@ class Reaction{
   constructor() {
     this.user_id = 0;
     this.user_name = '';
-    this.code = 0;
+    this.code = '';
   }
 }
 class Comment{
@@ -33,6 +33,7 @@ class Comment{
     this.created = '';
     this.modified = '';
     this.text = '';
+    this.reactions = [];
   }
 }
 class Suggestion{
@@ -218,27 +219,18 @@ const bundledItems = {
                 oneComment.created = response.data[rootIndex].events[index].created
                 oneComment.modified = response.data[rootIndex].events[index].modified
                 oneComment.text = response.data[rootIndex].events[index].text
-
-
-                ///
-                // // async [reactionActions.GET_REACTIONS_BY_SUGGESTION]({ commit }, suggestion_id) {
-                //   // console.log(response.data[rootIndex].events[index].id)
-                // const reactionsForOneComment = await api.reaction.getReactionsByEvent(6064);
-                // // const reactionsForOneComment = await api.reaction.getReactionsByEvent(response.data[rootIndex].events[index].id);
-                // if (reactionsForOneComment && reactionsForOneComment.code === 200) {
-                //   const oneReaction = new Reaction()
-                //   // oneReaction.code = reactionsForOneComment.data[rootIndex].events[index].user_id
-                //   // commit(reactionMutations.SET_REACTIONS, response.data);
-                //   // console.log("SDSDSDSDSSDSDSSDSDSSDSDSDSDS")
-                //   for (let index = 0; index < Object.keys(reactionsForOneComment.data).length; index++) {
-                //     console.log(reactionsForOneComment.data[index].code)
-                    
-                //   }
-                // }
-                // }
-
-                ///
-
+                const reactionsResponse = await api.reaction.getReactionsByEvent(response.data[rootIndex].events[index].id)
+                let reactionsArray = []
+                  if (reactionsResponse.data[0]) {
+                    for (let index = 0; index < reactionsResponse.data.length; index++) {
+                      const oneReaction = new Reaction()
+                      oneReaction.code = reactionsResponse.data[index]['code']
+                      oneReaction.user_id = reactionsResponse.data[index]['user_id']
+                      reactionsArray.push(oneReaction)
+                    }
+                  oneComment.reactions = reactionsArray
+                  reactionsArray = []
+                  }
                 commentsArray.push(oneComment)
               }
               oneSuggestion.comments = commentsArray
