@@ -109,7 +109,9 @@ const bundledItems = {
   },
   actions: {
     async getSuggestionsFromDBAndCommitState({ commit }, { offset, sort, filters, searchWord }) {
-      const response = await api.suggestion.getSuggestions(offset, 'COMMENTS_DESC', filters, searchWord);
+      // The next line for test purposes
+      // const response = await api.suggestion.getSuggestions(offset, 'COMMENTS_DESC', filters, searchWord);
+      const response = await api.suggestion.getSuggestions(offset, sort, filters, searchWord);
       if (response && response.code == 200) {
         let suggestionItems = [];
         for (let rootIndex = 0; rootIndex < Object.keys(response.data).length; rootIndex++) {
@@ -129,19 +131,30 @@ const bundledItems = {
           if(response.data[rootIndex].preferred_label['en']) {
             oneSuggestion.preferred_label["en"] = response.data[rootIndex].preferred_label['en']['value'] //
           }
+          let tagsArrayForOneSuggestion = []
+          if (response.data[rootIndex].tags[0]) {
+            for (let index = 0; index < response.data[rootIndex].tags.length; index++) {
+              const oneTagForSuggestion = new Tag()
+              oneTagForSuggestion.color = response.data[rootIndex].tags[index]['color']
+              oneTagForSuggestion.label = response.data[rootIndex].tags[index]['label']
+              tagsArrayForOneSuggestion.push(oneTagForSuggestion)
+            }
+            oneSuggestion.tags = tagsArrayForOneSuggestion
+            tagsArrayForOneSuggestion = []
+          }
           const reactionsForSuggestionResponse = await api.reaction.getReactionsBySuggestion(response.data[rootIndex].id)
           let reactionsArrayForOneSuggestion = []
-            if (reactionsForSuggestionResponse.data[0]) {
-              for (let index = 0; index < reactionsForSuggestionResponse.data.length; index++) {
-                const oneReactionForSuggestion = new Reaction()
-                oneReactionForSuggestion.code = reactionsForSuggestionResponse.data[index]['code']
-                oneReactionForSuggestion.user_id = reactionsForSuggestionResponse.data[index]['user_id']
-                // oneReaction.user_name = someResponseInTheFuture[index]['user_name']
-                reactionsArrayForOneSuggestion.push(oneReactionForSuggestion)
-              }
-              oneSuggestion.reactions = reactionsArrayForOneSuggestion
-              reactionsArrayForOneSuggestion = []
+          if (reactionsForSuggestionResponse.data[0]) {
+            for (let index = 0; index < reactionsForSuggestionResponse.data.length; index++) {
+              const oneReactionForSuggestion = new Reaction()
+              oneReactionForSuggestion.code = reactionsForSuggestionResponse.data[index]['code']
+              oneReactionForSuggestion.user_id = reactionsForSuggestionResponse.data[index]['user_id']
+              // oneReaction.user_name = someResponseInTheFuture[index]['user_name']
+              reactionsArrayForOneSuggestion.push(oneReactionForSuggestion)
             }
+            oneSuggestion.reactions = reactionsArrayForOneSuggestion
+            reactionsArrayForOneSuggestion = []
+          }
           if(response.data[rootIndex].alternative_labels[0]){
             for (let index = 0; index < Object.keys(response.data[rootIndex].alternative_labels).length; index++) {
               oneSuggestion.alternative_labels.push(response.data[rootIndex].alternative_labels[index]['value'])
