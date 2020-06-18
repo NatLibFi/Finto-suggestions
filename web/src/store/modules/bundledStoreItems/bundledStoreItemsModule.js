@@ -129,6 +129,19 @@ const bundledItems = {
           if(response.data[rootIndex].preferred_label['en']) {
             oneSuggestion.preferred_label["en"] = response.data[rootIndex].preferred_label['en']['value'] //
           }
+          const reactionsForSuggestionResponse = await api.reaction.getReactionsBySuggestion(response.data[rootIndex].id)
+          let reactionsArrayForOneSuggestion = []
+            if (reactionsForSuggestionResponse.data[0]) {
+              for (let index = 0; index < reactionsForSuggestionResponse.data.length; index++) {
+                const oneReactionForSuggestion = new Reaction()
+                oneReactionForSuggestion.code = reactionsForSuggestionResponse.data[index]['code']
+                oneReactionForSuggestion.user_id = reactionsForSuggestionResponse.data[index]['user_id']
+                // oneReaction.user_name = someResponseInTheFuture[index]['user_name']
+                reactionsArrayForOneSuggestion.push(oneReactionForSuggestion)
+              }
+              oneSuggestion.reactions = reactionsArrayForOneSuggestion
+              reactionsArrayForOneSuggestion = []
+            }
           if(response.data[rootIndex].alternative_labels[0]){
             for (let index = 0; index < Object.keys(response.data[rootIndex].alternative_labels).length; index++) {
               oneSuggestion.alternative_labels.push(response.data[rootIndex].alternative_labels[index]['value'])
@@ -226,6 +239,7 @@ const bundledItems = {
                       const oneReaction = new Reaction()
                       oneReaction.code = reactionsResponse.data[index]['code']
                       oneReaction.user_id = reactionsResponse.data[index]['user_id']
+                      // oneReaction.user_name = someResponseInTheFuture[index]['user_name']
                       reactionsArray.push(oneReaction)
                     }
                   oneComment.reactions = reactionsArray
