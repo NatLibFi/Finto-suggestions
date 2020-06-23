@@ -87,7 +87,7 @@ export default {
     };
   },
   computed: {
-    ...mapState('bundledItems', ['suggestions2']),
+    ...mapState('bundledItems', ['suggestions2', 'directives2', 'user2']),
     ...mapAuthenticatedUserGetters({
       isAuthenticated: authenticatedUserGetters.GET_IS_AUTHENTICATED,
       role: authenticatedUserGetters.GET_USER_ROLE
@@ -110,6 +110,9 @@ export default {
       filters: '',
       searchWord: ''      
     });
+    // this.$store.dispatch('bundledItems/setTestValues',{
+    //   data: "kattiz",
+    // });
 
     /// Minor
     this.testingOfUpdateHook();

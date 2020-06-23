@@ -104,8 +104,17 @@ const bundledItems = {
   },
   mutations: {
     setSuggestions2(state, data) {
-      state.suggestions2 = data;
+      state.suggestions2 = data
+      state.suggestions2[0].alternative_labels[0].value = "kattiXYZ"
     },
+    // setTestValues(data) {
+    //   state = bundledItems['getSuggestions2']
+    //   console.log("data on: ")
+    //   console.log(data)
+    //   console.log("staten objekti on: ")
+    //   console.log(state.suggestions2[0].alternative_labels[0].value)      
+    //   state.suggestions2[0].alternative_labels[0].value = data
+    // },
     // assaignChangesCommon(state, data){
       //   // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/assign
       //   const changedEntity = Object.assign(state, data);
@@ -113,6 +122,12 @@ const bundledItems = {
     },
     
     actions: {
+
+      // async setTestValues( {commit}, data) {
+      //   commit('setTestValues', data);
+      //   return data;
+      // },
+
       async getSuggestionsFromDBAndCommitState({ commit }, { offset, sort, filters, searchWord }) {
         let conditionForFilter = ''
         let secondConditionForFilter = ''
