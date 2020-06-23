@@ -121,15 +121,6 @@ const bundledItems = {
           // console.log(conditionForFilter)
           return listItem[conditionForFilter]
         }
-        // var filterDefinitions = function(listItem) {
-        //   // console.log(conditionForFilter)
-        //   if (conditionForFilter != '' && secondConditionForFilter === ''){
-        //     return listItem[conditionForFilter]
-        //   }
-        //   if (secondConditionForFilter != ''){
-        //     return listItem[conditionForFilter].filter(secondConditionForFilter)
-        //   }
-        // }
         // The next line for test purposes
         // const response = await api.suggestion.getSuggestions(offset, 'COMMENTS_DESC', filters, searchWord);
         const response = await api.suggestion.getSuggestions(offset, sort, filters, searchWord);
@@ -170,7 +161,7 @@ const bundledItems = {
                 const oneReactionForSuggestion = new Reaction()
                 oneReactionForSuggestion.code = reactionsForSuggestionResponse.data[index]['code']
                 oneReactionForSuggestion.user_id = reactionsForSuggestionResponse.data[index]['user_id']
-                // oneReaction.user_name = someResponseInTheFuture[index]['user_name']
+                // oneReaction.user_name = someResponseInTheFuture[index]['user_name'] // Should be added later on
                 reactionsArrayForOneSuggestion.push(oneReactionForSuggestion)
               }
               oneSuggestion.reactions = reactionsArrayForOneSuggestion
@@ -180,43 +171,11 @@ const bundledItems = {
               conditionForFilter = 'value'
               oneSuggestion.alternative_labels = response.data[rootIndex].alternative_labels.filter(filterDefinitions)
               conditionForFilter = ''
-              // Toimii
-              // var filtered_alternative_labels = response.data[rootIndex].alternative_labels.filter(function(filtered_alternative_label){
-              //   return filtered_alternative_label['value']
-              // })
-              // oneSuggestion.alternative_labels = filtered_alternative_labels
-
-              // Toimii
-              // for (let index = 0; index < Object.keys(response.data[rootIndex].alternative_labels).length; index++) {
-              //   oneSuggestion.alternative_labels.push(response.data[rootIndex].alternative_labels[index]['value'])
-              // }
             }
-
-            // conditionForFilter = 'value'
-            // oneSuggestion.alternative_labels = response.data[rootIndex].alternative_labels.filter(filterDefinitions)
-
-
             if(response.data[rootIndex].broader_labels[0] && response.data[rootIndex].broader_labels.length < 2){
-              // let tempObjectForBroaderLabels = {}
-
-
               conditionForFilter = 'uri'
-              // secondConditionForFilter = 'uri'
-              // oneSuggestion.alternative_labels = response.data[rootIndex].alternative_labels.filter(filterDefinitions)
-              // tempObjectForBroaderLabels['uri'] = response.data[rootIndex].broader_labels.filter(filterDefinitions)
-
-
-              // for (let index = 0; index < Object.keys(response.data[rootIndex].broader_labels).length; index++) {
-              //   tempObjectForBroaderLabels['uri'] = response.data[rootIndex].broader_labels[index]['uri']
-              //   tempObjectForBroaderLabels['value'] = response.data[rootIndex].broader_labels[index]['value']
-              //   oneSuggestion.broader_labels.push(tempObjectForBroaderLabels)
-              //   tempObjectForBroaderLabels = {}
-            // }
-            // tempObjectForBroaderLabels = {uri: response.data[rootIndex].broader_labels.filter(filterDefinitions), value: response.data[rootIndex].broader_labels.filter(filterDefinitions)}
               oneSuggestion.broader_labels = response.data[rootIndex].broader_labels.filter(filterDefinitions)
-            // tempObjectForBroaderLabels = {}
               conditionForFilter = ''
-
             }
             if(response.data[rootIndex].created){
               oneSuggestion.created = response.data[rootIndex].created
@@ -231,16 +190,6 @@ const bundledItems = {
               conditionForFilter = 'value'
               oneSuggestion.groups = response.data[rootIndex].groups.filter(filterDefinitions)
               conditionForFilter = ''
-
-
-
-              // let tempObjectForGroups = {}
-              // for (let index = 0; index < Object.keys(response.data[rootIndex].groups).length; index++) {
-              //   tempObjectForGroups['uri'] = response.data[rootIndex].groups[index]['uri']
-              //   tempObjectForGroups['value'] = response.data[rootIndex].groups[index]['value']
-              //   oneSuggestion.groups.push(tempObjectForGroups)
-              //   tempObjectForGroups = {}
-              // }
             }
             if(response.data[rootIndex].created){
               oneSuggestion.created = response.data[rootIndex].created
@@ -249,6 +198,10 @@ const bundledItems = {
               oneSuggestion.modified = response.data[rootIndex].modified
             }
             if(response.data[rootIndex].narrower_labels[0]){
+              // Wait until you have found a good real life example of the suggestion with narrow_label
+              // conditionForFilter = 'uri' // or 'value'
+              // oneSuggestion.narrower_labels = response.data[rootIndex].narrower_labels.filter(filterDefinitions)
+              // conditionForFilter = ''
               let tempObjectForNarrowerLabels = {}
               for (let index = 0; index < Object.keys(response.data[rootIndex].narrower_labels).length; index++) {
                 tempObjectForNarrowerLabels['uri'] = response.data[rootIndex].narrower_labels[index]['uri']
@@ -263,23 +216,15 @@ const bundledItems = {
             if(response.data[rootIndex].reason){
               oneSuggestion.reason = response.data[rootIndex].reason
             }
-            let tempObjectForRelatedLabels = {}
             if(response.data[rootIndex].related_labels[0]){
-              for (let index = 0; index < Object.keys(response.data[rootIndex].related_labels).length; index++) {
-                tempObjectForRelatedLabels['uri'] = response.data[rootIndex].related_labels[index]['uri']
-                tempObjectForRelatedLabels['value'] = response.data[rootIndex].related_labels[index]['value']
-                oneSuggestion.related_labels.push(tempObjectForRelatedLabels)
-                tempObjectForRelatedLabels = {}
-              }
+              conditionForFilter = 'uri' // or value
+              oneSuggestion.related_labels = response.data[rootIndex].related_labels.filter(filterDefinitions)
+              conditionForFilter = ''
             }
             if(response.data[rootIndex].exactMatches[0]){
-              let tempObjectForExactMatches = {}
-              for (let index = 0; index < Object.keys(response.data[rootIndex].exactMatches).length; index++) {
-                tempObjectForExactMatches['value'] = response.data[rootIndex].exactMatches[index]['value']
-                tempObjectForExactMatches['vocab'] = response.data[rootIndex].exactMatches[index]['vocab']
-                oneSuggestion.exactMatches.push(tempObjectForExactMatches)
-                tempObjectForExactMatches = {}
-              }
+              conditionForFilter = 'value' // or 'vocab'
+              oneSuggestion.exactMatches = response.data[rootIndex].exactMatches.filter(filterDefinitions)
+              conditionForFilter = ''
             }
             if(response.data[rootIndex].neededFor){
               oneSuggestion.neededFor = response.data[rootIndex].neededFor; //
