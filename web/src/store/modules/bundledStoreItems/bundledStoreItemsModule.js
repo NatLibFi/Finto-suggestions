@@ -1,5 +1,7 @@
 import Vue from 'vue';
 import api from '../../../api';
+// import getTwoEntities from './tools'
+import * as entitiesX from './tools';
 
 // anotherWay = 'thumbs_up' || 'thumbs_down || ''happy ...;
 // export const emojis = {
@@ -34,12 +36,14 @@ class Comment{
     this.modified = '';
     this.text = '';
     this.reactions = [];
+    this.path = null;
   }
 }
 class Suggestion{
   constructor() {
     this.id = 0;
-    this.suggestion_type = '';
+    this.suggestion_type = {};
+    // this.suggestion_type.path = null;
     this.preferred_label = {}; // [fi, sv ,en]
     this.alternative_labels = []; // [0..n]
     this.broader_labels = []; // [0..1]
@@ -62,6 +66,9 @@ class Suggestion{
     this.reactions = [];
     this.tags = [];
     this.comments = [];
+    this.pathItemName = '';
+    this.pathItemNumber = Number;
+    this.path = null;
   }
 }
 
@@ -105,49 +112,45 @@ const bundledItems = {
   mutations: {
     setSuggestions2(state, data) {
       state.suggestions2 = data
-      state.suggestions2[0].alternative_labels[0].value = "kattiXYZ"
-    },
-    // setTestValues(data) {
-    //   state = bundledItems['getSuggestions2']
-    //   console.log("data on: ")
-    //   console.log(data)
-    //   console.log("staten objekti on: ")
-    //   console.log(state.suggestions2[0].alternative_labels[0].value)      
-    //   state.suggestions2[0].alternative_labels[0].value = data
-    // },
-    // assaignChangesCommon(state, data){
-      //   // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/assign
-      //   const changedEntity = Object.assign(state, data);
-      // }
+      // suggestion_type
+      // state.suggestions2[0]['suggestion_type'] = 'MODIFY' // normilistaus
+      // state.suggestions2[0].alternative_labels[0].value = "kattiXYZ" // normilistaus
+      state.suggestions2[0].comments[1].text = "kattiXYZ" // eniten kommentteja
+
+      // console.log("Objektin propertiesit:")
+      // console.log(Object.keys(state.suggestions2).map(function(key){ return state.suggestions2[key] }));
+
+      },
     },
     
     actions: {
-
-      // async setTestValues( {commit}, data) {
-      //   commit('setTestValues', data);
-      //   return data;
-      // },
-
       async getSuggestionsFromDBAndCommitState({ commit }, { offset, sort, filters, searchWord }) {
+        const entityForTesting = {
+          itemOne: "kohdistetaan talletus ",
+          itemTwo: "tähän objektiin"
+        }
+        console.log(entitiesX.getTwoEntities(entityForTesting))
         let conditionForFilter = ''
         let secondConditionForFilter = ''
         let thirdConditionForFilter = ''
         var filterDefinitions = function(listItem) {
-          // console.log(conditionForFilter)
           return listItem[conditionForFilter]
         }
         // The next line for test purposes
         // const response = await api.suggestion.getSuggestions(offset, 'COMMENTS_DESC', filters, searchWord);
-        const response = await api.suggestion.getSuggestions(offset, sort, filters, searchWord);
+        const response = await api.suggestion.getSuggestions(offset, 'COMMENTS_DESC', filters, searchWord);
         if (response && response.code == 200) {
           let suggestionItems = [];
           for (let rootIndex = 0; rootIndex < Object.keys(response.data).length; rootIndex++) {
             const oneSuggestion = new Suggestion();
+            // oneSuggestion.pathItemName = 'id'
+            oneSuggestion.path = rootIndex
             if(response.data[rootIndex].id) {
               oneSuggestion.id = response.data[rootIndex].id; //
             }
             if(response.data[rootIndex].suggestion_type) {
-              oneSuggestion.suggestion_type = response.data[rootIndex].suggestion_type;
+              oneSuggestion.suggestion_type["suggestion_type"] = response.data[rootIndex].suggestion_type;
+              oneSuggestion.suggestion_type["path"] = rootIndex+".suggestion_type"
             }
             if(response.data[rootIndex].preferred_label['fi']) {
               oneSuggestion.preferred_label["fi"] = response.data[rootIndex].preferred_label['fi']['value'] //
@@ -260,6 +263,7 @@ const bundledItems = {
                   oneComment.created = response.data[rootIndex].events[index].created
                   oneComment.modified = response.data[rootIndex].events[index].modified
                   oneComment.text = response.data[rootIndex].events[index].text
+                  oneComment.path = rootIndex+".comments."+(index-1)
                   const reactionsResponse = await api.reaction.getReactionsByEvent(response.data[rootIndex].events[index].id)
                   let reactionsArray = []
                     if (reactionsResponse.data[0]) {
