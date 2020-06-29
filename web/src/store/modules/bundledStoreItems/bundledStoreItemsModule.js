@@ -73,7 +73,7 @@ class Suggestion{
   }
 }
 
-const bundledItems = {
+export const bundledItems = {
   namespaced: true,
   state: {
     directives2: {
@@ -106,77 +106,59 @@ const bundledItems = {
       title: '' 
     },
     suggestions2: [],
+    testValue: ''
   },
   getters: {
-    getSuggestions2: state => state[suggestions2]
+    getSuggestions2: state => state['suggestions2']
   },
   mutations: {
-    setSuggestions2(state, data) {
-      state.suggestions2 = data
-      // suggestion_type
-      state.suggestions2[0]['suggestion_type'] = 'MODIFY' // normilistaus
+    setSuggestions2(state, payload) {
+      console.log("Tulostetaan payload setSuggestions2:ssa")
+      console.log(payload)
+      console.log("Tulostetaan state setSuggestions2:ssa")
+      console.log(state)
+      state.suggestions2 = payload
+      // state.suggestions2[0]['suggestion_type'] = 'MODIFY' // normilistaus
       state.suggestions2[0].alternative_labels[0].value = "kattiXYZ" // normilistaus
-      state.suggestions2[2].alternative_labels[2].value = "KappasKumiXYZ" // normilistaus
+      state.suggestions2[2].alternative_labels[2].value = "KappasKumi..." // normilistaus
       // console.log(this.state.bundledItems.suggestions2[2].alternative_labels[2].value)
       // state.suggestions2[0].comments[1].text = "kattiXYZ" // eniten kommentteja
-
-      // console.log("Objektin propertiesit:")
-      // console.log(Object.keys(state.suggestions2).map(function(key){ return state.suggestions2[key] }));
-
       },
+
     setStoreStateItem(state, payload) {
+      console.log("Tulostetaan payload setStoreStateItemissä")
+      console.log(payload)
+      console.log("Tulostetaan state setStoreStateItemissä")
+      console.log(state)
       console.log("***")
       console.log(payload.path)
       console.log(payload.itemValue)
       console.log("***")
-      // if (path === '1.suggestion_type') {
-      //   console.log(payload.path)
-      // } else {
-      //   console.log("polku ei toimi")
-      // }
+      // vertailukappale
+      state.suggestions2[2]['alternative_labels'][2]['value'] = "jippii";
+
       var res = payload.path.split('.');
       if (res.length === 3) {
-        // console.log(item)
+        console.log(res.length)
+        console.log("**********************")
         const theFirstListItem = parseInt(res[0])
         console.log(theFirstListItem)
         const theSecondListItem = res[1]
         console.log(theSecondListItem)
         const theThirdListItem = res[2]
         console.log(theThirdListItem)
-        console.log(state.suggestions2[1][theSecondListItem][theThirdListItem])
-        state.suggestions2[1][theSecondListItem][theThirdListItem] = 'MODIFY'
-        console.log("toteutuuko muutos?")
-        console.log(state.suggestions2[1][theSecondListItem][theThirdListItem])
+        state.suggestions2[theFirstListItem][theSecondListItem][theSecondListItem] = payload.itemValue
       } else {
         console.log("Jotain muuta")
-      }
-      
-      // toimii
-      // console.log(this.state.bundledItems.suggestions2)
-      // toimii
-      console.log("tesatataan hakasulkeita")
-      console.log(this.state.bundledItems.suggestions2[2]['alternative_labels'][2]['value'])
-      
-      // state.suggestions2 = data
-      // suggestion_type
-      state.suggestions2[0]['suggestion_type'] = 'MODIFY' // normilistaus
-      state.suggestions2[0].alternative_labels[0].value = "kattiXYZ" // normilistaus
-      // state.suggestions2[0].comments[1].text = "kattiXYZ" // eniten kommentteja
-
-      // console.log("Objektin propertiesit:")
-      // console.log(Object.keys(state.suggestions2).map(function(key){ return state.suggestions2[key] }));
-
+        }
       },
     },
     
     actions: {
 
       async setSuggestionItem({ commit }, payload){
-        // let payload = {path: '1.suggestion_type.suggestion_type', itemValue: 'MODIFY'}
         commit('setStoreStateItem', payload); //1.suggestion_type
-        // commit('setStoreStateItem', path)
-        // commit('setStoreStateItem', "1.suggestion_type.suggestion_type")
-        // commit('setStoreStateItem', "1.suggestion_type.suggestion_type") //1.suggestion_type
+        // return payload;
       },
 
 
@@ -209,7 +191,7 @@ const bundledItems = {
             if(response.data[rootIndex].suggestion_type) {
               oneSuggestion.suggestion_type["suggestion_type"] = response.data[rootIndex].suggestion_type;
               oneSuggestion.suggestion_type["path"] = `${rootIndex}.suggestion_type`
-              console.log(rootIndex)
+              // console.log(rootIndex)
             }
             if(response.data[rootIndex].preferred_label['fi']) {
               oneSuggestion.preferred_label["fi"] = response.data[rootIndex].preferred_label['fi']['value'] //
@@ -344,21 +326,9 @@ const bundledItems = {
             suggestionItems.push(oneSuggestion)
           }
           commit('setSuggestions2', suggestionItems);
-
           // toimii
           // let payload = {path: '1.suggestion_type.suggestion_type', itemValue: 'MODIFY'}
           // commit('setStoreStateItem', payload); //1.suggestion_type
-
-
-
-          // console.log(payload)
-          // commit('setStoreStateItem', "1.suggestion_type.suggestion_type", "MODIFY") //1.suggestion_type
-
-
-
-
-
-
           return response.data;
         } else {
           return '';

@@ -132,7 +132,7 @@ export default {
     };
   },
   computed: {
-    ...mapState('bundledItems', ['suggestions2', 'directives2', 'user2']),
+    ...mapState('bundledItems', ['suggestions2', 'directives2', 'user2', 'testValue']),
     ...mapAuthenticatedUserGetters({
       isAuthenticated: authenticatedUserGetters.GET_IS_AUTHENTICATED,
       role: authenticatedUserGetters.GET_USER_ROLE
@@ -149,15 +149,15 @@ export default {
     },
   },
   async created() {
-    this.$store.dispatch('bundledItems/getSuggestionsFromDBAndCommitState',{
+    await this.$store.dispatch('bundledItems/getSuggestionsFromDBAndCommitState',{
       offset: 0,
       sort: 'CREATED_DESC',
       filters: '',
       searchWord: ''      
-    });
-    // this.$store.dispatch('bundledItems/setTestValues',{
-    //   data: "kattiz",
-    // });
+    }).then();
+
+    let payload = {path: '3.suggestion_type.suggestion_type', itemValue: 'NEW'}
+    await this.$store.dispatch('bundledItems/setSuggestionItem', payload);
 
     /// Minor
     this.testingOfUpdateHook();
