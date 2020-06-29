@@ -113,9 +113,9 @@ const bundledItems = {
     setSuggestions2(state, data) {
       state.suggestions2 = data
       // suggestion_type
-      // state.suggestions2[0]['suggestion_type'] = 'MODIFY' // normilistaus
-      // state.suggestions2[0].alternative_labels[0].value = "kattiXYZ" // normilistaus
-      state.suggestions2[0].comments[1].text = "kattiXYZ" // eniten kommentteja
+      state.suggestions2[0]['suggestion_type'] = 'MODIFY' // normilistaus
+      state.suggestions2[0].alternative_labels[0].value = "kattiXYZ" // normilistaus
+      // state.suggestions2[0].comments[1].text = "kattiXYZ" // eniten kommentteja
 
       // console.log("Objektin propertiesit:")
       // console.log(Object.keys(state.suggestions2).map(function(key){ return state.suggestions2[key] }));
@@ -138,7 +138,7 @@ const bundledItems = {
         }
         // The next line for test purposes
         // const response = await api.suggestion.getSuggestions(offset, 'COMMENTS_DESC', filters, searchWord);
-        const response = await api.suggestion.getSuggestions(offset, 'COMMENTS_DESC', filters, searchWord);
+        const response = await api.suggestion.getSuggestions(offset, sort, filters, searchWord);
         if (response && response.code == 200) {
           let suggestionItems = [];
           for (let rootIndex = 0; rootIndex < Object.keys(response.data).length; rootIndex++) {
@@ -148,9 +148,11 @@ const bundledItems = {
             if(response.data[rootIndex].id) {
               oneSuggestion.id = response.data[rootIndex].id; //
             }
+            //path testing
             if(response.data[rootIndex].suggestion_type) {
               oneSuggestion.suggestion_type["suggestion_type"] = response.data[rootIndex].suggestion_type;
-              oneSuggestion.suggestion_type["path"] = rootIndex+".suggestion_type"
+              oneSuggestion.suggestion_type["path"] = `${rootIndex}.suggestion_type`
+              console.log(rootIndex)
             }
             if(response.data[rootIndex].preferred_label['fi']) {
               oneSuggestion.preferred_label["fi"] = response.data[rootIndex].preferred_label['fi']['value'] //

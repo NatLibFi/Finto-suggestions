@@ -16,9 +16,54 @@
         Run the store state test:
       </a>
       {{ testSwitcher }}
+
+        <!-- <div v-for='suggestion in suggestions2' :key='suggestion.id' >
+          {{ suggestion }}
+        </div> -->
+
       <div v-if='testSwitcher'>
-        {{ getEntireStoreState }}
+        <!-- {{ getEntireStoreState }} -->
+        <div v-for='suggestion in somethingToManipulate.suggestions2' :key='suggestion.id' >
+          <span> >>> SUGGESTION </span><br>
+          <span> PATH: {{ suggestion.path }} </span><br>
+          <span> URI: {{ suggestion.uri }} </span><br>
+          <span> ID: {{ suggestion.id }} </span><br>
+          <span> STATUS: {{ suggestion.status }} </span><br>
+          <span> SUGGESTION_TYPE: {{ suggestion.suggestion_type }} </span><br>
+          <!-- <span> SUGGESTION_TYPE_PATH: {{ suggestion.suggestion_type.path }} </span><br> -->
+          <span> PREFERRED_LABELS: {{ suggestion.preferred_label }} </span><br>
+          <span> BROADER_LABELS: {{ suggestion.broader_labels }} </span><br>
+          <span> NAROWER_LABELS: {{ suggestion.narrower_labels }} </span><br>
+          <span> ALTERNATIVE_LABELS: {{ suggestion.alternative_labels }} </span><br>
+          <span> RELATED_LABELS: {{ suggestion.related_labels }} </span><br>
+          <span> EXACT_MATCHES: {{ suggestion.exact_matches }} </span><br>
+          <span> CREATED: {{ suggestion.created }} </span><br>
+          <span> MODIFIED: {{ suggestion.modified }} </span><br>
+          <span> DESCRIPTION: {{ suggestion.descripiton }} </span><br>
+          <span> NEEDEDFOR: {{ suggestion.neededFor }} </span><br>
+          <span> ORGANIZATION: {{ suggestion.organization }} </span><br>
+          <span> REASON: {{ suggestion.reason }} </span><br>
+          <span> SCOPENOTE: {{ suggestion.scopeNote }} </span><br>
+          <span> USER_ID: {{ suggestion.user_id }} </span><br>
+          <span> YSE_TERM: {{ suggestion.yse_term }} </span><br>
+          <span> TAGS: {{ suggestion.tags }} </span><br>
+          <span> REACTIONS: {{ suggestion.reactions }} </span><br>
+          <span> COMMENTS: {{ suggestion.comments }} </span><br>
+          <span> GROUPS: {{ suggestion.groups }} </span><br>
+          <span> ... </span><br>
+          <span> .. </span><br>
+          <span> . </span><br>
+          <!-- <span> {{ suggestion.status }} </span><br> -->
+          <!-- <span> {{ suggestion.pathItemName }} </span><br> -->
+        </div>
       </div>
+
+
+
+
+      <!-- <div v-if='testSwitcher'>
+        {{ getEntireStoreState }}
+      </div> -->
 
     </div>
     <div>
@@ -83,7 +128,7 @@ export default {
       updateTest: String,
       somethingToManipulate: String,
       somethingToJsonify: String,
-      something: String 
+      something: String,
     };
   },
   computed: {
