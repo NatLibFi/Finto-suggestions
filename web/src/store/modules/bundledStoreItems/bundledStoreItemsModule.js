@@ -2,6 +2,7 @@ import Vue from 'vue';
 import api from '../../../api';
 // import getTwoEntities from './tools'
 import * as entitiesX from './tools';
+import { storeKeyNames } from '../authenticatedUser/authenticatedUserConsts';
 
 // anotherWay = 'thumbs_up' || 'thumbs_down || ''happy ...;
 // export const emojis = {
@@ -115,6 +116,51 @@ const bundledItems = {
       // suggestion_type
       state.suggestions2[0]['suggestion_type'] = 'MODIFY' // normilistaus
       state.suggestions2[0].alternative_labels[0].value = "kattiXYZ" // normilistaus
+      state.suggestions2[2].alternative_labels[2].value = "KappasKumiXYZ" // normilistaus
+      // console.log(this.state.bundledItems.suggestions2[2].alternative_labels[2].value)
+      // state.suggestions2[0].comments[1].text = "kattiXYZ" // eniten kommentteja
+
+      // console.log("Objektin propertiesit:")
+      // console.log(Object.keys(state.suggestions2).map(function(key){ return state.suggestions2[key] }));
+
+      },
+    setStoreStateItem(state, payload) {
+      console.log("***")
+      console.log(payload.path)
+      console.log(payload.itemValue)
+      console.log("***")
+      // if (path === '1.suggestion_type') {
+      //   console.log(payload.path)
+      // } else {
+      //   console.log("polku ei toimi")
+      // }
+      var res = payload.path.split('.');
+      if (res.length === 3) {
+        // console.log(item)
+        const theFirstListItem = parseInt(res[0])
+        console.log(theFirstListItem)
+        const theSecondListItem = res[1]
+        console.log(theSecondListItem)
+        const theThirdListItem = res[2]
+        console.log(theThirdListItem)
+        console.log(state.suggestions2[1][theSecondListItem][theThirdListItem])
+        state.suggestions2[1][theSecondListItem][theThirdListItem] = 'MODIFY'
+        console.log("toteutuuko muutos?")
+        console.log(state.suggestions2[1][theSecondListItem][theThirdListItem])
+      } else {
+        console.log("Jotain muuta")
+      }
+      
+      // toimii
+      // console.log(this.state.bundledItems.suggestions2)
+      // toimii
+      console.log("tesatataan hakasulkeita")
+      console.log(this.state.bundledItems.suggestions2[2]['alternative_labels'][2]['value'])
+      
+      // state.suggestions2 = data
+      // suggestion_type
+      state.suggestions2[0]['suggestion_type'] = 'MODIFY' // normilistaus
+      state.suggestions2[0].alternative_labels[0].value = "kattiXYZ" // normilistaus
       // state.suggestions2[0].comments[1].text = "kattiXYZ" // eniten kommentteja
 
       // console.log("Objektin propertiesit:")
@@ -124,6 +170,17 @@ const bundledItems = {
     },
     
     actions: {
+
+      async setSuggestionItem({ commit }, payload){
+        // let payload = {path: '1.suggestion_type.suggestion_type', itemValue: 'MODIFY'}
+        commit('setStoreStateItem', payload); //1.suggestion_type
+        // commit('setStoreStateItem', path)
+        // commit('setStoreStateItem', "1.suggestion_type.suggestion_type")
+        // commit('setStoreStateItem', "1.suggestion_type.suggestion_type") //1.suggestion_type
+      },
+
+
+
       async getSuggestionsFromDBAndCommitState({ commit }, { offset, sort, filters, searchWord }) {
         const entityForTesting = {
           itemOne: "kohdistetaan talletus ",
@@ -287,6 +344,21 @@ const bundledItems = {
             suggestionItems.push(oneSuggestion)
           }
           commit('setSuggestions2', suggestionItems);
+
+          // toimii
+          // let payload = {path: '1.suggestion_type.suggestion_type', itemValue: 'MODIFY'}
+          // commit('setStoreStateItem', payload); //1.suggestion_type
+
+
+
+          // console.log(payload)
+          // commit('setStoreStateItem', "1.suggestion_type.suggestion_type", "MODIFY") //1.suggestion_type
+
+
+
+
+
+
           return response.data;
         } else {
           return '';
