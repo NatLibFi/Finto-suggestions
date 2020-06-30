@@ -21,15 +21,36 @@
           {{ suggestion }}
         </div> -->
 
-      <div v-if='testSwitcher'>
+      <!-- <div v-if='testSwitcher'> -->
         <!-- {{ getEntireStoreState }} -->
         <div v-for='suggestion in somethingToManipulate.suggestions2' :key='suggestion.id' >
           <span> >>> SUGGESTION </span><br>
           <span> PATH: {{ suggestion.path }} </span><br>
+          <p></p>
+
+                <!-- onClick="return confirm('Oletko varma?');" -->
+<!-- setSuggestionTypeInModel() -->
+
           <span> URI: {{ suggestion.uri }} </span><br>
           <span> ID: {{ suggestion.id }} </span><br>
           <span> STATUS: {{ suggestion.status }} </span><br>
+
           <span> SUGGESTION_TYPE: {{ suggestion.suggestion_type }} </span><br>
+
+          <span>
+            <a 
+              class="button"
+              v-on:click="setSuggestionTypeInModel(`${suggestion.suggestion_type.path}.suggestion_type`, suggestionTypeInModel)"
+              >Vaihda ehdotuksen tyyppiä</a
+            >
+          </span> {{suggestionTypeInModel}}
+          <select v-model="suggestionTypeInModel">
+            <option>NEW</option>
+            <option>MODIFY</option>
+          </select>
+          <p></p> 
+
+
           <!-- <span> SUGGESTION_TYPE_PATH: {{ suggestion.suggestion_type.path }} </span><br> -->
           <span> PREFERRED_LABELS: {{ suggestion.preferred_label }} </span><br>
           <span> BROADER_LABELS: {{ suggestion.broader_labels }} </span><br>
@@ -56,14 +77,7 @@
           <!-- <span> {{ suggestion.status }} </span><br> -->
           <!-- <span> {{ suggestion.pathItemName }} </span><br> -->
         </div>
-      </div>
-
-
-
-
-      <!-- <div v-if='testSwitcher'>
-        {{ getEntireStoreState }}
-      </div> -->
+      <!-- </div> -->
 
     </div>
     <div>
@@ -129,6 +143,8 @@ export default {
       somethingToManipulate: String,
       somethingToJsonify: String,
       something: String,
+      suggestionTypeInModel: 'vaihda arvo',
+      mutationCallString: String
     };
   },
   computed: {
@@ -154,9 +170,9 @@ export default {
       sort: 'CREATED_DESC',
       filters: '',
       searchWord: ''      
-    }).then();
+    });
 
-    let payload = {path: '3.suggestion_type.suggestion_type', itemValue: 'NEW'}
+    let payload = {path: '7.suggestion_type.suggestion_type', itemValue: `MODIFY`} 
     await this.$store.dispatch('bundledItems/setSuggestionItem', payload);
 
     /// Minor
@@ -175,6 +191,15 @@ export default {
     ...mapMeetingActions({
       getMeetings: meetingActions.GET_MEETINGS_AS_PITHY,
     }),
+
+    // /Suggestion_type
+    async setSuggestionTypeInModel(mutationCallString, suggestionTypeInModel) {
+      // let payload = {path: `${this.mutationCallString}`, itemValue: `${this.suggestionTypeInModel}`} 
+      let payload = {path: `${mutationCallString}`, itemValue: `${suggestionTypeInModel}`} 
+      console.log(payload)
+      await this.$store.dispatch('bundledItems/setSuggestionItem', payload);
+      // return { name: this.name, email: this.email, password: this.password };
+    },
     getStoreStateItem(){
       this.tietoToimivuudesta = store.state.idUsedtoGetCurrentMeeting
     }, //** 

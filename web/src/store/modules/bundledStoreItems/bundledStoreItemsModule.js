@@ -153,16 +153,12 @@ export const bundledItems = {
         }
       },
     },
-    
-    actions: {
 
+    actions: {
       async setSuggestionItem({ commit }, payload){
         commit('setStoreStateItem', payload); //1.suggestion_type
         // return payload;
       },
-
-
-
       async getSuggestionsFromDBAndCommitState({ commit }, { offset, sort, filters, searchWord }) {
         const entityForTesting = {
           itemOne: "kohdistetaan talletus ",
