@@ -70,7 +70,7 @@ FIRST: Copy or clone Git repository and checkout the `develop` branch
 1.  Copy the .env.default file and rename it to .env (from project root)
 2.  Modify the environment variables in .env as desired
 3.  Download and install [Docker CE](https://docs.docker.com/install/) to your computer. Docker-compose should be included with the installation. If not, (download and install it separately)[https://github.com/docker/compose/releases].
-4.  Download and install [Python 3.7+](https://www.python.org/downloads/) and after that install pipenv with command `pip install pipenv`. Pipenv is used to install/remove packages and run scripts api-side.
+4.  Download and install [Python 3.7+](https://www.python.org/downloads/) and after that install pipenv with command `pip install pipenv`. Pipenv is used to install/remove packages and run scripts api-side (You may need to install python3-distutils (sudo apt-get install python3-distutils) to get pipenv correctly installed).
 5. Download and install latest LTS Node.Js (https://nodejs.org/en/download/)
 6.  Start the freshly installed Docker
 7.  Run `docker-compose up --build` in project's **root** folder (you can add `-d` to run this in the background). This command builds the required containers (api, web and nginx) and starts them. You can check the container status with a command `docker ps` in another command line tab.
@@ -88,7 +88,7 @@ Please see [a terminal recording](documentation/img/docker-compose-up.svg) of a 
 ### Halting Containers, Teardown
 
 All the running (composed) containers can be halted with command `docker-compose down`.
-You can remove previously built containers and volumes by executing `docker system prune -a` and `docker volume prune`. This is useful 
+You can remove previously built containers and volumes by executing `docker system prune -a` and `docker volume prune`. This is useful
 
 ### Staging Installation
 
