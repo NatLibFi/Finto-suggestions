@@ -1,3 +1,6 @@
+# THIS REPOSITORY IS OBSOLETE
+The similar functionality now developed in https://github.com/NatLibFi/Skosmos-widget-suggestions.
+
 # Finto-suggestions (Ontology Suggestion Platform)
 
 ## Architecture
